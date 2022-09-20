@@ -1,0 +1,30 @@
+{
+  "name": "ogui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode production --progress --color --config webpack.config.publishing.js",
+    "prepack": "tsc",
+    "pack-copy": "yarn clean && tsc && yarn copy-files",
+    "clean": "rm -rf ./lib",
+    "copy-files": "cp -r ./src/assets/ ./lib/assets/",
+    "tsc": "tsc"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.4.0",
+    "typescript": "^4.8.3",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.6",
+    "@mui/material": "^5.10.6",
+    "@types/react": "^18.0.20"
+  }
+}

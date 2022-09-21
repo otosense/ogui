@@ -8,12 +8,12 @@ module.exports = {
   },
   // entry: './index.ts',
   context: sourcePath,
-  output: path.resolve(__dirname, "dist"),
-  // output: {
-  //   path: outPath,
-  //   publicPath: '/',
-  //   filename: 'index.js',
-  // },
+  // output: path.resolve(__dirname, "dist"),
+  output: {
+    path: outPath,
+    publicPath: '/',
+    filename: 'index.js',
+  },
   target: 'web',
   // fileName: "index.js",
   resolve: {
@@ -44,18 +44,17 @@ module.exports = {
 ],
 },
 externals: {
-  "react": {
-    "commonjs": "react",
-    "commonjs2": "react",
-    "amd": "react",
-    "root": "React"
-  },
-  "react-dom": {
-      "commonjs": "react-dom",
-      "commonjs2": "react-dom",
-      "amd": "react-dom",
-      "root": "ReactDOM"
-  },
-  "@mui/material": "@mui/material",
+    "react": {
+      "commonjs": "react",
+      "commonjs2": "react",
+      "amd": "react",
+      "root": "React"
+    },
+    "react-dom": {
+        "commonjs": "react-dom",
+        "commonjs2": "react-dom",
+        "amd": "react-dom",
+        "root": "ReactDOM"
+    },
   },
 }

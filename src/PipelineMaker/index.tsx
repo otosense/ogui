@@ -11,7 +11,7 @@ interface IProps {
   handleSelectChange: (val: string, i: number) => void;
   handleSave: VoidFunction;
   selectedValues: string[];
-  setSelectedValues: (arr: string[]) => VoidFunction;
+  setSelectedValues: (arr: string[]) => void;
 }
 const btnContainer = {
   display: 'flex',

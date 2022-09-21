@@ -1,7 +1,8 @@
 {
   "name": "@otosense/ogui",
-  "version": "1.0.4",
-  "main": "index.js",
+  "version": "1.0.5",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode production --progress --color --config webpack.config.publishing.js",
@@ -11,6 +12,7 @@
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
     "tsc": "tsc"
   },
+  "author": "ADI OtoSense team",
   "devDependencies": {
     "ts-loader": "^9.4.0",
     "typescript": "^4.8.3",
@@ -20,6 +22,9 @@
   "peerDependencies": {
     "react": "*"
   },
+  "files": [
+    "lib/**"
+  ],
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",

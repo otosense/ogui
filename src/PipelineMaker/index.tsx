@@ -63,7 +63,7 @@ const PipelineMaker = (props: IProps) => {
       {!!indexes.length && indexes.map((index, i) => {
         return(
       <StepContainer index={index} key={`step-${index}`} onClick={deleteStep}>
-          <StepSelect items={props.options} onChange={handleSelectChange} val={props.selectedValues[i]} index={index}/>
+          <StepSelect items={options} onChange={handleSelectChange} val={props.selectedValues[i]} index={index}/>
       </StepContainer>
         )
       })}

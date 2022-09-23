@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --mode production --progress --color --config webpack.config.publishing.js",
     "prepack": "tsc",
-    "pack-copy": "yarn clean && tsc && yarn copy-files",
+    "pack-copy": "yarn clean && tsc",
     "clean": "rm -rf ./lib",
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
     "tsc": "tsc"

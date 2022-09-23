@@ -7,7 +7,7 @@
 ## components' props
 
 ### Pipeline maker
-
+```
 interface IProps {
   options: string[];
   handleSelectChange: (val: string, i: number) => void;
@@ -18,12 +18,13 @@ interface IProps {
   mixedData?: any;
   filterMixedDataFunc?: (data: any) => string[];
 }
-
+```
 ### Stream2pyChart
-
+```
 interface IProps {
   data: any;
   xAxisDataKey: string;
   yAxis1DataKey: string;
   yAxisDataKey: string;
 }
+```

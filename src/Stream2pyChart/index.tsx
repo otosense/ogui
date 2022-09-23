@@ -1,37 +1,52 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useRef } from 'react'
+import {
+  AreaChart,
+  CartesianGrid,
+  YAxis,
+  XAxis,
+  Tooltip,
+  Legend,
+  Area
+} from 'recharts'
 
 interface IProps {
-  data: any;
-  xAxisDataKey: string;
-  yAxis1DataKey: string;
-  yAxis2DataKey: string;
+  arr: {X: number}[];
+  setArr: VoidFunction;
+  speed: number;
 }
 
 const Stream2pyChart = (props: IProps) => {
-  const { data, xAxisDataKey, yAxis1DataKey, yAxis2DataKey } = props;
+  const { arr, setArr, speed } = props;
+  const timeoutRef = useRef(null);
+  const validate = () => {
+    setArr()
+  }
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+    console.log('This will run every second!');
+    timeoutRef.current = null;
+      validate()
+  }, speed);
+  if (timeoutRef.current !== null) {
+    clearInterval(interval)
+  }
+  },[]);
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
+    <div>
+        <AreaChart width={730} height={250} data={arr}
+  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey={xAxisDataKey} />
+        <XAxis/>
         <YAxis />
         <Tooltip />
         <Legend />
-        <Line type="monotone" dataKey={yAxis1DataKey} stroke="#8884d8" activeDot={{ r: 8 }} />
-        <Line type="monotone" dataKey={yAxis2DataKey} stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+        <Area type="monotone" dataKey="X" stroke="#8884d8" fill="#8884d8" />
+
+      </AreaChart>
+ 
+    </div>
   );
 }
+
 export default Stream2pyChart;

@@ -18,7 +18,7 @@ module.exports = {
   // fileName: "index.js",
   resolve: {
     modules: [sourcePath, 'node_modules'],
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.svg', '.ttf'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.svg', '.ttf', '.mjs'],
   },
   module: {
     rules: [
@@ -31,7 +31,10 @@ module.exports = {
         use: ['ts-loader'],
     }, {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use:'file-loader',
+        use: {
+          loader: require.resolve('file-loader'),
+          exclude: [/\.js$/, /\.mjs$/, /\.html$/, /\.json$/],
+        }
     }, {
         test: /\.svg$/,
         use: {

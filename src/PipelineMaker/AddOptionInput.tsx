@@ -39,12 +39,11 @@ const AddOptionInput = (props: IProps) => {
         </Select>
       </Stack> */}
       <Stack direction="row" sx={{alignItems: 'end'}}>
-        <Stack>
+        <Stack sx={{width: '100%'}}>
           <Typography variant="overline">Type an option to add</Typography>
           <TextField
             value={textVal}
             onChange={changeTextField}
-            sx={{width: '100%'}}
           />
         </Stack>
         <Button

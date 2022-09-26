@@ -34,8 +34,7 @@ const Stream2pyChart = (props: IProps) => {
   },[]);
   return (
     <div>
-        <AreaChart width={730} height={250} data={arr}
-  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        <AreaChart width={730} height={250} data={arr} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis/>
         <YAxis />

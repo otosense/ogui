@@ -22,9 +22,9 @@ interface IProps {
 ### Stream2pyChart
 ```
 interface IProps {
-  data: any;
-  xAxisDataKey: string;
-  yAxis1DataKey: string;
-  yAxisDataKey: string;
+  arr: {X: number}[];
+  setArr: VoidFunction;
+  speed: number;
 }
 ```
+speed is in millisecond (1000 is 1 sec)

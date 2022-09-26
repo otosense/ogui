@@ -7,30 +7,27 @@ import StepSelect from "./StepSelect";
 import AddButton from "./AddButton";
 
 interface IProps {
-  options: string[];
+  options?: any[];
   handleSelectChange: (val: string, i: number) => void;
   handleSave: VoidFunction;
   selectedValues: string[];
   setSelectedValues: (arr: string[]) => void;
-  isMixedData?: boolean;
-  mixedData?: any;
-  filterMixedDataFunc?: (data: any) => string[];
 }
 const btnContainer = {
   display: 'flex',
   justifyContent: 'flex-end',
-  margin: 24,
+  margin: '24px',
   width: 'calc(100% - 48px)'
 }
 const PipelineMaker = (props: IProps) => {
-  const { isMixedData, mixedData, filterMixedDataFunc } = props;
+  const isMixedData = props.options.find((option) => typeof option !== 'string');
   let options: string[];
-  if(isMixedData){
-    const result: string[] = filterMixedDataFunc(mixedData);
-    options = result;
+  if(!!isMixedData){
+    options = props.options.map((item: any) => item.toString());
   } else {
     options = props.options;
   }
+  
   const [indexes, setIndexes] = useState<number[]>([1]);
   const handleSelectChange = (selected: string, i: number) => {
     const copy = [...props.selectedValues];

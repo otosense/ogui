@@ -1,13 +1,13 @@
 {
   "name": "@otosense/ogui",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode production --progress --color --config webpack.config.publishing.js",
     "prepack": "tsc",
-    "clean-tsc": "yarn clean && tsc",
+    "clean-tsc": "yarn clean && tsc && yarn copy-files",
     "clean": "rm -rf ./lib",
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
     "tsc": "tsc"

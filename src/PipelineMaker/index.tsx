@@ -1,10 +1,14 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import { Button, Box } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+
+import otosenseTheme2022 from '../shared/theme2022'
 import ConpomentContainer from './ComponentContainer'
 import StepContainer from './StepContainer'
 import StepSelect from "./StepSelect";
 import AddButton from "./AddButton";
+import AddOptionInput from './AddOptionInput'
 
 interface IProps {
   options?: any[];
@@ -13,25 +17,31 @@ interface IProps {
   selectedValues: string[];
   setSelectedValues: (arr: string[]) => void;
 }
-const btnContainer = {
+const saveBtnContainer = {
   display: 'flex',
   justifyContent: 'flex-end',
   margin: '24px',
   width: 'calc(100% - 48px)'
 }
 const PipelineMaker = (props: IProps) => {
-  const isMixedData = props.options.find((option) => typeof option !== 'string');
-  let options: string[];
-  if(!!isMixedData){
-    options = props.options.map((item: any) => item.toString());
-  } else {
-    options = props.options;
-  }
-  
+  const [innerOptions, setInnerOptions] = useState<string[]>([])
   const [indexes, setIndexes] = useState<number[]>([1]);
+
+  useEffect(() => {
+    //onload
+    const isMixedData = props.options.find((option) => typeof option !== 'string');
+    if(!!isMixedData){
+      const res = props.options.map((item: any) => item.toString());
+      setInnerOptions(res);
+    } else {
+      setInnerOptions(props.options);
+    }
+  }, [])
+
   const handleSelectChange = (selected: string, i: number) => {
     const copy = [...props.selectedValues];
     copy[i - 1] = selected;
+    console.log({copy})
     props.setSelectedValues(copy);
   }
   const addStep = () => {
@@ -42,7 +52,6 @@ const PipelineMaker = (props: IProps) => {
     copyIndex.push(plusOne);
     props.setSelectedValues(copyVals);
     setIndexes(copyIndex);
-    
   }
   const deleteStep = (index: number) => {
     if(indexes.length > 1) {
@@ -54,23 +63,30 @@ const PipelineMaker = (props: IProps) => {
       setIndexes(copyIndex);
     }
   }
+  const addOption = (str: string) => {
+    setInnerOptions(oldArray => [...oldArray, str]);
+  }
+
   return(
-    <ConpomentContainer title="Create pipeline">
-      <>
-      {!!indexes.length && indexes.map((index, i) => {
-        return(
-      <StepContainer index={index} key={`step-${index}`} onClick={deleteStep}>
-          <StepSelect items={options} onChange={handleSelectChange} val={props.selectedValues[i]} index={index}/>
-      </StepContainer>
-        )
-      })}
-      
-      <AddButton addStep={addStep}/>
-      <Box sx={btnContainer}>
-        <Button onClick={props.handleSave}>Save</Button>
-      </Box>
-      </>
-    </ConpomentContainer>
+    <ThemeProvider theme={otosenseTheme2022}>
+      <ConpomentContainer title="Create pipeline">
+        <>
+        {!!indexes.length && indexes.map((index, i) => {
+          return(
+        <StepContainer index={index} key={`step-${index}`} onClick={deleteStep}>
+            <StepSelect items={innerOptions} onChange={handleSelectChange} val={props.selectedValues[i]} index={index}/>
+        </StepContainer>
+          )
+        })}
+        
+        <AddButton addStep={addStep}/>
+        <Box sx={saveBtnContainer}>
+          <Button onClick={props.handleSave}>Save</Button>
+        </Box>
+        <AddOptionInput addOption={addOption}/>
+        </>
+      </ConpomentContainer>
+    </ThemeProvider>
   )
 }
 

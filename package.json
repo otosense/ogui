@@ -10,7 +10,8 @@
     "clean-tsc": "yarn clean && tsc && yarn copy-files",
     "clean": "rm -rf ./lib",
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "start": "webpack serve --mode development --config webpack.config.development.js --hot --inline --progress --host 0.0.0.0 --port 3000 --open"
   },
   "author": "ADI OtoSense team",
   "devDependencies": {

@@ -1,12 +1,14 @@
 /// <reference types="react" />
 interface IProps {
-    items: string[];
-    onChange: (val: string, i: number) => void;
-    val: string;
-    index: number;
+    stepNumber: number;
+    value: any;
+    items: any[];
+    renderItem: (item: any) => string | JSX.Element;
+    stringRepr: (item: any) => string;
+    onChange: (stepNumber: number, value: any) => void;
+    onDelete: (stepNumber: number) => void;
+    onOpen: (stepNumber: number) => void;
+    onClose: (stepNumber: number) => void;
 }
-export declare const selectBox: {
-    width: string;
-};
 declare const StepSelect: (props: IProps) => JSX.Element;
 export default StepSelect;

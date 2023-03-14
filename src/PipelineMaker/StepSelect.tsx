@@ -1,22 +1,21 @@
-import React, { useMemo, useState } from "react";
-import { Box, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from "@mui/icons-material/Search";
-
+import React, { useMemo, useState } from 'react'
+import { Box, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, type SelectChangeEvent, TextField } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import SearchIcon from '@mui/icons-material/Search'
 
 interface IProps {
-  stepNumber: number;
+  stepNumber: number
   value: any
-  items: any[];
-  renderItem: (item: any) => string | JSX.Element;
-  stringRepr: (item: any) => string;
-  onChange: (stepNumber: number, value: any) => void;
-  onDelete: (stepNumber: number) => void;
-  onOpen: (stepNumber: number) => void;
-  onClose: (stepNumber: number) => void;
+  items: any[]
+  renderItem: (item: any) => string | JSX.Element
+  stringRepr: (item: any) => string
+  onChange: (stepNumber: number, value: any) => void
+  onDelete: (stepNumber: number) => void
+  onOpen: (stepNumber: number) => void
+  onClose: (stepNumber: number) => void
 }
 
-const StepSelect = (props: IProps) => {
+const StepSelect = (props: IProps): JSX.Element => {
   const {
     stepNumber,
     items,
@@ -27,52 +26,52 @@ const StepSelect = (props: IProps) => {
     onDelete,
     onOpen,
     onClose
-  } = props;
+  } = props
 
   const initSelectedIdx = value === '' ? value : props.items.indexOf(value)
-  const [selectedIdx, setSelectedIdx] = useState(initSelectedIdx);
-  const [isHovering, setIsHovering] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState(initSelectedIdx)
+  const [isHovering, setIsHovering] = useState(false)
 
-  const [searchText, setSearchText] = useState("");
-  const containsText = (item: any, searchText: string) => {
+  const [searchText, setSearchText] = useState('')
+  const containsText = (item: any, searchText: string): boolean => {
     const stringItem = stringRepr(item).toLowerCase()
-    return stringItem.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+    return stringItem.toLowerCase().includes(searchText.toLowerCase())
   }
   const filteredItems = useMemo(
     () => items.filter((item) => containsText(item, searchText)),
     [searchText]
-  );
+  )
 
-  const id = 'step-' + stepNumber;
-  const labelId = 'step-label-' + stepNumber;
-  const label = 'Step #' + stepNumber;
+  const id = `step-${stepNumber}`
+  const labelId = `step-label-${stepNumber}`
+  const label = `Step #${stepNumber}`
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event: SelectChangeEvent): void => {
     setIsHovering(false)
-    const idx = event.target.value;
-    setSelectedIdx(idx as string);
-    const item = items[idx];
-    onChange(stepNumber, item);
-  };
-
-  const handleDelete = () => {
-    onDelete(stepNumber);
+    const idx = +event.target.value
+    setSelectedIdx(idx)
+    const item = items[idx]
+    onChange(stepNumber, item)
   }
 
-  const handleMouseOver = () => {
+  const handleDelete = (): void => {
+    onDelete(stepNumber)
+  }
+
+  const handleMouseOver = (): void => {
     setIsHovering(true)
   }
 
-  const handleMouseOut = () => {
+  const handleMouseOut = (): void => {
     setIsHovering(false)
   }
 
-  const handleOpen = () => {
+  const handleOpen = (): void => {
     onOpen(stepNumber)
   }
 
-  const handleClose = () => {
-    setSearchText("")
+  const handleClose = (): void => {
+    setSearchText('')
     onClose(stepNumber)
   }
 
@@ -80,7 +79,7 @@ const StepSelect = (props: IProps) => {
     <IconButton
       onClick={handleDelete}
       sx={{
-        visibility: selectedIdx !== '' && isHovering ? "visible": "hidden",
+        visibility: selectedIdx !== '' && isHovering ? 'visible' : 'hidden',
         position: 'absolute',
         right: '30px'
       }}
@@ -126,17 +125,17 @@ const StepSelect = (props: IProps) => {
                       </InputAdornment>
                     )
                   }}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) => { setSearchText(e.target.value) }}
                   onKeyDown={(e) => {
-                    if (e.key !== "Escape") {
+                    if (e.key !== 'Escape') {
                       // Prevents autoselecting item while typing (default Select behaviour)
-                      e.stopPropagation();
+                      e.stopPropagation()
                     }
                   }}
                 />
               </ListSubheader>
               {filteredItems.map((item, i) => {
-                const key = 'step-' + stepNumber + '-item-' + i
+                const key = `step-${stepNumber}-item-${i}`
                 const viewItem = renderItem(item)
                 return (
                   <MenuItem key={key} value={i}>
@@ -174,7 +173,7 @@ const StepSelect = (props: IProps) => {
   )
 }
 
-export default StepSelect;
+export default StepSelect
 
 // import React from "react"
 // import { Stack, Select, FormControl, MenuItem, SelectChangeEvent } from '@mui/material';

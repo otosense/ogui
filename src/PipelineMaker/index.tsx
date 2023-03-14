@@ -1,46 +1,46 @@
-import React, { useEffect, useState } from "react";
-import StepSelect from "./StepSelect";
+import React, { useEffect, useState } from 'react'
+import StepSelect from './StepSelect'
 
 interface IProps {
-  items?: any[];
-  steps?: any[];
-  renderItem?: (item: any) => string | JSX.Element;
-  stringRepr?: (item: any) => string;
-  style?: { [key: string]: string; };
-  onAddStep?: (step: any, stepNumber: number) => void;
-  onModifyStep?: (step: any, stepNumber: number) => void;
-  onDeleteStep?: (step: any, stepNumber: number) => void;
-  onShowItems?: (stepNumber: number) => void;
-  onHideItems?: (stepNumber: number) => void;
-  onPipelineChange?: (steps: any[]) => void
+  items: any[]
+  steps: any[]
+  renderItem: (item: any) => string | JSX.Element
+  stringRepr: (item: any) => string
+  style?: Record<string, string>
+  onAddStep: (step: any, stepNumber: number) => void
+  onModifyStep: (step: any, stepNumber: number) => void
+  onDeleteStep: (step: any, stepNumber: number) => void
+  onShowItems: (stepNumber: number) => void
+  onHideItems: (stepNumber: number) => void
+  onPipelineChange: (steps: any[]) => void
 }
 
-const PipelineMaker = (props: IProps) => {
+const PipelineMaker = (props: IProps): JSX.Element => {
   // const { items, renderItem } = props;
-  const [steps, setSteps] = useState([...props.steps, '']);
-  const [display, setDisplay] = useState(true);
+  const [steps, setSteps] = useState([...props.steps, ''])
+  const [display, setDisplay] = useState(true)
 
   useEffect(() => {
     setDisplay(true)
     props.onPipelineChange(steps.slice(0, -1))
   }, [steps])
 
-  const handleChangeStep = (stepNumber: number, value: any) => {
+  const handleChangeStep = (stepNumber: number, value: any): void => {
     steps[stepNumber - 1] = value
     if (stepNumber === steps.length) {
-      setSteps(oldSteps => [...oldSteps, '']);
+      setSteps(oldSteps => [...oldSteps, ''])
       props.onAddStep(value, stepNumber)
     } else {
       props.onModifyStep(value, stepNumber)
     }
   }
 
-  const handleDeleteStep = (stepNumber: number) => {
+  const handleDeleteStep = (stepNumber: number): void => {
     // setSteps(oldSteps => oldSteps.slice(1,3));
-    const newSteps = [...steps];
-    const deletedStep = newSteps.splice(stepNumber - 1, 1)[0];
+    const newSteps = [...steps]
+    const deletedStep = newSteps.splice(stepNumber - 1, 1)[0]
     setDisplay(false)
-    setSteps(newSteps);
+    setSteps(newSteps)
     props.onModifyStep(deletedStep, stepNumber)
     props.onPipelineChange(steps)
   }
@@ -49,7 +49,7 @@ const PipelineMaker = (props: IProps) => {
     <div style={props.style}>
       {display && steps.map((step, i) => {
         const stepNumber = i + 1
-        const key = 'step-select-' + stepNumber
+        const key = `step-select-${stepNumber}`
         return (
           <StepSelect
             key={key}
@@ -69,7 +69,7 @@ const PipelineMaker = (props: IProps) => {
   )
 }
 
-const toString = (x: any) => {
+const toString = (x: any): string => {
   return x.toString()
 }
 
@@ -84,11 +84,10 @@ PipelineMaker.defaultProps = {
   onDeleteStep: (step: any, stepNumber: number) => {},
   onShowItems: (stepNumber: number) => {},
   onHideItems: (stepNumber: number) => {},
-  onPipelineChange: (steps: any[]) => {},
+  onPipelineChange: (steps: any[]) => {}
 }
 
 export default PipelineMaker
-
 
 // import React, { useState } from "react"
 
@@ -166,7 +165,7 @@ export default PipelineMaker
 //         </StepContainer>
 //           )
 //         })}
-        
+
 //         <AddButton addStep={addStep}/>
 //         <Box sx={saveBtnContainer}>
 //           <Button onClick={props.handleSave}>Save</Button>

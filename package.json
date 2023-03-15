@@ -45,6 +45,7 @@
     "@otosense/components": "^0.2.6",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.11",
+    "date-fns": "^2.29.3",
     "moment": "^2.29.4",
     "recharts": "^2.1.14"
   }

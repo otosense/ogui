@@ -95,7 +95,7 @@ export const SessionTable = (props: TableProps): JSX.Element => {
 
   return (
     <ThemeProvider theme={props.theme ?? otosenseTheme2022}>
-      <Box>
+      <Box sx={{ minHeight: '720px', backgroundColor: '#fff' }}>
         <SessionFilter
           clearFilters={props.clearFilters}
           submitFilters={collapseWrap(props.submitFilters)}

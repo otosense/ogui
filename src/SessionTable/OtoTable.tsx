@@ -15,12 +15,16 @@ import {
   type Session
 } from './types'
 
+interface StComponentValue {
+  filter: Optional<SessionFilterOptions>
+  sort: Optional<SessionSortOptions>
+  pagination: Optional<PaginationOptions>
+}
+
 interface OtoTableProps {
-  listSessions: (
-    filter: Optional<SessionFilterOptions>,
-    sort: Optional<SessionSortOptions>,
-    pagination: Optional<PaginationOptions>
-  ) => Session[]
+  setComponentValue: (value: StComponentValue) => void
+  data: Session[]
+  query?: Optional<StComponentValue>
 }
 
 const columns: Column[] = [
@@ -42,22 +46,27 @@ const columns: Column[] = [
 ]
 
 export const OtoTable = (props: OtoTableProps): JSX.Element => {
-  const [fromBt, setFromBt] = useState<number | null>(null)
-  const [toTt, setToTt] = useState<number | null>(null)
-  const [fromTt, setFromTt] = useState<number | null>(null)
-  const [toBt, setToBt] = useState<number | null>(null)
-  const [sr, setSr] = useState<number | null>(null)
-  const [channels, setChannels] = useState<string[] | null>(null)
-  const [channelsOp, setChannelsOp] = useState<Operator | null>(null)
-  const [annotations, setAnnotations] = useState<string[] | null>(null)
-  const [annotationsOp, setAnnotationsOp] = useState<Operator | null>(null)
-  const [rowsPerPage, setRowsPerPage] = useState<number>(50)
-  const [page, setPage] = useState<number>(0)
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
-  const [orderBy, setOrderBy] = useState<string>('bt')
-  const [data, setData] = useState<Session[]>([])
+  const [fromBt, setFromBt] = useState<Optional<number> >(props.query?.filter?.from_bt)
+  const [toBt, setToBt] = useState<Optional<number>>(props.query?.filter?.to_bt)
+  const [fromTt, setFromTt] = useState<Optional<number>>(props.query?.filter?.from_tt)
+  const [toTt, setToTt] = useState<Optional<number>>(props.query?.filter?.to_tt)
+  const [sr, setSr] = useState<Optional<number>>(props.query?.filter?.sr)
+  const [channels, setChannels] = useState<Optional<string[]>>(props.query?.filter?.channels?.names)
+  const [channelsOp, setChannelsOp] = useState<Optional<Operator>>(props.query?.filter?.channels?.operator)
+  const [annotations, setAnnotations] = useState<Optional<string[]>>(props.query?.filter?.annotations?.names)
+  const [annotationsOp, setAnnotationsOp] = useState<Optional<Operator>>(props.query?.filter?.annotations?.operator)
+  let defaultRowsPerPage = 50
+  let defaultPage = 0
+  if (props.query?.pagination?.from_idx != null) {
+    defaultRowsPerPage = props.query.pagination.to_idx - props.query.pagination.from_idx
+    defaultPage = props.query.pagination.from_idx / defaultRowsPerPage
+  }
+  const [rowsPerPage, setRowsPerPage] = useState<number>(defaultRowsPerPage)
+  const [page, setPage] = useState<number>(defaultPage)
+  const [order, setOrder] = useState<'asc' | 'desc'>(props.query?.sort?.mode ?? 'desc')
+  const [orderBy, setOrderBy] = useState<string>(props.query?.sort?.field ?? 'bt')
 
-  const getSessions = (): Session[] => {
+  const submitFilters = (): void => {
     const chFilter = (channels != null && channelsOp != null)
       ? {
           names: channels,
@@ -71,23 +80,24 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
         }
       : null
 
-    const pagination: PaginationOptions = {
-      from_idx: page * rowsPerPage,
-      to_idx: (page + 1) * rowsPerPage
+    const value: StComponentValue = {
+      filter: {
+        from_bt: fromBt,
+        to_bt: toBt,
+        from_tt: fromTt,
+        to_tt: toTt,
+        annotations: anFilter,
+        device_ids: null,
+        channels: chFilter,
+        sr
+      },
+      sort: { field: orderBy as SessionSortOptions['field'], mode: order },
+      pagination: {
+        from_idx: page * rowsPerPage,
+        to_idx: (page + 1) * rowsPerPage
+      }
     }
-    return props.listSessions({
-      from_bt: fromBt,
-      to_bt: toBt,
-      from_tt: fromTt,
-      to_tt: toTt,
-      annotations: anFilter,
-      device_ids: null,
-      channels: chFilter,
-      sr
-    },
-    { field: orderBy as SessionSortOptions['field'], mode: order },
-    pagination
-    )
+    props.setComponentValue(value)
   }
 
   const filterOptions: FilterOption[] = [
@@ -132,9 +142,6 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
       operatorOptions: ['and', 'or']
     }
   ]
-  const submitFilters = (): void => {
-    setData(getSessions())
-  }
   const clearFilters = (): void => {
     [setFromBt, setToBt, setFromTt, setToTt, setSr, setChannels, setChannelsOp, setAnnotations, setAnnotationsOp].forEach((setter) => {
       setter(null)
@@ -203,14 +210,14 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
   }
 
   useEffect(submitFilters, [page, order, orderBy, rowsPerPage])
-  // useEffect(() => {
-  //   setPage(0)
-  // }, [fromBt, toBt, fromTt, toTt, sr, channels, channelsOp, annotations, annotationsOp, rowsPerPage])
+  useEffect(() => {
+    setPage(0)
+  }, [fromBt, toBt, fromTt, toTt, sr, channels, channelsOp, annotations, annotationsOp, rowsPerPage])
 
   return (
     <SessionTable
       theme={otosenseTheme2022}
-      data={data}
+      data={props.data}
       columns={columns}
       clearFilters={clearFilters}
       submitFilters={submitFilters}

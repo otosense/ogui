@@ -123,12 +123,13 @@ const sortSessions = (sort: SessionSortOptions, sessions: Session[]): Session[] 
   return _sessions
 }
 
-export const mockListSessions = (
+export const listSessions = (
   filter: Optional<SessionFilterOptions> = null,
   sort: Optional<SessionSortOptions> = null,
-  pagination: Optional<PaginationOptions> = null
+  pagination: Optional<PaginationOptions> = null,
+  sessions: Session[] = mockSessions
 ): Session[] => {
-  let s = (filter != null) ? filterSessions(filter, mockSessions) : [...mockSessions]
+  let s = (filter != null) ? filterSessions(filter, sessions) : [...sessions]
   if (sort != null) {
     s = sortSessions(sort, s)
   }

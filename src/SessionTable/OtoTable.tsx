@@ -4,7 +4,7 @@ import { Box, Grid, Stack, Typography } from '@mui/material'
 
 import { type Column, SessionTable } from './Table'
 import { formatSessionTime } from './utility'
-import { type FilterOption } from './Filter'
+import { type FilterOption } from './SearchFilterSideMenu'
 import { cellDateTime, cellMW160 } from './tableStyles'
 import {
   type PaginationOptions,
@@ -14,17 +14,19 @@ import {
   type Optional,
   type Session
 } from './types'
+import { listSessions } from './testData'
 
-interface StComponentValue {
+interface SearchFilters {
   filter: Optional<SessionFilterOptions>
   sort: Optional<SessionSortOptions>
   pagination: Optional<PaginationOptions>
 }
 
 interface OtoTableProps {
-  setComponentValue: (value: StComponentValue) => void
   data: Session[]
-  query?: Optional<StComponentValue>
+  query?: Optional<SearchFilters>
+  isMultiSelect?: boolean
+  onSelectSessions: (sessionIds: Array<Session['ID']>) => void
 }
 
 const columns: Column[] = [
@@ -65,6 +67,7 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
   const [page, setPage] = useState<number>(defaultPage)
   const [order, setOrder] = useState<'asc' | 'desc'>(props.query?.sort?.mode ?? 'desc')
   const [orderBy, setOrderBy] = useState<string>(props.query?.sort?.field ?? 'bt')
+  const [filteredData, setFilteredData] = useState<Session[]>(props.data)
 
   const submitFilters = (): void => {
     const chFilter = (channels != null && channelsOp != null)
@@ -80,7 +83,7 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
         }
       : null
 
-    const value: StComponentValue = {
+    const value: SearchFilters = {
       filter: {
         from_bt: fromBt,
         to_bt: toBt,
@@ -97,7 +100,7 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
         to_idx: (page + 1) * rowsPerPage
       }
     }
-    props.setComponentValue(value)
+    setFilteredData(listSessions(value.filter, value.sort, value.pagination, props.data))
   }
 
   const filterOptions: FilterOption[] = [
@@ -217,7 +220,7 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
   return (
     <SessionTable
       theme={otosenseTheme2022}
-      data={props.data}
+      data={filteredData}
       columns={columns}
       clearFilters={clearFilters}
       submitFilters={submitFilters}
@@ -230,6 +233,9 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
       order={order}
       onOrderChange={onOrderChange}
       renderExpandedData={renderExpandedSession}
+      isMultiSelect={props.isMultiSelect}
+      onSelectSessions={props.onSelectSessions}
+      sessionKey={'ID'}
     />
   )
 }

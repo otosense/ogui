@@ -15,22 +15,35 @@ interface IProps {
   onPipelineChange: (steps: any[]) => void
 }
 
-const PipelineMaker = (props: IProps): JSX.Element => {
+const PipelineMaker = (props: IProps) => {
+  // Detect dark mode
+  const [darkMode, setDarkMode] = useState(
+    !!window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+  useEffect(() => {
+    const modeMe = (e: any) => {
+      setDarkMode(!!e.matches);
+    }  
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', modeMe);
+    // return window.matchMedia('(prefers-color-scheme: dark)').removeListener(modeMe);
+  }, []);
+
   // const { items, renderItem } = props;
   const [steps, setSteps] = useState([...props.steps, ''])
   const [display, setDisplay] = useState(true)
 
   useEffect(() => {
     setDisplay(true)
-    props.onPipelineChange(steps.slice(0, -1))
   }, [steps])
 
   const handleChangeStep = (stepNumber: number, value: any): void => {
     steps[stepNumber - 1] = value
     if (stepNumber === steps.length) {
-      setSteps(oldSteps => [...oldSteps, ''])
+      props.onPipelineChange(steps)
       props.onAddStep(value, stepNumber)
+      setSteps(oldSteps => [...oldSteps, '']);
     } else {
+      props.onPipelineChange(steps.slice(0, -1))
       props.onModifyStep(value, stepNumber)
     }
   }
@@ -42,11 +55,16 @@ const PipelineMaker = (props: IProps): JSX.Element => {
     setDisplay(false)
     setSteps(newSteps)
     props.onModifyStep(deletedStep, stepNumber)
-    props.onPipelineChange(steps)
+    props.onPipelineChange(newSteps.slice(0, -1))
+  }
+
+  const style = {
+    filter: darkMode ? 'invert(1)' : 'invert(0)',
+    ...props.style
   }
 
   return (
-    <div style={props.style}>
+    <div style={style}>
       {display && steps.map((step, i) => {
         const stepNumber = i + 1
         const key = `step-select-${stepNumber}`
@@ -58,6 +76,7 @@ const PipelineMaker = (props: IProps): JSX.Element => {
             items={props.items}
             renderItem={props.renderItem}
             stringRepr={props.stringRepr}
+            darkMode={darkMode}
             onChange={handleChangeStep}
             onDelete={handleDeleteStep}
             onOpen={props.onShowItems}

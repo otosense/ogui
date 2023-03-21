@@ -1,18 +1,21 @@
-import React, { useMemo, useState } from 'react'
-import { Box, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, type SelectChangeEvent, TextField } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
-import SearchIcon from '@mui/icons-material/Search'
+import React, { useMemo, useState } from "react";
+import { Box, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+
 
 interface IProps {
   stepNumber: number
   value: any
-  items: any[]
-  renderItem: (item: any) => string | JSX.Element
-  stringRepr: (item: any) => string
-  onChange: (stepNumber: number, value: any) => void
-  onDelete: (stepNumber: number) => void
-  onOpen: (stepNumber: number) => void
-  onClose: (stepNumber: number) => void
+  items: any[];
+  renderItem: (item: any) => string | JSX.Element;
+  stringRepr: (item: any) => string;
+  darkMode: boolean;
+  onChange: (stepNumber: number, value: any) => void;
+  onDelete: (stepNumber: number) => void;
+  onOpen: (stepNumber: number) => void;
+  onClose: (stepNumber: number) => void;
 }
 
 const StepSelect = (props: IProps): JSX.Element => {
@@ -70,9 +73,13 @@ const StepSelect = (props: IProps): JSX.Element => {
     onOpen(stepNumber)
   }
 
-  const handleClose = (): void => {
-    setSearchText('')
-    onClose(stepNumber)
+  const handleClose = () => {
+    setSearchText("");
+    onClose(stepNumber);
+  };
+
+  const handleAddItem = () => {
+
   }
 
   const deleteButton = (
@@ -86,7 +93,14 @@ const StepSelect = (props: IProps): JSX.Element => {
     >
       <DeleteIcon />
     </IconButton>
-  )
+  );
+
+  const menuProps = {
+    autoFocus: false,
+    style: {
+      filter: props.darkMode ? 'invert(1)' : 'invert(0)',
+    }
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -104,7 +118,7 @@ const StepSelect = (props: IProps): JSX.Element => {
               label={label}
               value={selectedIdx}
               renderValue={() => renderItem(items[selectedIdx])}
-              MenuProps={{ autoFocus: false }}
+              MenuProps={menuProps}
               endAdornment={deleteButton}
               onChange={handleChange}
               onMouseOver={handleMouseOver}
@@ -133,6 +147,9 @@ const StepSelect = (props: IProps): JSX.Element => {
                     }
                   }}
                 />
+                <Button onClick={handleAddItem}>
+                  <AddIcon /> Add a new item
+                </Button>
               </ListSubheader>
               {filteredItems.map((item, i) => {
                 const key = `step-${stepNumber}-item-${i}`

@@ -10,14 +10,13 @@ import {
   TableSortLabel,
   type Theme,
   ThemeProvider,
-  Typography,
-  Checkbox
+  Typography
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import GradingIcon from '@mui/icons-material/Grading'
-import { cellIconSpacing, SessionsTableContainer } from './tableStyles'
+import { SessionsTableContainer } from './tableStyles'
 import { Row } from './Row'
 import { type FilterOption, SessionFilter } from './SearchFilterSideMenu'
 import { TablePaginationRowsPerPage } from './Pagination'

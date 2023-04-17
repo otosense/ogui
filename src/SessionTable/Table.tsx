@@ -90,6 +90,7 @@ interface TableProps {
   isMultiSelect?: boolean
   onSelectSessions: (sessionKeys: string[]) => void
   sessionKey: string
+  totalCount?: number
 }
 
 export const SessionTable = (props: TableProps): JSX.Element => {
@@ -211,6 +212,7 @@ export const SessionTable = (props: TableProps): JSX.Element => {
               onRowsPerPageChange={collapseWrap(props.onRowsPerPageChange)}
               page={props.page}
               onPageChange={collapseWrap(props.onPageChange)}
+              count={props.totalCount ?? -1}
             />
           </Table>
         </SessionsTableContainer>

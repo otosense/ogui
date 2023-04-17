@@ -40,6 +40,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps): JSX.Element
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
+        disabled={props.count !== -1 && (props.page + 1) * props.rowsPerPage >= props.count}
         aria-label="next page"
       >
         {theme.direction === 'rtl' ? <KeyboardArrowLeft/> : <KeyboardArrowRight/>}
@@ -58,6 +59,7 @@ interface PaginationProps {
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => void
+  count?: number
 
 }
 
@@ -67,7 +69,7 @@ export const TablePaginationRowsPerPage = (props: PaginationProps): JSX.Element 
       <TablePagination
         rowsPerPageOptions={[10, 20, 30, 40, 50]}
         colSpan={10}
-        count={-1}
+        count={props.count ?? -1}
         rowsPerPage={props.rowsPerPage}
         page={props.page}
         SelectProps={{

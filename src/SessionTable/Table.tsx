@@ -107,6 +107,7 @@ export const SessionTable = (props: TableProps): JSX.Element => {
       }
       setSelectedSessions(_difference)
     } else {
+      setSelectedSessions(new Set([sessionKey]))
       props.onSelectSessions([sessionKey])
     }
   }
@@ -197,7 +198,6 @@ export const SessionTable = (props: TableProps): JSX.Element => {
                       const key = v[props.sessionKey]
                       onChangeSelectSession(key)
                     }}
-                    isCheckbox={props.isMultiSelect}
                     isSelected={selectedSessions.has(v[props.sessionKey])}
                     renderExpandedData={() => props.renderExpandedData(v)}
                   />

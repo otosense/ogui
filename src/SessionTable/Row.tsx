@@ -17,7 +17,6 @@ export interface RowProps {
   data: any
   columns: Column[]
   id: string
-  isCheckbox?: boolean
   isSelected?: boolean
 }
 
@@ -26,10 +25,7 @@ export const Row = (props: RowProps): JSX.Element => (
     <TableRow sx={{ width: '100%', borderBottom: '0.5px solid #ccc' }} hover>
       <TableCell sx={cellIconSpacing}>
         <CenterBox>
-          {(props.isCheckbox === true)
-            ? <Checkbox color="primary" checked={props.isSelected} onChange={props.onSelectSession} />
-            : <OpenInNewIcon color="primary" onClick={props.onSelectSession}/>
-          }
+          <Checkbox color="primary" checked={props.isSelected} onChange={props.onSelectSession} />
         </CenterBox>
       </TableCell>
       <TableCell sx={cellIconSpacing}>

@@ -1,6 +1,6 @@
 export interface Session {
-  ID: string
-  device_id: string
+  id: string
+  device_id?: string
   bt: number
   tt: number
   sr: number

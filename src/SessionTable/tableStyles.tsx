@@ -21,7 +21,7 @@ export const cellDateTime: CSSProperties = {
   background: 'transparent'
 }
 
-export const SessionsTableContainer = styled(TableContainer)({
+export const DataTableContainer = styled(TableContainer)({
   height: 'calc(100vh - 130px)',
   overflow: 'auto',
   ml: -1,

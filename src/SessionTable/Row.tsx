@@ -2,18 +2,17 @@ import React from 'react'
 import { Checkbox, IconButton, TableCell, TableRow } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { CenterBox } from '@otosense/components'
 
 import { cellIconSpacing } from './tableStyles'
-import { type Column } from './Table'
+import { type Column } from './DataTable'
 import { CollapsedContents } from './CollapsedContents'
 
 export interface RowProps {
   isExpanded: boolean
   onClickExpand: VoidFunction
   renderExpandedData: () => JSX.Element
-  onSelectSession: VoidFunction
+  onSelectItem: VoidFunction
   data: any
   columns: Column[]
   id: string
@@ -25,7 +24,7 @@ export const Row = (props: RowProps): JSX.Element => (
     <TableRow sx={{ width: '100%', borderBottom: '0.5px solid #ccc' }} hover>
       <TableCell sx={cellIconSpacing}>
         <CenterBox>
-          <Checkbox color="primary" checked={props.isSelected} onChange={props.onSelectSession} />
+          <Checkbox color="primary" checked={props.isSelected} onChange={props.onSelectItem} />
         </CenterBox>
       </TableCell>
       <TableCell sx={cellIconSpacing}>

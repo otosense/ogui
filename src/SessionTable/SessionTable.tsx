@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { type CSSProperties, useEffect, useState } from 'react'
 import { FlexBox, otosenseTheme2022 } from '@otosense/components'
 import { Box, Grid, Stack, Typography } from '@mui/material'
 
-import { type Column, SessionTable } from './Table'
+import { type Column, DataTable } from './DataTable'
 import { formatSessionTime } from './utility'
 import { type FilterOption } from './SearchFilterSideMenu'
 import { cellDateTime, cellMW160 } from './tableStyles'
@@ -15,6 +15,7 @@ import {
   type Session
 } from './types'
 import { listSessions } from './testData'
+import { detectDarkModeChange, getDarkModeValue } from '../utils'
 
 interface SearchFilters {
   filter: Optional<SessionFilterOptions>
@@ -22,13 +23,19 @@ interface SearchFilters {
   pagination: Optional<PaginationOptions>
 }
 
-interface OtoTableProps {
+interface SessionTableProps {
   data: Session[]
   query?: Optional<SearchFilters>
   isMultiSelect?: boolean
-  onSelectSessions: (sessionIds: Array<Session['ID']>) => void
+  style?: Record<string, string>
+  onSelectSessions: (sessions: Session[]) => void
 }
-
+const cellTags: CSSProperties = {
+  maxWidth: 480,
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
+  wordWrap: 'break-word'
+}
 const columns: Column[] = [
   {
     label: 'Start Date',
@@ -37,17 +44,25 @@ const columns: Column[] = [
     orderBy: 'bt'
   },
   {
-    label: 'End Date',
-    sx: cellDateTime,
-    key: (s: Session) => formatSessionTime(+s.tt),
-    orderBy: 'tt'
+    label: 'Duration (sec)',
+    sx: cellMW160,
+    key: (s: Session) => `${(s.tt - s.bt) / 1e6}`,
   },
-  { label: 'Duration (sec)', sx: cellMW160, key: (s: Session) => `${(s.tt - s.bt) / 1e6}` },
-  { label: 'Sample Rate (Hz)', sx: cellMW160, key: 'sr', orderBy: 'sr' },
-  { label: 'Bit Depth', sx: cellMW160, key: 'bit_depth' }
+  {
+    label: 'Annotations',
+    sx: cellTags,
+    key: (s: Session) => {
+      const uniqueAnnots = Array.from(new Set(s.annotations.map(a => a.name)))
+      return uniqueAnnots.sort().join(', ')
+    }
+  }
 ]
 
-export const OtoTable = (props: OtoTableProps): JSX.Element => {
+export const SessionTable = (props: SessionTableProps): JSX.Element => {
+  // Detect dark mode
+  const [darkMode, setDarkMode] = useState(getDarkModeValue())
+  useEffect(() => { detectDarkModeChange(setDarkMode) }, [])
+
   const [fromBt, setFromBt] = useState<Optional<number> >(props.query?.filter?.from_bt)
   const [toBt, setToBt] = useState<Optional<number>>(props.query?.filter?.to_bt)
   const [fromTt, setFromTt] = useState<Optional<number>>(props.query?.filter?.from_tt)
@@ -172,10 +187,6 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
   }
 
   const renderExpandedSession = (s: Session): JSX.Element => {
-    const occurrences = s.annotations.reduce((acc: Record<string, number>, { name }) => {
-      (acc[name] != null) ? ++acc[name] : acc[name] = 1
-      return acc
-    }, {})
     return (
       <Grid container>
         <Grid item sm={4}>
@@ -185,8 +196,10 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
               {s.channels.map((c, i) => {
                 return (
                   <FlexBox key={`channel-${i}`} ml={1}>
-                    <Typography variant="h4">{c.name}-</Typography>
-                    <Typography variant="h5" mr={0.5}>{c.description}</Typography>
+                    <Typography variant="h5">{c.name}</Typography>
+                    {!(c.description.length === 0) && <Typography variant="h6" mr={0.5}>
+                      {`\u00A0- ${c.description}`}
+                    </Typography>}
                   </FlexBox>
                 )
               })}
@@ -195,17 +208,7 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
         </Grid>
         <Grid item sm={4}>
           <Stack direction="row">
-            <Box>{'Annotation Occurrences'}</Box>:
-            <Stack mt={'5px'} ml={0}>
-              {Object.entries(occurrences).map(([name, count], i) => {
-                return (
-                  <FlexBox key={`occurrences-${i}`} ml={1}>
-                    <Typography variant="h4">{name}-</Typography>
-                    <Typography variant="h5" mr={0.5}>{count}</Typography>
-                  </FlexBox>
-                )
-              })}
-            </Stack>
+            <Box>{`Sample Rate: ${s.sr}`}</Box>
           </Stack>
         </Grid>
       </Grid>
@@ -217,25 +220,32 @@ export const OtoTable = (props: OtoTableProps): JSX.Element => {
     setPage(0)
   }, [fromBt, toBt, fromTt, toTt, sr, channels, channelsOp, annotations, annotationsOp, rowsPerPage])
 
+  const style = {
+    filter: darkMode ? 'invert(1)' : 'invert(0)',
+    ...props.style
+  }
+
   return (
-    <SessionTable
-      theme={otosenseTheme2022}
-      data={filteredData}
-      columns={columns}
-      clearFilters={clearFilters}
-      submitFilters={submitFilters}
-      filterOptions={filterOptions}
-      rowsPerPage={rowsPerPage}
-      onRowsPerPageChange={onRowsPerPageChange}
-      page={page}
-      onPageChange={onPageChange}
-      orderBy={orderBy}
-      order={order}
-      onOrderChange={onOrderChange}
-      renderExpandedData={renderExpandedSession}
-      isMultiSelect={props.isMultiSelect}
-      onSelectSessions={props.onSelectSessions}
-      sessionKey={'ID'}
-    />
+    <div style={style}>
+      <DataTable
+        theme={otosenseTheme2022}
+        data={filteredData}
+        columns={columns}
+        clearFilters={clearFilters}
+        submitFilters={submitFilters}
+        filterOptions={filterOptions}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={onRowsPerPageChange}
+        page={page}
+        onPageChange={onPageChange}
+        orderBy={orderBy}
+        order={order}
+        onOrderChange={onOrderChange}
+        renderExpandedData={renderExpandedSession}
+        isMultiSelect={props.isMultiSelect}
+        onSelectItems={props.onSelectSessions}
+        totalCount={props.data?.length ?? -1}
+      />
+    </div>
   )
 }

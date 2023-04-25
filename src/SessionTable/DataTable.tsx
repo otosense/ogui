@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
   Box,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -9,17 +8,15 @@ import {
   TableRow,
   TableSortLabel,
   type Theme,
-  ThemeProvider,
-  Typography
+  ThemeProvider
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
-import ClearAllIcon from '@mui/icons-material/ClearAll'
+// import ClearAllIcon from '@mui/icons-material/ClearAll'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
-import GradingIcon from '@mui/icons-material/Grading'
-import { SessionsTableContainer } from './tableStyles'
+import { DataTableContainer } from './tableStyles'
 import { Row } from './Row'
-import { type FilterOption, SessionFilter } from './SearchFilterSideMenu'
-import { TablePaginationRowsPerPage } from './Pagination'
+import { type FilterOption, Filter } from './SearchFilterSideMenu'
+import { DataTableFooter } from './DataTableFooter'
 import { CenterBox, otosenseTheme2022 } from '@otosense/components'
 
 export interface Column {
@@ -88,40 +85,41 @@ interface TableProps {
   onOrderChange: (orderBy: string) => void
   renderExpandedData: (data: any) => JSX.Element
   isMultiSelect?: boolean
-  onSelectSessions: (sessionKeys: string[]) => void
-  sessionKey: string
+  onSelectItems: (items: any[]) => void
   totalCount?: number
 }
 
-export const SessionTable = (props: TableProps): JSX.Element => {
+export const DataTable = (props: TableProps): JSX.Element => {
   const [expandedRow, setExpandedRow] = useState<number>(-1)
-  const [selectedSessions, setSelectedSessions] = useState<Set<string>>(new Set())
+  const [selectedItems, setSelectedItems] = useState<Set<any>>(new Set())
 
-  const onChangeSelectSession = (sessionKey: string): void => {
+  const onChangeSelectItem = (item: any): void => {
     if (props.isMultiSelect === true) {
-      const _difference = new Set(selectedSessions)
-      if (_difference.has(sessionKey)) {
-        _difference.delete(sessionKey)
+      const _difference = new Set(selectedItems)
+      if (_difference.has(item)) {
+        _difference.delete(item)
       } else {
-        _difference.add(sessionKey)
+        _difference.add(item)
       }
-      setSelectedSessions(_difference)
+      setSelectedItems(_difference)
+      props.onSelectItems(Array.from(_difference))
     } else {
-      setSelectedSessions(new Set([sessionKey]))
-      props.onSelectSessions([sessionKey])
+      setSelectedItems(new Set([item]))
+      props.onSelectItems([item])
     }
   }
 
-  const addOrRemoveAllSessionsInView = (): void => {
+  const addOrRemoveAllItemsInView = (): void => {
     if (props.data?.length > 0) {
-      const firstKey = props.data[0][props.sessionKey]
-      const _difference = new Set(selectedSessions)
-      if (selectedSessions.has(firstKey)) {
-        props.data.forEach((v) => _difference.delete(v[props.sessionKey]))
+      const firstItem = props.data[0]
+      const _difference = new Set(selectedItems)
+      if (selectedItems.has(firstItem)) {
+        props.data.forEach((v) => _difference.delete(v))
       } else {
-        props.data.forEach((v) => _difference.add(v[props.sessionKey]))
+        props.data.forEach((v) => _difference.add(v))
       }
-      setSelectedSessions(_difference)
+      setSelectedItems(_difference)
+      props.onSelectItems(Array.from(_difference))
     }
   }
   const collapseWrap = (f: (...args: any[]) => void): VoidFunction => {
@@ -134,31 +132,12 @@ export const SessionTable = (props: TableProps): JSX.Element => {
   return (
     <ThemeProvider theme={props.theme ?? otosenseTheme2022}>
       <Box sx={{ minHeight: '720px', backgroundColor: '#fff' }}>
-        {props.isMultiSelect === true &&
-          <>
-            <Button
-              color="secondary"
-              onClick={() => { props.onSelectSessions(Array.from(selectedSessions)) }}
-              startIcon={<GradingIcon />}
-            >
-              <Typography variant="button">{'Submit Selection'}</Typography>
-            </Button>
-
-            <Button
-              color="secondary"
-              onClick={() => { setSelectedSessions(new Set()) }}
-              startIcon={<ClearAllIcon />}
-            >
-              <Typography variant="button">{'Clear Selection'}</Typography>
-            </Button>
-          </>
-        }
-        <SessionFilter
+        <Filter
           clearFilters={props.clearFilters}
           submitFilters={collapseWrap(props.submitFilters)}
           filterOptions={props.filterOptions}
         />
-        <SessionsTableContainer sx={{ borderTop: '1px solid #eee', width: '100%' }}>
+        <DataTableContainer sx={{ borderTop: '1px solid #eee', width: '100%' }}>
           <Table size="small" sx={{ marginBottom: 1 }} stickyHeader>
             <TableHead sx={{ borderBottom: '1px solid #eee' }}>
               <TableRow>
@@ -174,7 +153,7 @@ export const SessionTable = (props: TableProps): JSX.Element => {
                       <CenterBox>
                         <DoneAllIcon
                           color="primary"
-                          onClick={addOrRemoveAllSessionsInView}
+                          onClick={addOrRemoveAllItemsInView}
                         />
                       </CenterBox>
                     </TableCell>
@@ -194,11 +173,10 @@ export const SessionTable = (props: TableProps): JSX.Element => {
                     columns={props.columns}
                     isExpanded={i === expandedRow}
                     onClickExpand={() => { setExpandedRow(i !== expandedRow ? i : -1) }}
-                    onSelectSession={() => {
-                      const key = v[props.sessionKey]
-                      onChangeSelectSession(key)
+                    onSelectItem={() => {
+                      onChangeSelectItem(v)
                     }}
-                    isSelected={selectedSessions.has(v[props.sessionKey])}
+                    isSelected={selectedItems.has(v)}
                     renderExpandedData={() => props.renderExpandedData(v)}
                   />
                 ))}</>
@@ -207,15 +185,16 @@ export const SessionTable = (props: TableProps): JSX.Element => {
                 </TableRow>
               }
             </TableBody>
-            <TablePaginationRowsPerPage
+            <DataTableFooter
               rowsPerPage={props.rowsPerPage}
               onRowsPerPageChange={collapseWrap(props.onRowsPerPageChange)}
               page={props.page}
               onPageChange={collapseWrap(props.onPageChange)}
               count={props.totalCount ?? -1}
+              selectedItemsCount={selectedItems.size}
             />
           </Table>
-        </SessionsTableContainer>
+        </DataTableContainer>
       </Box>
     </ThemeProvider>
   )

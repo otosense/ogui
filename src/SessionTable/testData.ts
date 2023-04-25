@@ -39,7 +39,7 @@ const mockSessionGen = (n = 10): Session[] => {
     }
     sessions.push(
       {
-        ID: `mockSession${i}`,
+        id: `mockSession${i}`,
         device_id: `deviceId${i % 2 + 1}`,
         bt,
         tt,
@@ -100,9 +100,9 @@ const sortSessions = (sort: SessionSortOptions, sessions: Session[]): Session[] 
   if (_sessions?.length > 0) {
     if (sort.field === 'device_id') {
       if (sort.mode === 'asc') {
-        _sessions = _sessions.sort((a, b) => a.device_id.localeCompare(b.device_id))
+        _sessions = _sessions.sort((a, b) => a.device_id?.localeCompare(b.device_id ?? '') ?? 0)
       } else {
-        _sessions = _sessions.sort((b, a) => a.device_id.localeCompare(b.device_id))
+        _sessions = _sessions.sort((b, a) => a.device_id?.localeCompare(b.device_id ?? '') ?? 0)
       }
     } else {
       if (sort.mode === 'asc') {

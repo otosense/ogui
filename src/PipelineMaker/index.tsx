@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import StepSelect from './StepSelect'
+import { detectDarkModeChange, getDarkModeValue } from '../utils'
 
 interface IProps {
   items: any[]
@@ -15,18 +16,10 @@ interface IProps {
   onPipelineChange: (steps: any[]) => void
 }
 
-const PipelineMaker = (props: IProps) => {
+const PipelineMaker = (props: IProps): JSX.Element => {
   // Detect dark mode
-  const [darkMode, setDarkMode] = useState(
-    !!window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-  );
-  useEffect(() => {
-    const modeMe = (e: any) => {
-      setDarkMode(!!e.matches);
-    }  
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', modeMe);
-    // return window.matchMedia('(prefers-color-scheme: dark)').removeListener(modeMe);
-  }, []);
+  const [darkMode, setDarkMode] = useState(getDarkModeValue())
+  useEffect(() => { detectDarkModeChange(setDarkMode) }, [])
 
   // const { items, renderItem } = props;
   const [steps, setSteps] = useState([...props.steps, ''])
@@ -41,7 +34,7 @@ const PipelineMaker = (props: IProps) => {
     if (stepNumber === steps.length) {
       props.onPipelineChange(steps)
       props.onAddStep(value, stepNumber)
-      setSteps(oldSteps => [...oldSteps, '']);
+      setSteps(oldSteps => [...oldSteps, ''])
     } else {
       props.onPipelineChange(steps.slice(0, -1))
       props.onModifyStep(value, stepNumber)
@@ -76,7 +69,6 @@ const PipelineMaker = (props: IProps) => {
             items={props.items}
             renderItem={props.renderItem}
             stringRepr={props.stringRepr}
-            darkMode={darkMode}
             onChange={handleChangeStep}
             onDelete={handleDeleteStep}
             onOpen={props.onShowItems}

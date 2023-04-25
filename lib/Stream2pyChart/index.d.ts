@@ -1,8 +1,8 @@
 /// <reference types="react" />
 interface IProps {
-    arr: {
+    arr: Array<{
         X: number;
-    }[];
+    }>;
     setArr: VoidFunction;
     speed: number;
 }

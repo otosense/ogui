@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import TuneIcon from '@mui/icons-material/Tune'
 import CloseIcon from '@mui/icons-material/Close'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -13,6 +13,7 @@ import {
 
 import { firstLetterStyle } from './tableStyles'
 import { type Operator, type Optional } from './types'
+import { detectDarkModeChange, getDarkModeValue } from '../utils'
 
 interface DateFilterOption {
   label: string
@@ -47,7 +48,7 @@ interface FilterProps {
   filterOptions: FilterOption[]
 }
 
-export const SessionFilter = (props: FilterProps): JSX.Element => {
+export const Filter = (props: FilterProps): JSX.Element => {
   const [drawerState, setDrawerState] = useState<boolean>(false)
 
   const filterTitle = 'Filters'
@@ -119,6 +120,10 @@ export const SearchFilter = (props: SearchFilterProps): JSX.Element => {
     formatAndCallSetFilters
   } = props
 
+  // Detect dark mode
+  const [darkMode, setDarkMode] = useState(getDarkModeValue())
+  useEffect(() => { detectDarkModeChange(setDarkMode) }, [])
+
   const renderComponents = (filterOption: FilterOption): JSX.Element | undefined => {
     const { options } = filterOption
     if (options === 'date') {
@@ -133,8 +138,12 @@ export const SearchFilter = (props: SearchFilterProps): JSX.Element => {
     }
   }
 
+  const style = {
+    filter: darkMode ? 'invert(1)' : 'invert(0)'
+  }
+
   return (
-    <Drawer anchor="right" open={drawerState} onClose={toggleState}>
+    <Drawer style={style} anchor="right" open={drawerState} onClose={toggleState}>
       <SearchHeader>
         <Typography variant="h3">{title}</Typography>
         <Box onClick={toggleState} sx={{ '&:hover': { cursor: 'pointer' } }}>

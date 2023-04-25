@@ -1,21 +1,20 @@
-import React, { useMemo, useState } from "react";
-import { Box, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
-
+import React, { useEffect, useMemo, useState } from 'react'
+import { Box, Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, ListSubheader, MenuItem, Select, type SelectChangeEvent, TextField } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import SearchIcon from '@mui/icons-material/Search'
+import AddIcon from '@mui/icons-material/Add'
+import { detectDarkModeChange, getDarkModeValue } from '../utils'
 
 interface IProps {
   stepNumber: number
   value: any
-  items: any[];
-  renderItem: (item: any) => string | JSX.Element;
-  stringRepr: (item: any) => string;
-  darkMode: boolean;
-  onChange: (stepNumber: number, value: any) => void;
-  onDelete: (stepNumber: number) => void;
-  onOpen: (stepNumber: number) => void;
-  onClose: (stepNumber: number) => void;
+  items: any[]
+  renderItem: (item: any) => string | JSX.Element
+  stringRepr: (item: any) => string
+  onChange: (stepNumber: number, value: any) => void
+  onDelete: (stepNumber: number) => void
+  onOpen: (stepNumber: number) => void
+  onClose: (stepNumber: number) => void
 }
 
 const StepSelect = (props: IProps): JSX.Element => {
@@ -30,6 +29,10 @@ const StepSelect = (props: IProps): JSX.Element => {
     onOpen,
     onClose
   } = props
+
+  // Detect dark mode
+  const [darkMode, setDarkMode] = useState(getDarkModeValue())
+  useEffect(() => { detectDarkModeChange(setDarkMode) }, [])
 
   const initSelectedIdx = value === '' ? value : props.items.indexOf(value)
   const [selectedIdx, setSelectedIdx] = useState(initSelectedIdx)
@@ -73,12 +76,12 @@ const StepSelect = (props: IProps): JSX.Element => {
     onOpen(stepNumber)
   }
 
-  const handleClose = () => {
-    setSearchText("");
-    onClose(stepNumber);
-  };
+  const handleClose = (): void => {
+    setSearchText('')
+    onClose(stepNumber)
+  }
 
-  const handleAddItem = () => {
+  const handleAddItem = (): void => {
 
   }
 
@@ -93,14 +96,14 @@ const StepSelect = (props: IProps): JSX.Element => {
     >
       <DeleteIcon />
     </IconButton>
-  );
+  )
 
   const menuProps = {
     autoFocus: false,
     style: {
-      filter: props.darkMode ? 'invert(1)' : 'invert(0)',
+      filter: darkMode ? 'invert(1)' : 'invert(0)'
     }
-  };
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>

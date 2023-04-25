@@ -5,7 +5,6 @@ interface IProps {
     items: any[];
     renderItem: (item: any) => string | JSX.Element;
     stringRepr: (item: any) => string;
-    darkMode: boolean;
     onChange: (stepNumber: number, value: any) => void;
     onDelete: (stepNumber: number) => void;
     onOpen: (stepNumber: number) => void;

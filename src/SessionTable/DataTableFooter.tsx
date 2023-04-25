@@ -1,13 +1,13 @@
 import * as React from 'react'
 
 import { useTheme } from '@mui/material/styles'
-import { Box, IconButton, TableFooter, TablePagination, TableRow } from '@mui/material'
+import { Box, IconButton, TableFooter, TablePagination, TableRow, TableCell } from '@mui/material'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 
 import { centerTableFooter } from './tableStyles'
 
-interface TablePaginationActionsProps {
+interface DataTablePaginationActionsProps {
   count: number
   page: number
   rowsPerPage: number
@@ -17,7 +17,7 @@ interface TablePaginationActionsProps {
   ) => void
 }
 
-const TablePaginationActions = (props: TablePaginationActionsProps): JSX.Element => {
+const DataTablePaginationActions = (props: DataTablePaginationActionsProps): JSX.Element => {
   const theme = useTheme()
   const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
     const prevPageNum = props.page - 1
@@ -49,7 +49,7 @@ const TablePaginationActions = (props: TablePaginationActionsProps): JSX.Element
   )
 }
 
-interface PaginationProps {
+interface DataTableFooterProps {
   rowsPerPage: number
   onRowsPerPageChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -60,12 +60,15 @@ interface PaginationProps {
     newPage: number
   ) => void
   count?: number
-
+  selectedItemsCount: number
 }
 
-export const TablePaginationRowsPerPage = (props: PaginationProps): JSX.Element => (
+export const DataTableFooter = (props: DataTableFooterProps): JSX.Element => (
   <TableFooter sx={centerTableFooter}>
     <TableRow>
+      {props.selectedItemsCount > 0 && (
+        <TableCell>{props.selectedItemsCount} {props.selectedItemsCount === 1 ? 'item' : 'items'} selected</TableCell>
+      )}
       <TablePagination
         rowsPerPageOptions={[10, 20, 30, 40, 50]}
         colSpan={10}
@@ -80,7 +83,7 @@ export const TablePaginationRowsPerPage = (props: PaginationProps): JSX.Element 
         }}
         onPageChange={props.onPageChange}
         onRowsPerPageChange={props.onRowsPerPageChange}
-        ActionsComponent={TablePaginationActions}
+        ActionsComponent={DataTablePaginationActions}
         labelDisplayedRows={({ from, to }) => `${from}-${to}`}
       />
     </TableRow>

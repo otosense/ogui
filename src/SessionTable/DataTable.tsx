@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Table,
@@ -18,6 +18,7 @@ import { Row } from './Row'
 import { type FilterOption, Filter } from './SearchFilterSideMenu'
 import { DataTableFooter } from './DataTableFooter'
 import { CenterBox, otosenseTheme2022 } from '@otosense/components'
+import { detectDarkModeChange, getDarkModeValue } from '../utils'
 
 export interface Column {
   // eslint-disable-next-line @typescript-eslint/key-spacing
@@ -65,6 +66,7 @@ const renderHeaders = (columns: Column[], orderBy: string, order: 'asc' | 'desc'
 }
 
 interface TableProps {
+  style?: Record<string, string>
   theme?: Theme
   data: any[]
   columns: Column[]
@@ -87,11 +89,20 @@ interface TableProps {
   isMultiSelect?: boolean
   onSelectItems: (items: any[]) => void
   totalCount?: number
+  isDarkMode?: boolean
 }
 
 export const DataTable = (props: TableProps): JSX.Element => {
   const [expandedRow, setExpandedRow] = useState<number>(-1)
   const [selectedItems, setSelectedItems] = useState<Set<any>>(new Set())
+  const [darkMode, setDarkMode] = useState<boolean>(props.isDarkMode ?? getDarkModeValue())
+  useEffect(() => {
+    if (props.isDarkMode == null) {
+      detectDarkModeChange(setDarkMode)
+    } else {
+      setDarkMode(props.isDarkMode)
+    }
+  }, [])
 
   const onChangeSelectItem = (item: any): void => {
     if (props.isMultiSelect === true) {
@@ -130,72 +141,74 @@ export const DataTable = (props: TableProps): JSX.Element => {
   }
 
   return (
-    <ThemeProvider theme={props.theme ?? otosenseTheme2022}>
-      <Box sx={{ minHeight: '720px', backgroundColor: '#fff' }}>
-        <Filter
-          clearFilters={props.clearFilters}
-          submitFilters={collapseWrap(props.submitFilters)}
-          filterOptions={props.filterOptions}
-        />
-        <DataTableContainer sx={{ borderTop: '1px solid #eee', width: '100%' }}>
-          <Table size="small" sx={{ marginBottom: 1 }} stickyHeader>
-            <TableHead sx={{ borderBottom: '1px solid #eee' }}>
-              <TableRow>
-                {(props.isMultiSelect === true)
-                  ? <TableCell
-                      sx={{
-                        paddingLeft: 0.3,
-                        paddingRight: 0.3,
-                        maxWidth: 24,
-                        backgroundColor: '#fff'
-                      }}
-                    >
-                      <CenterBox>
-                        <DoneAllIcon
-                          color="primary"
-                          onClick={addOrRemoveAllItemsInView}
-                        />
-                      </CenterBox>
-                    </TableCell>
-                  : <TableCell sx={{ background: '#fff' }} colSpan={1}/>
-                }
-                <TableCell sx={{ background: '#fff' }} colSpan={1}/>
-                {renderHeaders(props.columns, props.orderBy, props.order, collapseWrap(props.onOrderChange))}
-              </TableRow>
-            </TableHead>
-            <TableBody sx={{ marginBottom: 64 }}>
-              {props.data?.length > 0
-                ? <>{props.data.map((v, i) => (
-                  <Row
-                    key={`row-${i}`}
-                    id={`row-${i}`}
-                    data={v}
-                    columns={props.columns}
-                    isExpanded={i === expandedRow}
-                    onClickExpand={() => { setExpandedRow(i !== expandedRow ? i : -1) }}
-                    onSelectItem={() => {
-                      onChangeSelectItem(v)
-                    }}
-                    isSelected={selectedItems.has(v)}
-                    renderExpandedData={() => props.renderExpandedData(v)}
-                  />
-                ))}</>
-                : <TableRow>
-                  <TableCell colSpan={props.columns.length + 2} sx={{ textAlign: 'center' }}>{'No Data'}</TableCell>
+    <div style={{ filter: darkMode ? 'invert(1)' : 'invert(0)', ...props.style }}>
+      <ThemeProvider theme={props.theme ?? otosenseTheme2022}>
+        <Box sx={{ minHeight: '720px', backgroundColor: '#fff' }}>
+          <Filter
+            clearFilters={props.clearFilters}
+            submitFilters={collapseWrap(props.submitFilters)}
+            filterOptions={props.filterOptions}
+          />
+          <DataTableContainer sx={{ borderTop: '1px solid #eee', width: '100%' }}>
+            <Table size="small" sx={{ marginBottom: 1 }} stickyHeader>
+              <TableHead sx={{ borderBottom: '1px solid #eee' }}>
+                <TableRow>
+                  {(props.isMultiSelect === true)
+                    ? <TableCell
+                        sx={{
+                          paddingLeft: 0.3,
+                          paddingRight: 0.3,
+                          maxWidth: 24,
+                          backgroundColor: '#fff'
+                        }}
+                      >
+                        <CenterBox>
+                          <DoneAllIcon
+                            color="primary"
+                            onClick={addOrRemoveAllItemsInView}
+                          />
+                        </CenterBox>
+                      </TableCell>
+                    : <TableCell sx={{ background: '#fff' }} colSpan={1}/>
+                  }
+                  <TableCell sx={{ background: '#fff' }} colSpan={1}/>
+                  {renderHeaders(props.columns, props.orderBy, props.order, collapseWrap(props.onOrderChange))}
                 </TableRow>
-              }
-            </TableBody>
-            <DataTableFooter
-              rowsPerPage={props.rowsPerPage}
-              onRowsPerPageChange={collapseWrap(props.onRowsPerPageChange)}
-              page={props.page}
-              onPageChange={collapseWrap(props.onPageChange)}
-              count={props.totalCount ?? -1}
-              selectedItemsCount={selectedItems.size}
-            />
-          </Table>
-        </DataTableContainer>
-      </Box>
-    </ThemeProvider>
+              </TableHead>
+              <TableBody sx={{ marginBottom: 64 }}>
+                {props.data?.length > 0
+                  ? <>{props.data.map((v, i) => (
+                    <Row
+                      key={`row-${i}`}
+                      id={`row-${i}`}
+                      data={v}
+                      columns={props.columns}
+                      isExpanded={i === expandedRow}
+                      onClickExpand={() => { setExpandedRow(i !== expandedRow ? i : -1) }}
+                      onSelectItem={() => {
+                        onChangeSelectItem(v)
+                      }}
+                      isSelected={selectedItems.has(v)}
+                      renderExpandedData={() => props.renderExpandedData(v)}
+                    />
+                  ))}</>
+                  : <TableRow>
+                    <TableCell colSpan={props.columns.length + 2} sx={{ textAlign: 'center' }}>{'No Data'}</TableCell>
+                  </TableRow>
+                }
+              </TableBody>
+              <DataTableFooter
+                rowsPerPage={props.rowsPerPage}
+                onRowsPerPageChange={collapseWrap(props.onRowsPerPageChange)}
+                page={props.page}
+                onPageChange={collapseWrap(props.onPageChange)}
+                count={props.totalCount ?? -1}
+                selectedItemsCount={selectedItems.size}
+              />
+            </Table>
+          </DataTableContainer>
+        </Box>
+      </ThemeProvider>
+    </div>
   )
 }

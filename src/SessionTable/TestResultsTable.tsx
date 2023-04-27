@@ -1,4 +1,4 @@
-import React, { type CSSProperties, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FlexBox, otosenseTheme2022 } from '@otosense/components'
 import { Box, Grid, Stack, Typography } from '@mui/material'
 
@@ -12,7 +12,8 @@ import {
   type SessionSortOptions,
   type Operator,
   type Optional,
-  type Session
+  type Session,
+  type TestResult
 } from './types'
 import { listSessions } from './testData'
 
@@ -22,18 +23,13 @@ interface SearchFilters {
   pagination: Optional<PaginationOptions>
 }
 
-interface SessionTableProps {
-  data: Session[]
+interface OtoTableProps {
+  data: TestResult[]
   query?: Optional<SearchFilters>
   isMultiSelect?: boolean
   style?: Record<string, string>
-  onSelectSessions: (sessions: Session[]) => void
-}
-const cellTags: CSSProperties = {
-  maxWidth: 480,
-  overflowWrap: 'break-word',
-  wordBreak: 'break-word',
-  wordWrap: 'break-word'
+
+  onSelectSessions: (sessions: TestResult[]) => void
 }
 const columns: Column[] = [
   {
@@ -42,22 +38,40 @@ const columns: Column[] = [
     key: (s: Session) => formatSessionTime(+s.bt),
     orderBy: 'bt'
   },
+  { label: 'Duration (sec)', sx: cellMW160, key: (s: Session) => `${(s.tt - s.bt) / 1e6}` },
   {
-    label: 'Duration (sec)',
-    sx: cellMW160,
-    key: (s: Session) => `${(s.tt - s.bt) / 1e6}`
+    label: 'Tags',
+    sx: {
+      maxWidth: 240,
+      overflowWrap: 'break-word',
+      wordBreak: 'break-word',
+      wordWrap: 'break-word'
+    },
+    key: (s: Session) => {
+      const uniqueTags = new Set(s.annotations.map(a => a.name))
+      return Array.from(uniqueTags).join(', ')
+    }
   },
   {
-    label: 'Annotations',
-    sx: cellTags,
-    key: (s: Session) => {
-      const uniqueAnnots = Array.from(new Set(s.annotations.map(a => a.name)))
-      return uniqueAnnots.sort().join(', ')
-    }
+    label: 'Class',
+    sx: cellMW160,
+    key: 'class',
+    orderBy: 'class'
+  },
+  {
+    label: 'Class Predicted',
+    sx: cellMW160,
+    key: 'class_predicted',
+    orderBy: 'class_predicted'
+  },
+  {
+    label: 'Prediction Accuracy',
+    sx: cellMW160,
+    key: (s: TestResult) => (s.class === s.class_predicted) ? 'correct' : 'incorrect'
   }
 ]
 
-export const SessionTable = (props: SessionTableProps): JSX.Element => {
+export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
   const [fromBt, setFromBt] = useState<Optional<number> >(props.query?.filter?.from_bt)
   const [toBt, setToBt] = useState<Optional<number>>(props.query?.filter?.to_bt)
   const [fromTt, setFromTt] = useState<Optional<number>>(props.query?.filter?.from_tt)
@@ -192,7 +206,7 @@ export const SessionTable = (props: SessionTableProps): JSX.Element => {
                 return (
                   <FlexBox key={`channel-${i}`} ml={1}>
                     <Typography variant="h5">{c.name}</Typography>
-                    {!(c.description.length === 0) && <Typography variant="h6" mr={0.5}>
+                    {typeof c.description === 'string' && <Typography variant="h6" mr={0.5}>
                       {`\u00A0- ${c.description}`}
                     </Typography>}
                   </FlexBox>

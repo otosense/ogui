@@ -16,6 +16,12 @@ export interface Session {
   }>
 }
 
+export interface TestResult extends Session {
+  class: string
+  class_predicted: string
+  prediction_accuracy: string
+}
+
 export type Operator = 'and' | 'or'
 
 export type Optional<T> = T | null | undefined

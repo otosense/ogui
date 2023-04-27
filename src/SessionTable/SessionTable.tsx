@@ -12,7 +12,7 @@ import {
   type SessionSortOptions,
   type Operator,
   type Optional,
-  type Session
+  type Session, type SortField, type CompareFunction
 } from './types'
 import { listSessions } from './testData'
 
@@ -76,7 +76,7 @@ export const SessionTable = (props: SessionTableProps): JSX.Element => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(defaultRowsPerPage)
   const [page, setPage] = useState<number>(defaultPage)
   const [order, setOrder] = useState<'asc' | 'desc'>(props.query?.sort?.mode ?? 'desc')
-  const [orderBy, setOrderBy] = useState<string>(props.query?.sort?.field ?? 'bt')
+  const [orderBy, setOrderBy] = useState<SortField | CompareFunction>(props.query?.sort?.field ?? 'bt')
   const [filteredData, setFilteredData] = useState<Session[]>(props.data)
 
   const submitFilters = (): void => {
@@ -104,7 +104,7 @@ export const SessionTable = (props: SessionTableProps): JSX.Element => {
         channels: chFilter,
         sr
       },
-      sort: { field: orderBy as SessionSortOptions['field'], mode: order },
+      sort: { field: orderBy, mode: order },
       pagination: {
         from_idx: page * rowsPerPage,
         to_idx: (page + 1) * rowsPerPage
@@ -175,7 +175,7 @@ export const SessionTable = (props: SessionTableProps): JSX.Element => {
     setPage(0)
   }
 
-  const onOrderChange = (orderBy: string): void => {
+  const onOrderChange = (orderBy: SortField | CompareFunction): void => {
     setOrderBy(orderBy)
     setOrder(order === 'asc' ? 'desc' : 'asc')
     setPage(0)

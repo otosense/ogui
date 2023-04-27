@@ -14,6 +14,7 @@ export interface Session {
     bt: number
     tt: number
   }>
+  [key: string]: any
 }
 
 export interface TestResult extends Session {
@@ -43,8 +44,10 @@ export interface SessionFilterOptions {
   sr: Optional<number>
 }
 
+export type SortField = 'device_id' | 'bt' | 'tt' | 'sr' | string
+export type CompareFunction = (a: Record<string, any>, b: Record<string, any>) => number
 export interface SessionSortOptions {
-  field: 'device_id' | 'bt' | 'tt' | 'sr'
+  field: SortField | CompareFunction
   mode: 'asc' | 'desc'
 }
 

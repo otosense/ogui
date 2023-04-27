@@ -14,6 +14,12 @@ export interface Session {
         bt: number;
         tt: number;
     }>;
+    [key: string]: any;
+}
+export interface TestResult extends Session {
+    class: string;
+    class_predicted: string;
+    prediction_accuracy: string;
 }
 export declare type Operator = 'and' | 'or';
 export declare type Optional<T> = T | null | undefined;
@@ -33,8 +39,10 @@ export interface SessionFilterOptions {
     }>;
     sr: Optional<number>;
 }
+export declare type SortField = 'device_id' | 'bt' | 'tt' | 'sr' | string;
+export declare type CompareFunction = (a: Record<string, any>, b: Record<string, any>) => number;
 export interface SessionSortOptions {
-    field: 'device_id' | 'bt' | 'tt' | 'sr';
+    field: SortField | CompareFunction;
     mode: 'asc' | 'desc';
 }
 export interface PaginationOptions {

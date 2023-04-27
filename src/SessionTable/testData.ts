@@ -4,7 +4,9 @@ import {
   type SessionSortOptions,
   type Operator,
   type Optional,
-  type Session
+  type Session,
+  type SortField,
+  type CompareFunction
 } from './types'
 
 const mockAnnotations = (start: number, stop: number, step: number, tag: number): Session['annotations'] => {
@@ -98,32 +100,46 @@ const filterSessions = (f: SessionFilterOptions, sessions = mockSessions): Sessi
 const sortSessions = (sort: SessionSortOptions, sessions: Session[]): Session[] => {
   let _sessions = [...sessions]
   if (_sessions?.length > 0) {
-    const sortType = typeof sessions[0][sort.field]
-    if (sortType === 'string') {
+    let sortType
+    if (typeof sort.field === 'string') {
+      sortType = typeof sessions[0][sort.field]
+    } else {
+      sortType = 'function'
+    }
+    if ((sortType) === 'function') {
+      const cmpFunc = sort.field as CompareFunction
+      if (sort.mode === 'asc') {
+        _sessions = _sessions.sort((a, b) => cmpFunc(a, b))
+      } else {
+        _sessions = _sessions.sort((b, a) => cmpFunc(a, b))
+      }
+    } else if ((sortType) === 'string') {
+      const sortField: SortField = sort.field as SortField
       if (sort.mode === 'asc') {
         _sessions = _sessions.sort((a, b) => {
-          const x = a[sort.field] as string
-          const y = b[sort.field] as string
+          const x = a[sortField] as string
+          const y = b[sortField] as string
           return x?.localeCompare(y ?? '') ?? 0
         })
       } else {
         _sessions = _sessions.sort((b, a) => {
-          const x = a[sort.field] as string
-          const y = b[sort.field] as string
+          const x = a[sortField] as string
+          const y = b[sortField] as string
           return x?.localeCompare(y ?? '') ?? 0
         })
       }
     } else if (sortType === 'number') {
+      const sortField: SortField = sort.field as SortField
       if (sort.mode === 'asc') {
         _sessions = _sessions.sort((a, b) => {
-          const x = a[sort.field] as number
-          const y = b[sort.field] as number
+          const x = a[sortField] as number
+          const y = b[sortField] as number
           return x - y
         })
       } else {
         _sessions = _sessions.sort((b, a) => {
-          const x = a[sort.field] as number
-          const y = b[sort.field] as number
+          const x = a[sortField] as number
+          const y = b[sortField] as number
           return x - y
         })
       }

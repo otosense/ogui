@@ -6,7 +6,7 @@ export declare const DataTableContainer: import("@emotion/styled").StyledCompone
     children?: import("react").ReactNode;
     classes?: Partial<import("@mui/material").TableContainerClasses> | undefined;
     sx?: import("@mui/material").SxProps<import("@mui/material").Theme> | undefined;
-} & import("@mui/material/OverridableComponent").CommonProps & Omit<Omit<import("react").DetailedHTMLProps<import("react").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & {
+} & import("@mui/material/OverridableComponent").CommonProps & Omit<Pick<import("react").DetailedHTMLProps<import("react").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "key" | keyof import("react").HTMLAttributes<HTMLDivElement>> & {
     ref?: ((instance: HTMLDivElement | null) => void) | import("react").RefObject<HTMLDivElement> | null | undefined;
 }, keyof import("@mui/material/OverridableComponent").CommonProps | "children" | "sx"> & import("@mui/system").MUIStyledCommonProps<import("@mui/material").Theme>, {}, {}>;
 export declare const firstLetterStyle: {

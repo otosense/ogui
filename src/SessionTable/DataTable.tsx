@@ -19,16 +19,17 @@ import { type FilterOption, Filter } from './SearchFilterSideMenu'
 import { DataTableFooter } from './DataTableFooter'
 import { CenterBox, otosenseTheme2022 } from '@otosense/components'
 import { detectDarkModeChange, getDarkModeValue } from '../utils'
+import { type CompareFunction, type SortField } from './types'
 
 export interface Column {
   // eslint-disable-next-line @typescript-eslint/key-spacing
   key: (string | ((data: any) => any))
   label: string
   sx: any
-  orderBy?: string
+  orderBy?: SortField | CompareFunction
 }
 
-const renderHeaders = (columns: Column[], orderBy: string, order: 'asc' | 'desc', onOrderChange: (orderBy: string) => void): JSX.Element => {
+const renderHeaders = (columns: Column[], orderBy: SortField | CompareFunction, order: 'asc' | 'desc', onOrderChange: (orderBy: SortField | CompareFunction) => void): JSX.Element => {
   return (
     <>
       {columns.map((c, i) => {
@@ -43,7 +44,7 @@ const renderHeaders = (columns: Column[], orderBy: string, order: 'asc' | 'desc'
                 active={orderBy === c.orderBy}
                 direction={orderBy === c.orderBy ? order : 'asc'}
                 onClick={() => {
-                  onOrderChange(c.orderBy as string)
+                  onOrderChange(c.orderBy as SortField | CompareFunction)
                 }}
               >
                 {c.label}
@@ -82,9 +83,9 @@ interface TableProps {
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => void
-  orderBy: string
+  orderBy: SortField | CompareFunction
   order: 'asc' | 'desc'
-  onOrderChange: (orderBy: string) => void
+  onOrderChange: (orderBy: SortField | CompareFunction) => void
   renderExpandedData: (data: any) => JSX.Element
   isMultiSelect?: boolean
   onSelectItems: (items: any[]) => void

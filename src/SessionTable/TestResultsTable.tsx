@@ -13,7 +13,9 @@ import {
   type Operator,
   type Optional,
   type Session,
-  type TestResult
+  type TestResult,
+  type SortField,
+  type CompareFunction
 } from './types'
 import { listSessions } from './testData'
 
@@ -67,7 +69,15 @@ const columns: Column[] = [
   {
     label: 'Prediction Accuracy',
     sx: cellMW160,
-    key: (s: TestResult) => (s.class === s.class_predicted) ? 'correct' : 'incorrect'
+    key: (s: TestResult) => (s.class === s.class_predicted) ? 'correct' : 'incorrect',
+    orderBy: (a: any, b: any) => {
+      if (a == null || b == null) {
+        return 0
+      }
+      const x = (a.class === a.class_predicted) ? 0 : 1
+      const y = (b.class === b.class_predicted) ? 0 : 1
+      return x - y
+    }
   }
 ]
 
@@ -90,7 +100,7 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
   const [rowsPerPage, setRowsPerPage] = useState<number>(defaultRowsPerPage)
   const [page, setPage] = useState<number>(defaultPage)
   const [order, setOrder] = useState<'asc' | 'desc'>(props.query?.sort?.mode ?? 'desc')
-  const [orderBy, setOrderBy] = useState<string>(props.query?.sort?.field ?? 'bt')
+  const [orderBy, setOrderBy] = useState<SortField | CompareFunction>(props.query?.sort?.field ?? 'bt')
   const [filteredData, setFilteredData] = useState<Session[]>(props.data)
 
   const submitFilters = (): void => {
@@ -118,7 +128,7 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
         channels: chFilter,
         sr
       },
-      sort: { field: orderBy as SessionSortOptions['field'], mode: order },
+      sort: { field: orderBy, mode: order },
       pagination: {
         from_idx: page * rowsPerPage,
         to_idx: (page + 1) * rowsPerPage
@@ -189,8 +199,8 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
     setPage(0)
   }
 
-  const onOrderChange = (orderBy: string): void => {
-    setOrderBy(orderBy)
+  const onOrderChange = (newOrderBy: SortField | CompareFunction): void => {
+    setOrderBy(() => newOrderBy)
     setOrder(order === 'asc' ? 'desc' : 'asc')
     setPage(0)
   }

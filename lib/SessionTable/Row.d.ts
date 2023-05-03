@@ -3,7 +3,7 @@ import { type Column } from './DataTable';
 export interface RowProps {
     isExpanded: boolean;
     onClickExpand: VoidFunction;
-    renderExpandedData: () => JSX.Element;
+    renderExpandedData?: () => JSX.Element;
     onSelectItem: VoidFunction;
     data: any;
     columns: Column[];

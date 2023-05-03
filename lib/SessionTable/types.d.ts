@@ -21,6 +21,13 @@ export interface TestResult extends Session {
     class_predicted: string;
     prediction_accuracy: string;
 }
+export interface DppMetadata {
+    name: string;
+    date_created: number;
+    sample_rate: number;
+    precision: number;
+    recall: number;
+}
 export declare type Operator = 'and' | 'or';
 export declare type Optional<T> = T | null | undefined;
 export interface SessionFilterOptions {

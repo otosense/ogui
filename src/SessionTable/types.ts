@@ -23,6 +23,14 @@ export interface TestResult extends Session {
   prediction_accuracy: string
 }
 
+export interface DppMetadata {
+  name: string
+  date_created: number
+  sample_rate: number
+  precision: number
+  recall: number
+}
+
 export type Operator = 'and' | 'or'
 
 export type Optional<T> = T | null | undefined

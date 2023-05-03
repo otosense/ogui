@@ -97,7 +97,7 @@ const filterSessions = (f: SessionFilterOptions, sessions = mockSessions): Sessi
   })
 }
 
-const sortSessions = (sort: SessionSortOptions, sessions: Session[]): Session[] => {
+const sortSessions = (sort: SessionSortOptions, sessions: Array<Record<string, any>>): Array<Record<string, any>> => {
   let _sessions = [...sessions]
   if (_sessions?.length > 0) {
     let sortType
@@ -156,10 +156,30 @@ export const listSessions = (
 ): Session[] => {
   let s = (filter != null) ? filterSessions(filter, sessions) : [...sessions]
   if (sort != null) {
-    s = sortSessions(sort, s)
+    s = sortSessions(sort, s) as Session[]
   }
   if (pagination != null) {
     s = s.slice(pagination.from_idx, pagination.to_idx)
   }
+  return s
+}
+
+export const listData = (
+  sort: Optional<SessionSortOptions> = null,
+  pagination: Optional<PaginationOptions> = null,
+  data: Array<Record<string, any>> = []
+): Array<Record<string, any>> => {
+  let s = [...data]
+  console.log('listData in', { s })
+
+  if (sort != null) {
+    s = sortSessions(sort, s)
+    console.log('listData sort', { s })
+  }
+  if (pagination != null) {
+    s = s.slice(pagination.from_idx, pagination.to_idx)
+    console.log('listData pagination', { s })
+  }
+  console.log('listData out', { s })
   return s
 }

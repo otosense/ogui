@@ -11,7 +11,6 @@ import {
   ThemeProvider
 } from '@mui/material'
 import { visuallyHidden } from '@mui/utils'
-// import ClearAllIcon from '@mui/icons-material/ClearAll'
 import DoneAllIcon from '@mui/icons-material/DoneAll'
 import { DataTableContainer } from './tableStyles'
 import { Row } from './Row'
@@ -71,9 +70,9 @@ interface TableProps {
   theme?: Theme
   data: any[]
   columns: Column[]
-  clearFilters: VoidFunction
+  clearFilters?: VoidFunction
   submitFilters: VoidFunction
-  filterOptions: FilterOption[]
+  filterOptions?: FilterOption[]
   rowsPerPage: number
   onRowsPerPageChange: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -86,11 +85,17 @@ interface TableProps {
   orderBy: SortField | CompareFunction
   order: 'asc' | 'desc'
   onOrderChange: (orderBy: SortField | CompareFunction) => void
-  renderExpandedData: (data: any) => JSX.Element
+  renderExpandedData?: (data: any) => JSX.Element
   isMultiSelect?: boolean
   onSelectItems: (items: any[]) => void
   totalCount?: number
   isDarkMode?: boolean
+}
+
+const undefinedOrCallWithArg = (f: ((a: any) => JSX.Element) | undefined, a: any): (() => JSX.Element) | undefined => {
+  if (f != null) {
+    return () => f(a)
+  }
 }
 
 export const DataTable = (props: TableProps): JSX.Element => {
@@ -145,11 +150,11 @@ export const DataTable = (props: TableProps): JSX.Element => {
     <div style={{ filter: darkMode ? 'invert(1)' : 'invert(0)', ...props.style }}>
       <ThemeProvider theme={props.theme ?? otosenseTheme2022}>
         <Box sx={{ minHeight: '720px', backgroundColor: '#fff' }}>
-          <Filter
+          {props.filterOptions != null && props.clearFilters != null && <Filter
             clearFilters={props.clearFilters}
             submitFilters={collapseWrap(props.submitFilters)}
             filterOptions={props.filterOptions}
-          />
+          />}
           <DataTableContainer sx={{ borderTop: '1px solid #eee', width: '100%' }}>
             <Table size="small" sx={{ marginBottom: 1 }} stickyHeader>
               <TableHead sx={{ borderBottom: '1px solid #eee' }}>
@@ -172,27 +177,31 @@ export const DataTable = (props: TableProps): JSX.Element => {
                       </TableCell>
                     : <TableCell sx={{ background: '#fff' }} colSpan={1}/>
                   }
-                  <TableCell sx={{ background: '#fff' }} colSpan={1}/>
+                  {props.renderExpandedData != null && <TableCell sx={{ background: '#fff' }} colSpan={1}/>}
                   {renderHeaders(props.columns, props.orderBy, props.order, collapseWrap(props.onOrderChange))}
                 </TableRow>
               </TableHead>
               <TableBody sx={{ marginBottom: 64 }}>
                 {props.data?.length > 0
-                  ? <>{props.data.map((v, i) => (
-                    <Row
-                      key={`row-${i}`}
-                      id={`row-${i}`}
-                      data={v}
-                      columns={props.columns}
-                      isExpanded={i === expandedRow}
-                      onClickExpand={() => { setExpandedRow(i !== expandedRow ? i : -1) }}
-                      onSelectItem={() => {
-                        onChangeSelectItem(v)
-                      }}
-                      isSelected={selectedItems.has(v)}
-                      renderExpandedData={() => props.renderExpandedData(v)}
-                    />
-                  ))}</>
+                  ? <>{props.data.map((v, i) => {
+                    return (
+                      <Row
+                        key={`row-${i}`}
+                        id={`row-${i}`}
+                        data={v}
+                        columns={props.columns}
+                        isExpanded={i === expandedRow}
+                        onClickExpand={() => {
+                          setExpandedRow(i !== expandedRow ? i : -1)
+                        }}
+                        onSelectItem={() => {
+                          onChangeSelectItem(v)
+                        }}
+                        isSelected={selectedItems.has(v)}
+                        renderExpandedData={undefinedOrCallWithArg(props.renderExpandedData, v)}
+                      />
+                    )
+                  })}</>
                   : <TableRow>
                     <TableCell colSpan={props.columns.length + 2} sx={{ textAlign: 'center' }}>{'No Data'}</TableCell>
                   </TableRow>

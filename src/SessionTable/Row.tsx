@@ -11,7 +11,7 @@ import { CollapsedContents } from './CollapsedContents'
 export interface RowProps {
   isExpanded: boolean
   onClickExpand: VoidFunction
-  renderExpandedData: () => JSX.Element
+  renderExpandedData?: () => JSX.Element
   onSelectItem: VoidFunction
   data: any
   columns: Column[]
@@ -27,7 +27,7 @@ export const Row = (props: RowProps): JSX.Element => (
           <Checkbox color="primary" checked={props.isSelected} onChange={props.onSelectItem} />
         </CenterBox>
       </TableCell>
-      <TableCell sx={cellIconSpacing}>
+      {props.renderExpandedData != null && <TableCell sx={cellIconSpacing}>
         <IconButton
           aria-label="expand row"
           size="small"
@@ -37,13 +37,14 @@ export const Row = (props: RowProps): JSX.Element => (
             ? <KeyboardArrowUpIcon color="primary"/>
             : <KeyboardArrowDownIcon color="primary"/>}
         </IconButton>
-      </TableCell>
+      </TableCell>}
       {props.columns.map((c, i) => (
         <TableCell sx={c.sx} key={`${props.id}-col-${i}`}>
           {(typeof c.key === 'string') ? props.data[c.key] : c.key(props.data)}
         </TableCell>
       ))}
     </TableRow>
-    <CollapsedContents isExpanded={props.isExpanded} renderData={props.renderExpandedData}/>
+    {props.renderExpandedData != null &&
+      <CollapsedContents isExpanded={props.isExpanded} renderData={props.renderExpandedData}/>}
   </React.Fragment>
 )

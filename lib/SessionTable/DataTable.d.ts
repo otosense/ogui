@@ -13,9 +13,9 @@ interface TableProps {
     theme?: Theme;
     data: any[];
     columns: Column[];
-    clearFilters: VoidFunction;
+    clearFilters?: VoidFunction;
     submitFilters: VoidFunction;
-    filterOptions: FilterOption[];
+    filterOptions?: FilterOption[];
     rowsPerPage: number;
     onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
     page: number;
@@ -23,7 +23,7 @@ interface TableProps {
     orderBy: SortField | CompareFunction;
     order: 'asc' | 'desc';
     onOrderChange: (orderBy: SortField | CompareFunction) => void;
-    renderExpandedData: (data: any) => JSX.Element;
+    renderExpandedData?: (data: any) => JSX.Element;
     isMultiSelect?: boolean;
     onSelectItems: (items: any[]) => void;
     totalCount?: number;

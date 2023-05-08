@@ -111,7 +111,6 @@ export const DppTable = (props: OtoTableProps): JSX.Element => {
 
   useEffect(submitFilters, [page, order, orderBy, rowsPerPage])
   useEffect(() => { setPage(0) }, [rowsPerPage])
-  console.log('DppTable', { filteredData })
   return (
     <DataTable
       theme={otosenseTheme2022}

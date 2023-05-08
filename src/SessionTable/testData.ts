@@ -170,16 +170,12 @@ export const listData = (
   data: Array<Record<string, any>> = []
 ): Array<Record<string, any>> => {
   let s = [...data]
-  console.log('listData in', { s })
 
   if (sort != null) {
     s = sortSessions(sort, s)
-    console.log('listData sort', { s })
   }
   if (pagination != null) {
     s = s.slice(pagination.from_idx, pagination.to_idx)
-    console.log('listData pagination', { s })
   }
-  console.log('listData out', { s })
   return s
 }

@@ -199,6 +199,7 @@ export const DataTable = (props: TableProps): JSX.Element => {
                         }}
                         isSelected={selectedItems.has(v)}
                         renderExpandedData={undefinedOrCallWithArg(props.renderExpandedData, v)}
+                        selectComponent={(props.isMultiSelect === true) ? 'checkbox' : 'radio'}
                       />
                     )
                   })}</>

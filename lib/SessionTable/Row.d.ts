@@ -9,5 +9,6 @@ export interface RowProps {
     columns: Column[];
     id: string;
     isSelected?: boolean;
+    selectComponent?: 'checkbox' | 'radio';
 }
 export declare const Row: (props: RowProps) => JSX.Element;

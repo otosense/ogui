@@ -17,7 +17,7 @@ export const MultilineOperatorFilter = (
   linesValue: Optional<string[]>,
   onChangeLines: (lines: string[]) => void,
   operatorValue: Optional<Operator>,
-  onChangeOperator: (op: Operator | null) => void,
+  onChangeOperator: (op: Operator) => void,
   operatorOptions: Operator[]
 ): JSX.Element => {
   const [lines, setlines] = useState<string>('')
@@ -36,23 +36,23 @@ export const MultilineOperatorFilter = (
         multiline
         rows={4}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setlines(event.target.value) }}
-        onBlur={() => { onChangeLines(lines.replace(/^\s+|\s+$/g, '').split(/\s+/)) }}
+        onBlur={() => { onChangeLines(lines.replace(/^\s+|\s+$/g, '').split(/\n+/)) }}
       />
-    <Autocomplete
-      options={operatorOptions}
-      id={`filter-${label}`}
-      onChange={(e: any, newValue: string | null) => {
-        if (newValue != null) {
-          onChangeOperator(newValue as Operator)
-        } else {
-          onChangeOperator(null)
-        }
-      }}
-      value={operatorValue ?? ''}
-      renderInput={(params) => (
-        <TextField {...params} placeholder={'Operator'} variant="filled" />
-      )}
-    />
+      <Autocomplete
+        options={operatorOptions}
+        id={`filter-${label}`}
+        onChange={(e: any, newValue: string | null) => {
+          if (newValue != null) {
+            onChangeOperator(newValue as Operator)
+          } else {
+            onChangeOperator(operatorOptions[0])
+          }
+        }}
+        value={operatorValue ?? operatorOptions[0]}
+        renderInput={(params) => (
+          <TextField {...params} placeholder={'Operator'} variant="filled" />
+        )}
+      />
     </>
   )
 }

@@ -14,7 +14,7 @@ const mockAnnotations = (start: number, stop: number, step: number, tag: number)
   let t = 1
   for (let i = start; i < stop; i += step) {
     annotations.push({
-      name: `tag${t}`,
+      name: `tag ${t}`,
       bt: i,
       tt: i + step
     })

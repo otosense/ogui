@@ -35,8 +35,8 @@ interface MultilineOperatorFilterOption {
   options: 'multilineOperator'
   linesValue: Optional<string[]>
   onChangeLines: (lines: string[]) => void
-  operatorValue: Optional<Operator>
-  onChangeOperator: (op: Operator | null) => void
+  operatorValue: Operator
+  onChangeOperator: (op: Operator) => void
   operatorOptions: Operator[]
 
 }

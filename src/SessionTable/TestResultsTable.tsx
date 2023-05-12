@@ -88,9 +88,9 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
   const [toTt, setToTt] = useState<Optional<number>>(props.query?.filter?.to_tt)
   const [sr, setSr] = useState<Optional<number>>(props.query?.filter?.sr)
   const [channels, setChannels] = useState<Optional<string[]>>(props.query?.filter?.channels?.names)
-  const [channelsOp, setChannelsOp] = useState<Optional<Operator>>(props.query?.filter?.channels?.operator)
+  const [channelsOp, setChannelsOp] = useState<Operator>(props.query?.filter?.channels?.operator ?? 'and')
   const [annotations, setAnnotations] = useState<Optional<string[]>>(props.query?.filter?.annotations?.names)
-  const [annotationsOp, setAnnotationsOp] = useState<Optional<Operator>>(props.query?.filter?.annotations?.operator)
+  const [annotationsOp, setAnnotationsOp] = useState<Operator>(props.query?.filter?.annotations?.operator ?? 'and')
   let defaultRowsPerPage = 50
   let defaultPage = 0
   if (props.query?.pagination?.from_idx != null) {
@@ -116,6 +116,10 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
           operator: annotationsOp
         }
       : null
+
+    if (channelsOp == null || annotationsOp == null) {
+      console.error({ channelsOp, annotationsOp })
+    }
 
     const value: SearchFilters = {
       filter: {
@@ -179,10 +183,13 @@ export const TestResultsTable = (props: OtoTableProps): JSX.Element => {
       operatorOptions: ['and', 'or']
     }
   ]
+  const resetOps = (): void => { [setChannelsOp, setAnnotationsOp].forEach((setter) => { setter('and') }) }
+
   const clearFilters = (): void => {
-    [setFromBt, setToBt, setFromTt, setToTt, setSr, setChannels, setChannelsOp, setAnnotations, setAnnotationsOp].forEach((setter) => {
+    [setFromBt, setToBt, setFromTt, setToTt, setSr, setChannels, setAnnotations].forEach((setter) => {
       setter(null)
     })
+    resetOps()
   }
 
   const onPageChange = (

@@ -2,8 +2,10 @@
   "name": "@otosense/ogui",
   "version": "1.1.0",
   "main": "lib/index.js",
+  "type": "module",
   "types": "lib/index.d.ts",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "webpack --mode production --progress --color --config webpack.config.publishing.js",
     "prepack": "tsc",
@@ -11,13 +13,11 @@
     "clean": "rm -rf ./lib",
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
     "tsc": "tsc",
+    "dev": "vite",
     "start": "webpack serve --mode development --config webpack.config.development.js --hot --inline --progress --host 0.0.0.0 --port 3000 --open"
   },
   "author": "ADI OtoSense team",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": ">=5.43.0",
-    "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
@@ -25,10 +25,19 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-webpack-plugin": "^4.0.0",
     "ts-loader": "^9.4.0",
-    "typescript": "^4.8.3",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.13.3"
+    "webpack-dev-server": "^4.13.3",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2"
   },
   "peerDependencies": {
     "react": "*",
@@ -38,16 +47,27 @@
     "lib/**"
   ],
   "dependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.6",
-    "@mui/material": "^5.10.6",
     "@mui/x-date-pickers": "^5.0.0-alpha.2",
     "@otosense/components": "^0.2.6",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.11",
     "date-fns": "^2.29.3",
     "moment": "^2.29.4",
-    "recharts": "^2.1.14"
+    "recharts": "^2.1.14",
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
+    "@mui/material": "^5.12.3",
+    "@mui/styles": "^5.12.3",
+    "@tanstack/react-query": "^4.29.7",
+    "@tanstack/react-virtual": "^3.0.0-alpha.0",
+    "@types/react-table": "^7.7.14",
+    "axios": "^1.4.0",
+    "material-react-table": "^1.11.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
+    "react-table": "^7.8.0",
+    "styled-components": "^5.3.10"
   }
 }

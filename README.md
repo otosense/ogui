@@ -28,3 +28,11 @@ interface IProps {
 }
 ```
 speed is in millisecond (1000 is 1 sec)
+
+
+### DataTable
+Start the server
+
+```bash
+  yarn dev
+```

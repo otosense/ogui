@@ -31,7 +31,25 @@ speed is in millisecond (1000 is 1 sec)
 
 
 ### DataTable
-Start the server
+If you want to run the DataTable. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DataTable/main.tsx"></script>
+```
+
+Goto the DataTable Folder in Terminal and Start the server
+
+```bash
+  yarn dev
+```
+
+
+### Charts
+If you want to run the Charts. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/Charts/main.tsx"></script>
+```
+
+Goto the Charts Folder in Terminal and Start the server
 
 ```bash
   yarn dev

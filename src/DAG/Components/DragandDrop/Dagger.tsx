@@ -24,6 +24,7 @@ import { Dagger, changedDager, dd_dager } from '../../assets/SampleDag';
 import CustomNode from './CustomNode';
 import Load from './Load';
 import Save from './Save';
+import * as API from './../API/API';
 import React from 'react';
 
 
@@ -66,11 +67,11 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'TB') => {
 };
 
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
-const nodeTypes = {
-    // custom: (props: any) => <NodeCreator {...props} type='funcNode' />,
-    textUpdater: (props: any) => <NodeCreator {...props} type='varNode' />,
-    custom: (props: any) => <CustomNode {...props} type='funcNode' />,
-};
+// const nodeTypes = {
+//     // custom: (props: any) => <NodeCreator {...props} type='funcNode' />,
+//     textUpdater: (props: any) => <NodeCreator {...props} type='varNode' />,
+//     custom: (props: any) => <CustomNode {...props} type='funcNode' />,
+// };
 export const DnDFlow = () => {
 
 
@@ -80,8 +81,29 @@ export const DnDFlow = () => {
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
     const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} });
     const [uploadOver, setUploadOver] = useState(false);
+    const [funcList, setFuncList] = useState([]);
 
     // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const resolve = await API.getFuncNodes();
+                setFuncList(resolve);
+            } catch (error: any) {
+                // Handle error
+                console.log('Error in API.getFuncNodes', error.toString());
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const nodeTypes = useMemo(() => ({
+        textUpdater: (props: any) => <NodeCreator {...props} type='varNode' />,
+        custom: (props: any) => <CustomNode {...props} type='funcNode' funcList={funcList} />,
+    }), [funcList]);
+
 
     const onConnect = useCallback((params: Edge | Connection) => {
         const { source, target } = params;
@@ -281,17 +303,15 @@ export const DnDFlow = () => {
                 </div>
 
             </ReactFlowProvider>
-
-            {(isModal?.open && isModal?.type === 'upload') && (
+            {isModal?.open && (
                 <div className='overlayPosition'>
-                    <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                    {isModal?.type === 'upload' ? (
+                        <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                    ) : (
+                        <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                    )}
                 </div>
             )}
-            {(isModal?.open && isModal?.type !== 'upload') && (
-                <div className='overlayPosition'>
-                    <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
-                </div>)
-            }
         </div>
 
     );

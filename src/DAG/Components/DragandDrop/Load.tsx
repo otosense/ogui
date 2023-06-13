@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import * as API from '../API/API';
 
 function Load(props: {
@@ -10,32 +10,25 @@ function Load(props: {
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
     const [selectDag, setSelectDag] = useState('');
+    const [dagListResponse, setDagListResponse] = useState([]);
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
     };
 
 
-    // const mutation = useMutation({
-    //     mutationFn: (newTodo: any) => {
-    //         const url = 'https://dagger.free.beeceptor.com/' + newTodo;
-    //         return axios.get(url);
-    //     },
-    //     onSuccess: (data, variables, context) => {
-    //         // I will fire first
-    //         console.log({ data, variables, context });
-    //         console.log('{data}', data.data);
-    //         props.onDataUploaded(data.data);
-    //         onClose();
-    //     },
-    // });
-
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await API.getDagList();
+            setDagListResponse(resp);
+        };
+        fetchData();
+    }, []);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         // mutation.mutate(selectDag);
         API.loadDag(selectDag).then(x => {
-            console.log('object', x);
             props.onDataUploaded(x);
             setShowErrorMessage(false);
             onClose();
@@ -63,11 +56,7 @@ function Load(props: {
         onClose();
     };
 
-    const resp = API.getDagList();
-
-
     const loadDag = async (e: { target: { value: string; }; }) => {
-        console.log('e', e.target.value);
         setSelectDag(e.target.value);
     };
     return (
@@ -80,7 +69,7 @@ function Load(props: {
                         <select name="dagList" id="dagList" defaultValue="" onChange={loadDag}>
                             <option disabled value="">Select a Dag</option>
                             {
-                                resp?.data?.map((option: { value: string, label: string; }) => (
+                                dagListResponse?.map((option: { value: string, label: string; }) => (
                                     <option key={option?.value} value={option?.value}>
                                         {option?.label}
                                     </option>
@@ -89,7 +78,7 @@ function Load(props: {
                         </select>
                     </div>
                     {showErrorMessage && <p className='jsonError'>The JSON upload failed. Please check the JSON and try again</p>}
-                    <button type="submit" className='uploadSubmitButton btnSize'>Submit</button>
+                    <button type="submit" className='uploadSubmitButton btnSize'>Load</button>
                     <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
                 </form>
             }
@@ -104,14 +93,14 @@ function Load(props: {
                     required
                 />
                 {errorExist && <p className='jsonError'>The JSON upload failed. Please check the JSON and try again</p>}
-                <button type="submit" className='uploadSubmitButton btnSize'>Submit</button>
+                <button type="submit" className='uploadSubmitButton btnSize'>Load</button>
                 <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
             </form>}
 
             {!openEditor ?
-                <p className='sampleText'><span onClick={() => setOpenEditor(true)} className='clickHere'><b>Click here</b> </span>to Enter On Your Own</p>
+                <p className='sampleText'><span onClick={() => setOpenEditor(true)} className='clickHere'><b>Click here</b> </span>to Enter DAG JSON</p>
                 :
-                <p className='sampleText'><span onClick={() => setOpenEditor(false)} className='clickHere'><b>Click here</b> </span> to Select Dag Templates</p>
+                <p className='sampleText'><span onClick={() => setOpenEditor(false)} className='clickHere'><b>Click here</b> </span> to Select a Dag</p>
             }
 
         </div>

@@ -6,13 +6,27 @@ const ApiUrl = {
     viewConfig: "http://localhost:3000/viewConfig",
     baseURl: "http://localhost:3000",
     waveForm: "http://localhost:3000/wf",
-    mixed: "http://localhost:3000/mixed"
+    mixed: "http://localhost:3000/mixed",
+
 };
+
 
 const GetMethod = async (url: any) => {
     const response = await axios.get(url);
     return response.data;
 };
+
+export function viewConfig() {
+    const url = ApiUrl.viewConfig;
+    return GetMethod(url);
+}
+
+
+export function getData(channel: string, min: number, max: number) {
+    const url = `${ApiUrl.baseURl + '/' + channel}?from=${min}&to=${max}`;
+    return GetMethod(url);
+}
+
 
 export function annot(min: number, max: number) {
     const url = `${ApiUrl.getAnnotations}?from=${min}&to=${max}`;

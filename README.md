@@ -31,7 +31,30 @@ speed is in millisecond (1000 is 1 sec)
 
 
 ### DataTable
-Start the server
+If you want to run the DataTable. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DataTable/main.tsx"></script>
+```
+
+```bash
+  yarn dev
+```
+
+### DPP
+If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DPP/main.tsx"></script>
+```
+
+```bash
+  yarn dev
+```
+
+### DataVisualizer
+If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DataVisualizer/main.tsx"></script>
+```
 
 ```bash
   yarn dev

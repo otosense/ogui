@@ -1,25 +1,28 @@
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
-import { memo, useContext, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import * as API from './API/API';
 import HighchartsStock from 'highcharts/modules/stock'; // import the Highcharts Stock module
+import { IChartData, IDataElementTypeThree, IProps, ISrcChannel, IZoomRange } from './API/interfaces';
+import { useContext } from 'react';
 import { ZoomContext } from './Charts';
-import { IChannelData, IDataElement, IProps, ISrcChannel, IZoomRange } from './API/interfaces';
 import { defaultZoomBehavior } from './globalConfigs';
 
 HighchartsStock(Highcharts); // initialize the Stock module
-const DataTypeTwo = (props: IProps) => {
-    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+
+const DataTypeThree = (props: IProps) => {
+    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels, plotValue } = props.configs;
     const { minimap, combineZoom } = props.userConfig;
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelData[]>([]);
     const [start, setStart] = useState(0);
-    const [setXCategory, setSetXCategory] = useState<number[]>([]);
+    const [data, setData] = useState<IChartData[]>([]);
+    const [setXCategory, setSetXCategory] = useState<string[]>([]);
     const zoomLevel = useContext(ZoomContext);
 
     const fetchData = async () => {
         const newStart = start + data_limit;
         setStart(newStart);
+
         // Note: Mapping Data based on src_channels 
         await channelMapping(src_channels, start, newStart, data, setData);
     };
@@ -31,11 +34,7 @@ const DataTypeTwo = (props: IProps) => {
     useEffect(() => {
         const chart = chartRef.current?.chart;
         if (chart) {
-            const updatedCategories = data.flatMap((channelData: IChannelData) => {
-                return channelData.data.map((val: IDataElement) => val.ts);
-            });
-            setSetXCategory(updatedCategories);
-
+            dataMapping(data, setSetXCategory, chart);
             chart.update({
                 xAxis: {
                     events: {
@@ -50,17 +49,18 @@ const DataTypeTwo = (props: IProps) => {
                     }
                 },
             });
+
+            chart.redraw();
         }
     }, [data]);
+
 
     useEffect(() => {
         const chart = chartRef.current?.chart;
         if (chart && zoomLevel && combineZoom === undefined ? true : combineZoom) {
             chart.xAxis[0].setExtremes(zoomLevel?.min, zoomLevel?.max);
         }
-
     }, [zoomLevel]);
-
 
     const handlePan = () => {
         fetchData();
@@ -68,22 +68,23 @@ const DataTypeTwo = (props: IProps) => {
 
     const options = {
         chart: {
+            // type: "line",
             type: String(chart_type),
-            // animation: Highcharts.svg, // don't animate in old IE
             marginRight: 10,
             zoomType: "xy",
             panning: true,
             panKey: 'shift',
-            // events: {
-            //     load: function (this: any) {
-            //         defaultZoomBehavior.call(this);
-            //     },
-            // }
         },
         title: {
             text: String(chart_title),
         },
         xAxis: {
+            // categories: [],
+            categories: setXCategory,
+            // ordinal: false,
+            title: {
+                text: String(x_label),
+            },
             labels: {
                 rotation: -10,
                 formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
@@ -91,29 +92,44 @@ const DataTypeTwo = (props: IProps) => {
                     return String(this.value);
                 }
             },
-            title: {
-                text: String(x_label),
-            },
             tickLength: 10,
-            categories: setXCategory,
         },
         yAxis: {
             lineWidth: 1,
             opposite: false,
-            // type: 'logarithmic',
             title: {
                 text: String(y_label),
             },
+            // ordinal: false,
         },
-
         tooltip: {
             shared: true,
-            formatter(this: any): string {
-                let tooltip = '<b>' + 'ts : ' + this.x + '</b><br/>';
-                this.points.forEach(function (point: { series: { name: string; }; y: string; }) {
-                    tooltip += '<b>' + point.series.name + ': ' + point.y + '</b><br/>';
+            formatter(this: Highcharts.TooltipFormatterContextObject): string {
+                const xValue = this?.x || "";
+                const finalToolTipFormat = data.map((channelData) => {
+                    const correspondingData = channelData.data.find((data) => {
+                        return (data.ts)?.toFixed(2) === xValue.toString();
+                    });
+                    // Generate the tooltip content using the corresponding data
+                    let tooltipContent: string = '';
+                    if (correspondingData) {
+                        const generateHTML = (obj: any, parentKey = '') => {
+                            let html = '';
+                            for (const key in obj) {
+                                if (typeof obj[key] === 'object') {
+                                    html += generateHTML(obj[key], `${parentKey}${key}.`);
+                                } else {
+                                    html += `<div><b>${key}: ${obj[key]}</b></div> <br/>`;
+                                }
+                            }
+
+                            return html;
+                        };
+                        tooltipContent += generateHTML(correspondingData);
+                    }
+                    return tooltipContent;
                 });
-                return tooltip;
+                return finalToolTipFormat[0];
             }
         },
         legend: {
@@ -127,9 +143,10 @@ const DataTypeTwo = (props: IProps) => {
         exporting: {
             enabled: true,
         },
-        series: data.map((x: IChannelData) => (
+        series: data.map((x: IChartData) => (
             {
-                data: x.data.map((y: any) => y.value),
+
+                data: x.data.map((x: { values: { [x: string]: string; }; }) => x.values[plotValue]),
                 name: x.channel,
                 turboThreshold: 100000,
                 pointPadding: 1,
@@ -143,56 +160,65 @@ const DataTypeTwo = (props: IProps) => {
                         fontSize: '14px',
                         fontWeight: 'bold',
                     },
-                    // formatter(this: any): string {
-                    //     return this.point?.title;
-                    // },
-                    formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-                        return String(this.value);
-                    }
+                    formatter(this: any): string {
+                        return this.point?.title;
+                    },
                 },
             }
         )),
-        navigation: {
-            buttonOptions: {
-                enabled: true
-            }
-        },
         navigator: {
             enabled: Boolean(minimap === undefined ? true : minimap),
             adaptToUpdatedData: true,
             xAxis: {
                 labels: {
-                    formatter(this: Highcharts.AxisLabelsFormatterContextObject): string | number {
-                        const xValue = this.value;
-                        return (setXCategory[xValue]);
+                    formatter(this: Highcharts.AxisLabelsFormatterContextObject): number {
+                        const xValue: number = Number(this.value);
+                        const finalToolTipFormat = data.map((channelData) => {
+                            // Format the label based on the x-axis value
+                            const correspondingData = channelData.data[Number(xValue)];
+                            return correspondingData?.ts;
+                        });
+                        return finalToolTipFormat[0];
                     },
                 },
             }
         },
         scrollbar: {
-            enabled: false // enable the scrollbar
+            enabled: false,
         },
         rangeSelector: {
-            enabled: false // enable the range selector
+            enabled: false,
         },
     };
+
     return (
-        // style={{ width: 1000 }}
         <div className='chartParent'>
             <HighchartsReact
                 highcharts={Highcharts}
                 ref={chartRef}
                 options={options}
-                constructorType={'stockChart'} // use stockChart constructor
+                constructorType={'stockChart'}
             />
             <button onClick={handlePan} className='loadMoreButton'>Load More</button>
         </div>
     );
 };
 
-export default memo(DataTypeTwo);
+export default memo(DataTypeThree);
 
-async function channelMapping(src_channels: ISrcChannel[], start: number, newStart: number, data: any[], setData: (value: any) => void) {
+
+
+function dataMapping(data: IChartData[], setSetXCategory: (value: string[]) => void, chart: any) {
+    const updatedCategories = data.flatMap((channelData: IChartData) => {
+        return channelData.data.map((val) => val?.ts.toFixed(2));
+    });
+    setSetXCategory(updatedCategories);
+
+    // chart.update({ series: seriesData }, false);
+    chart.xAxis[0].setCategories(updatedCategories, false);
+}
+
+async function channelMapping(src_channels: ISrcChannel[], start: number, newStart: number, data: IChartData[], setData: (value: IChartData[]) => void) {
     const promises = src_channels.map(async (eachChannel: { channel: string; }) => {
         const response = await API.getData(eachChannel.channel, start, newStart);
         return {
@@ -204,7 +230,7 @@ async function channelMapping(src_channels: ISrcChannel[], start: number, newSta
     try {
         const responses = await Promise.all(promises);
         responses.forEach((response) => {
-            const existingChannelIndex = data.findIndex((item: { channel: string; }) => item.channel === response.channel);
+            const existingChannelIndex = data.findIndex((item) => item.channel === response.channel);
 
             if (existingChannelIndex !== -1) {
                 data[existingChannelIndex].data = [...data[existingChannelIndex].data, ...response.data];

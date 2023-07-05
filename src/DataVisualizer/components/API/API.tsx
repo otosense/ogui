@@ -16,6 +16,16 @@ const GetMethod = async (url: any) => {
     return response.data;
 };
 
+export function getAnnotations() {
+    const url = ApiUrl.getAnnotations;
+    return GetMethod(url);
+}
+
+export function getVolumes() {
+    const url = ApiUrl.getVolumes;
+    return GetMethod(url);
+}
+
 export function viewConfig() {
     const url = ApiUrl.viewConfig;
     return GetMethod(url);

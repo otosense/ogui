@@ -1,51 +1,55 @@
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
-import { memo, useContext, useEffect, useRef, useState } from 'react';
-import * as API from './API/API';
 import HighchartsStock from 'highcharts/modules/stock'; // import the Highcharts Stock module
+
+import * as API from './API/API';
 import { ZoomContext } from './Charts';
 import { IChannelData, IDataElement, IProps, ISrcChannel, IZoomRange } from './API/interfaces';
-import { defaultZoomBehavior } from './globalConfigs';
+import { defaultZoomBehavior, explicitChannelMapping, settingZoomInGlobalStore, updatingZoomFromGlobalStore } from './globalConfigs';
 
-HighchartsStock(Highcharts); // initialize the Stock module
+HighchartsStock(Highcharts); // initialize the module
 const DataTypeTwo = (props: IProps) => {
+    // Props Received from the Charts.tsx component from Backend API
     const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
+    // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelData[]>([]);
-    const [start, setStart] = useState(0);
-    const [setXCategory, setSetXCategory] = useState<number[]>([]);
-    const zoomLevel = useContext(ZoomContext);
+    const [data, setData] = useState<IChannelData[]>([]); // handling Data for visualization
+    const [start, setStart] = useState(0); // handling for API from , to counts 
+    const [xCategory, setXCategory] = useState<number[]>([]); // handling X-Axis for plotting
+    const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
 
     const fetchData = async () => {
         const newStart = start + data_limit;
         setStart(newStart);
         // Note: Mapping Data based on src_channels 
-        await channelMapping(src_channels, start, newStart, data, setData);
+        await explicitChannelMapping(src_channels, start, newStart, data, setData);
     };
 
     useEffect(() => {
+        // when component Loaded respective API from the backend
         fetchData();
     }, []);
 
     useEffect(() => {
+        // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart) {
             const updatedCategories = data.flatMap((channelData: IChannelData) => {
                 return channelData.data.map((val: IDataElement) => val.ts);
             });
-            setSetXCategory(updatedCategories);
+            // Update X Axis Data which is ts
+            setXCategory(updatedCategories);
 
+            // Handling Zoom and setting the zoom level in Global Store
             chart.update({
                 xAxis: {
                     events: {
                         // afterSetExtremes: syncCharts
                         afterSetExtremes: function (e: IZoomRange) {
-                            if (combineZoom === undefined ? true : combineZoom) {
-                                if (e.trigger === 'navigator' || e.trigger === 'zoom') {
-                                    props.onZoomChange(e.min, e.max);
-                                }
-                            }
+                            settingZoomInGlobalStore(combineZoom, e, props);
                         },
                     }
                 },
@@ -54,18 +58,22 @@ const DataTypeTwo = (props: IProps) => {
     }, [data]);
 
     useEffect(() => {
-        const chart = chartRef.current?.chart;
-        if (chart && zoomLevel && combineZoom === undefined ? true : combineZoom) {
-            chart.xAxis[0].setExtremes(zoomLevel?.min, zoomLevel?.max);
-        }
+        // updating the Zoom level from the Global Store if any changes are made on other charts
+        updatingZoomFromGlobalStore(chartRef, zoomLevel, combineZoom);
 
     }, [zoomLevel]);
 
 
     const handlePan = () => {
+        // when LoadMore is clicked calling the next set of data from backend
         fetchData();
     };
-
+    // Chart Options
+    /* 
+        Note: in xAxis.categories are responsible for the x axis data,
+            series are responsible for the y axis data.
+    
+    */
     const options = {
         chart: {
             type: String(chart_type),
@@ -95,7 +103,7 @@ const DataTypeTwo = (props: IProps) => {
                 text: String(x_label),
             },
             tickLength: 10,
-            categories: setXCategory,
+            categories: xCategory,
         },
         yAxis: {
             lineWidth: 1,
@@ -164,7 +172,7 @@ const DataTypeTwo = (props: IProps) => {
                 labels: {
                     formatter(this: Highcharts.AxisLabelsFormatterContextObject): string | number {
                         const xValue = this.value;
-                        return (setXCategory[xValue]);
+                        return (xCategory[xValue]);
                     },
                 },
             }
@@ -190,30 +198,6 @@ const DataTypeTwo = (props: IProps) => {
     );
 };
 
+// type: any 
 export default memo(DataTypeTwo);
 
-async function channelMapping(src_channels: ISrcChannel[], start: number, newStart: number, data: any[], setData: (value: any) => void) {
-    const promises = src_channels.map(async (eachChannel: { channel: string; }) => {
-        const response = await API.getData(eachChannel.channel, start, newStart);
-        return {
-            channel: eachChannel.channel,
-            data: response.data
-        };
-    });
-
-    try {
-        const responses = await Promise.all(promises);
-        responses.forEach((response) => {
-            const existingChannelIndex = data.findIndex((item: { channel: string; }) => item.channel === response.channel);
-
-            if (existingChannelIndex !== -1) {
-                data[existingChannelIndex].data = [...data[existingChannelIndex].data, ...response.data];
-            } else {
-                data.push(response);
-            }
-        });
-        setData([...data]);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}

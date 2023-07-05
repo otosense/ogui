@@ -1,75 +1,83 @@
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
-import { memo, useContext, useEffect, useRef, useState } from 'react';
-import * as API from './API/API';
 import HighchartsStock from 'highcharts/modules/stock'; // import the Highcharts Stock module
-import { defaultZoomBehavior, epochConverted } from './globalConfigs';
+
+import { defaultZoomBehavior, epochConverted, implicitChannelMapping, settingZoomInGlobalStore, updatingZoomFromGlobalStore } from './globalConfigs';
 import { IChannelMappingResponse, IProps, ISample, ISrcChannel, IZoomRange } from './API/interfaces';
 import { ZoomContext } from './Charts';
 
-HighchartsStock(Highcharts); // initialize the Stock module
+
+HighchartsStock(Highcharts); // initialize the module
 
 const DataTypeOne = (props: IProps) => {
+    // Props Received from the Charts.tsx component from Backend API
     const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
+    // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelMappingResponse[]>([]);
-    const [start, setStart] = useState(0);
-    const [setXCategory, setSetXCategory] = useState<string[]>([]);
-    const zoomLevel = useContext(ZoomContext);
+    const [data, setData] = useState<IChannelMappingResponse[]>([]); // handling Data for visualization
+    const [start, setStart] = useState(0); // handling for API from , to counts 
+    const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
+    const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
 
     const fetchData = async () => {
         const newStart = start + data_limit;
         setStart(newStart);
         // Note: Mapping Data based on src_channels 
-        await channelMapping(src_channels, start, newStart, data, setData);
+        await implicitChannelMapping(src_channels, start, newStart, data, setData);
     };
 
     useEffect(() => {
+        // when component Loaded respective API from the backend
         fetchData();
     }, []);
 
     useEffect(() => {
+        // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart) {
-            const updatedSeries = dataMapping(data);
+            const updatedSeries = dataMapping(data); // Mapping the Data based on the data Type
             const yAxisData = updatedSeries?.flat().map((series: ISample) => series.value);
             const xAxisTs = updatedSeries?.flat().map((series: ISample) => series.time);
-            setSetXCategory(xAxisTs);
+            // Update X Axis Data which is ts
+            setXCategory(xAxisTs);
+            // Update Y Axis Data 
             chart.update({ series: [{ data: yAxisData }] }, false);
 
-
+            // Handling Zoom and setting the zoom level in Global Store
             chart.update({
                 xAxis: {
                     events: {
                         // afterSetExtremes: syncCharts
                         afterSetExtremes: function (e: IZoomRange) {
-                            // console.log('e', e);
-                            if (combineZoom === undefined ? true : combineZoom) {
-                                if (e.trigger === 'navigator' || e.trigger === 'zoom') {
-                                    props.onZoomChange(e.min, e.max);
-                                }
-                            }
+                            settingZoomInGlobalStore(combineZoom, e, props);
                         },
                     }
                 },
             });
-
+            // Re-Draw the chart default behavior of the Highcharts
             chart.redraw();
         }
     }, [data]);
 
     useEffect(() => {
-        const chart = chartRef.current?.chart;
-        if (chart && zoomLevel && combineZoom === undefined ? true : combineZoom) {
-            chart.xAxis[0].setExtremes(zoomLevel?.min, zoomLevel?.max);
-        }
+        // updating the Zoom level from the Global Store if any changes are made on other charts
+        updatingZoomFromGlobalStore(chartRef, zoomLevel, combineZoom);
     }, [zoomLevel]);
 
     const handlePan = () => {
+        // when LoadMore is clicked calling the next set of data from backend
         fetchData();
     };
 
+    // Chart Options
+    /* 
+        Note: in xAxis.categories are responsible for the x axis data,
+            series are responsible for the y axis data.
+    
+    */
     const options = {
         chart: {
             // type: "line",
@@ -90,7 +98,7 @@ const DataTypeOne = (props: IProps) => {
                 text: String(x_label)
             },
             // categories: [],
-            categories: setXCategory,
+            categories: xCategory,
 
             labels: {
                 rotation: -25,
@@ -155,7 +163,7 @@ const DataTypeOne = (props: IProps) => {
                     formatter(this: Highcharts.AxisLabelsFormatterContextObject): string | number {
                         // Format the label based on the x-axis value
                         const xValue: any = this.value || '';
-                        return setXCategory[xValue];
+                        return xCategory[xValue];
                     },
                 },
             }
@@ -179,49 +187,26 @@ const DataTypeOne = (props: IProps) => {
         </div>
     );
 };
-
+// type: IChannelMappingResponse 
 export default memo(DataTypeOne);
 
 function dataMapping(data: IChannelMappingResponse[]): ISample[][] {
+    // looping the initial data from the local state 
     return data.map((channel: IChannelMappingResponse) => {
+        // extracting { data, sr, ts } 
         let { data, sr, ts } = channel.data;
-
+        // converting the backend time to Epoch time and with proper sample rate and interval
         let timeDifferBetweenSamples = sr / (1000 * 1000);
         let sampleTime = ts;
         let sampledData: ISample[] = [];
         data.forEach((sampleValue: number, index: number) => {
             if (index !== 0) {
+                // increment sampleTime based on time difference between them
                 sampleTime = sampleTime + timeDifferBetweenSamples;
             }
-            let sample = { value: sampleValue, time: epochConverted(sampleTime) };
+            let sample = { value: sampleValue, time: epochConverted(sampleTime) }; // conversion fo epoch time to human readable
             sampledData.push(sample);
         });
         return sampledData;
     });
 }
-
-async function channelMapping(src_channels: ISrcChannel[], start: number, newStart: number, data: IChannelMappingResponse[], setData: (value: IChannelMappingResponse[]) => void) {
-    const promises = src_channels.map(async (eachChannel: { channel: string; }) => {
-        const response = await API.getData(eachChannel.channel, start, newStart);
-        return {
-            channel: eachChannel.channel,
-            data: response.data
-        };
-    });
-
-    try {
-        const responses = await Promise.all(promises);
-        responses.map((response) => {
-            const existingChannelIndex = data.findIndex((item: { channel: string; }) => item.channel === response.channel);
-            if (existingChannelIndex !== -1) {
-                (data[existingChannelIndex].data.data).push(...response.data.data);
-            }
-            else {
-                data.push(response);
-            }
-        });
-        setData([...data]);
-    } catch (error) {
-        console.error('Error fetching data For Type 1:', error);
-    }
-};

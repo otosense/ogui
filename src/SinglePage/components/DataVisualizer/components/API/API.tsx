@@ -1,12 +1,19 @@
 import axios from 'axios';
 
 const ApiUrl = {
-    getAnnotations: "http://localhost:3000/annotation",
-    getVolumes: "http://localhost:3000/volume",
-    viewConfig: "http://localhost:3000/viewConfig",
-    baseURl: "http://localhost:3000",
-    waveForm: "http://localhost:3000/wf",
-    mixed: "http://localhost:3000/mixed",
+    // getAnnotations: "http://localhost:3000/annotation",
+    // getVolumes: "http://localhost:3000/volume",
+    // viewConfig: "http://localhost:3000/viewConfig",
+    // baseURl: "http://localhost:3000",
+    // waveForm: "http://localhost:3000/wf",
+    // mixed: "http://localhost:3000/mixed",
+
+    getAnnotations: "http://52.188.113.129:3000/annotation",
+    getVolumes: "http://52.188.113.129:3000/volume",
+    viewConfig: "http://52.188.113.129:3000/viewConfig",
+    baseURl: "http://52.188.113.129:3000",
+    waveForm: "http://52.188.113.129:3000/wf",
+    mixed: "http://52.188.113.129:3000/mixed",
 
 };
 

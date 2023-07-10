@@ -1,0 +1,507 @@
+#root {
+  max-width: 1920px;
+  /* margin: 0 auto; */
+  padding: 2rem;
+  /* text-align: center; */
+  display: flex;
+  justify-content: space-between;
+  align-items: top;
+  width: 100%;
+}
+
+.navBar {
+  height: 93vh;
+  position: sticky;
+  left: 0;
+  top: 0;
+  width: 16%;
+  border-right: 1px solid #ccc;
+}
+
+.activeLink {
+  color: #3db5fe !important;
+  font-weight: 800;
+  border-right: 5px solid #3db5fe !important;
+}
+
+
+
+.outlets {
+  width: 84%;
+  padding-left: 10px;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.MuiTabs-root.MuiTabs-vertical {
+  overflow: unset !important;
+  position: sticky;
+  left: 0;
+  z-index: 999;
+  background: #fff;
+}
+
+div[role="tabpanel"] {
+  width: 100%;
+  height: 100%;
+}
+
+/* ======================= DAG Builder CSS Starts here  =======================*/
+
+
+.dndflow {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow aside {
+  border-right: 1px solid #eee;
+  padding: 15px 10px;
+  font-size: 12px;
+  /* background: #fcfcfc; */
+}
+
+.dndflow aside .description {
+  margin-bottom: 10px;
+}
+
+.dndflow .dndnode {
+  height: 20px;
+  padding: 4px;
+  border: 3px solid #1a192b;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.dndflow .dndnode.input {
+  border-color: #c2410c;
+}
+
+.dndflow .dndnode.output {
+  border-color: #ff0072;
+}
+
+.dndflow .dndnode.function {
+  border-color: #0891b2;
+}
+
+
+.dndflow .reactflow-wrapper {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.dndflow .selectall {
+  margin-top: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .dndflow {
+    flex-direction: row;
+  }
+
+  .dndflow aside {
+    width: 12%;
+    max-width: 250px;
+  }
+}
+
+/* .react-flow {
+  overflow: unset !important;
+} */
+
+.customInputBox {
+  width: 80%;
+  margin: 4% 1%;
+  border-color: transparent;
+}
+
+.custom-node__select {
+  /* margin: 5px; */
+  width: 90%;
+}
+
+.custom-node__select select {
+  width: 90%;
+}
+
+.custom-node__header {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.titleBox {
+  border: 0;
+  margin: 6%;
+  width: 80%;
+  color: #fff;
+  background: #4b5563;
+}
+
+input#text:focus-visible {
+  outline: unset;
+}
+
+.react-flow__panel.react-flow__attribution.bottom.right {
+  display: none;
+}
+
+
+
+.nodeTitle {
+  margin: -1px;
+  padding: 2%;
+  color: #fff;
+}
+
+.nodeTitle.funcNode {
+  background: #0891b2;
+}
+
+h4.nodeTitle.varNode {
+  background: #c2410c;
+
+}
+
+/* .nodeTitle {
+  margin: -1px;
+  background: #0891b2;
+  padding: 2%;
+} */
+
+.flexProps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8%;
+  font-size: 12px;
+  background: #1f2937;
+  color: #fff;
+  flex-direction: column;
+}
+
+.inputStyler {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  background: #1f2937;
+  color: #fff;
+}
+
+.flexProps.varNode {
+  border: 1px solid #c2410c;
+}
+
+.flexProps.funcNode {
+  border: 1px solid #0891b2;
+}
+
+.text-updater-node {
+  overflow: hidden;
+  width: 200px;
+}
+
+.ModalBox {
+  background: #fff;
+  /* padding: 1%; */
+  width: 40%;
+  border-radius: 1%;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.ModalTitle {
+  margin: 0;
+  line-height: 3;
+  border-bottom: 1px solid rgb(229, 231, 235);
+  margin-bottom: 2%;
+  display: block !important;
+  text-align: center;
+}
+
+
+
+.overlayPosition {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  /* background: #ccc;
+  opacity: 0.9; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+textarea.textAreaSize {
+  width: 95%;
+  height: 350px;
+  border: 1px solid rgb(229, 231, 235);
+}
+
+.uploadSubmitButton {
+  background: #2dd4bf;
+  color: #fff;
+  margin: 10px;
+}
+
+.uploadCancelButton {
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+}
+
+.btnSize {
+  width: 25%;
+  margin-bottom: 3%;
+}
+
+p.jsonError {
+  color: red;
+  font-size: 12px;
+  margin: 0;
+}
+
+button.saveBtn {
+  margin-right: 10px;
+}
+
+.react-flow__panel.top.right {
+  margin: 1% 0;
+  width: 24%;
+}
+
+button.panelBtn {
+  width: 35%;
+  text-align: center;
+}
+
+.invalidMsg {
+  font-size: 12px;
+  color: orangered;
+}
+
+.dagNameBox {
+  border: 1px solid #ccc;
+  margin: 2% 0;
+  width: 80%;
+  padding: 3%;
+  border-radius: 5px;
+}
+
+.copyBtn {
+  position: absolute;
+  right: 22px;
+  top: 146px;
+  width: 6%;
+  cursor: pointer;
+}
+
+.jsonData {
+  position: relative;
+}
+
+.dagNameSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 2%;
+}
+
+.clickHere {
+  color: #0891b2;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.dagList {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+}
+
+select#dagList {
+  padding: 2%;
+  width: 60%;
+  border: 1px solid #ccc;
+  margin: 2%;
+}
+
+.DND {
+  width: 100%;
+}
+
+/* ======================= DAG Builder CSS Ends here  =======================*/
+
+
+/* ======================= Data Visualization CSS Starts here  =======================*/
+.chartParent {
+  position: relative;
+  border: 1px solid #eaeaea;
+  background-color: #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  /* width: 100%; */
+}
+
+.loadMoreButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  /* border-color: #ccc; */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #3db5fe;
+  color: #fff;
+}
+
+/* ======================= Data Visualization CSS Ends here  =======================*/
+
+
+/* ======================= Data Table CSS Starts here  =======================*/
+
+table {
+
+  scroll-behavior: smooth;
+}
+
+.resizer {
+  display: inline-block;
+  background: #ccc;
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(50%);
+  z-index: 1;
+}
+
+.resizer.isResizing {
+  background: #ccc;
+}
+
+tr.highlightMe {
+  background: #ccc !important;
+}
+
+p.colorBox {
+  width: 25px;
+  text-align: center;
+  margin: 0 auto;
+  border-radius: 50%;
+  height: 25px;
+}
+
+main.mainTableView {
+  display: flex;
+  justify-content: space-between;
+}
+
+.columnToggler {
+  width: 20%;
+  position: sticky;
+  top: 0;
+  text-align: center;
+  height: 60vh;
+}
+
+.columnName label {
+  display: flex;
+  align-items: center;
+}
+
+
+.columnName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* .ModalTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: unset;
+} */
+
+.disabledSorting {
+  opacity: 0.5;
+}
+
+p.lineInfo {
+  margin: 1% 1% 0;
+  font-size: 14px;
+}
+
+.MuiTable-stickyHeader thead {
+  position: sticky !important;
+  top: 0;
+  z-index: 99;
+  background: #fff;
+}
+
+
+
+.css-apqrd9-MuiTableBody-root {
+  text-align: left;
+}
+
+.Mui-TableHeadCell-Content-Labels {
+  text-transform: capitalize;
+}
+
+.row-expand {
+  display: flex;
+  justify-content: space-between;
+  width: 25%;
+  text-align: left;
+  flex-direction: column;
+}
+
+/* ======================= Data Table CSS Ends here  =======================*/

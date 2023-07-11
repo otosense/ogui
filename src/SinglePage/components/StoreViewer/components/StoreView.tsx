@@ -27,6 +27,8 @@ const handleCopy = (label: string) => {
         .then(() => {
             console.log("Text copied to clipboard: ", label);
             // Add your desired feedback or notification here
+            // return <h1>Copied</h1>;
+            alert("Id Copied" + ' ' + label);
         })
         .catch((error) => {
             console.error("Failed to copy text: ", error);
@@ -36,7 +38,7 @@ const handleCopy = (label: string) => {
 
 const renderTree = (nodes: any, isRoot: boolean, i: number) => (
     <section key={i}>
-        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)} style={{ border: "none", background: "transparent", padding: "0", cursor: "pointer" }}>
+        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)}>
             {/* <img src={InfoOutlinedIcon} alt='copyButton' /> */}
             <InfoOutlinedIcon />
         </button>}

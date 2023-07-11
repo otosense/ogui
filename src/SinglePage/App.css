@@ -517,10 +517,19 @@ button.copy {
   position: absolute;
   right: 0;
   z-index: 999;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer
 }
 
 section.outlets.storeView {
   width: 30%;
+}
+
+.MuiSvgIcon-root:focus,
+button.copy:focus {
+  outline: unset !important;
 }
 
 /* ======================= StoreView CSS Ends here  =======================*/

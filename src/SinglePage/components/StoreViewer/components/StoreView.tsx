@@ -3,22 +3,27 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
-import { annotationSample } from '../assets/data';
+import * as API from '../API/API';
 
 interface Child {
     id: string;
-    name: string;
+    name?: string;
     children?: Child[];
+    bt?: number[];
+    tt?: number[];
 }
 
 interface Device {
     id: string;
-    name: string;
+    name?: string;
     children?: Child[];
+    bt?: number[];
+    tt?: number[];
 }
 let index: number;
 const StoreView = () => {
     const [deviceNodes, setDeviceNodes] = useState<Device[]>([]);
+    const [StoreConfig, setStoreConfig] = useState<Device[]>([]);
     // const [index, setIndex] = useState(0);
 
     useEffect(() => {
@@ -59,9 +64,22 @@ const StoreView = () => {
             return transformedNodes;
         };
 
-        const transformedNodes = transformData(annotationSample);
+        const transformedNodes = transformData(StoreConfig);
         setDeviceNodes(transformedNodes);
+    }, [StoreConfig]);
+
+
+    useEffect(() => {
+        // when page Loaded calling ViewConfig API
+        fetchData();
     }, []);
+
+    const fetchData = async () => {
+        // ViewConfig API Called
+        const response = await API.StoreConfig();
+        // Saved in Local Component state
+        setStoreConfig(response.data);
+    };
 
     const renderTree = (nodes: Child, i: number) => (
         <>

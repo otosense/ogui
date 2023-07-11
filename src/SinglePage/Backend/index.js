@@ -127,6 +127,14 @@ app.get('/mixed', (req, res) => {
   res.json({ data: limitedData });
 });
 
+app.get('/storeViewer', (req, res) => {
+  // Read the output.json file
+  const output = require('./json/Store.json');
+
+  // Send the limitedData as the response
+  res.json({ data: output });
+});
+
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });

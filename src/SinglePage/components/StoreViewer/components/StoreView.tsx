@@ -131,6 +131,7 @@ const transformData = (annotation: any[]): Device[] => {
 const StoreView = () => {
     const [deviceNodes, setDeviceNodes] = useState<Device[]>([]);
     const [StoreConfig, setStoreConfig] = useState<Device[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         console.log('StoreConfig', StoreConfig);
@@ -145,17 +146,26 @@ const StoreView = () => {
     const fetchData = async () => {
         const response = await API.StoreConfig();
         console.log('response', response);
-        setStoreConfig(response.data);
+        setStoreConfig(response?.data || response);
+        setIsLoading(false);
     };
 
     return (
-        <TreeView
-            aria-label="Store View"
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-        >
-            {deviceNodes.map((node, i) => renderTree(node, false, i))}
-        </TreeView>
+        <>
+            {isLoading ? (
+                // Show the loader while loading
+                <div>Loading...</div>
+            ) : (
+                // Render the tree view once the data is loaded
+                <TreeView
+                    aria-label="Store View"
+                    defaultCollapseIcon={<ExpandMoreIcon />}
+                    defaultExpandIcon={<ChevronRightIcon />}
+                >
+                    {deviceNodes.map((node, i) => renderTree(node))}
+                </TreeView>
+            )}
+        </>
     );
 };
 

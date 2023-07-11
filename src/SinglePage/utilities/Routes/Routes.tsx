@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import React, { lazy } from 'react';
 
 const DataTable = lazy(() => import('../../components/DataTable/components/TableConfigs'));
 const Charts = lazy(() => import('../../components/DataVisualizer/components/Charts'));
@@ -9,7 +9,7 @@ const RouterConfig = [
     {
         path: '/StoreView',
         sidebarName: 'StoreViewer',
-        component: <section className='outlets'><StoreView /></section>
+        component: <section className='outlets storeView'><StoreView /></section>
     },
     {
         path: '/dataVisualization',

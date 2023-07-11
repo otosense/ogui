@@ -1,14 +1,7 @@
 [
     {
         "id": "af8eccb8-fc3c-11ed-8742-0242ac160004",
-        "annotations": [
-            {
-                "name": "ac16_oldDell_builtinMic_sinwave_t45",
-                "bt": 1685157309238641,
-                "tt": 1685202309241392,
-                "source": "user"
-            }
-        ],
+        "annotations": [],
         "sr": 44100,
         "bit_depth": 2,
         "channels": [

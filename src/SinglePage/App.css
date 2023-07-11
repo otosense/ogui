@@ -4,7 +4,7 @@
   padding: 2rem;
   /* text-align: center; */
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: top;
   width: 100%;
 }
@@ -505,3 +505,22 @@ p.lineInfo {
 }
 
 /* ======================= Data Table CSS Ends here  =======================*/
+
+
+/* ======================= StoreView CSS starts here  =======================*/
+
+.MuiCollapse-wrapperInner {
+  position: relative;
+}
+
+button.copy {
+  position: absolute;
+  right: 0;
+  z-index: 999;
+}
+
+section.outlets.storeView {
+  width: 30%;
+}
+
+/* ======================= StoreView CSS Ends here  =======================*/

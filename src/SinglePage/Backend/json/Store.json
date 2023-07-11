@@ -1,94 +1,61 @@
 [
     {
-        "device1": [
+        "id": "af8eccb8-fc3c-11ed-8742-0242ac160004",
+        "annotations": [
             {
-                "id": "1234",
-                "bt": 123,
-                "tt": 456,
-                "name": "Sub device1",
-                "annotation": [
-                    {
-                        "name": "annot1",
-                        "bt": 1,
-                        "tt": 2,
-                        "id": "annot1"
-                    },
-                    {
-                        "name": "annot2",
-                        "bt": 12,
-                        "tt": 21,
-                        "id": "annot2"
-                    }
-                ]
+                "name": "ac16_oldDell_builtinMic_sinwave_t45",
+                "bt": 1685157309238641,
+                "tt": 1685202309241392,
+                "source": "user"
             }
-        ]
+        ],
+        "sr": 44100,
+        "bit_depth": 2,
+        "channels": [
+            "Channel-1",
+            "Channel-2"
+        ],
+        "device_id": "02:42:ac:16:00:04",
+        "tt": 1685202309241392,
+        "bt": 1685157309238641
     },
     {
-        "device2": [
+        "id": "ecdba6b8-fd0e-11ed-a258-0242ac130004",
+        "annotations": [
             {
-                "id": "5678",
-                "bt": 123,
-                "tt": 456,
-                "name": "Sub device1",
-                "annotation": [
-                    {
-                        "name": "temp1",
-                        "bt": 1,
-                        "tt": 2,
-                        "id": "annot3"
-                    },
-                    {
-                        "name": "temp2",
-                        "bt": 12,
-                        "tt": 21,
-                        "id": "annot4"
-                    }
-                ]
-            },
-            {
-                "id": "91011",
-                "bt": 123,
-                "tt": 456,
-                "name": "Sub device2",
-                "annotation": [
-                    {
-                        "name": "temp3",
-                        "bt": 1,
-                        "tt": 2,
-                        "id": "annot5"
-                    },
-                    {
-                        "name": "temp4",
-                        "bt": 12,
-                        "tt": 21,
-                        "id": "annot6"
-                    }
-                ]
+                "name": "”iepe_radio_t10000 --timer=10\noedge-cli start-capture --annotations=”iepe_radio_t17000",
+                "bt": 1685247606354985,
+                "tt": 1685264606356678,
+                "source": "user"
             }
-        ]
+        ],
+        "sr": 44100,
+        "bit_depth": 2,
+        "channels": [
+            "Channel-1",
+            "Channel-2"
+        ],
+        "device_id": "02:42:ac:13:00:04",
+        "tt": 1685264606356678,
+        "bt": 1685247606354985
     },
     {
-        "device3": [
+        "id": "fe98d29a-fd0e-11ed-a2ce-0242ac130004",
+        "annotations": [
             {
-                "id": "1213",
-                "bt": 123,
-                "tt": 456,
-                "name": "Sub device",
-                "annotation": [
-                    {
-                        "name": "templ",
-                        "bt": 1,
-                        "tt": 2,
-                        "id": "annot7"
-                    },
-                    {
-                        "name": "temp2",
-                        "bt": 12,
-                        "tt": 21,
-                        "id": "annot8"
-                    }
-                ]
+                "name": "sys76_ac13_sineWave_t24000",
+                "bt": 1685247636116361,
+                "tt": 1685271636118322,
+                "source": "user"
             }
-        ]
+        ],
+        "sr": 44100,
+        "bit_depth": 2,
+        "channels": [
+            "Channel-1"
+        ],
+        "device_id": "02:42:ac:13:00:04",
+        "tt": 1685271636118322,
+        "bt": 1685247636116361
     }
 ]

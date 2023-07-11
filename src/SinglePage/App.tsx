@@ -3,7 +3,7 @@ import 'reactflow/dist/style.css';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import RouterConfig from './utilities/Routes/Routes';
 import Layout from './utilities/Routes/Layout';
-import { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 
 function App() {
   const navigate = useNavigate();

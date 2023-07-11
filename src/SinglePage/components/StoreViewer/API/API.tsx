@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 const ApiUrl = {
-    StoreConfig: "http://localhost:3000/storeViewer",
-
-    // StoreConfig: "http://52.188.113.129:3000/storeViewer"
+    // StoreConfig: "http://localhost:3000/storeViewer",
+    StoreConfig: "http://52.188.113.129:3000/storeViewer"
 };
 
 

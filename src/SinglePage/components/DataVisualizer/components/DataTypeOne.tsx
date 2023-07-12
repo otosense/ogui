@@ -12,21 +12,21 @@ HighchartsStock(Highcharts); // initialize the module
 
 const DataTypeOne = (props: IProps) => {
     // Props Received from the Charts.tsx component from Backend API
-    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    // const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
     // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
     // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelMappingResponse[]>([]); // handling Data for visualization
+    const [data, setData] = useState<IChannelMappingResponse[]>(props.data); // handling Data for visualization
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
     const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
 
     const fetchData = async () => {
-        const newStart = start + data_limit;
+        const newStart = start + 5000;
         setStart(newStart);
         // Note: Mapping Data based on src_channels 
-        await implicitChannelMapping(src_channels, start, newStart, data, setData);
+        // await implicitChannelMapping(src_channels, start, newStart, data, setData);
     };
 
     useEffect(() => {
@@ -80,8 +80,8 @@ const DataTypeOne = (props: IProps) => {
     */
     const options = {
         chart: {
-            // type: "line",
-            type: String(chart_type),
+            type: "line",
+            // type: String(chart_type),
             // animation: Highcharts.svg, // don't animate in old IE
             marginRight: 10,
             zoomType: "xy",
@@ -89,13 +89,13 @@ const DataTypeOne = (props: IProps) => {
             panKey: 'shift',
         },
         title: {
-            text: String(chart_title),
+            text: String('chart_title'),
         },
         xAxis: {
             // type: "datetime",
             tickPixelInterval: 100,
             title: {
-                text: String(x_label)
+                text: String('x_label')
             },
             // categories: [],
             categories: xCategory,
@@ -113,7 +113,7 @@ const DataTypeOne = (props: IProps) => {
             opposite: false,
             type: 'logarithmic',
             title: {
-                text: String(y_label)
+                text: String('y_label')
             },
         },
         tooltip: {
@@ -192,19 +192,22 @@ export default memo(DataTypeOne);
 
 function dataMapping(data: IChannelMappingResponse[]): ISample[][] {
     // looping the initial data from the local state 
+    console.log('data before', data);
     return data.map((channel: IChannelMappingResponse) => {
         // extracting { data, sr, ts } 
-        let { data, sr, ts } = channel.data;
+        console.log('channel', channel);
+        let { data, sr, ts } = channel;
         // converting the backend time to Epoch time and with proper sample rate and interval
         let timeDifferBetweenSamples = sr / (1000 * 1000);
         let sampleTime = ts;
         let sampledData: ISample[] = [];
-        data.forEach((sampleValue: number, index: number) => {
+        data?.forEach((sampleValue: number, index: number) => {
             if (index !== 0) {
                 // increment sampleTime based on time difference between them
                 sampleTime = sampleTime + timeDifferBetweenSamples;
             }
             let sample = { value: sampleValue, time: epochConverted(sampleTime) }; // conversion fo epoch time to human readable
+            console.log('sample', sample);
             sampledData.push(sample);
         });
         return sampledData;

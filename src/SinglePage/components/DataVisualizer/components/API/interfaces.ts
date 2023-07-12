@@ -30,7 +30,9 @@ interface IChannelData {
 
 interface IChannelMappingResponse {
     channel: string;
-    data: IChannelData;
+    data: IChannelData[];
+    sr: number;
+    ts: number;
 }
 
 interface ISrcChannel {

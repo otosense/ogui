@@ -102,9 +102,9 @@ export default function Charts() {
                 return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} configs={undefined} data={sessionDetail.data} />;
 
             }
-            //  else if (sessionDetail.data_type === "wf") {
-            //     return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
-            // }
+            else if (sessionDetail.data_type === "wf") {
+                return <DataTypeOne key={index} configs={undefined} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
+            }
 
         });
         // return viewConfigs.map((viewConfig: IViewProps, index: number) => {
@@ -138,7 +138,7 @@ export default function Charts() {
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
-            <form method="post" onSubmit={handleSubmit} className='FormSection'>
+            <form onSubmit={handleSubmit} className='FormSection'>
                 <label>
                     <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} />
                 </label>

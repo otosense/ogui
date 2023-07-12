@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     // Programmatically navigate to the desired route on component mount
-    navigate('/StoreView');
+    navigate('/dataVisualization');
   }, []);
   return (
     <>

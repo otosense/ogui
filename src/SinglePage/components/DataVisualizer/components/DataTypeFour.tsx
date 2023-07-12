@@ -16,13 +16,14 @@ HighchartsBoost(Highcharts);
 let Yaxis: string[] = [];
 
 const DataTypeFour = (props: IProps) => {
+    console.log('object', props);
     // Props Received from the Charts.tsx component from Backend API
-    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    // const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
     // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
     // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelDataTypeFour[]>([]); // handling Data for visualization
+    const [data, setData] = useState<IChannelDataTypeFour[]>(props.data); // handling Data for visualization
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xAxisCategory, setXAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
     const [plotting, setPlotting] = useState<IChannelDataTypeFour[]>([]); // handling X-Axis for plotting in Chart
@@ -30,10 +31,10 @@ const DataTypeFour = (props: IProps) => {
     const [legendName, setLegendName] = useState<string>(''); // legend for the chart
 
     const fetchData = async () => {
-        const newStart = start + data_limit;
+        const newStart = start + 5000;
         setStart(newStart);
         // Note: Mapping Data based on src_channels 
-        await explicitChannelMapping(src_channels, start, newStart, data, setData);
+        // await explicitChannelMapping(src_channels, start, newStart, data, setData);
     };
 
     useEffect(() => {
@@ -45,6 +46,7 @@ const DataTypeFour = (props: IProps) => {
         // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart && data) {
+            console.log('data', data);
             dataMapping(data, setXAxisCategory, setPlotting, setLegendName); // Mapping the Data based on the data Type
 
             // Handling Zoom and setting the zoom level in Global Store
@@ -77,9 +79,12 @@ const DataTypeFour = (props: IProps) => {
             series are responsible for the y axis data.
     
     */
+
+    console.log('setPlotting', plotting);
     const Options = {
         chart: {
-            type: String(chart_type),
+            // type: String(chart_type),
+            type: 'xrange',
             // animation: Highcharts.svg, // don't animate in old IE
             marginRight: 10,
             zoomType: "xy",
@@ -88,7 +93,8 @@ const DataTypeFour = (props: IProps) => {
         },
 
         title: {
-            text: String(chart_title),
+            // text: String(chart_title),
+            text: 'Title',
         },
         xAxis: {
             // type: "datetime",
@@ -99,14 +105,14 @@ const DataTypeFour = (props: IProps) => {
                 },
             },
             title: {
-                text: String(x_label),
+                text: String('x_label'),
             },
         },
         yAxis: {
             opposite: false,
             lineWidth: 1,
             title: {
-                text: String(y_label),
+                text: String('y_label'),
             },
             categories: xAxisCategory
 
@@ -119,7 +125,8 @@ const DataTypeFour = (props: IProps) => {
                     this.points.forEach(function (point: Highcharts.Point): void {
                         const x = point.x.toFixed(2);
                         const x2 = point.x2 != null ? point.x2.toFixed(2) : '';
-                        const yCategory = point?.yCategory !== null ? point.yCategory.toString() : '';
+                        console.log('point', point);
+                        const yCategory = point?.yCategory !== null ? point.yCategory?.toString() : '';
                         tooltip += `<b>${x} - ${x2}</b><br/><b>${yCategory}</b>`;
                     });
                     return tooltip;
@@ -140,6 +147,7 @@ const DataTypeFour = (props: IProps) => {
             enabled: true,
         },
         series: [
+            // console.log('plotting', plotting),
             {
                 name: legendName,
                 data: plotting,
@@ -204,18 +212,24 @@ function dataMapping(data: any[],
     setXAxisCategory: (value: string[]) => void,
     setPlotting: (value: any) => void, setLegendName: (channel: string) => void): void {
     let uniqueArray: string[] = [];
+
     // looping the initial data from the local state 
     data.map((channelData) => {
+
+        console.log('channelData', channelData);
         channelData?.data?.map((singleChannelData: ISingleChannelData) => {
             Yaxis.push(singleChannelData.tag);
             uniqueArray = [...new Set(Yaxis)];
+            console.log('uniqueArray', uniqueArray, singleChannelData.tag, uniqueArray?.indexOf(singleChannelData.tag));
             setXAxisCategory(uniqueArray);
             const chartData = {
                 x: singleChannelData.bt,
                 x2: singleChannelData.tt,
-                y: uniqueArray.indexOf(singleChannelData.tag),
+                y: uniqueArray?.indexOf(singleChannelData.tag),
                 title: singleChannelData.tag,
             };
+
+            console.log('chartData', chartData);
             // setting the legend
             setLegendName(channelData.channel);
             // data prepared to display in the chart

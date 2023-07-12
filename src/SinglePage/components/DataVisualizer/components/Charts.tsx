@@ -12,7 +12,8 @@ export const ZoomContext = React.createContext<IZoomRange | null>(null);
 export default function Charts() {
     const [viewConfigs, setViewConfigs] = useState([]);
     const [zoomLevel, setZoomLevel] = useState<IZoomRange>();
-    const [sessionId, setSessionId] = useState<number>();
+    const [sessionId, setSessionId] = useState<string>();
+    const [sessionDetails, SetSessionDetails] = useState<any>([]);
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
@@ -94,33 +95,44 @@ export default function Charts() {
     // Mapping of Chart to Smart Components based on data_type, for data_type, please refer above comments
 
     const chartChannel = () => {
-        return viewConfigs.map((viewConfig: IViewProps, index: number) => {
-            const { data_type } = viewConfig;
-            if (data_type === "volume") {
-                return <DataTypeTwo key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeTwo} />;
-            } else if (data_type === "annot") {
-                return <DataTypeFour key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} />;
-            } else if (data_type === "wf") {
-                return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
-            } else if (data_type === "mixed") {
-                return <DataTypeThree key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeThree} />;
+
+        return sessionDetails.map((sessionDetail: any, index: number) => {
+            console.log('sessionDetail', sessionDetail);
+            if (sessionDetail.data_type === "annot") {
+                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} configs={undefined} data={sessionDetail.data} />;
+
             }
+            //  else if (sessionDetail.data_type === "wf") {
+            //     return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
+            // }
+
         });
+        // return viewConfigs.map((viewConfig: IViewProps, index: number) => {
+        //     const { data_type } = viewConfig;
+        //     if (data_type === "volume") {
+        //         return <DataTypeTwo key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeTwo} />;
+        //     } else if (data_type === "annot") {
+        //         return <DataTypeFour key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} />;
+        //     } else if (data_type === "wf") {
+        //         return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
+        //     } else if (data_type === "mixed") {
+        //         return <DataTypeThree key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeThree} />;
+        //     }
+        // });
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: { preventDefault: () => void; target: HTMLFormElement | undefined; }) => {
         // Prevent the browser from reloading the page
         e.preventDefault();
-        console.log('e.target', e.target);
-        // Create a new FormData object from the form element
-        const formData = new FormData(e.target);
+        getSessionDetails(sessionId);
 
-        // Retrieve the value of the input field by its name
-        const inputValue: number = formData.get('sessionId');
+    };
 
-        setSessionId(inputValue);
+    const getSessionDetails = async (sessionId: string | undefined) => {
 
-
-
+        const sessionIdPayload = { "session_id": sessionId };
+        const response = await API.getSessionDetails(sessionIdPayload);
+        console.log('response', response);
+        SetSessionDetails(response);
     };
 
     return (
@@ -128,7 +140,7 @@ export default function Charts() {
         <ZoomContext.Provider value={zoomLevel}>
             <form method="post" onSubmit={handleSubmit} className='FormSection'>
                 <label>
-                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" value={sessionId} className='sessionIdBox' />
+                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} />
                 </label>
                 <Button variant="contained" type="submit">Submit</Button>
             </form>

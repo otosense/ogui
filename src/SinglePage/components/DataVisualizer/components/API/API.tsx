@@ -15,8 +15,11 @@ const ApiUrl = {
     waveForm: "http://52.188.113.129:3000/wf",
     mixed: "http://52.188.113.129:3000/mixed",
 
-    baseURl: "http://0.0.0.0:3030",
-    getAnnotations: "get_session_annotation"
+    baseURl: "http://52.188.113.129:8080",
+    getAnnotations: "http://52.188.113.129:8080/get_session_annotation",
+    getWaveForm: "http://52.188.113.129:8080/get_session_wf_data",
+
+    getSessionDetails: "http://52.188.113.129:8080/get_session_data"
 };
 
 
@@ -30,23 +33,13 @@ async function PostMethod(url: string, data: any) {
     return response.data;
 }
 
-// export function getAnnotations() {
-//     const url = ApiUrl.getAnnotations;
-//     return GetMethod(url);
-// }
-
-// export function getVolumes() {
-//     const url = ApiUrl.getVolumes;
-//     return GetMethod(url);
-// }
-
 export function viewConfig() {
     const url = ApiUrl.viewConfig;
     return GetMethod(url);
 }
 
 
-export function getData(channel: string, min: number, max: number) {
+export function getData(channel: string, min: number = 0, max: number = 0) {
     // const url = `${ApiUrl.baseURl + '/' + channel}?from=${min}&to=${max}`;
     const url = `${ApiUrl.baseURl + '/' + channel}`;
 
@@ -54,26 +47,16 @@ export function getData(channel: string, min: number, max: number) {
     return GetMethod(url);
 }
 
+export function getSessionDetails(data: string) {
+    // const url = `${ApiUrl.baseURl + '/' + channel}?from=${min}&to=${max}`;
+    const url = `${ApiUrl.getSessionDetails}`;
+
+    // const url = `${ApiUrl.baseURl + '/' + ApiUrl.getAnnotations}`;
+    return PostMethod(url, data);
+}
 
 
 
-// export function annot(min: number, max: number) {
-//     const url = `${ApiUrl.getAnnotations}?from=${min}&to=${max}`;
-//     return GetMethod(url);
-// }
 
-// export function volume(min: number, max: number) {
-//     const url = `${ApiUrl.getVolumes}?from=${min}&to=${max}`;
-//     return GetMethod(url);
-// }
 
-// export function waveForm(min: number, max: number) {
-//     const url = `${ApiUrl.waveForm}?from=${min}&to=${max}`;
-//     return GetMethod(url);
-// }
-
-// export function mixed(min: number, max: number) {
-//     const url = `${ApiUrl.mixed}?from=${min}&to=${max}`;
-//     return GetMethod(url);
-// }
 

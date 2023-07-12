@@ -1,51 +1,5 @@
 [
     {
-        "chart_title": "chart1",
-        "data_type": "wf",
-        "chart_type": "line",
-        "x_label": "Time",
-        "y_label": "Value",
-        "miniMap": true,
-        "data_limit": 1000,
-        "src_channels": [
-            {
-                "channel": "wf",
-                "name": "waveform"
-            }
-        ]
-    },
-    {
-        "chart_title": "Chart 2",
-        "data_type": "volume",
-        "chart_type": "line",
-        "x_label": "Time",
-        "y_label": "Value",
-        "miniMap": true,
-        "data_limit": 1000,
-        "src_channels": [
-            {
-                "channel": "volume",
-                "name": "volume"
-            }
-        ]
-    },
-    {
-        "chart_title": "chart3",
-        "data_type": "mixed",
-        "chart_type": "line",
-        "x_label": "Time",
-        "y_label": "Value",
-        "miniMap": true,
-        "plotValue": "std",
-        "data_limit": 1000,
-        "src_channels": [
-            {
-                "channel": "mixed",
-                "name": "mixed1"
-            }
-        ]
-    },
-    {
         "chart_title": "Chart 4",
         "data_type": "annot",
         "chart_type": "xrange",
@@ -55,27 +9,8 @@
         "data_limit": 1000,
         "src_channels": [
             {
-                "channel": "annotation",
+                "channel": "get_session_annotation",
                 "name": "annotation1"
-            }
-        ]
-    },
-    {
-        "chart_title": "Multi Channel",
-        "data_type": "volume",
-        "chart_type": "line",
-        "x_label": "Time",
-        "y_label": "Value",
-        "miniMap": true,
-        "data_limit": 1000,
-        "src_channels": [
-            {
-                "channel": "volume",
-                "name": "volume"
-            },
-            {
-                "channel": "temp",
-                "name": "temperature"
             }
         ]
     }

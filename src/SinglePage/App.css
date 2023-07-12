@@ -400,6 +400,16 @@ select#dagList {
   color: #fff;
 }
 
+
+
+.FormSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  margin-bottom: 10px;
+}
+
 /* ======================= Data Visualization CSS Ends here  =======================*/
 
 

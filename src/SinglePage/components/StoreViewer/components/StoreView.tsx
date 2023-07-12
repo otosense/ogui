@@ -38,7 +38,7 @@ const handleCopy = (label: string) => {
 
 const renderTree = (nodes: any, isRoot: boolean, i: number) => (
     <section key={i} style={{ position: 'relative' }}>
-        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)}>
+        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)} title='Click to Copy'>
             {/* <img src={InfoOutlinedIcon} alt='copyButton' /> */}
             <InfoOutlinedIcon />
         </button>}

@@ -5,12 +5,14 @@ import DataTypeFour from './DataTypeFour';
 import DataTypeThree from './DataTypeThree';
 import DataTypeOne from './DataTypeOne';
 import { IViewProps, IZoomRange } from './API/interfaces';
+import { Button, TextField } from '@mui/material';
 
 // Handling Global Store Zoom Properties to pass for other components
 export const ZoomContext = React.createContext<IZoomRange | null>(null);
 export default function Charts() {
     const [viewConfigs, setViewConfigs] = useState([]);
     const [zoomLevel, setZoomLevel] = useState<IZoomRange>();
+    const [sessionId, setSessionId] = useState<number>();
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
@@ -105,12 +107,32 @@ export default function Charts() {
             }
         });
     };
+    const handleSubmit = (e) => {
+        // Prevent the browser from reloading the page
+        e.preventDefault();
+        console.log('e.target', e.target);
+        // Create a new FormData object from the form element
+        const formData = new FormData(e.target);
 
+        // Retrieve the value of the input field by its name
+        const inputValue: number = formData.get('sessionId');
+
+        setSessionId(inputValue);
+
+
+
+    };
 
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
-            {chartChannel()}
+            <form method="post" onSubmit={handleSubmit} className='FormSection'>
+                <label>
+                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" value={sessionId} className='sessionIdBox' />
+                </label>
+                <Button variant="contained" type="submit">Submit</Button>
+            </form>
+            {sessionId !== undefined && chartChannel()}
         </ZoomContext.Provider>
     );
 }

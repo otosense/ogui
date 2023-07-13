@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { APIresponse } from '../assets/sample';
 import InfiniteScroll from '../pages/InfiniteScroll';
@@ -78,9 +78,9 @@ const configuration = {
 
 const configuration2 = {
     apiHandler: {
-        endPoint: 'https://dummyjson.com/products', // API endpoint
-        fetchSize: 50,  // Fetch Data count
-        dataKey: 'products' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value Also to store column in local storage.
+        endPoint: 'http://52.188.113.129:8080/get_all_sessions', // API endpoint
+        fetchSize: 10,  // Fetch Data count
+        dataKey: 'get_all_sessions' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value Also to store column in local storage.
     },
     globalConfig: {
         // enablePinning: false,
@@ -104,57 +104,81 @@ const configuration2 = {
         // enableDensityToggle: false, // Enable density toggle padding property
         // enableFullScreenToggle: false, // Enable full screen toggle property
         // enableRowVirtualization: true, // Enable row virtualization,
-        hideColumnsDefault: ["images", , "description"] // Hide columns default
+        hideColumnsDefault: ["annotations", "channels"] // Hide columns default
     },
 
-    // rowExpandedDetails: ({ row }:any) => {
-    //   const { description } = row.original;
-    //   return <p>{description}</p>;
-    // },
-    columnConfig: [
-        {
-            header: 'thumbnail',
-            enableColumnFilter: false,
-            enableSorting: false,
-            filterFn: 'contains',
-            Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
-        },
-        {
-            header: 'height',
-            enableColumnFilter: false,
-            enableSorting: false,
-        },
-        {
-            header: 'title',
-            Cell: ({ cell }: { cell: any; }) => {
-                return (<p
-                    style={{
-                        color: colorCodes(),
-                    }}
-                // className='colorBox'
-                >{cell.getValue()}</p>);
+    rowExpandedDetails: ({ row }: any) => {
+        const { channels, annotations } = row.original;
+        return (
+            <>
+                {annotations.map((annotation, i) => {
 
+                    const entries = Object.entries(annotation);
+                    return (
+                        <Box className="row-expand" key={i}>
+                            {entries.map(([key, values]) => (
+                                <Typography key={key}>
+                                    <b>{key}:</b> {values}
+                                </Typography>
+                            ))}
+                        </Box>
+                    );
+                })}
+                <Box className="row-expand">
+                    <Typography>
+                        <b>Channels: {channels.map((channel, i) => {
 
-                function colorCodes() {
-                    // return cell.row.original.category === "smartphones" ? "Red" : "Green";
-                    switch (cell.row.original.category) {
-                        case "smartphones":
-                            return "Red";
-                            break;
-                        case "laptops":
-                            return "yellow";
-                            break;
-                        case "skincare":
-                            return "green";
-                            break;
-                        default:
-                            return "black";
-                            break;
-                    }
-                }
-            }
-        }
-    ]
+                            if (Array.isArray(channels) && channels.length > 0) {
+                                const firstItem = channels[0];
+                                if (typeof firstItem === 'string') {
+                                    // Logic for array of strings
+                                    return channel;
+                                } else if (typeof firstItem === 'object' && !Array.isArray(firstItem)) {
+                                    // Logic for array of objects
+                                    const entries = Object.entries(channel);
+                                    return (
+                                        <Box className="row-expand" key={i}>
+                                            {entries.map(([key, values]) => (
+                                                <Typography key={key}>
+                                                    <b>{key}:</b> {values}
+                                                </Typography>
+                                            ))}
+                                        </Box>
+                                    );
+                                } else {
+                                    // Invalid channel format
+                                    return '';
+                                }
+                            } else {
+                                // Empty channel or not an array
+                                return channel;
+                            }
+                            // if (typeof channel === 'object') {
+                            //     if (channel?.hasownProperty('name') || channel?.hasownProperty('description')) {
+                            //         const entries = Object.entries(channel);
+                            //         return (
+                            //             <Box className="row-expand" key={i}>
+                            //                 {entries.map(([key, values]) => (
+                            //                     <Typography key={key}>
+                            //                         <b>{key}:</b> {values}
+                            //                     </Typography>
+                            //                 ))}
+                            //             </Box>
+                            //         );
+                            //     }
+                            // }
+                            // else {
+                            //     return channel;
+                            // }
+                        })}</b>
+                    </Typography>
+                </Box>
+            </>
+        );
+    },
+    // columnConfig: [
+
+    // ]
 
 };
 
@@ -282,10 +306,10 @@ function TableConfigs() {
 
     return (
         <>
-            <InfiniteScroll config={configuration} />
+            {/* <InfiniteScroll config={configuration} /> */}
             <InfiniteScroll config={configuration2} />
-            <InfiniteScroll config={configuration3} />
-            <InfiniteScroll config={configuration4} />
+            {/* <InfiniteScroll config={configuration3} /> */}
+            {/* <InfiniteScroll config={configuration4} /> */}
         </>
     );
 }

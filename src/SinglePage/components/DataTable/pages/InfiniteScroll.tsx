@@ -1,4 +1,4 @@
-import {
+import React, {
     UIEvent,
     memo,
     useCallback,
@@ -75,8 +75,11 @@ const InfiniteScroll = ({ config }: any) => {
     flatData = useMemo(() => {
         let tableData;
         if (config.apiHandler && config.apiHandler.endPoint) {
+            console.log('data', data);
             if (!data) return [];
-            tableData = data.pages.flatMap((page: any) => page[dataKey]);
+            // tableData = data.pages.flatMap((page: any) => page[dataKey]);
+            tableData = data.pages[0].data;
+            console.log('tableData', tableData);
         } else {
             data = config.data;
             if (!data) return [];
@@ -84,6 +87,8 @@ const InfiniteScroll = ({ config }: any) => {
             isError = false;
             isLoading = false;
         }
+
+        console.log('tableData', tableData);
         setFlatRowData(tableData);
         return tableData;
     }, [data]);
@@ -93,7 +98,8 @@ const InfiniteScroll = ({ config }: any) => {
         let firstRow;
         if (config.apiHandler && config.apiHandler.endPoint) {
             if (!data) return [];
-            firstRow = data?.pages[0]?.[dataKey]?.[0];
+            // firstRow = data?.pages[0]?.[dataKey]?.[0];
+            firstRow = data.pages[0]?.data?.[0];
         } else {
             data = config.data;
             if (!data) return [];
@@ -112,6 +118,7 @@ const InfiniteScroll = ({ config }: any) => {
             if (containerRefElement) {
                 const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
                 //once the user has scrolled within 400px of the bottom of the table, fetch more data if we can
+                console.log('clientHeight', clientHeight);
                 if (
                     scrollHeight - scrollTop - clientHeight < 400 &&
                     !isFetching &&
@@ -140,8 +147,8 @@ const InfiniteScroll = ({ config }: any) => {
         fetchMoreOnBottomReached(tableContainerRef.current);
     }, [fetchMoreOnBottomReached]);
 
-    if (isLoading) return <div><CircularProgress /> <h3>  Loading...</h3></div>;
-
+    if (isLoading) return <div className='loader'><CircularProgress /> <h3>  Loading...</h3></div>;
+    console.log('flatRowData', flatRowData);
     return (
         <>
             <section> {!isLoading &&

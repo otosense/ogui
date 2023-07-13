@@ -516,9 +516,11 @@ p.lineInfo {
 .row-expand {
   display: flex;
   justify-content: space-between;
-  width: 25%;
+  /* width: 25%; */
   text-align: left;
+  border: 1px solid #ccc;
   flex-direction: column;
+  padding: 10px;
 }
 
 /* ======================= Data Table CSS Ends here  =======================*/

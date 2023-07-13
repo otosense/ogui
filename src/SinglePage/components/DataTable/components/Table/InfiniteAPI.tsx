@@ -10,15 +10,21 @@ export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFil
         queryFn: async ({ pageParam = 0 }) => {
             const baseUrl = endPoint;
             const params = new URLSearchParams();
-
-            params.set('start', `${pageParam * fetchSize}`);
-            params.set('limit', `${fetchSize}`);
-            params.set('filters', JSON.stringify(columnFilters ?? []));
-            params.set('globalFilter', globalFilter ?? '');
-            params.set('sorting', JSON.stringify(sorting ?? []));
+            const from = pageParam * fetchSize;
+            // params.set('start', `${pageParam * fetchSize}`);
+            // params.set('limit', `${fetchSize}`);
+            // params.set('filters', JSON.stringify(columnFilters ?? []));
+            // params.set('globalFilter', globalFilter ?? '');
+            // params.set('sorting', JSON.stringify(sorting ?? []));
 
             const url = `${baseUrl}?${params.toString()}`;
-            const response = await axios.get<UserApiResponse>(url);
+            const response = await axios.post<UserApiResponse>(url, {
+                // "from_": `${Number(pageParam * fetchSize)}`,
+                // "to_": `${Number(fetchSize)}`
+
+                "from_": Number(from),
+                "to_": Number(from + fetchSize)
+            });
             return response.data;
         },
         getNextPageParam: (_lastGroup, groups) => groups.length,

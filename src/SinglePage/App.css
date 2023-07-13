@@ -387,7 +387,14 @@ select#dagList {
   background-color: #ccc;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  /* width: 100%; */
+  width: 49%;
+}
+
+.chartArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .loadMoreButton {

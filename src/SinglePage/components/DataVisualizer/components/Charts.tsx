@@ -14,6 +14,7 @@ export default function Charts() {
     const [zoomLevel, setZoomLevel] = useState<IZoomRange>();
     const [sessionId, setSessionId] = useState<string>();
     const [sessionDetails, SetSessionDetails] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
@@ -99,11 +100,11 @@ export default function Charts() {
         return sessionDetails.map((sessionDetail: any, index: number) => {
             console.log('sessionDetail', sessionDetail);
             if (sessionDetail.data_type === "annot") {
-                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} configs={undefined} data={sessionDetail.data} />;
+                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data} />;
 
             }
             else if (sessionDetail.data_type === "wf") {
-                return <DataTypeOne key={index} configs={undefined} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
+                return <DataTypeOne key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
             }
 
         });
@@ -122,17 +123,26 @@ export default function Charts() {
     };
     const handleSubmit = (e: { preventDefault: () => void; target: HTMLFormElement | undefined; }) => {
         // Prevent the browser from reloading the page
+        setIsLoading(true);
         e.preventDefault();
         getSessionDetails(sessionId);
 
     };
 
     const getSessionDetails = async (sessionId: string | undefined) => {
+        setIsLoading(true);
+        try {
+            const sessionIdPayload = { session_id: sessionId };
+            const response = await API.getSessionDetails(sessionIdPayload);
+            console.log('response', response);
+            SetSessionDetails(response);
+        } catch (error) {
+            console.error('Error retrieving session details:', error);
+            // Handle the error here
+        } finally {
+            setIsLoading(false);
 
-        const sessionIdPayload = { "session_id": sessionId };
-        const response = await API.getSessionDetails(sessionIdPayload);
-        console.log('response', response);
-        SetSessionDetails(response);
+        }
     };
 
     return (
@@ -140,11 +150,14 @@ export default function Charts() {
         <ZoomContext.Provider value={zoomLevel}>
             <form onSubmit={handleSubmit} className='FormSection'>
                 <label>
-                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} />
+                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
                 </label>
                 <Button variant="contained" type="submit">Submit</Button>
             </form>
-            {sessionId !== undefined && chartChannel()}
+            {!isLoading ?
+                <section className='chartArea'>
+                    {sessionId !== undefined && chartChannel()}
+                </section> : <h1>Loading...</h1>}
         </ZoomContext.Provider>
     );
 }

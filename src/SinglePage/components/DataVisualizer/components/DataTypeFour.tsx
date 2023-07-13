@@ -111,7 +111,18 @@ const DataTypeFour = (props: IProps) => {
             title: {
                 text: String('y_label'),
             },
-            categories: xAxisCategory
+            categories: xAxisCategory,
+            labels: {
+                formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+                    // Truncate the label text
+                    var maxLength = 4; // Maximum number of characters
+                    var label: string | number = this.value;
+                    if (label?.length > maxLength) {
+                        label = label?.substring(0, maxLength) + '...';
+                    }
+                    return String(label);
+                }
+            }
 
         },
         tooltip: {

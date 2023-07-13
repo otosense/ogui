@@ -21,6 +21,7 @@ const DataTypeOne = (props: IProps) => {
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
     const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchData = async () => {
         const newStart = start + 5000;
@@ -38,13 +39,15 @@ const DataTypeOne = (props: IProps) => {
         // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart) {
-            const updatedSeries = dataMapping(data); // Mapping the Data based on the data Type
+            const updatedSeries = dataMapping(data, setIsLoading); // Mapping the Data based on the data Type
             const yAxisData = updatedSeries?.flat().map((series: ISample) => series.value);
             const xAxisTs = updatedSeries?.flat().map((series: ISample) => series.time);
             // Update X Axis Data which is ts
-            setXCategory(xAxisTs);
+            // setXCategory(xAxisTs);
             // Update Y Axis Data 
-            chart.update({ series: [{ data: yAxisData }] }, false);
+            console.log('yAxisData', yAxisData);
+            setIsLoading(false);
+            chart.update({ series: [{ data: yAxisData }] });
 
             // Handling Zoom and setting the zoom level in Global Store
             chart.update({
@@ -115,6 +118,8 @@ const DataTypeOne = (props: IProps) => {
             title: {
                 text: String('y_label')
             },
+            allowDecimals: false,
+            softMin: -100,
         },
         tooltip: {
             shared: true,
@@ -177,21 +182,26 @@ const DataTypeOne = (props: IProps) => {
     };
     return (
         <div className='chartParent'>
-            <HighchartsReact
-                highcharts={Highcharts}
-                ref={chartRef}
-                options={options}
-                constructorType={'stockChart'} // use stockChart constructor
-            />
-            <button onClick={handlePan} className='loadMoreButton'>Load More</button>
+            {!isLoading ?
+                <>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        ref={chartRef}
+                        options={options}
+                        constructorType={'stockChart'} // use stockChart constructor
+                    />
+                    <button onClick={handlePan} className='loadMoreButton'>Load More</button>
+                </>
+                : <h1>Loading...</h1>}
         </div>
     );
 };
 // type: IChannelMappingResponse 
 export default memo(DataTypeOne);
 
-function dataMapping(data: IChannelMappingResponse[]): ISample[][] {
+function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISample[][] {
     // looping the initial data from the local state 
+    setIsLoading(true);
     console.log('data before', data);
     return data.map((channel: IChannelMappingResponse) => {
         // extracting { data, sr, ts } 

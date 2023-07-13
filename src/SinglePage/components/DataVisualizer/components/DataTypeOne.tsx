@@ -45,7 +45,7 @@ const DataTypeOne = (props: IProps) => {
             // Update X Axis Data which is ts
             // setXCategory(xAxisTs);
             // Update Y Axis Data 
-            console.log('yAxisData', yAxisData);
+            // console.log('yAxisData', yAxisData);
             setIsLoading(false);
             chart.update({ series: [{ data: yAxisData }] });
 
@@ -114,12 +114,13 @@ const DataTypeOne = (props: IProps) => {
         yAxis: {
             lineWidth: 1,
             opposite: false,
-            type: 'logarithmic',
+            type: 'linear',
             title: {
                 text: String('y_label')
             },
             allowDecimals: false,
-            softMin: -100,
+            // min: -10000
+            // softMin: -1,
         },
         tooltip: {
             shared: true,
@@ -202,10 +203,10 @@ export default memo(DataTypeOne);
 function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISample[][] {
     // looping the initial data from the local state 
     setIsLoading(true);
-    console.log('data before', data);
+    // console.log('data before', data);
     return data.map((channel: IChannelMappingResponse) => {
         // extracting { data, sr, ts } 
-        console.log('channel', channel);
+        // console.log('channel', channel);
         let { data, sr, ts } = channel;
         // converting the backend time to Epoch time and with proper sample rate and interval
         let timeDifferBetweenSamples = sr / (1000 * 1000);
@@ -217,7 +218,7 @@ function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISampl
                 sampleTime = sampleTime + timeDifferBetweenSamples;
             }
             let sample = { value: sampleValue, time: epochConverted(sampleTime) }; // conversion fo epoch time to human readable
-            console.log('sample', sample);
+            // console.log('sample', sample);
             sampledData.push(sample);
         });
         return sampledData;

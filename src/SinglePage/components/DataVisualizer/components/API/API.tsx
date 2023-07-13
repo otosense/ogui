@@ -28,9 +28,16 @@ const GetMethod = async (url: any) => {
     return response.data;
 };
 
+
 async function PostMethod(url: string, data: any) {
-    const response = await axios.post(url, data);
-    return response.data;
+    try {
+        const response = await axios.post(url, data);
+        return response.data;
+    } catch (error: any) {
+        // Handle the error here
+        console.error('Error in API request:', error.response.data.error);
+        throw error.response.data.error;
+    }
 }
 
 export function viewConfig() {

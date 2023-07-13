@@ -6,31 +6,42 @@ import DataTypeThree from './DataTypeThree';
 import DataTypeOne from './DataTypeOne';
 import { IViewProps, IZoomRange } from './API/interfaces';
 import { Button, TextField } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+const fetchSize = 1000;
+const from = 0 * fetchSize;
 
 // Handling Global Store Zoom Properties to pass for other components
 export const ZoomContext = React.createContext<IZoomRange | null>(null);
 export default function Charts() {
-    const [viewConfigs, setViewConfigs] = useState([]);
     const [zoomLevel, setZoomLevel] = useState<IZoomRange>();
     const [sessionId, setSessionId] = useState<string>();
-    const [sessionDetails, SetSessionDetails] = useState<any>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [initialSize, setInitialSize] = useState<number>(0);
+    const [storeChartData, setStoreChartData] = useState<any[]>([]);
+
+    const { data, status, error, isLoading, mutate } = useMutation(API.getSessionDetails);
+
+    if (isLoading) {
+        return <div className="loader">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error">{`Error: ${error}`}</div>;
+    }
+
+    // useEffect(() => {
+    //     setStoreChartData(data);
+    //     if (data) {
+    //         return setStoreChartData((prev: any[]) => [...prev, data]);
+    //     }
+    // }, [data]);
+
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
         setZoomLevel({ min, max });
     };
-    useEffect(() => {
-        // when page Loaded calling ViewConfig API
-        fetchData();
-    }, []);
 
-    const fetchData = async () => {
-        // ViewConfig API Called
-        const response = await API.viewConfig();
-        // Saved in Local Component state
-        setViewConfigs(response.data);
-    };
 
 
     // Configurations for Dev Users
@@ -97,7 +108,7 @@ export default function Charts() {
 
     const chartChannel = () => {
 
-        return sessionDetails.map((sessionDetail: any, index: number) => {
+        return data?.map((sessionDetail: any, index: number) => {
             console.log('sessionDetail', sessionDetail);
             if (sessionDetail.data_type === "annot") {
                 return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data} />;
@@ -121,30 +132,36 @@ export default function Charts() {
         //     }
         // });
     };
-    const handleSubmit = (e: { preventDefault: () => void; target: HTMLFormElement | undefined; }) => {
+    const handleSubmit = (e: any) => {
         // Prevent the browser from reloading the page
-        setIsLoading(true);
         e.preventDefault();
-        getSessionDetails(sessionId);
+        setInitialSize(initialSize + fetchSize);
+        const sessionIdPayload = {
+            session_id: sessionId,
+            "ann_from": initialSize,
+            "ann_to": initialSize + fetchSize,
+            "wf_from": initialSize,
+            "wf_to": initialSize + fetchSize,
 
+        };
+        mutate(sessionIdPayload);
     };
 
-    const getSessionDetails = async (sessionId: string | undefined) => {
-        setIsLoading(true);
-        try {
-            const sessionIdPayload = { session_id: sessionId };
-            const response = await API.getSessionDetails(sessionIdPayload);
-            console.log('response', response);
-            SetSessionDetails(response);
-        } catch (error) {
-            console.error('Error retrieving session details:', error);
-            // Handle the error here
-        } finally {
-            setIsLoading(false);
+    const loadMoreData = () => {
+        console.log('from:', initialSize);
+        console.log('initialSize:', initialSize, initialSize + fetchSize);
+        const sessionIdPayload = {
+            session_id: sessionId,
+            "ann_from": initialSize,
+            "ann_to": initialSize + fetchSize,
+            "wf_from": initialSize,
+            "wf_to": initialSize + fetchSize,
 
-        }
+        };
+        mutate(sessionIdPayload);
     };
 
+    console.log('storeChartData', storeChartData);
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
@@ -154,10 +171,10 @@ export default function Charts() {
                 </label>
                 <Button variant="contained" type="submit">Submit</Button>
             </form>
-            {!isLoading ?
-                <section className='chartArea'>
-                    {sessionId !== undefined && chartChannel()}
-                </section> : <h1>Loading...</h1>}
+            <button onClick={loadMoreData} className='loadMoreButton'>Load More</button>
+            <section className='chartArea'>
+                {sessionId !== undefined && chartChannel()}
+            </section>
         </ZoomContext.Provider>
     );
 }

@@ -5,6 +5,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
 import * as API from '../API/API';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Child {
     id: string;
@@ -85,40 +86,35 @@ const renderTree = (nodes: any, isRoot: boolean, i: number) => (
 
 
 const StoreView = () => {
-    const [deviceNodes, setDeviceNodes] = useState<Device[]>([]);
-    const [StoreConfig, setStoreConfig] = useState<Device[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        setDeviceNodes(StoreConfig);
-    }, [StoreConfig]);
+    useEffect(() => mutate({
+        "from_": Number(0),
+        "to_": Number(100)
+    }), []);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const queryClient = useQueryClient();
+    const { data, status, error, isLoading, mutate } = useMutation(API.StoreConfig);
+    { console.log({ data, status, error, isLoading }); }
 
-    const fetchData = async () => {
-        const response = await API.StoreConfig();
-        console.log('response', response);
-        setStoreConfig(response?.data || response);
-        setIsLoading(false);
-    };
+    if (isLoading) {
+        return <div className="loader">Loading...</div>;
+    }
 
+    if (error) {
+        return <div className="error">{`Error: ${error}`}</div>;
+    }
+    console.log('data', data?.data?.data, data?.data);
     return (
         <>
-            {isLoading ? (
-                // Show the loader while loading
-                <div>Loading...</div>
-            ) : (
-                // Render the tree view once the data is loaded
-                <TreeView
-                    aria-label="Store View"
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                >
-                    {deviceNodes.map((node, i) => renderTree(node, true, i))}
-                </TreeView>
-            )}
+
+            {/* // Render the tree view once the data is loaded */}
+            <TreeView
+                aria-label="Store View"
+                defaultCollapseIcon={<ExpandMoreIcon />}
+                defaultExpandIcon={<ChevronRightIcon />}
+            >
+                {data?.data?.map((node: any, i: number) => renderTree(node, true, i))}
+            </TreeView>
         </>
     );
 };

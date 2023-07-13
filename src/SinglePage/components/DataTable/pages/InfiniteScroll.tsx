@@ -78,7 +78,8 @@ const InfiniteScroll = ({ config }: any) => {
             console.log('data', data);
             if (!data) return [];
             // tableData = data.pages.flatMap((page: any) => page[dataKey]);
-            tableData = data.pages[0].data;
+
+            tableData = data.pages?.flatMap((page: any) => page.data);
             console.log('tableData', tableData);
         } else {
             data = config.data;

@@ -111,12 +111,11 @@ const configuration2 = {
         const { channels, annotations } = row.original;
         return (
             <>
-                {annotations.map((annotation, i) => {
-
+                {annotations?.map((annotation: { [s: string]: unknown; }, i: number) => {
                     const entries = Object.entries(annotation);
                     return (
                         <Box className="row-expand" key={i}>
-                            {entries.map(([key, values]) => (
+                            {entries.map(([key, values]: any) => (
                                 <Typography key={key}>
                                     <b>{key}:</b> {values}
                                 </Typography>
@@ -126,51 +125,7 @@ const configuration2 = {
                 })}
                 <Box className="row-expand">
                     <Typography>
-                        <b>Channels: {channels.map((channel, i) => {
-
-                            if (Array.isArray(channels) && channels.length > 0) {
-                                const firstItem = channels[0];
-                                if (typeof firstItem === 'string') {
-                                    // Logic for array of strings
-                                    return channel;
-                                } else if (typeof firstItem === 'object' && !Array.isArray(firstItem)) {
-                                    // Logic for array of objects
-                                    const entries = Object.entries(channel);
-                                    return (
-                                        <Box className="row-expand" key={i}>
-                                            {entries.map(([key, values]) => (
-                                                <Typography key={key}>
-                                                    <b>{key}:</b> {values}
-                                                </Typography>
-                                            ))}
-                                        </Box>
-                                    );
-                                } else {
-                                    // Invalid channel format
-                                    return '';
-                                }
-                            } else {
-                                // Empty channel or not an array
-                                return channel;
-                            }
-                            // if (typeof channel === 'object') {
-                            //     if (channel?.hasownProperty('name') || channel?.hasownProperty('description')) {
-                            //         const entries = Object.entries(channel);
-                            //         return (
-                            //             <Box className="row-expand" key={i}>
-                            //                 {entries.map(([key, values]) => (
-                            //                     <Typography key={key}>
-                            //                         <b>{key}:</b> {values}
-                            //                     </Typography>
-                            //                 ))}
-                            //             </Box>
-                            //         );
-                            //     }
-                            // }
-                            // else {
-                            //     return channel;
-                            // }
-                        })}</b>
+                        <b>Channels: {channels?.map((channel: string) => channel)} </b>
                     </Typography>
                 </Box>
             </>

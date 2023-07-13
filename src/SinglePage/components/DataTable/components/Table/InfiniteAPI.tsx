@@ -7,7 +7,14 @@ export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFil
     if (!endPoint) return {};
     return useInfiniteQuery<UserApiResponse>({
         queryKey: [dataKey, columnFilters, globalFilter, sorting],
-        queryFn: async ({ pageParam = 0 }) => {
+        queryFn: fetchingNewData(),
+        getNextPageParam: (_lastGroup, groups) => groups.length,
+        keepPreviousData: true,
+        refetchOnWindowFocus: false,
+    });
+
+    function fetchingNewData() {
+        return async ({ pageParam = 0 }) => {
             const baseUrl = endPoint;
             const params = new URLSearchParams();
             const from = pageParam * fetchSize;
@@ -16,19 +23,12 @@ export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFil
             // params.set('filters', JSON.stringify(columnFilters ?? []));
             // params.set('globalFilter', globalFilter ?? '');
             // params.set('sorting', JSON.stringify(sorting ?? []));
-
             const url = `${baseUrl}?${params.toString()}`;
             const response = await axios.post<UserApiResponse>(url, {
-                // "from_": `${Number(pageParam * fetchSize)}`,
-                // "to_": `${Number(fetchSize)}`
-
                 "from_": Number(from),
                 "to_": Number(from + fetchSize)
             });
             return response.data;
-        },
-        getNextPageParam: (_lastGroup, groups) => groups.length,
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-    });
+        };
+    }
 }

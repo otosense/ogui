@@ -23,6 +23,7 @@ import { InfintieColumns } from '../components/Table/InfintieColumns';
 import { APIDataFetching } from '../components/Table/InfiniteAPI';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
+import LoadingOverlay from '../../../utilities/Loader';
 
 let flatData: any;
 let columns: MRT_ColumnDef<any>[];
@@ -148,10 +149,11 @@ const InfiniteScroll = ({ config }: any) => {
         fetchMoreOnBottomReached(tableContainerRef.current);
     }, [fetchMoreOnBottomReached]);
 
-    if (isLoading) return <div className='loader'><CircularProgress /> <h3>  Loading...</h3></div>;
+    // if (isLoading) return <div className='loader'><CircularProgress /> <h3>  Loading...</h3></div>;
     console.log('flatRowData', flatRowData);
     return (
         <>
+            {isLoading && <LoadingOverlay />}
             <section> {!isLoading &&
                 <MaterialReactTable
                     columns={columns} // Columns For Table 

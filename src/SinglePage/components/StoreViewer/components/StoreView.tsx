@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import TreeItem from '@mui/lab/TreeItem';
-import * as API from '../API/API';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import TextField from '@mui/material/TextField/TextField';
+import LoadingOverlay from '../../../utilities/Loader';
+import Button from '@mui/material/Button/Button';
+
+import * as API from '../API/API';
 
 interface Child {
     id: string;
@@ -105,15 +110,8 @@ const StoreView = () => {
     const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
     const [storeData, setStoreData] = useState({ data: [] });
 
-    // useEffect(() => mutate({
-    //     "from_": Number(0),
-    //     "to_": Number(100)
-    // }), []);
 
 
-    const loadMore = () => {
-        setPasser({ "from_": Number(passer.to_), "to_": Number(passer.to_ + fetchSize) });
-    };
     const { data, status, error, isLoading } = useQuery({
         queryKey: ['StoreConfig', passer],
         queryFn: async () => {
@@ -131,12 +129,18 @@ const StoreView = () => {
         // },
     });
 
+
+    const loadMore = () => {
+        setPasser({ "from_": Number(passer.to_), "to_": Number(passer.to_ + fetchSize) });
+    };
+
+
     useEffect(() => {
         if (!isLoading && status === 'success' && data) {
             setStoreData((prevData: any) => {
-                const newData = data.data.filter((newItem) => {
+                const newData = data.data.filter((newItem: { id: any; }) => {
                     // Check if the newItem already exists in prevData.data
-                    return !prevData.data.some((item) => item.id === newItem.id);
+                    return !prevData.data.some((item: { id: any; }) => item.id === newItem.id);
                 });
 
                 return {
@@ -147,6 +151,18 @@ const StoreView = () => {
         }
     }, [data, isLoading, status]);
 
+    useEffect(() => {
+        if (storeData.data) {
+            // Filter the data based on the search query
+            const filteredData = filterData(storeData.data, searchQuery);
+            setSearchResults(filteredData);
+        }
+    }, [storeData, searchQuery]);
+
+    // useEffect(() => mutate({
+    //     "from_": Number(0),
+    //     "to_": Number(100)
+    // }), []);
 
     // const queryClient = useQueryClient();
     // const newLocal = async () => {
@@ -155,27 +171,12 @@ const StoreView = () => {
     // const { data, status, error, isLoading, mutate } = useMutation(API.StoreConfig);
 
     // { console.log({ data, status, error, isLoading }); }
-    console.log('storeData', storeData);
-    const handleSearchQueryChange = (event) => {
+    const handleSearchQueryChange = (event: { target: { value: string; }; }) => {
         setSearchQuery(event.target.value);
     };
 
-    useEffect(() => {
-        // if (data && data.data) {
-        //     // Filter the data based on the search query
-        //     const filteredData = filterData(data.data, searchQuery);
-        //     setSearchResults(filteredData);
-        // }
-
-        if (storeData.data) {
-            // Filter the data based on the search query
-            const filteredData = filterData(storeData.data, searchQuery);
-            setSearchResults(filteredData);
-        }
-    }, [storeData, searchQuery]);
-
-    const filterData = (nodes, query) => {
-        const filteredNodes = nodes.filter((node) => {
+    const filterData = (nodes: string | any[], query: string) => {
+        const filteredNodes = nodes?.filter((node: { id: string; children: string | any[]; }) => {
             // Check if the node's label matches the search query
             if (node.id.toLowerCase().includes(query.toLowerCase())) {
                 return true;
@@ -190,32 +191,32 @@ const StoreView = () => {
         return filteredNodes;
     };
 
-
-    if (isLoading) {
-        return <div className="loader">Loading...</div>;
-    }
-
     if (error) {
         return <div className="error">{`Error: ${error}`}</div>;
     }
     return (
         <>
-            {/* <input type="text" value={searchQuery} onChange={handleSearchQueryChange} placeholder="Search" /> */}
-            <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required />
+            {isLoading && <LoadingOverlay />}
+            <section className="topLayout">
+                <TextField fullWidth id="myInput" label="Search Session Id" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required />
+                <Button variant="contained" onClick={loadMore} >Load More</Button>
+            </section>
 
-            <button onClick={loadMore}>Click</button>
+            <section className='storeViewerLayout'>
+                <TreeView
+                    aria-label="Store View"
+                    // defaultCollapseIcon={<ExpandMoreIcon />}
+                    // defaultExpandIcon={<ChevronRightIcon />}
+                    defaultCollapseIcon={<IndeterminateCheckBoxIcon />}
+                    defaultExpandIcon={<AddBoxIcon />}
 
-            <TreeView
-                aria-label="Store View"
-                defaultCollapseIcon={<ExpandMoreIcon />}
-                defaultExpandIcon={<ChevronRightIcon />}
-            >
-                {searchResults.length > 0 ? (
-                    searchResults.map((node, i) => renderTree(node, true, i, searchQuery))
-                ) : (
-                    <TreeItem nodeId="no-results" label="No matching nodes found" />
-                )}
-            </TreeView>
+                >
+                    {searchResults.length > 0 ? (
+                        searchResults.map((node, i) => renderTree(node, true, i, searchQuery))
+                    ) : (!isLoading && <TreeItem nodeId="no-results" label="No matching nodes found" />)
+                    }
+                </TreeView>
+            </section>
         </>
     );
 

@@ -532,6 +532,30 @@ p.lineInfo {
   position: relative;
 }
 
+section.topLayout {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.MuiTreeItem-content {
+  padding: 0.5% 5px !important;
+}
+
+.sessionIdBox {
+  width: 35% !important;
+}
+
+section.storeViewerLayout {
+  width: 35%;
+}
+
 button.copy {
   position: absolute;
   right: 0;
@@ -542,9 +566,9 @@ button.copy {
   cursor: pointer
 }
 
-section.outlets.storeView {
+/* section.outlets.storeView {
   width: 30%;
-}
+} */
 
 .MuiSvgIcon-root:focus,
 button.copy:focus {

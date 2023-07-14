@@ -11,6 +11,8 @@ export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFil
         getNextPageParam: (_lastGroup, groups) => groups.length,
         keepPreviousData: true,
         refetchOnWindowFocus: false,
+        cacheTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 1 * 60 * 1000, // 1 minute
     });
 
     function fetchingNewData() {

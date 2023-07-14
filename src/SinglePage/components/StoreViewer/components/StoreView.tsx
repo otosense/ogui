@@ -5,7 +5,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
 import * as API from '../API/API';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import TextField from '@mui/material/TextField/TextField';
 
 interface Child {
@@ -98,30 +98,81 @@ const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string)
 
 
 const StoreView = () => {
+    const fetchSize = 10;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
+    const [storeData, setStoreData] = useState({ data: [] });
 
-    useEffect(() => mutate({
-        "from_": Number(0),
-        "to_": Number(100)
-    }), []);
+    // useEffect(() => mutate({
+    //     "from_": Number(0),
+    //     "to_": Number(100)
+    // }), []);
 
-    const queryClient = useQueryClient();
-    const { data, status, error, isLoading, mutate } = useMutation(API.StoreConfig);
+
+    const loadMore = () => {
+        setPasser({ "from_": Number(passer.to_), "to_": Number(passer.to_ + fetchSize) });
+    };
+    const { data, status, error, isLoading } = useQuery({
+        queryKey: ['StoreConfig', passer],
+        queryFn: async () => {
+            return API.StoreConfig(passer);
+        },
+        keepPreviousData: false,
+        refetchOnWindowFocus: false,
+        cacheTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 1 * 60 * 1000, // 1 minute
+        // onSuccess: (data) => {
+        //     setStoreData((prevData: any) => ({
+        //         ...prevData,
+        //         data: [...prevData.data, ...data.data],
+        //     }));
+        // },
+    });
+
+    useEffect(() => {
+        if (!isLoading && status === 'success' && data) {
+            setStoreData((prevData: any) => {
+                const newData = data.data.filter((newItem) => {
+                    // Check if the newItem already exists in prevData.data
+                    return !prevData.data.some((item) => item.id === newItem.id);
+                });
+
+                return {
+                    ...prevData,
+                    data: [...prevData.data, ...newData],
+                };
+            });
+        }
+    }, [data, isLoading, status]);
+
+
+    // const queryClient = useQueryClient();
+    // const newLocal = async () => {
+    //     return API.StoreConfig(passer);
+    // };
+    // const { data, status, error, isLoading, mutate } = useMutation(API.StoreConfig);
+
     // { console.log({ data, status, error, isLoading }); }
-
+    console.log('storeData', storeData);
     const handleSearchQueryChange = (event) => {
         setSearchQuery(event.target.value);
     };
 
     useEffect(() => {
-        if (data && data.data) {
+        // if (data && data.data) {
+        //     // Filter the data based on the search query
+        //     const filteredData = filterData(data.data, searchQuery);
+        //     setSearchResults(filteredData);
+        // }
+
+        if (storeData.data) {
             // Filter the data based on the search query
-            const filteredData = filterData(data.data, searchQuery);
+            const filteredData = filterData(storeData.data, searchQuery);
             setSearchResults(filteredData);
         }
-    }, [data, searchQuery]);
+    }, [storeData, searchQuery]);
 
     const filterData = (nodes, query) => {
         const filteredNodes = nodes.filter((node) => {
@@ -151,6 +202,8 @@ const StoreView = () => {
         <>
             {/* <input type="text" value={searchQuery} onChange={handleSearchQueryChange} placeholder="Search" /> */}
             <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required />
+
+            <button onClick={loadMore}>Click</button>
 
             <TreeView
                 aria-label="Store View"

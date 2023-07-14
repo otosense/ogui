@@ -6,7 +6,8 @@ import { UserApiResponse } from "../../assets/Interfaces";
 export function APIDataFetching(columnFilters: MRT_ColumnFiltersState, globalFilter: any, sorting: MRT_SortingState, fetchSize: number, endPoint: string, dataKey: String) {
     if (!endPoint) return {};
     return useInfiniteQuery<UserApiResponse>({
-        queryKey: [dataKey, columnFilters, globalFilter, sorting],
+        // queryKey: [dataKey, columnFilters, globalFilter, sorting], // fetch API is any change happened in columnFilters, globalFilter, sorting 
+        queryKey: [dataKey],
         queryFn: fetchingNewData(),
         getNextPageParam: (_lastGroup, groups) => groups.length,
         keepPreviousData: true,

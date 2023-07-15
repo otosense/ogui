@@ -54,7 +54,7 @@ export function getData(channel: string, min: number = 0, max: number = 0) {
     return GetMethod(url);
 }
 
-export function getSessionDetails(data: string) {
+export function getSessionDetails(data: any) {
     // const url = `${ApiUrl.baseURl + '/' + channel}?from=${min}&to=${max}`;
     const url = `${ApiUrl.getSessionDetails}`;
 

@@ -6,7 +6,7 @@ import DataTypeThree from './DataTypeThree';
 import DataTypeOne from './DataTypeOne';
 import { IViewProps, IZoomRange } from './API/interfaces';
 import { Button, TextField } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const fetchSize = 1000;
 const from = 0 * fetchSize;
@@ -19,11 +19,36 @@ export default function Charts() {
     const [initialSize, setInitialSize] = useState<number>(0);
     const [storeChartData, setStoreChartData] = useState<any[]>([]);
 
-    const { data, status, error, isLoading, mutate } = useMutation(API.getSessionDetails);
 
-    if (isLoading) {
-        return <div className="loader">Loading...</div>;
-    }
+    const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
+    const [storeData, setStoreData] = useState({ data: [] });
+    const [sample, setSample] = useState({});
+
+    // const { data, status, error, isLoading, mutate } = useMutation(API.getSessionDetails);
+
+
+    const { data, status, error, isLoading, refetch } = useQuery({
+        queryKey: ['StoreConfig', sample],
+        queryFn: async () => {
+            return API.getSessionDetails(sample);
+        },
+        keepPreviousData: false,
+        refetchOnWindowFocus: false,
+        cacheTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 1 * 60 * 1000, // 1 minute
+        enabled: false, // Set enabled to false initially
+        // onSuccess: (data) => {
+        //     setStoreData((prevData: any) => ({
+        //         ...prevData,
+        //         data: [...prevData.data, ...data.data],
+        //     }));
+        // },
+    });
+
+
+    // if (isLoading) {
+    //     return <div className="loader">Loading...</div>;
+    // }
 
     if (error) {
         return <div className="error">{`Error: ${error}`}</div>;
@@ -62,49 +87,6 @@ export default function Charts() {
         // combineZoom: false
     };
 
-    /* 
-    Note: Which Smart Components supports which DataType are mentioned below
-
-    DataTypeOne => will have data Structure like ( wf, plc )below 
-    
-    ```
-        "data": [0,0,0]
-    ```
-    DataTypeTwo =>  will have data Structure like (volume) below 
-
-    ```
-        "data": [
-            {
-                "value": 0.4685317155388221,
-                "ts": 0.6031073392919892
-            },
-        ] 
-    ```
-
-    DataTypeThree =>  will have data Structure like (mixed) below 
-
-    ```
-        "data": [
-                {
-                    "values": {
-                        "mean": 0.00014688624667242239,
-                        "std": 0.476557482488626
-                    },
-                    "ts": 0.35223049787552263
-                }
-            ]
-    ```
-
-    DataTypeThree =>  will have data Structure like (Annotations) below :
-
-    ```
-          "data": [
-                { "tag": "normal", "bt": 1.3555504237496248, "tt": 3.0553881157382206 }
-            ];
-    ```
-   */
-
-    // Mapping of Chart to Smart Components based on data_type, for data_type, please refer above comments
 
     const chartChannel = () => {
 
@@ -144,8 +126,17 @@ export default function Charts() {
             "wf_to": initialSize + fetchSize,
 
         };
-        mutate(sessionIdPayload);
+        setSample(sessionIdPayload);
+        // refetch(); //
+        // mutate(sessionIdPayload);
     };
+
+    useEffect(() => {
+        if (Object.keys(sample).length > 0) {
+            refetch();
+        }
+    }, [sample]);
+
 
     const loadMoreData = () => {
         console.log('from:', initialSize);
@@ -158,20 +149,33 @@ export default function Charts() {
             "wf_to": initialSize + fetchSize,
 
         };
-        mutate(sessionIdPayload);
+        setSample(sessionIdPayload);
+        // refetch(); //
+        // mutate(sessionIdPayload);
     };
 
-    console.log('storeChartData', storeChartData);
+    // console.log('storeChartData', storeChartData);
+    console.log('sample,', sample);
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
-            <form onSubmit={handleSubmit} className='FormSection'>
+            {/* <form onSubmit={handleSubmit} className='FormSection'>
                 <label>
                     <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
                 </label>
                 <Button variant="contained" type="submit">Submit</Button>
             </form>
-            <button onClick={loadMoreData} className='loadMoreButton'>Load More</button>
+            <button onClick={loadMoreData} className='loadMoreButton'>Load More</button> */}
+
+            <section className="topLayout">
+                <form onSubmit={handleSubmit} className='FormSection'>
+                    <label>
+                        <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
+                    </label>
+                    <Button variant="contained" type="submit">Submit</Button>
+                </form>
+                <Button variant="contained" onClick={loadMoreData} >Load More</Button>
+            </section>
             <section className='chartArea'>
                 {sessionId !== undefined && chartChannel()}
             </section>

@@ -38,14 +38,16 @@ export default function Charts() {
         staleTime: 1 * 60 * 1000, // 1 minute
         enabled: false, // Set enabled to false initially
         // onSuccess: (data) => {
+        //     console.log('onSuccess data', data);
         //     setStoreData((prevData: any) => ({
         //         ...prevData,
-        //         data: [...prevData.data, ...data.data],
+        //         data: [...prevData.data, ...data?.data],
         //     }));
         // },
     });
 
-    console.log({ data, status, error, isLoading, refetch });
+    // console.log('storeData', storeData);
+
     if (isLoading && data) {
         return <div className="loader">Loading...</div>;
     }
@@ -81,11 +83,15 @@ export default function Charts() {
 
 
     const chartChannel = () => {
+        // console.log('storeChartData', storeChartData);
 
-        return data?.map((sessionDetail: any, index: number) => {
-            console.log('sessionDetail', sessionDetail);
+        // storeChartData.map((ss, i) => {
+        //     console.log('ss', ss.data[0]);
+        // });
+        return storeChartData?.map((sessionDetail: any, index: number) => {
+            // console.log('sessionDetail', sessionDetail.data);
             if (sessionDetail.data_type === "annot") {
-                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data} />;
+                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data[0]} />;
 
             }
             else if (sessionDetail.data_type === "wf") {
@@ -104,8 +110,31 @@ export default function Charts() {
     useEffect(() => {
         if (Object.keys(sample).length > 0) {
             refetch().then((data) => {
+
+
                 if (data) {
-                    setStoreChartData((prevData) => [...prevData, ...data.data]);
+                    data.data.forEach((eachChannel) => {
+
+                        // console.log(`eachChannel`, eachChannel);
+                        const existingChannelIndex = storeChartData.findIndex(
+                            (item) => item.data_type === eachChannel.data_type
+                        );
+
+                        if (existingChannelIndex !== -1) {
+                            // If the channel already exists, push the new data to the existing channel's 'data' array
+                            // console.log('storeChartData[existingChannelIndex].data', storeChartData[existingChannelIndex].data[0]?.[0]?.data);
+                            // console.log('pushing existing channel', eachChannel.data?.[0]?.data);
+                            storeChartData[existingChannelIndex].data[0]?.[0]?.data?.push(...eachChannel.data?.[0]?.data);
+                        } else {
+                            // If the channel doesn't exist, create a new channel with the 'data' array
+                            storeChartData.push({
+                                data_type: eachChannel.data_type,
+                                data: [eachChannel.data],
+                            });
+                        }
+
+                        setStoreChartData(storeChartData);
+                    });
                 }
             });
         }
@@ -116,27 +145,21 @@ export default function Charts() {
         payloadSetting(sessionId, initialSize, setSample);
     };
 
+
+    // useEffect(() => {
+    //     console.log('storeChartData', storeChartData);
+    // }, [storeChartData]);
+
     console.log('storeChartData', storeChartData);
-    console.log('sample,', sample);
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
-            {/* <form onSubmit={handleSubmit} className='FormSection'>
-                <label>
-                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
-                </label>
-                <Button variant="contained" type="submit">Submit</Button>
-            </form>
-            <button onClick={loadMoreData} className='loadMoreButton'>Load More</button> */}
-
             <section className="topLayout">
                 <form onSubmit={handleSubmit} className='FormSection'>
-                    <label>
-                        <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='sessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
-                    </label>
+                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='getSessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
                     <Button variant="contained" type="submit">Submit</Button>
                 </form>
-                <Button variant="contained" onClick={loadMoreData} >Load More</Button>
+                {storeChartData.length > 0 && <Button variant="contained" onClick={loadMoreData} >Load More</Button>}
             </section>
             <section className='chartArea'>
                 {sessionId !== undefined && chartChannel()}

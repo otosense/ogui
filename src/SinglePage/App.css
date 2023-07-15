@@ -407,6 +407,9 @@ select#dagList {
   color: #fff;
 }
 
+.getSessionIdBox {
+  width: 75% !important;
+}
 
 
 .FormSection {
@@ -414,7 +417,6 @@ select#dagList {
   justify-content: space-between;
   align-items: center;
   width: 50%;
-  margin-bottom: 10px;
 }
 
 /* ======================= Data Visualization CSS Ends here  =======================*/

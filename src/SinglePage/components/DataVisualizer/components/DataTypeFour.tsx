@@ -59,7 +59,7 @@ const DataTypeFour = (props: IProps) => {
                 },
             });
         }
-    }, [data]);
+    }, [props]);
 
     useEffect(() => {
         // updating the Zoom level from the Global Store if any changes are made on other charts
@@ -194,6 +194,9 @@ const DataTypeFour = (props: IProps) => {
         },
         rangeSelector: {
             enabled: false // enable the range selector
+        },
+        accessibility: {
+            enabled: false
         },
     };
 

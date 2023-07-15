@@ -11,34 +11,36 @@ import { ZoomContext } from './Charts';
 HighchartsStock(Highcharts); // initialize the module
 
 const DataTypeOne = (props: IProps) => {
+    console.log('props', props.data);
     // Props Received from the Charts.tsx component from Backend API
     // const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
     // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
     // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelMappingResponse[]>(props.data); // handling Data for visualization
+    const [data, setData] = useState<IChannelMappingResponse[]>(props.data[0]); // handling Data for visualization
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
     const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchData = async () => {
-        const newStart = start + 5000;
-        setStart(newStart);
-        // Note: Mapping Data based on src_channels 
-        // await implicitChannelMapping(src_channels, start, newStart, data, setData);
-    };
+    // const fetchData = async () => {
+    //     const newStart = start + 5000;
+    //     setStart(newStart);
+    //     // Note: Mapping Data based on src_channels 
+    //     // await implicitChannelMapping(src_channels, start, newStart, data, setData);
+    // };
 
-    useEffect(() => {
-        // when component Loaded respective API from the backend
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     // when component Loaded respective API from the backend
+    //     fetchData();
+    // }, []);
 
     useEffect(() => {
         // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart) {
+            console.log('data', data);
             const updatedSeries = dataMapping(data, setIsLoading); // Mapping the Data based on the data Type
             const yAxisData = updatedSeries?.flat().map((series: ISample) => series.value);
             const xAxisTs = updatedSeries?.flat().map((series: ISample) => series.time);
@@ -63,17 +65,17 @@ const DataTypeOne = (props: IProps) => {
             // Re-Draw the chart default behavior of the Highcharts
             chart.redraw();
         }
-    }, [data]);
+    }, [props]);
 
     useEffect(() => {
         // updating the Zoom level from the Global Store if any changes are made on other charts
         updatingZoomFromGlobalStore(chartRef, zoomLevel, combineZoom);
     }, [zoomLevel]);
 
-    const handlePan = () => {
-        // when LoadMore is clicked calling the next set of data from backend
-        fetchData();
-    };
+    // const handlePan = () => {
+    //     // when LoadMore is clicked calling the next set of data from backend
+    //     fetchData();
+    // };
 
     // Chart Options
     /* 
@@ -125,7 +127,10 @@ const DataTypeOne = (props: IProps) => {
         tooltip: {
             shared: true,
             formatter(this: Highcharts.TooltipFormatterContextObject): string {
-                return `<b>${this.x}</b><br/><b>${this.y}</b>`;
+                // return `<b>${this.x}</b><br/><b>${this.y}</b>`;
+                console.log('this', this);
+
+                return `<b>${this.x}</b><br/><b>${Math.round(this.y)}</b>`; // Round
             },
         },
         legend: {
@@ -142,7 +147,8 @@ const DataTypeOne = (props: IProps) => {
         series: data.map((channel: IChannelMappingResponse) => (
             {
                 name: channel.channel,
-                turboThreshold: 100000,
+                // turboThreshold: 100000,
+                turboThreshold: Number.MAX_SAFE_INTEGER,
                 pointPadding: 1,
                 groupPadding: 1,
                 borderColor: 'gray',
@@ -159,6 +165,10 @@ const DataTypeOne = (props: IProps) => {
                         return String(this.value);
                     }
                 },
+                stickyTracking: true,
+                dataGrouping: {
+                    enabled: false
+                }
             }
         )),
         navigator: {
@@ -179,7 +189,10 @@ const DataTypeOne = (props: IProps) => {
         },
         rangeSelector: {
             enabled: false // enable the range selector
-        }
+        },
+        accessibility: {
+            enabled: false
+        },
     };
     return (
         <div className='chartParent'>
@@ -191,7 +204,7 @@ const DataTypeOne = (props: IProps) => {
                         options={options}
                         constructorType={'stockChart'} // use stockChart constructor
                     />
-                    <button onClick={handlePan} className='loadMoreButton'>Load More</button>
+                    {/* <button onClick={handlePan} className='loadMoreButton'>Load More</button> */}
                 </>
                 : <h1>Loading...</h1>}
         </div>
@@ -203,10 +216,10 @@ export default memo(DataTypeOne);
 function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISample[][] {
     // looping the initial data from the local state 
     setIsLoading(true);
+    console.log('called dataMapping');
     // console.log('data before', data);
     return data.map((channel: IChannelMappingResponse) => {
         // extracting { data, sr, ts } 
-        // console.log('channel', channel);
         let { data, sr, ts } = channel;
         // converting the backend time to Epoch time and with proper sample rate and interval
         let timeDifferBetweenSamples = sr / (1000 * 1000);
@@ -221,6 +234,7 @@ function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISampl
             // console.log('sample', sample);
             sampledData.push(sample);
         });
+        console.log('sampledData', sampledData);
         return sampledData;
     });
 }

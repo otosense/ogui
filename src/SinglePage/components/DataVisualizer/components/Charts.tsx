@@ -45,22 +45,14 @@ export default function Charts() {
         // },
     });
 
-
-    // if (isLoading) {
-    //     return <div className="loader">Loading...</div>;
-    // }
+    console.log({ data, status, error, isLoading, refetch });
+    if (isLoading && data) {
+        return <div className="loader">Loading...</div>;
+    }
 
     if (error) {
         return <div className="error">{`Error: ${error}`}</div>;
     }
-
-    // useEffect(() => {
-    //     setStoreChartData(data);
-    //     if (data) {
-    //         return setStoreChartData((prev: any[]) => [...prev, data]);
-    //     }
-    // }, [data]);
-
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
@@ -101,60 +93,30 @@ export default function Charts() {
             }
 
         });
-        // return viewConfigs.map((viewConfig: IViewProps, index: number) => {
-        //     const { data_type } = viewConfig;
-        //     if (data_type === "volume") {
-        //         return <DataTypeTwo key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeTwo} />;
-        //     } else if (data_type === "annot") {
-        //         return <DataTypeFour key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} />;
-        //     } else if (data_type === "wf") {
-        //         return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
-        //     } else if (data_type === "mixed") {
-        //         return <DataTypeThree key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeThree} />;
-        //     }
-        // });
     };
     const handleSubmit = (e: any) => {
         // Prevent the browser from reloading the page
         e.preventDefault();
         setInitialSize(initialSize + fetchSize);
-        const sessionIdPayload = {
-            session_id: sessionId,
-            "ann_from": initialSize,
-            "ann_to": initialSize + fetchSize,
-            "wf_from": initialSize,
-            "wf_to": initialSize + fetchSize,
-
-        };
-        setSample(sessionIdPayload);
-        // refetch(); //
-        // mutate(sessionIdPayload);
+        payloadSetting(sessionId, initialSize, setSample);
     };
 
     useEffect(() => {
         if (Object.keys(sample).length > 0) {
-            refetch();
+            refetch().then((data) => {
+                if (data) {
+                    setStoreChartData((prevData) => [...prevData, ...data.data]);
+                }
+            });
         }
     }, [sample]);
 
 
     const loadMoreData = () => {
-        console.log('from:', initialSize);
-        console.log('initialSize:', initialSize, initialSize + fetchSize);
-        const sessionIdPayload = {
-            session_id: sessionId,
-            "ann_from": initialSize,
-            "ann_to": initialSize + fetchSize,
-            "wf_from": initialSize,
-            "wf_to": initialSize + fetchSize,
-
-        };
-        setSample(sessionIdPayload);
-        // refetch(); //
-        // mutate(sessionIdPayload);
+        payloadSetting(sessionId, initialSize, setSample);
     };
 
-    // console.log('storeChartData', storeChartData);
+    console.log('storeChartData', storeChartData);
     console.log('sample,', sample);
     return (
         // React way of handling Context
@@ -182,3 +144,14 @@ export default function Charts() {
         </ZoomContext.Provider>
     );
 }
+function payloadSetting(sessionId: string | undefined, initialSize: number, setSample: React.Dispatch<React.SetStateAction<{}>>) {
+    const sessionIdPayload = {
+        session_id: sessionId,
+        "ann_from": initialSize,
+        "ann_to": initialSize + fetchSize,
+        "wf_from": initialSize,
+        "wf_to": initialSize + fetchSize,
+    };
+    setSample(sessionIdPayload);
+}
+

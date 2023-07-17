@@ -383,11 +383,11 @@ select#dagList {
 /* ======================= Data Visualization CSS Starts here  =======================*/
 .chartParent {
   position: relative;
-  border: 1px solid #eaeaea;
+  /* border: 1px solid #eaeaea;
   background-color: #ccc;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
   margin-bottom: 20px;
-  width: 49%;
+  width: 100%;
 }
 
 .chartArea {
@@ -395,6 +395,9 @@ select#dagList {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  border: 1px solid #eaeaea;
+  /* background-color: #ccc; */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .loadMoreButton {

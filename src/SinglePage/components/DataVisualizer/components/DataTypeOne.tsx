@@ -45,7 +45,7 @@ const DataTypeOne = (props: IProps) => {
             const yAxisData = updatedSeries?.flat().map((series: ISample) => series.value);
             const xAxisTs = updatedSeries?.flat().map((series: ISample) => series.time);
             // Update X Axis Data which is ts
-            // setXCategory(xAxisTs);
+            setXCategory(xAxisTs);
             // Update Y Axis Data 
             // console.log('yAxisData', yAxisData);
             setIsLoading(false);

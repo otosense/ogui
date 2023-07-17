@@ -95,6 +95,7 @@ const DataTypeFour = (props: IProps) => {
         },
         xAxis: {
             // type: "datetime",
+            visible: false,
             tickPixelInterval: 100,
             labels: {
                 formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
@@ -177,8 +178,8 @@ const DataTypeFour = (props: IProps) => {
         ],
 
         navigator: {
-            enabled: Boolean(minimap === undefined ? true : minimap),
-            // enabled: false,
+            // enabled: Boolean(minimap === undefined ? true : minimap),
+            enabled: false,
             adaptToUpdatedData: true,
             xAxis: {
                 labels: {

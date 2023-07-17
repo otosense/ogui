@@ -113,7 +113,7 @@ export default function Charts() {
 
 
                 if (data) {
-                    data.data.forEach((eachChannel) => {
+                    data.data?.forEach((eachChannel) => {
 
                         // console.log(`eachChannel`, eachChannel);
                         const existingChannelIndex = storeChartData.findIndex(

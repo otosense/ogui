@@ -1,7 +1,7 @@
 #root {
   max-width: 1920px;
   /* margin: 0 auto; */
-  padding: 2rem;
+  padding: 8px;
   /* text-align: center; */
   display: flex;
   /* justify-content: space-between; */
@@ -10,7 +10,7 @@
 }
 
 .navBar {
-  height: 93vh;
+  height: calc(100vh - 1vh);
   position: sticky;
   left: 0;
   top: 0;
@@ -21,14 +21,36 @@
 .activeLink {
   color: #3db5fe !important;
   font-weight: 800;
-  border-right: 5px solid #3db5fe !important;
+  border-left: 5px solid #3db5fe !important;
+}
+
+.activeLink .MuiTypography-root {
+  font-weight: 700;
+}
+
+.MuiListItem-padding {
+  border-bottom: 1px solid #CDCDCD !important;
+}
+
+.MuiListItem-padding:hover {
+  background-color: #DCF2FF !important;
+  color: #3db5fe !important;
+  /* border-bottom: 1px solid #CDCDCD !important; */
+}
+
+ul.MuiList-root.MuiList-padding {
+  padding-top: 0;
+}
+
+.MuiListItem-padding:first-child {
+  border-top: 1px solid #CDCDCD !important;
 }
 
 
 
 .outlets {
   width: 84%;
-  padding-left: 10px;
+  /* padding-left: 10px; */
 }
 
 .logo {
@@ -419,7 +441,7 @@ select#dagList {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 50%;
+  width: 47%;
 }
 
 /* ======================= Data Visualization CSS Ends here  =======================*/
@@ -537,6 +559,19 @@ p.lineInfo {
   position: relative;
 }
 
+.MuiTreeItem-content.Mui-selected:hover {
+  background-color: #DCF2FF !important;
+}
+
+.MuiTreeItem-content.Mui-selected {
+  background-color: unset !important;
+}
+
+/* .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl {
+  height: 32px;
+  padding: 8px !important;
+} */
+
 section.topLayout {
   position: sticky;
   top: 0;
@@ -545,12 +580,23 @@ section.topLayout {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
+  padding: 0 8px 9px;
   border-bottom: 1px solid #ccc;
 }
 
-.MuiTreeItem-content {
-  padding: 0.5% 5px !important;
+section.renderNodes {
+  /* padding: 16px 24px !important; */
+  /* border-bottom: 1px solid #D6D6D6; */
+}
+
+button.copy+.MuiTreeItem-root {
+  border-bottom: 1px solid #D6D6D6;
+  padding: 8px !important;
+
+}
+
+.renderNodes li>div.MuiTreeItem-content {
+  padding: 4px !important;
 }
 
 .sessionIdBox {
@@ -558,7 +604,7 @@ section.topLayout {
 }
 
 section.storeViewerLayout {
-  width: 35%;
+  width: 40%;
 }
 
 button.copy {
@@ -568,7 +614,8 @@ button.copy {
   border: none;
   background: transparent;
   padding: 0;
-  cursor: pointer
+  cursor: pointer;
+  top: 12px
 }
 
 /* section.outlets.storeView {

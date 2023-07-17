@@ -12,6 +12,7 @@ import LoadingOverlay from '../../../utilities/Loader';
 import Button from '@mui/material/Button/Button';
 
 import * as API from '../API/API';
+import { StyledTreeItem } from './StoreViewStyle';
 
 interface Child {
     id: string;
@@ -44,12 +45,12 @@ const handleCopy = (label: string) => {
 };
 
 const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string) => (
-    <section key={i} style={{ position: 'relative' }}>
+    <section key={i} style={{ position: 'relative' }} className='renderNodes'>
         {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)} title='Click to Copy'>
             {/* <img src={InfoOutlinedIcon} alt='copyButton' /> */}
-            <InfoOutlinedIcon />
+            <InfoOutlinedIcon style={{ color: "#0880ae" }} />
         </button>}
-        <TreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
+        <StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
             {Object.entries(nodes).map(([key, value], index) => {
                 if (key !== 'id' && key !== 'name' && key !== 'children' && key !== 'channels' && key !== 'annotations') {
                     // Check if the key or value matches the search query
@@ -64,7 +65,7 @@ const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string)
                     //     `${key}: ${value}`
                     // );
                     return (
-                        <TreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
+                        <StyledTreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
                     );
                 }
                 return null;
@@ -73,31 +74,31 @@ const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string)
                 nodes.children.map((node: any, i: any) => renderTree(node, true, i, searchQuery))
             ) : null}
             {Array.isArray(nodes.channels) ? (
-                <TreeItem nodeId={`${nodes.id}-channels`} label="Channels">
+                <StyledTreeItem nodeId={`${nodes.id}-channels`} label="Channels">
                     {nodes.channels.map((channel: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, index: any) => (
-                        <TreeItem
+                        <StyledTreeItem
                             key={`${nodes.id}-channel-${index}`}
                             nodeId={`${nodes.id}-channel-${index}`}
                             label={channel}
                         />
                     ))}
-                </TreeItem>
+                </StyledTreeItem>
             ) : null}
             {Array.isArray(nodes.annotations) ? (
-                <TreeItem nodeId={`${nodes.id}-annotations`} label="Annotations">
+                <StyledTreeItem nodeId={`${nodes.id}-annotations`} label="Annotations">
                     {nodes.annotations.length > 0 ? (
                         nodes.annotations.map((annotation: any, index: number) => (
                             Object.entries(annotation).map(([key, value], index) => (
-                                <TreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
+                                <StyledTreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
                             ))
                         ))
                     ) : (
-                        <TreeItem nodeId={`${nodes.id}-no-annotations`} label="[]">
-                        </TreeItem>
+                        <StyledTreeItem nodeId={`${nodes.id}-no-annotations`} label="[]">
+                        </StyledTreeItem>
                     )}
-                </TreeItem>
+                </StyledTreeItem>
             ) : null}
-        </TreeItem>
+        </StyledTreeItem>
     </section>
 );
 
@@ -198,22 +199,22 @@ const StoreView = () => {
         <>
             {isLoading && <LoadingOverlay />}
             <section className="topLayout">
-                <TextField fullWidth id="myInput" label="Search Session Id" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required />
+                <TextField fullWidth id="myInput" label="Search Session Id" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required size="small" />
                 <Button variant="contained" onClick={loadMore} >Load More</Button>
             </section>
 
             <section className='storeViewerLayout'>
                 <TreeView
                     aria-label="Store View"
-                    // defaultCollapseIcon={<ExpandMoreIcon />}
-                    // defaultExpandIcon={<ChevronRightIcon />}
-                    defaultCollapseIcon={<IndeterminateCheckBoxIcon />}
-                    defaultExpandIcon={<AddBoxIcon />}
+                    defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
+                    defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
+                // defaultCollapseIcon={<IndeterminateCheckBoxIcon />}
+                // defaultExpandIcon={<AddBoxIcon />}
 
                 >
                     {searchResults.length > 0 ? (
                         searchResults.map((node, i) => renderTree(node, true, i, searchQuery))
-                    ) : (!isLoading && <TreeItem nodeId="no-results" label="No matching nodes found" />)
+                    ) : (!isLoading && <StyledTreeItem nodeId="no-results" label="No matching nodes found" />)
                     }
                 </TreeView>
             </section>

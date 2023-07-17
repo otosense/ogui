@@ -156,7 +156,7 @@ export default function Charts() {
         <ZoomContext.Provider value={zoomLevel}>
             <section className="topLayout">
                 <form onSubmit={handleSubmit} className='FormSection'>
-                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='getSessionIdBox' onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
+                    <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='getSessionIdBox' size="small" onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
                     <Button variant="contained" type="submit">Submit</Button>
                 </form>
                 {storeChartData.length > 0 && <Button variant="contained" onClick={loadMoreData} >Load More</Button>}

@@ -66,6 +66,6 @@ export const StyledTreeItem = styled((props: TreeItemProps) => (
         marginLeft: 11,
         paddingLeft: 18,
         marginBottom: 5,
-        borderLeft: `1px solid #cdcdcd`,
+        borderLeft: `1px dotted #cdcdcd`,
     },
 }));

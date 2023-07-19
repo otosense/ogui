@@ -8,9 +8,9 @@ import { IViewProps, IZoomRange } from './API/interfaces';
 import { Alert, Button, TextField } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import LoadingOverlay from '../../../utilities/Loader';
+import { viewConfig } from '../Configs/configs';
 
 const fetchSize = 1000;
-const from = 0 * fetchSize;
 
 // Handling Global Store Zoom Properties to pass for other components
 export const ZoomContext = React.createContext<IZoomRange | null>(null);
@@ -67,18 +67,47 @@ export default function Charts() {
 
 
     const chartChannel = () => {
-        return storeChartData?.map((sessionDetail: any, index: number) => {
-            if (sessionDetail.data_type === "annot") {
-                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data[0]} />;
 
+        storeChartData?.map((sessionDetail: any, index: number) => {
+            viewConfig.map(view => {
+                view.src_channels.map((x) => {
+                    if (x.channel === sessionDetail.data_type) {
+                        x.data = sessionDetail;
+                    }
+                });
+            });
+        });
+
+
+        return viewConfig.map((view, index) => {
+            console.log('view.data_type', view);
+            if (view.data_type === "annot") {
+                return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} configs={view} />;
             }
-            else if (sessionDetail.data_type === "wf") {
-                return <DataTypeOne key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
+            else if (view.data_type === "wf") {
+                return <DataTypeOne key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} configs={view} />;
             } else {
                 return "Error in data_type";
             }
 
         });
+
+        // return storeChartData?.map((sessionDetail: any, index: number) => {
+        //     return viewConfig.map(view => {
+        //         console.log('view', view);
+
+        //         console.log('storeChartData', storeChartData);
+        //         if (sessionDetail.data_type === "annot") {
+        //             return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data[0]} />;
+
+        //         }
+        //         else if (sessionDetail.data_type === "wf") {
+        //             return <DataTypeOne key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
+        //         } else {
+        //             return "Error in data_type";
+        //         }
+        //     });
+        // });
     };
     const handleSubmit = (e: any) => {
         // Prevent the browser from reloading the page
@@ -91,25 +120,22 @@ export default function Charts() {
         if (Object.keys(sample).length > 0) {
             refetch()?.then((data) => {
                 if (data) {
-                    data.data?.forEach((eachChannel: { data_type: string; data: { data: any; }[]; }) => {
-                        // console.log(`eachChannel`, eachChannel);
+                    data.data?.forEach((eachChannel: { channel: string; data: { data: any; }[]; }) => {
                         const existingChannelIndex = storeChartData.findIndex(
-                            (item) => item.data_type === eachChannel.data_type
+                            (item) => item.data_type === eachChannel.channel
                         );
 
                         if (existingChannelIndex !== -1) {
                             // If the channel already exists, push the new data to the existing channel's 'data' array
-                            // console.log('storeChartData[existingChannelIndex].data', storeChartData[existingChannelIndex].data[0]?.[0]?.data);
-                            // console.log('pushing existing channel', eachChannel.data?.[0]?.data);
-                            storeChartData[existingChannelIndex].data[0]?.[0]?.data?.push(...eachChannel.data?.[0]?.data);
+                            storeChartData[existingChannelIndex].data[0].push(...eachChannel.data);
                         } else {
                             // If the channel doesn't exist, create a new channel with the 'data' array
                             storeChartData.push({
-                                data_type: eachChannel.data_type,
+                                ...eachChannel,
+                                data_type: eachChannel.channel,
                                 data: [eachChannel.data],
                             });
                         }
-
                         setStoreChartData(storeChartData);
                     });
                 }

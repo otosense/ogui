@@ -5,7 +5,7 @@ const epochConverted = (time: number) => {
     const epochTime = time;
     const date = new Date(epochTime);
     const localISOTimeString = date.toLocaleString();
-    return (localISOTimeString.split(',')[1]).trim();
+    return (localISOTimeString.split(',')[1])?.trim();
 };
 
 function defaultZoomBehavior(this: any) {

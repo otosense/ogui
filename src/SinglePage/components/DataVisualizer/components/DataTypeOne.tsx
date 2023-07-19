@@ -11,14 +11,13 @@ import { ZoomContext } from './Charts';
 HighchartsStock(Highcharts); // initialize the module
 
 const DataTypeOne = (props: IProps) => {
-    console.log('props', props.data);
     // Props Received from the Charts.tsx component from Backend API
-    // const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props?.configs;
     // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
     // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelMappingResponse[]>(props.data[0]); // handling Data for visualization
+    const [data, setData] = useState<IChannelMappingResponse[]>(src_channels); // handling Data for visualization
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
     const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
@@ -28,7 +27,7 @@ const DataTypeOne = (props: IProps) => {
     //     const newStart = start + 5000;
     //     setStart(newStart);
     //     // Note: Mapping Data based on src_channels 
-    //     // await implicitChannelMapping(src_channels, start, newStart, data, setData);
+    // await implicitChannelMapping(src_channels, start, newStart, data, setData);
     // };
 
     // useEffect(() => {
@@ -40,14 +39,14 @@ const DataTypeOne = (props: IProps) => {
         // Any changes happening data will be called and updated the charts
         const chart = chartRef.current?.chart;
         if (chart) {
-            console.log('data', data);
-            const updatedSeries = dataMapping(data, setIsLoading); // Mapping the Data based on the data Type
-            const yAxisData = updatedSeries?.flat().map((series: ISample) => series.value);
-            const xAxisTs = updatedSeries?.flat().map((series: ISample) => series.time);
-            // Update X Axis Data which is ts
+            // console.log('data', data);
+            const updatedSeries = dataMapping(data, setIsLoading);
+
+            const flattenSamples = updatedSeries?.flat();
+            const yAxisData = flattenSamples?.map((series: ISample) => series?.value);
+            const xAxisTs = flattenSamples?.map((series: ISample) => series?.time);
+
             setXCategory(xAxisTs);
-            // Update Y Axis Data 
-            // console.log('yAxisData', yAxisData);
             setIsLoading(false);
             chart.update({ series: [{ data: yAxisData }] });
 
@@ -85,8 +84,8 @@ const DataTypeOne = (props: IProps) => {
     */
     const options = {
         chart: {
-            type: "line",
-            // type: String(chart_type),
+            // type: "line",
+            type: String(chart_type),
             // animation: Highcharts.svg, // don't animate in old IE
             marginRight: 10,
             zoomType: "xy",
@@ -94,13 +93,13 @@ const DataTypeOne = (props: IProps) => {
             panKey: 'shift',
         },
         title: {
-            text: String('chart_title'),
+            text: String(chart_title),
         },
         xAxis: {
             // type: "datetime",
             tickPixelInterval: 100,
             title: {
-                text: String('x_label')
+                text: String(x_label)
             },
             // categories: [],
             categories: xCategory,
@@ -118,7 +117,7 @@ const DataTypeOne = (props: IProps) => {
             opposite: false,
             type: 'linear',
             title: {
-                text: String('y_label')
+                text: String(y_label)
             },
             allowDecimals: false,
             // min: -10000
@@ -213,28 +212,32 @@ const DataTypeOne = (props: IProps) => {
 // type: IChannelMappingResponse 
 export default memo(DataTypeOne);
 
-function dataMapping(data: IChannelMappingResponse[], setIsLoading: any): ISample[][] {
-    // looping the initial data from the local state 
+function dataMapping(srcData: IChannelMappingResponse[], setIsLoading: any): ISample[][] {
     setIsLoading(true);
     console.log('called dataMapping');
-    // console.log('data before', data);
-    return data.map((channel: IChannelMappingResponse) => {
-        // extracting { data, sr, ts } 
-        let { data, sr, ts } = channel;
-        // converting the backend time to Epoch time and with proper sample rate and interval
-        let timeDifferBetweenSamples = sr / (1000 * 1000);
-        let sampleTime = ts;
-        let sampledData: ISample[] = [];
-        data?.forEach((sampleValue: number, index: number) => {
-            if (index !== 0) {
-                // increment sampleTime based on time difference between them
-                sampleTime = sampleTime + timeDifferBetweenSamples;
-            }
-            let sample = { value: sampleValue, time: epochConverted(sampleTime) }; // conversion fo epoch time to human readable
-            // console.log('sample', sample);
-            sampledData.push(sample);
-        });
-        console.log('sampledData', sampledData);
-        return sampledData;
+    console.log('data before', srcData);
+
+    return srcData?.map((channel: IChannelMappingResponse) => {
+        const { data } = channel;
+        if (data) {
+            const timeDifferBetweenSamples = data?.sr / (1000 * 1000);
+            let sampleTime = data?.ts;
+            const sampledData: ISample[] = [];
+
+            data.data[0].forEach((sampleValue: number, index: number) => {
+                if (index !== 0) {
+                    sampleTime += timeDifferBetweenSamples;
+                }
+                const sample: ISample = {
+                    value: sampleValue,
+                    time: epochConverted(sampleTime),
+                };
+                sampledData.push(sample);
+            });
+
+            console.log('sampledData', sampledData);
+            return sampledData;
+        }
+        return [];
     });
 }

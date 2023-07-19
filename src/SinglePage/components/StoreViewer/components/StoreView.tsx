@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -29,7 +29,10 @@ interface Device {
     tt?: number[];
 }
 
-const handleCopy = async (label: string, setCopied: React.Dispatch<React.SetStateAction<boolean>>) => {
+const handleCopy = async (
+    label: string,
+    setCopied: React.Dispatch<React.SetStateAction<boolean>>
+) => {
     setCopied(false);
     try {
         await navigator?.clipboard?.writeText(label);
@@ -39,57 +42,85 @@ const handleCopy = async (label: string, setCopied: React.Dispatch<React.SetStat
     }
 };
 
-const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string, setCopied: React.Dispatch<React.SetStateAction<boolean>>) => (
+const renderTree = (
+    nodes: any,
+    isRoot: boolean,
+    i: number,
+    searchQuery: string,
+    setCopied: React.Dispatch<React.SetStateAction<boolean>>
+) => (
     <section key={i} style={{ position: 'relative' }} className='renderNodes'>
-        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`, setCopied)} title='Click to Copy'>
-            {/* <img src={InfoOutlinedIcon} alt='copyButton' /> */}
-            <InfoOutlinedIcon style={{ color: "#0880ae" }} />
-        </button>}
+        {isRoot && (
+            <button
+                className='copy'
+                onClick={() => handleCopy(`${nodes.id}`, setCopied)}
+                title='Click to Copy'
+            >
+                <InfoOutlinedIcon style={{ color: '#0880ae' }} />
+            </button>
+        )}
         <StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
             {Object.entries(nodes).map(([key, value], index) => {
-                if (key !== 'id' && key !== 'name' && key !== 'children' && key !== 'channels' && key !== 'annotations') {
-                    // Check if the key or value matches the search query
-                    // const isMatch = key.toLowerCase().includes(searchQuery.toLowerCase()) || value?.toString().toLowerCase().includes(searchQuery.toLowerCase());
-                    // console.log('isMatch', isMatch);
-                    // Highlight the matched portion with a yellow background color
-                    // const labelContent = isMatch ? (
-                    //     <span style={{ backgroundColor: 'yellow' }}>
-                    //         {`${key}: ${value}`}
-                    //     </span>
-                    // ) : (
-                    //     `${key}: ${value}`
-                    // );
+                if (
+                    key !== 'id' &&
+                    key !== 'name' &&
+                    key !== 'children' &&
+                    key !== 'channels' &&
+                    key !== 'annotations'
+                ) {
                     return (
-                        <StyledTreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
+                        <StyledTreeItem
+                            key={`${nodes.id}-${key}`}
+                            nodeId={`${nodes.id}-${key}`}
+                            label={`${key}: ${value}`}
+                        />
                     );
                 }
                 return null;
             })}
-            {Array.isArray(nodes.children) ? (
-                nodes.children.map((node: any, i: any) => renderTree(node, true, i, searchQuery, setCopied))
-            ) : null}
+            {Array.isArray(nodes.children)
+                ? nodes.children.map((node: any, i: any) =>
+                    renderTree(node, true, i, searchQuery, setCopied)
+                )
+                : null}
             {Array.isArray(nodes.channels) ? (
-                <StyledTreeItem nodeId={`${nodes.id}-channels`} label="Channels">
-                    {nodes.channels.map((channel: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, index: any) => (
-                        <StyledTreeItem
-                            key={`${nodes.id}-channel-${index}`}
-                            nodeId={`${nodes.id}-channel-${index}`}
-                            label={channel}
-                        />
-                    ))}
+                <StyledTreeItem nodeId={`${nodes.id}-channels`} label='Channels'>
+                    {nodes.channels.map(
+                        (
+                            channel:
+                                | string
+                                | number
+                                | boolean
+                                | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                                | React.ReactFragment
+                                | React.ReactPortal
+                                | null
+                                | undefined,
+                            index: any
+                        ) => (
+                            <StyledTreeItem
+                                key={`${nodes.id}-channel-${index}`}
+                                nodeId={`${nodes.id}-channel-${index}`}
+                                label={channel}
+                            />
+                        )
+                    )}
                 </StyledTreeItem>
             ) : null}
             {Array.isArray(nodes.annotations) ? (
-                <StyledTreeItem nodeId={`${nodes.id}-annotations`} label="Annotations">
+                <StyledTreeItem nodeId={`${nodes.id}-annotations`} label='Annotations'>
                     {nodes.annotations.length > 0 ? (
-                        nodes.annotations.map((annotation: any, index: number) => (
+                        nodes.annotations.map((annotation: any, index: number) =>
                             Object.entries(annotation).map(([key, value], index) => (
-                                <StyledTreeItem key={`${nodes.id}-${key}`} nodeId={`${nodes.id}-${key}`} label={`${key}: ${value}`} />
+                                <StyledTreeItem
+                                    key={`${nodes.id}-${key}`}
+                                    nodeId={`${nodes.id}-${key}`}
+                                    label={`${key}: ${value}`}
+                                />
                             ))
-                        ))
+                        )
                     ) : (
-                        <StyledTreeItem nodeId={`${nodes.id}-no-annotations`} label="[]">
-                        </StyledTreeItem>
+                        <StyledTreeItem nodeId={`${nodes.id}-no-annotations`} label='[]'></StyledTreeItem>
                     )}
                 </StyledTreeItem>
             ) : null}
@@ -97,16 +128,33 @@ const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string,
     </section>
 );
 
+const useDebounce = (value: string, delay: number) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedValue(value);
+        }, delay);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [value, delay]);
+
+    return debouncedValue;
+};
 
 const StoreView = () => {
-    const fetchSize = 10;
+    const fetchSize = 100;
+    const observer = useRef<IntersectionObserver | null>(null);
 
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
+    const [passer, setPasser] = useState({ from_: Number(0), to_: Number(fetchSize) });
     const [storeData, setStoreData] = useState({ data: [] });
     const [copied, setCopied] = useState(false);
 
+    const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
     const { data, status, error, isLoading, isFetching } = useQuery({
         queryKey: ['StoreConfig', passer],
@@ -117,27 +165,22 @@ const StoreView = () => {
         refetchOnWindowFocus: false,
         cacheTime: 5 * 60 * 1000, // 5 minutes
         staleTime: 1 * 60 * 1000, // 1 minute
-        // onSuccess: (data) => {
-        //     setStoreData((prevData: any) => ({
-        //         ...prevData,
-        //         data: [...prevData.data, ...data.data],
-        //     }));
-        // },
     });
 
-
     const loadMore = () => {
-        setPasser({ "from_": Number(passer.to_), "to_": Number(passer.to_ + fetchSize) });
+        setPasser((prevPasser) => ({
+            from_: Number(prevPasser.to_),
+            to_: Number(prevPasser.to_ + fetchSize),
+        }));
     };
-
 
     useEffect(() => {
         if (!isLoading && status === 'success' && data) {
             setStoreData((prevData: any) => {
-                const newData = data.data.filter((newItem: { id: any; }) => {
-                    // Check if the newItem already exists in prevData.data
-                    return !prevData.data.some((item: { id: any; }) => item.id === newItem.id);
-                });
+                const newData = data.data.filter(
+                    (newItem: { id: any; }) =>
+                        !prevData.data.some((item: { id: any; }) => item.id === newItem.id)
+                );
 
                 return {
                     ...prevData,
@@ -149,35 +192,48 @@ const StoreView = () => {
 
     useEffect(() => {
         if (storeData.data) {
-            // Filter the data based on the search query
-            const filteredData = filterData(storeData.data, searchQuery);
+            const filteredData = filterData(storeData.data, debouncedSearchQuery);
             setSearchResults(filteredData);
         }
-    }, [storeData, searchQuery]);
+    }, [storeData, debouncedSearchQuery]);
 
-    // useEffect(() => mutate({
-    //     "from_": Number(0),
-    //     "to_": Number(100)
-    // }), []);
+    useEffect(() => {
+        const options = {
+            root: null,
+            rootMargin: '20px',
+            threshold: 1.0,
+        };
 
-    // const queryClient = useQueryClient();
-    // const newLocal = async () => {
-    //     return API.StoreConfig(passer);
-    // };
-    // const { data, status, error, isLoading, mutate } = useMutation(API.StoreConfig);
+        const handleIntersect: IntersectionObserverCallback = (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    loadMore();
+                }
+            });
+        };
 
-    // { console.log({ data, status, error, isLoading }); }
-    const handleSearchQueryChange = (event: { target: { value: string; }; }) => {
+        observer.current = new IntersectionObserver(handleIntersect, options);
+        console.log('searchResults', searchResults.length);
+        if (observer.current && !isLoading && !isFetching && searchResults.length >= fetchSize) {
+            observer.current.observe(document.getElementById('bottomObserver')!);
+        }
+
+        return () => {
+            if (observer.current) {
+                observer.current.disconnect();
+            }
+        };
+    }, [isLoading, isFetching, searchResults]);
+
+    const handleSearchQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
     };
 
-    const filterData = (nodes: string | any[], query: string) => {
-        const filteredNodes = nodes?.filter((node: { id: string; children: string | any[]; }) => {
-            // Check if the node's label matches the search query
+    const filterData = (nodes: any[], query: string) => {
+        const filteredNodes = nodes.filter((node) => {
             if (node.id.toLowerCase().includes(query.toLowerCase())) {
                 return true;
             }
-            // Recursively search in the children of the node
             if (node.children && node.children.length > 0) {
                 const filteredChildren = filterData(node.children, query);
                 return filteredChildren.length > 0;
@@ -190,28 +246,50 @@ const StoreView = () => {
     return (
         <>
             {isLoading && <LoadingOverlay />}
-            <section className="topLayout">
-                <TextField fullWidth id="myInput" label="Search Session Id" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required size="small" />
-                <Button variant="contained" onClick={loadMore} >Load More</Button>
+            <section className='topLayout'>
+                <TextField
+                    fullWidth
+                    id='myInput'
+                    label='Search Session Id'
+                    variant='outlined'
+                    name='sessionId'
+                    defaultValue={searchQuery}
+                    className='sessionIdBox'
+                    onChange={handleSearchQueryChange}
+                    required
+                    size='small'
+                />
+                {/* <Button variant='contained' onClick={loadMore}>
+                    Load More
+                </Button> */}
             </section>
-            {error ? (<Alert severity="error" className='errorMessage'>{error.toString()}</Alert>) : ''}
+            {error && (
+                <Alert severity='error' className='errorMessage'>
+                    {error.toString()}
+                </Alert>
+            )}
             {copied && <SnackBar />}
             <section className='storeViewerLayout'>
                 <TreeView
-                    aria-label="Store View"
-                    defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
-                    defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
+                    aria-label='Store View'
+                    defaultCollapseIcon={<ExpandMoreIcon style={{ color: '#0880ae' }} />}
+                    defaultExpandIcon={<ChevronRightIcon style={{ color: '#0880ae' }} />}
                 >
                     {searchResults.length > 0 ? (
-                        searchResults.map((node, i) => renderTree(node, true, i, searchQuery, setCopied))
-                    ) : (!isFetching && !isLoading && <StyledTreeItem nodeId="no-results" label="No matching nodes found" />)
-                    }
+                        searchResults.map((node, i) =>
+                            renderTree(node, true, i, searchQuery, setCopied)
+                        )
+                    ) : !isFetching && !isLoading ? (
+                        <StyledTreeItem
+                            nodeId='no-results'
+                            label='No matching nodes found'
+                        />
+                    ) : null}
                 </TreeView>
+                <div id='bottomObserver' style={{ height: '10px' }}></div>
             </section>
         </>
     );
-
-
 };
 
 export default React.memo(StoreView);

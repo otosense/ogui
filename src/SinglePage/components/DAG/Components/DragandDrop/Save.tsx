@@ -29,35 +29,18 @@ function Save(props: {
 
     const submitHandler = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        console.log('props.data', props.data);
-
-
-
         const combinedObj = {
             dagName,
             ...props.data,
         };
         onClose();
 
-        console.log('combinedObj', JSON.stringify(combinedObj));
+        // console.log('combinedObj', JSON.stringify(combinedObj));
 
-        // API.saveDag(combinedObj).then(x => {
-        //     // console.log('x', x);
-        //     // Response Handler
-        // }).catch(err => console.log('error', err.message));
-
-        // const parsedData = 
-        const parsedData = JSON?.parse(props.data);
-        console.log('parsedDataparsedDataparsedData.data', parsedData);
-        try {
-            const parsedData = JSON.parse(props.data);
-            console.log('parsedDataparsedDataparsedData.data', parsedData);
-
-        } catch (error) {
-            setErrorExist(true);
-            return;
-        }
-
+        API.saveDag(combinedObj).then(x => {
+            // console.log('x', x);
+            // Response Handler
+        }).catch(err => console.log('error', err.message));
     };
 
 

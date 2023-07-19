@@ -14,7 +14,6 @@ const Layout = () => {
                     {RouterConfig.map((route, i) => (
                         <ListItem
                             key={i}
-                            button
                             component={Link}
                             to={route.path}
                             className={location.pathname === route.path ? 'activeLink' : ''}

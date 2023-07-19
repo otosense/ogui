@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import RouterConfig from './utilities/Routes/Routes';
 import Layout from './utilities/Routes/Layout';
 import React, { Suspense, useEffect } from 'react';
+import MiniDrawer from './utilities/Routes/ResponsiveLayout';
 
 function App() {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ function App() {
   }, []);
   return (
     <>
-      <Layout />
+      {/* <Layout /> */}
+      <MiniDrawer />
       <Suspense fallback={<h1>Loading..</h1>}>
         <Routes>
           {/* Add the default '/' route */}

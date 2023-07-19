@@ -1,6 +1,6 @@
 #root {
   max-width: 1920px;
-  /* margin: 0 auto; */
+  margin: 0 auto;
   padding: 8px;
   /* text-align: center; */
   display: flex;
@@ -18,10 +18,22 @@
   border-right: 1px solid #cdcdcd;
 }
 
-.activeLink {
+/* .activeLink {
+
+  border-left: 5px solid #3db5fe !important;
+} */
+
+.navText {
+  color: #000;
+}
+
+.activeLink .navText {
   color: #3db5fe !important;
   font-weight: 800;
-  border-left: 5px solid #3db5fe !important;
+}
+
+.activeLink svg.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium {
+  fill: #3db5fe !important;
 }
 
 .activeLink .MuiTypography-root {
@@ -46,10 +58,14 @@ ul.MuiList-root.MuiList-padding {
   border-top: 1px solid #cdcdcd !important;
 }
 
-
+.capitalize {
+  text-transform: capitalize;
+}
 
 .outlets {
-  width: 84%;
+  width: 95%;
+  margin-top: 64px;
+  height: calc(100vh - 13vh);
   /* padding-left: 10px; */
 }
 
@@ -118,17 +134,19 @@ div[role="tabpanel"] {
 .dndflow aside {
   border-right: 1px solid #eee;
   padding: 15px 10px;
-  font-size: 12px;
+  font-size: 75%;
+  text-align: center;
   /* background: #fcfcfc; */
 }
 
 .dndflow aside .description {
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .dndflow .dndnode {
-  height: 20px;
-  padding: 4px;
+  /* height: 20px; */
+  padding: 8px;
   border: 3px solid #1a192b;
   border-radius: 2px;
   margin-bottom: 10px;
@@ -217,6 +235,7 @@ input#text:focus-visible {
   margin: -1px;
   padding: 2%;
   color: #fff;
+  text-align: center;
 }
 
 .nodeTitle.funcNode {
@@ -341,6 +360,7 @@ button.saveBtn {
 button.panelBtn {
   width: 35%;
   text-align: center;
+  font-size: 100%;
 }
 
 .invalidMsg {
@@ -399,6 +419,34 @@ select#dagList {
   width: 100%;
 }
 
+@media only screen and (max-width: 767px) {
+
+  /* CSS rules for mobile devices */
+  .react-flow__panel.top.right {
+    margin: 3% 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+
+  /* CSS rules for tablet devices */
+  .react-flow__panel.top.right {
+    margin: 1% 0;
+    width: 32%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+}
+
+
 /* ======================= DAG Builder CSS Ends here  =======================*/
 
 
@@ -444,14 +492,49 @@ select#dagList {
   width: 47%;
 }
 
+@media only screen and (max-width: 767px) {
+
+  /* CSS rules for mobile devices */
+  section.storeViewerLayout {
+    width: 100%;
+  }
+
+  section.topLayout {
+    top: 56px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+
+  /* CSS rules for mobile devices */
+  .getSessionIdBox {
+    width: 75% !important;
+    margin-right: 10px !important;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+
+  /* CSS rules for tablet devices */
+  .getSessionIdBox {
+    width: 75% !important;
+    margin-right: 10px !important;
+  }
+
+
+}
+
 /* ======================= Data Visualization CSS Ends here  =======================*/
 
 
 /* ======================= Data Table CSS Starts here  =======================*/
 
 table {
-
   scroll-behavior: smooth;
+}
+
+section.outlets.DataTable {
+  padding-left: 10px;
 }
 
 .resizer {
@@ -574,13 +657,13 @@ p.lineInfo {
 
 section.topLayout {
   position: sticky;
-  top: 0;
+  top: 64px;
   background: #fff;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 8px 9px;
+  padding: 8px;
   border-bottom: 1px solid #cdcdcd;
 }
 
@@ -625,6 +708,30 @@ button.copy {
 .MuiSvgIcon-root:focus,
 button.copy:focus {
   outline: unset !important;
+}
+
+@media only screen and (max-width: 767px) {
+
+  /* CSS rules for mobile devices */
+  section.storeViewerLayout {
+    width: 100%;
+  }
+
+  section.topLayout {
+    top: 56px;
+  }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+
+  /* CSS rules for tablet devices */
+  section.storeViewerLayout {
+    width: 100%;
+  }
+
+  section.topLayout {
+    top: 56px;
+  }
 }
 
 /* ======================= StoreView CSS Ends here  =======================*/

@@ -211,7 +211,7 @@ const DataTypeFour = (props: IProps) => {
                 options={Options}
                 constructorType={'stockChart'} // use stockChart constructor
             />
-            <button onClick={handlePan} className='loadMoreButton'>Load More</button>
+            {/* <button onClick={handlePan} className='loadMoreButton'>Load More</button> */}
         </div>
     );
 };

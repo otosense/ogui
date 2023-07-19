@@ -8,7 +8,7 @@ export default () => {
 
   return (
     <aside>
-      <div className="description">You can drag these nodes to the pane on the right.</div>
+      <div className="description">You can drag these nodes to the pane</div>
       {/* <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>
         Variable Node
       </div>

@@ -17,12 +17,12 @@ let Yaxis: string[] = [];
 
 const DataTypeFour = (props: IProps) => {
     // Props Received from the Charts.tsx component from Backend API
-    // const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
+    const { chart_title, chart_type, x_label, y_label, miniMap, data_limit, src_channels } = props.configs;
     // Props Received from the Charts.tsx component from userConfig
     const { minimap, combineZoom } = props.userConfig;
     // Create Chart Reference
     const chartRef = useRef<HighchartsReact.Props>(null);
-    const [data, setData] = useState<IChannelDataTypeFour[]>(props.data); // handling Data for visualization
+    const [data, setData] = useState<IChannelDataTypeFour[]>(src_channels); // handling Data for visualization
     const [start, setStart] = useState(0); // handling for API from , to counts 
     const [xAxisCategory, setXAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
     const [plotting, setPlotting] = useState<IChannelDataTypeFour[]>([]); // handling X-Axis for plotting in Chart
@@ -80,8 +80,8 @@ const DataTypeFour = (props: IProps) => {
 
     const Options = {
         chart: {
-            // type: String(chart_type),
-            type: 'xrange',
+            type: String(chart_type),
+            // type: 'xrange',
             // animation: Highcharts.svg, // don't animate in old IE
             marginRight: 10,
             zoomType: "xy",
@@ -90,8 +90,8 @@ const DataTypeFour = (props: IProps) => {
         },
 
         title: {
-            // text: String(chart_title),
-            text: 'Title',
+            text: String(chart_title),
+            // text: 'Title',
         },
         xAxis: {
             // type: "datetime",
@@ -103,14 +103,14 @@ const DataTypeFour = (props: IProps) => {
                 },
             },
             title: {
-                text: String('x_label'),
+                text: String(x_label),
             },
         },
         yAxis: {
             opposite: false,
             lineWidth: 1,
             title: {
-                text: String('y_label'),
+                text: String(y_label),
             },
             categories: xAxisCategory,
             labels: {
@@ -225,8 +225,7 @@ function dataMapping(data: any[],
 
     // looping the initial data from the local state 
     data.map((channelData) => {
-
-        channelData?.data?.map((singleChannelData: ISingleChannelData) => {
+        channelData?.data?.data.flat()?.map((singleChannelData: ISingleChannelData) => {
             Yaxis.push(singleChannelData.tag);
             uniqueArray = [...new Set(Yaxis)];
             setXAxisCategory(uniqueArray);

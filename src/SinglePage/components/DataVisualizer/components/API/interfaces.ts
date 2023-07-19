@@ -13,7 +13,7 @@ interface IProps {
     onZoomChange(min: number, max: number): unknown;
     configs: IViewProps & { chart_title?: string; plotValue?: string; };
     userConfig: any;
-    data: any[];
+    // data: any[];
 }
 
 interface ISample {

@@ -80,7 +80,6 @@ export default function Charts() {
 
 
         return viewConfig.map((view, index) => {
-            console.log('view.data_type', view);
             if (view.data_type === "annot") {
                 return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} configs={view} />;
             }
@@ -89,7 +88,6 @@ export default function Charts() {
             } else {
                 return "Error in data_type";
             }
-
         });
 
         // return storeChartData?.map((sessionDetail: any, index: number) => {

@@ -244,7 +244,7 @@ const StoreView = () => {
     };
 
     return (
-        <>
+        <main className='mainArea'>
             {isLoading && <LoadingOverlay />}
             <section className='topLayout'>
                 <TextField
@@ -288,7 +288,7 @@ const StoreView = () => {
                 </TreeView>
                 <div id='bottomObserver' style={{ height: '10px' }}></div>
             </section>
-        </>
+        </main>
     );
 };
 

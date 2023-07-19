@@ -5,8 +5,9 @@ import DataTypeFour from './DataTypeFour';
 import DataTypeThree from './DataTypeThree';
 import DataTypeOne from './DataTypeOne';
 import { IViewProps, IZoomRange } from './API/interfaces';
-import { Button, TextField } from '@mui/material';
+import { Alert, Button, TextField } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import LoadingOverlay from '../../../utilities/Loader';
 
 const fetchSize = 1000;
 const from = 0 * fetchSize;
@@ -20,14 +21,13 @@ export default function Charts() {
     const [storeChartData, setStoreChartData] = useState<any[]>([]);
 
 
-    const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
-    const [storeData, setStoreData] = useState({ data: [] });
     const [sample, setSample] = useState({});
+    // const [isLoading, setIsLoading] = useState(false);
 
     // const { data, status, error, isLoading, mutate } = useMutation(API.getSessionDetails);
 
 
-    const { data, status, error, isLoading, refetch } = useQuery({
+    const { error, refetch, isFetching } = useQuery({
         queryKey: ['StoreConfig', sample],
         queryFn: async () => {
             return API.getSessionDetails(sample);
@@ -37,24 +37,8 @@ export default function Charts() {
         cacheTime: 5 * 60 * 1000, // 5 minutes
         staleTime: 1 * 60 * 1000, // 1 minute
         enabled: false, // Set enabled to false initially
-        // onSuccess: (data) => {
-        //     console.log('onSuccess data', data);
-        //     setStoreData((prevData: any) => ({
-        //         ...prevData,
-        //         data: [...prevData.data, ...data?.data],
-        //     }));
-        // },
     });
 
-    // console.log('storeData', storeData);
-
-    if (isLoading && data) {
-        return <div className="loader">Loading...</div>;
-    }
-
-    if (error) {
-        return <div className="error">{`Error: ${error}`}</div>;
-    }
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
@@ -83,19 +67,15 @@ export default function Charts() {
 
 
     const chartChannel = () => {
-        // console.log('storeChartData', storeChartData);
-
-        // storeChartData.map((ss, i) => {
-        //     console.log('ss', ss.data[0]);
-        // });
         return storeChartData?.map((sessionDetail: any, index: number) => {
-            // console.log('sessionDetail', sessionDetail.data);
             if (sessionDetail.data_type === "annot") {
                 return <DataTypeFour key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} data={sessionDetail.data[0]} />;
 
             }
             else if (sessionDetail.data_type === "wf") {
                 return <DataTypeOne key={index} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} data={sessionDetail.data} />;
+            } else {
+                return "Error in data_type";
             }
 
         });
@@ -109,12 +89,9 @@ export default function Charts() {
 
     useEffect(() => {
         if (Object.keys(sample).length > 0) {
-            refetch().then((data) => {
-
-
+            refetch()?.then((data) => {
                 if (data) {
-                    data.data?.forEach((eachChannel) => {
-
+                    data.data?.forEach((eachChannel: { data_type: string; data: { data: any; }[]; }) => {
                         // console.log(`eachChannel`, eachChannel);
                         const existingChannelIndex = storeChartData.findIndex(
                             (item) => item.data_type === eachChannel.data_type
@@ -136,6 +113,10 @@ export default function Charts() {
                         setStoreChartData(storeChartData);
                     });
                 }
+            }).catch((error) => {
+                console.error('Error occurred while fetching data:', error);
+                // setHasError(true);
+                // setErrorMessage('Error occurred while fetching data. Please try again.');
             });
         }
     }, [sample]);
@@ -145,15 +126,10 @@ export default function Charts() {
         payloadSetting(sessionId, initialSize, setSample);
     };
 
-
-    // useEffect(() => {
-    //     console.log('storeChartData', storeChartData);
-    // }, [storeChartData]);
-
-    console.log('storeChartData', storeChartData);
     return (
         // React way of handling Context
         <ZoomContext.Provider value={zoomLevel}>
+            {isFetching && <LoadingOverlay />}
             <section className="topLayout">
                 <form onSubmit={handleSubmit} className='FormSection'>
                     <TextField fullWidth id="myInput" label="SessionId" variant="outlined" name="sessionId" defaultValue={sessionId} className='getSessionIdBox' size="small" onChange={(e: { target: { value: string; }; }) => setSessionId(e.target.value)} required />
@@ -161,9 +137,10 @@ export default function Charts() {
                 </form>
                 {storeChartData.length > 0 && <Button variant="contained" onClick={loadMoreData} >Load More</Button>}
             </section>
-            <section className='chartArea'>
-                {sessionId !== undefined && chartChannel()}
-            </section>
+            {error ? (<Alert severity="error" className='errorMessage'>{error.toString()}</Alert>) : ''}
+            {sessionId !== undefined && <section className='chartArea'>
+                {chartChannel()}
+            </section>}
         </ZoomContext.Provider>
     );
 }

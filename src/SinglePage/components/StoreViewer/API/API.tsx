@@ -20,8 +20,8 @@ async function PostMethod(url: string, data: any) {
         return response.data;
     } catch (error: any) {
         // Handle the error here
-        console.error('Error in API request:', error.response.data.error);
-        throw error.response.data.error;
+        const errorMessage = error?.response?.data?.error || error?.message + ' ' + error?.config?.url;
+        throw errorMessage;
     }
 }
 

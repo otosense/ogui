@@ -58,6 +58,10 @@ ul.MuiList-root.MuiList-padding {
   border-top: 1px solid #cdcdcd !important;
 }
 
+.errorMessage {
+  margin-top: 8px;
+}
+
 .capitalize {
   text-transform: capitalize;
 }

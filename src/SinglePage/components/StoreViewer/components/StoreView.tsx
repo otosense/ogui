@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import TreeItem from '@mui/lab/TreeItem';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import TextField from '@mui/material/TextField/TextField';
 import LoadingOverlay from '../../../utilities/Loader';
 import Button from '@mui/material/Button/Button';
 
 import * as API from '../API/API';
 import { StyledTreeItem } from './StoreViewStyle';
+import { Alert } from '@mui/material';
+import SnackBar from '../../../utilities/SnackBar';
 
 interface Child {
     id: string;
@@ -30,23 +29,19 @@ interface Device {
     tt?: number[];
 }
 
-const handleCopy = (label: string) => {
-    navigator.clipboard.writeText(label)
-        .then(() => {
-            // console.log("Text copied to clipboard: ", label);
-            // Add your desired feedback or notification here
-            // return <h1>Copied</h1>;
-            alert("Id Copied" + ' ' + label);
-        })
-        .catch((error) => {
-            // console.error("Failed to copy text: ", error);
-            // Add your desired error handling here
-        });
+const handleCopy = async (label: string, setCopied: React.Dispatch<React.SetStateAction<boolean>>) => {
+    setCopied(false);
+    try {
+        await navigator?.clipboard?.writeText(label);
+        setCopied(true);
+    } catch (error) {
+        console.log('Copy Failed');
+    }
 };
 
-const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string) => (
+const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string, setCopied: React.Dispatch<React.SetStateAction<boolean>>) => (
     <section key={i} style={{ position: 'relative' }} className='renderNodes'>
-        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`)} title='Click to Copy'>
+        {isRoot && <button className='copy' onClick={() => handleCopy(`${nodes.id}`, setCopied)} title='Click to Copy'>
             {/* <img src={InfoOutlinedIcon} alt='copyButton' /> */}
             <InfoOutlinedIcon style={{ color: "#0880ae" }} />
         </button>}
@@ -71,7 +66,7 @@ const renderTree = (nodes: any, isRoot: boolean, i: number, searchQuery: string)
                 return null;
             })}
             {Array.isArray(nodes.children) ? (
-                nodes.children.map((node: any, i: any) => renderTree(node, true, i, searchQuery))
+                nodes.children.map((node: any, i: any) => renderTree(node, true, i, searchQuery, setCopied))
             ) : null}
             {Array.isArray(nodes.channels) ? (
                 <StyledTreeItem nodeId={`${nodes.id}-channels`} label="Channels">
@@ -110,10 +105,10 @@ const StoreView = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [passer, setPasser] = useState({ "from_": Number(0), "to_": Number(fetchSize) });
     const [storeData, setStoreData] = useState({ data: [] });
+    const [copied, setCopied] = useState(false);
 
 
-
-    const { data, status, error, isLoading } = useQuery({
+    const { data, status, error, isLoading, isFetching } = useQuery({
         queryKey: ['StoreConfig', passer],
         queryFn: async () => {
             return API.StoreConfig(passer);
@@ -192,9 +187,6 @@ const StoreView = () => {
         return filteredNodes;
     };
 
-    if (error) {
-        return <div className="error">{`Error: ${error}`}</div>;
-    }
     return (
         <>
             {isLoading && <LoadingOverlay />}
@@ -202,19 +194,17 @@ const StoreView = () => {
                 <TextField fullWidth id="myInput" label="Search Session Id" variant="outlined" name="sessionId" defaultValue={searchQuery} className='sessionIdBox' onChange={handleSearchQueryChange} required size="small" />
                 <Button variant="contained" onClick={loadMore} >Load More</Button>
             </section>
-
+            {error ? (<Alert severity="error" className='errorMessage'>{error.toString()}</Alert>) : ''}
+            {copied && <SnackBar />}
             <section className='storeViewerLayout'>
                 <TreeView
                     aria-label="Store View"
                     defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
                     defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
-                // defaultCollapseIcon={<IndeterminateCheckBoxIcon />}
-                // defaultExpandIcon={<AddBoxIcon />}
-
                 >
                     {searchResults.length > 0 ? (
-                        searchResults.map((node, i) => renderTree(node, true, i, searchQuery))
-                    ) : (!isLoading && <StyledTreeItem nodeId="no-results" label="No matching nodes found" />)
+                        searchResults.map((node, i) => renderTree(node, true, i, searchQuery, setCopied))
+                    ) : (!isFetching && !isLoading && <StyledTreeItem nodeId="no-results" label="No matching nodes found" />)
                     }
                 </TreeView>
             </section>

@@ -688,6 +688,7 @@ section.topLayout {
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid #cdcdcd;
+  width: 100%;
 }
 
 section.renderNodes {

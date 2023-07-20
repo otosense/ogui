@@ -211,6 +211,7 @@ div[role="tabpanel"] {
 .custom-node__select {
   /* margin: 5px; */
   width: 90%;
+  text-align: center;
 }
 
 .custom-node__select select {

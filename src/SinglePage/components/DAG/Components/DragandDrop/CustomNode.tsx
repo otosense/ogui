@@ -3,12 +3,13 @@ import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { pythonIdentifierPattern } from '../Utilities/globalFunction';
 import * as API from './../API/API';
 
-function Select({ value, handleId, nodeId, sourcePosition, data, selector }: any) {
+function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable }: any) {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [customValue, setCustomValue] = useState();
   const [valueText, setValueText] = useState('');
   const [validationMsg, setValidationMsg] = useState(false);
+  const [allowConnection, setAllowConnection] = useState(isConnectable);
 
   const onChange = (evt: { target: { value: any; }; }) => {
     const { nodeInternals } = store.getState();
@@ -54,6 +55,11 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector }: any
     }
   }, []);
 
+  useEffect(() => {
+    setAllowConnection(customValue === "new" ? valueText?.length > 0 : true);
+  }, [customValue, valueText]);
+
+
   return (
     <div className="custom-node__select">
       <select className="nodrag titleBox" onChange={onChange} value={value}>
@@ -77,19 +83,21 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector }: any
           {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
         </>
       }
-      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' />
-      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' />
+      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={allowConnection} />
+      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={allowConnection} />
     </div>
   );
 }
 
-function CustomNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; }) {
-  const { id, data, type, sourcePosition, funcList } = props;
+
+
+function CustomNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; }) {
+  const { id, data, type, sourcePosition, funcList, isConnectable } = props;
   return (
     <section className={`text-updater-node ${type}`}>
       <h4 className={`nodeTitle ${type}`}>func_node</h4>
       <div className={`flexProps ${type}`}>
-        <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} />
+        <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} />
       </div>
 
     </section>

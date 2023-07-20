@@ -82,7 +82,7 @@ const DnDFlow = () => {
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
     const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} });
     const [uploadOver, setUploadOver] = useState(false);
-    const [funcList, setFuncList] = useState([]);
+    const [funcList, setFuncList] = useState<any>([]);
 
     // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -91,6 +91,13 @@ const DnDFlow = () => {
             try {
                 const resolve = await API.getFuncNodes();
                 setFuncList(resolve);
+
+                // Adding Custom Function
+                const customFunction = {
+                    "value": "new",
+                    "label": "New Function"
+                };
+                setFuncList((prevData: any) => [...prevData, customFunction]);
             } catch (error: any) {
                 // Handle error
                 console.log('Error in API.getFuncNodes', error.toString());
@@ -164,7 +171,7 @@ const DnDFlow = () => {
     }, [setNodes, setEdges, setUploadOver]);
 
     const onSave = useCallback(() => {
-        const flowKey = 'example-flow';
+        const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
             const flow = reactFlowInstance.toObject();
             let MappedJson = {
@@ -220,11 +227,11 @@ const DnDFlow = () => {
             };
             if (type === 'custom') {
                 newNode.data = {
-                    label: 'Add',
-                    ddType: 'Add',
+                    label: 'FunctionNode',
+                    ddType: 'FunctionNode',
                     initialEdge: 'right',
                     selects: {
-                        [nodeTypeId]: 'Add',
+                        [nodeTypeId]: 'FunctionNode',
                     },
                 };
             }

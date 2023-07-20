@@ -43,7 +43,7 @@ function NodeCreator(props: any) {
     }, [props.type]);
 
     useEffect(() => {
-        setAllowConnection(valueText.length > 0);
+        setAllowConnection(valueText?.length > 0);
     }, [valueText]);
 
 

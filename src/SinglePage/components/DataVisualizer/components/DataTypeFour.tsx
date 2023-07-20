@@ -8,7 +8,7 @@ import HighchartsStock from 'highcharts/modules/stock'; // import the Highcharts
 import * as API from './API/API';
 import { ZoomContext } from './Charts';
 import { IChannelDataTypeFour, IProps, ISingleChannelData, ISrcChannel, IZoomRange } from './API/interfaces';
-import { defaultZoomBehavior, explicitChannelMapping, settingZoomInGlobalStore, updatingZoomFromGlobalStore } from './globalConfigs';
+import { defaultZoomBehavior, epochConverted, explicitChannelMapping, settingZoomInGlobalStore, formatDate, updatingZoomFromGlobalStore } from './globalConfigs';
 
 HighchartsStock(Highcharts); // initialize the module
 xrange(Highcharts);
@@ -94,12 +94,14 @@ const DataTypeFour = (props: IProps) => {
             // text: 'Title',
         },
         xAxis: {
-            // type: "datetime",
+            type: "datetime",
+            dateFormat: '%Y-%m-%d %H:%M:%S',
             visible: false,
             tickPixelInterval: 100,
             labels: {
                 formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-                    return String(this.value);
+                    // return Date(this.value);
+                    return Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.value);
                 },
             },
             title: {
@@ -130,12 +132,13 @@ const DataTypeFour = (props: IProps) => {
             shared: true,
             formatter(this: Highcharts.TooltipFormatterContextObject): string {
                 if (this && this.points) {
-                    let tooltip = '<b>' + 'ts : ' + this.x + '</b><br/>';
+                    // let tooltip = '<b>' + 'ts : ' + epochConverted(this.x) + '</b><br/>';
+                    let tooltip = '';
                     this.points.forEach(function (point: Highcharts.Point): void {
-                        const x = point.x.toFixed(2);
-                        const x2 = point.x2 != null ? point.x2.toFixed(2) : '';
+                        const x = epochConverted(point.x);
+                        const x2 = point.x2 != null ? epochConverted(point.x2) : '';
                         const yCategory = point?.yCategory !== null ? point.yCategory?.toString() : '';
-                        tooltip += `<b>${x} - ${x2}</b><br/><b>${yCategory}</b>`;
+                        tooltip += `<b>From: ${x} - To: ${x2}</b><br/><b>${yCategory}> `;
                     });
                     return tooltip;
                 } else {
@@ -178,8 +181,8 @@ const DataTypeFour = (props: IProps) => {
         ],
 
         navigator: {
-            // enabled: Boolean(minimap === undefined ? true : minimap),
-            enabled: false,
+            enabled: Boolean(minimap === undefined ? true : minimap),
+            // enabled: false,
             adaptToUpdatedData: true,
             xAxis: {
                 labels: {
@@ -230,16 +233,23 @@ function dataMapping(data: any[],
             uniqueArray = [...new Set(Yaxis)];
             setXAxisCategory(uniqueArray);
             const chartData = {
-                x: singleChannelData.bt,
-                x2: singleChannelData.tt,
+                x: (singleChannelData.bt),
+                x2: (singleChannelData.tt),
                 y: uniqueArray?.indexOf(singleChannelData.tag),
                 title: singleChannelData.tag,
             };
-
             // setting the legend
             setLegendName(channelData.channel);
             // data prepared to display in the chart
             setPlotting((prevData: any) => [...prevData, chartData]);
         });
     });
+};
+
+
+function caller(val) {
+    const dateString = new Date(val).toUTCString();
+    const dateObject = new Date(dateString);
+    const unixTimestamp = Math.floor(dateObject.getTime() / 1000);
+    return unixTimestamp;
 }

@@ -124,11 +124,76 @@ function updatingZoomFromGlobalStore(chartRef: any, zoomLevel: IZoomRange | null
 
 
 
+// function formatDateForHighcharts(timeString) {
+
+//     const epochTime = timeString;
+//     const date = new Date(epochTime);
+//     console.log('dateee', date.getUTCDate(), date);
+//     const localISOTimeString = date.toLocaleString();
+
+//     // const outputTime = epochConverted(timeString);
+//     // const [time, period] = outputTime.split(' '); // Split time and AM/PM
+//     // const [hourStr, minuteStr, secondStr] = time.split(':'); // Split hour, minute, and second
+
+//     // let hour = parseInt(hourStr, 10);
+//     // const minute = parseInt(minuteStr, 10);
+//     // const second = parseInt(secondStr, 10);
+
+//     // // Adjust hour for AM/PM format
+//     // if (period === 'PM' && hour !== 12) {
+//     //     hour += 12;
+//     // } else if (period === 'AM' && hour === 12) {
+//     //     hour = 0;
+//     // }
+
+//     // // Create a new Date object in UTC format
+//     // const date = new Date(Date.UTC(2022, 0, 1, hour, minute, second));
+
+//     // // Return the UTC timestamp in milliseconds
+//     // return date.getTime();
+// }
+
+function formatDateForHighcharts(timeString) {
+    const epochTimer = new Date(timeString);
+    const dateObj = new Date(epochTimer);
+
+    // Extract individual components
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth();
+    const day = dateObj.getDate();
+    const hour = dateObj.getHours();
+    const minute = dateObj.getMinutes();
+    const second = dateObj.getSeconds();
+
+    // Create the formatted string in the Date.UTC format
+    const formattedString = `Date.UTC(${year}, ${month}, ${day}, ${hour}, ${minute}, ${second})`;
+
+    return formattedString;
+}
+
+function formatDate(timeString) {
+    const inputDate = formatDateForHighcharts(timeString);
+    console.log('inputDate', inputDate);
+    return inputDate;
+    const dateValues = inputDate.match(/\d+/g);
+    const [year, month, day, hours, minutes, seconds] = dateValues;
+
+    // const formattedDate = `Date.UTC(${year}, ${month - 1}, ${day}, ${hours}, ${minutes}, ${seconds})`;
+    const formattedDate = new Date(Date.UTC(year, month, day, hours, minutes, seconds)).toISOString().split('T')[0];
+
+    console.log('formattedDate', formattedDate);
+    return formattedDate;
+}
+
+
+
 export {
     epochConverted,
     defaultZoomBehavior,
     implicitChannelMapping,
     explicitChannelMapping,
     settingZoomInGlobalStore,
-    updatingZoomFromGlobalStore
+    updatingZoomFromGlobalStore,
+    formatDateForHighcharts,
+    formatDate
 };

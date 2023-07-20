@@ -77,8 +77,8 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector }: any
           {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
         </>
       }
-      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} />
-      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} />
+      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' />
+      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' />
     </div>
   );
 }

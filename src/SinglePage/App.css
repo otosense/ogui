@@ -135,6 +135,11 @@ div[role="tabpanel"] {
   height: 100%;
 }
 
+.connector:hover {
+  min-width: 8px !important;
+  min-height: 8px !important;
+}
+
 .dndflow aside {
   border-right: 1px solid #eee;
   padding: 15px 10px;

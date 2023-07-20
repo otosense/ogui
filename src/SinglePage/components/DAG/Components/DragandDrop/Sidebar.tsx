@@ -21,7 +21,7 @@ export default () => {
       <div className="dndnode function" onDragStart={(event) => onDragStart(event, 'custom')} draggable>
         Function Node
       </div>
-      <div className="description"><b>Note:</b> If the value of the Variable Node is empty, it will allow connections to be made with other nodes</div>
+      <div className="description"><b>Note:</b> If the value of the Variable Node is empty, it will not allow connections to be made with other nodes</div>
 
       {/* <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'output')} draggable>
         Output Node

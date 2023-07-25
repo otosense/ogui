@@ -86,6 +86,8 @@ const DnDFlow = () => {
     const [funcList, setFuncList] = useState<any>([]);
     const [showSnackbar, setShowSnackbar] = useState(false);
 
+    const [errorMessage, setErrorMessage] = useState('');
+
 
     // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
     const toggleSnackbar = () => {
@@ -128,6 +130,8 @@ const DnDFlow = () => {
 
         if (existingEdge) {
             // An outgoing edge already exists, so prevent creating a new connection
+            setErrorMessage('Already having a outgoing connection');
+            toggleSnackbar(); // Show the Snackbar
             return;
         }
         const newEdge = {
@@ -256,6 +260,7 @@ const DnDFlow = () => {
         const targetNode = nodes.find((node) => node.id === target);
 
         if (!sourceNode || !targetNode) {
+            setErrorMessage('Invalid connection');
             return false;
         }
         console.log('sourceNode.data', sourceNode);
@@ -267,25 +272,25 @@ const DnDFlow = () => {
         // Check if the source node is of type 'custom' and if its value is empty
         if (sourceType === 'custom' && targetType === 'textUpdater') {
             if (targetValue.trim() === '') {
+                setErrorMessage('Invalid connection Please add value for Var Node');
                 toggleSnackbar();
                 return false; // Prevent the connection
             }
             else if ((sourceValue.trim() === 'new')) {
+                setErrorMessage('Invalid connection Please add value for new function node');
                 // Show Snackbar alert for an empty 'CustomNode' value
                 toggleSnackbar();
                 return false; // Prevent the connection
             }
-            // console.log('object');
-            // // Show Snackbar alert for an empty 'CustomNode' value
-            // toggleSnackbar();
-            // return false; // Prevent the connection
+
         }
 
+
+
         let isConnectionAllowed = sourceType !== targetType && !(sourceType === 'textUpdater' && sourceValue.trim() === '');
-        console.log('targetType', targetType);
         // Show Snackbar if the connection is not allowed and it's a new connection attempt
-        // Show Snackbar if the connection is not allowed
         if (!isConnectionAllowed) {
+            setErrorMessage('Invalid connection  Please add value for new function node or Var node');
             toggleSnackbar(); // Show the Snackbar
         }
 
@@ -364,7 +369,7 @@ const DnDFlow = () => {
                 </div>
             )}
 
-            {showSnackbar && <SnackBar message={'not allowed'} severity='error' />}
+            {showSnackbar && <SnackBar message={errorMessage} severity='error' />}
         </div>
 
     );

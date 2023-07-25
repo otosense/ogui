@@ -269,6 +269,13 @@ const DnDFlow = () => {
         const sourceValue = sourceNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
         const targetValue = targetNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
         console.log('sourceValue', { sourceType, sourceValue, targetType, targetValue });
+        if (sourceType === targetType) {
+            setErrorMessage('Same Connections not allowed');
+            // Show Snackbar alert for an empty 'CustomNode' value
+            toggleSnackbar();
+            return false;
+        }
+
         // Check if the source node is of type 'custom' and if its value is empty
         if (sourceType === 'custom' && targetType === 'textUpdater') {
             if (targetValue.trim() === '') {
@@ -284,6 +291,8 @@ const DnDFlow = () => {
             }
 
         }
+
+
 
 
 

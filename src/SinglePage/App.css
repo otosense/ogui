@@ -136,8 +136,18 @@ div[role="tabpanel"] {
 }
 
 .connector:hover {
-  min-width: 8px !important;
-  min-height: 8px !important;
+  min-width: 12px !important;
+  min-height: 10px !important;
+}
+
+.connector {
+  width: 10px !important;
+  height: 9px !important;
+  border-radius: 2px !important;
+}
+
+.customConnector {
+  border-color: #fff !important;
 }
 
 .dndflow aside {

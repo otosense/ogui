@@ -5,8 +5,10 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Alert from '@mui/material/Alert/Alert';
 
-export default function SnackBar() {
-    const [open, setOpen] = React.useState(true);
+export default function SnackBar(props) {
+    console.log('props', props);
+    const [open, setOpen] = React.useState(props.message.length > 0);
+
 
     const handleClick = () => {
         setOpen(true);
@@ -40,12 +42,12 @@ export default function SnackBar() {
         <div>
             <Snackbar
                 open={open}
-                autoHideDuration={1500}
+                autoHideDuration={2000}
                 onClose={handleClose}
                 // message=""
                 action={action}
             >
-                <Alert severity="info">Session ID Copied Successfully</Alert>
+                <Alert severity={props.severity}>{props.message}</Alert>
             </Snackbar>
         </div>
     );

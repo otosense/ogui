@@ -268,7 +268,7 @@ const StoreView = () => {
                     {error.toString()}
                 </Alert>
             )}
-            {copied && <SnackBar />}
+            {copied && <SnackBar message={'Session ID Copied Successfully'} severity={'info'} />}
             <section className='storeViewerLayout'>
                 <TreeView
                     aria-label='Store View'

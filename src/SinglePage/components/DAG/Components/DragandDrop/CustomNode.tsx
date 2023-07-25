@@ -83,8 +83,8 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
           {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
         </>
       }
-      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={allowConnection} />
-      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={allowConnection} />
+      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={isConnectable} />
+      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
     </div>
   );
 }

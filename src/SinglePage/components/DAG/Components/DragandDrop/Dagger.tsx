@@ -27,6 +27,7 @@ import Save from './Save';
 import * as API from './../API/API';
 import 'reactflow/dist/style.css';
 import React from 'react';
+import SnackBar from '../../../../utilities/SnackBar';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -83,8 +84,14 @@ const DnDFlow = () => {
     const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} });
     const [uploadOver, setUploadOver] = useState(false);
     const [funcList, setFuncList] = useState<any>([]);
+    const [showSnackbar, setShowSnackbar] = useState(false);
+
 
     // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
+    const toggleSnackbar = () => {
+        setShowSnackbar((prev) => !prev);
+        // setSnackbarKey((prev) => prev + 1); // Update the key to force the Snackbar to re-render
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -245,11 +252,47 @@ const DnDFlow = () => {
 
     const isValidConnection = (connection: any) => {
         const { source, target } = connection;
-        const sourceValid = nodes.find((node) => node.id === source)?.type;
-        const targetValid = nodes.find((node) => node.id === target)?.type;
-        return sourceValid !== targetValid;
-        // return sourceValid !== 'custom' || targetValid !== 'custom';
+        const sourceNode = nodes.find((node) => node.id === source);
+        const targetNode = nodes.find((node) => node.id === target);
+
+        if (!sourceNode || !targetNode) {
+            return false;
+        }
+        console.log('sourceNode.data', sourceNode);
+        const sourceType = sourceNode.type;
+        const targetType = targetNode.type;
+        const sourceValue = sourceNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
+        const targetValue = targetNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
+        console.log('sourceValue', { sourceType, sourceValue, targetType, targetValue });
+        // Check if the source node is of type 'custom' and if its value is empty
+        if (sourceType === 'custom' && targetType === 'textUpdater') {
+            if (targetValue.trim() === '') {
+                toggleSnackbar();
+                return false; // Prevent the connection
+            }
+            else if ((sourceValue.trim() === 'new')) {
+                // Show Snackbar alert for an empty 'CustomNode' value
+                toggleSnackbar();
+                return false; // Prevent the connection
+            }
+            // console.log('object');
+            // // Show Snackbar alert for an empty 'CustomNode' value
+            // toggleSnackbar();
+            // return false; // Prevent the connection
+        }
+
+        let isConnectionAllowed = sourceType !== targetType && !(sourceType === 'textUpdater' && sourceValue.trim() === '');
+        console.log('targetType', targetType);
+        // Show Snackbar if the connection is not allowed and it's a new connection attempt
+        // Show Snackbar if the connection is not allowed
+        if (!isConnectionAllowed) {
+            toggleSnackbar(); // Show the Snackbar
+        }
+
+        return isConnectionAllowed;
     };
+
+
 
     const uploadHandler = () => {
         setUploadOver(false);
@@ -320,6 +363,8 @@ const DnDFlow = () => {
                     )}
                 </div>
             )}
+
+            {showSnackbar && <SnackBar message={'not allowed'} severity='error' />}
         </div>
 
     );

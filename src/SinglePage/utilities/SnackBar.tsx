@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { memo } from 'react';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Alert from '@mui/material/Alert/Alert';
 
-export default function SnackBar(props) {
+function SnackBar(props) {
     console.log('props', props);
     const [open, setOpen] = React.useState(props.message.length > 0);
 
@@ -24,9 +24,9 @@ export default function SnackBar(props) {
 
     const action = (
         <React.Fragment>
-            {/* <Button color="secondary" size="small" onClick={handleClose}>
-                UNDO
-            </Button> */}
+            <Button color="secondary" size="small" onClick={handleClose}>
+                Close
+            </Button>
             <IconButton
                 size="small"
                 aria-label="close"
@@ -42,9 +42,9 @@ export default function SnackBar(props) {
         <div>
             <Snackbar
                 open={open}
-                autoHideDuration={2000}
+                autoHideDuration={4000}
                 onClose={handleClose}
-                // message=""
+                message=""
                 action={action}
             >
                 <Alert severity={props.severity}>{props.message}</Alert>
@@ -52,3 +52,5 @@ export default function SnackBar(props) {
         </div>
     );
 }
+
+export default memo(SnackBar);

@@ -50,7 +50,7 @@ function NodeCreator(props: any) {
     return (
         <div className="text-updater-node">
             <h4 className={`nodeTitle ${type}`}>{nodeType.title}</h4>
-            <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} isConnectable={allowConnection} className='connector' />
+            <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} isConnectable={isConnectable} className='connector' />
             <div className={`flexProps ${type}`}>
                 <div className="inputStyler">
                     <label htmlFor="text">{nodeType.label}:</label>
@@ -58,7 +58,7 @@ function NodeCreator(props: any) {
                 </div>
                 {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
             </div>
-            <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} isConnectable={allowConnection} className='connector' />
+            <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} isConnectable={isConnectable} className='connector' />
         </div>
     );
 }

@@ -1,0 +1,38 @@
+// Dag validationMsg starts here
+
+    // const sourceValue = sourceNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
+        // const targetValue = targetNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
+        // console.log('sourceValue', { sourceType, sourceValue, targetType, targetValue });
+
+
+        // // Check if the source node is of type 'custom' and if its value is empty
+        // if (sourceType === 'custom' && targetType === 'textUpdater') {
+        //     if (targetValue.trim() === '') {
+        //         setErrorMessage('Invalid connection Please add value for Var Node');
+        //         toggleSnackbar();
+        //         return false; // Prevent the connection
+        //     }
+        //     else if ((sourceValue.trim() === 'new')) {
+        //         setErrorMessage('Invalid connection Please add value for new function node');
+        //         // Show Snackbar alert for an empty 'CustomNode' value
+        //         toggleSnackbar();
+        //         return false; // Prevent the connection
+        //     }
+
+        // }
+
+
+
+
+
+        // let isConnectionAllowed = sourceType !== targetType && !(sourceType === 'textUpdater' && sourceValue.trim() === '');
+        // // Show Snackbar if the connection is not allowed and it's a new connection attempt
+        // if (!isConnectionAllowed) {
+        //     setErrorMessage('Invalid connection  Please add value for new function node or Var node');
+        //     toggleSnackbar(); // Show the Snackbar
+        // }
+
+        // return isConnectionAllowed;
+
+
+        // Dag validationMsg ends here

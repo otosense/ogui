@@ -146,10 +146,6 @@ div[role="tabpanel"] {
   border-radius: 2px !important;
 }
 
-.customConnector {
-  border-color: #fff !important;
-}
-
 .dndflow aside {
   border-right: 1px solid #eee;
   padding: 15px 10px;

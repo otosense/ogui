@@ -258,52 +258,22 @@ const DnDFlow = () => {
         const { source, target } = connection;
         const sourceNode = nodes.find((node) => node.id === source);
         const targetNode = nodes.find((node) => node.id === target);
-
+        console.log({ sourceNode, targetNode });
         if (!sourceNode || !targetNode) {
             setErrorMessage('Invalid connection');
-            return false;
-        }
-        console.log('sourceNode.data', sourceNode);
-        const sourceType = sourceNode.type;
-        const targetType = targetNode.type;
-        const sourceValue = sourceNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
-        const targetValue = targetNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
-        console.log('sourceValue', { sourceType, sourceValue, targetType, targetValue });
-        if (sourceType === targetType) {
-            setErrorMessage('Same Connections not allowed');
-            // Show Snackbar alert for an empty 'CustomNode' value
             toggleSnackbar();
             return false;
         }
+        const sourceType = sourceNode.type;
+        const targetType = targetNode.type;
 
-        // Check if the source node is of type 'custom' and if its value is empty
-        if (sourceType === 'custom' && targetType === 'textUpdater') {
-            if (targetValue.trim() === '') {
-                setErrorMessage('Invalid connection Please add value for Var Node');
-                toggleSnackbar();
-                return false; // Prevent the connection
-            }
-            else if ((sourceValue.trim() === 'new')) {
-                setErrorMessage('Invalid connection Please add value for new function node');
-                // Show Snackbar alert for an empty 'CustomNode' value
-                toggleSnackbar();
-                return false; // Prevent the connection
-            }
 
+        if (sourceType === targetType) {
+            setErrorMessage('Same Connections not allowed');
+            toggleSnackbar();
+            return false;
         }
-
-
-
-
-
-        let isConnectionAllowed = sourceType !== targetType && !(sourceType === 'textUpdater' && sourceValue.trim() === '');
-        // Show Snackbar if the connection is not allowed and it's a new connection attempt
-        if (!isConnectionAllowed) {
-            setErrorMessage('Invalid connection  Please add value for new function node or Var node');
-            toggleSnackbar(); // Show the Snackbar
-        }
-
-        return isConnectionAllowed;
+        return sourceType !== targetType;
     };
 
 

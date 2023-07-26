@@ -5,14 +5,16 @@ import RouterConfig from './utilities/Routes/Routes';
 import Layout from './utilities/Routes/Layout';
 import React, { Suspense, useEffect } from 'react';
 import MiniDrawer from './utilities/Routes/ResponsiveLayout';
+import DualAxesChart from './components/DataVisualizer/components/DualAxis';
+import TripleAxesChart from './components/DataVisualizer/components/TripleAxis';
 
 function App() {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Programmatically navigate to the desired route on component mount
-    navigate('/dataVisualization');
-  }, []);
+  // useEffect(() => {
+  //   // Programmatically navigate to the desired route on component mount
+  //   navigate('/dagger');
+  // }, []);
   return (
     <>
       {/* <Layout /> */}
@@ -25,6 +27,10 @@ function App() {
           ))}
           {/* Add the wildcard route */}
           <Route path="*" element={<h1>Page Not Found</h1>} />
+          <Route path="/dual" element={<>
+            <DualAxesChart />
+            <TripleAxesChart />
+          </>} />
         </Routes>
       </Suspense>
     </>

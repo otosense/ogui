@@ -174,18 +174,18 @@ const DnDFlow = () => {
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
             const flow = reactFlowInstance.toObject();
+            // Handling Error if any of the nodes label are empty
+            const getFuncNode = ValidationError(flow);
             let MappedJson = {
                 func_nodes: convertJsonToFuncNodes(flow)
             };
 
-            const getFuncNode = ValidationError(MappedJson);
             setErrorMapping(getFuncNode);
-            console.log('getFuncNode', getFuncNode);
-            // setIsModal({
-            //     open: true,
-            //     type: 'download',
-            //     data: MappedJson
-            // });
+            setIsModal({
+                open: getFuncNode.length === 0,
+                type: 'download',
+                data: MappedJson
+            });
             localStorage.setItem(flowKey, JSON.stringify(flow));
             localStorage.setItem('MappedJson', JSON.stringify(MappedJson));
 

@@ -3,7 +3,7 @@ import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
 import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
 
 function TextEditorNode(props: any) {
-    const { id, isConnectable, type, sourcePosition, data } = props;
+    const { id, isConnectable, type, sourcePosition, data, errorMapping } = props;
     const [valueText, setValueText] = useState(props.data.label);
     const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' });
     const [validationMsg, setValidationMsg] = useState(false);
@@ -42,9 +42,15 @@ function TextEditorNode(props: any) {
         }
     }, [props.type]);
 
+    function errorMapper(errorMapping: any, id: string) {
+        const errorNode = errorMapping.find((x: any) => x.id === id);
+        return errorNode ? 'bugNode' : '';
+    }
+
+
     return (
-        <div className="text-updater-node">
-            <h4 className={`nodeTitle ${type}`} title={valueText}>{valueText.length === 0 ? 'Node Title' : valueText}</h4>
+        <div className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
+            {/* <h4 className={`nodeTitle ${type}`} title={valueText}>{valueText.length === 0 ? 'Node Title' : valueText}</h4> */}
             {/* <h4 className={`nodeTitle ${type}`}>{nodeType.title}</h4> */}
             <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} isConnectable={isConnectable} className='connector' />
             <div className={`flexProps ${type}`}>

@@ -311,6 +311,11 @@ h4.nodeTitle.varNode {
   border-color: red !important;
 }
 
+.bugNode .flexProps.varNode {
+  border-color: red !important;
+  background: red;
+}
+
 .text-updater-node {
   overflow: hidden;
   width: 200px;

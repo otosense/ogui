@@ -3,11 +3,11 @@ import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
 import * as API from '../../API/API';
 
-function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable }: any) {
+function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels }: any) {
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
-  const [customValue, setCustomValue] = useState();
-  const [valueText, setValueText] = useState('');
+  const [customValue, setCustomValue] = useState(value);
+  const [valueText, setValueText] = useState(labels);
   const [validationMsg, setValidationMsg] = useState(false);
 
   const onChange = (evt: { target: { value: any; }; }) => {
@@ -91,35 +91,15 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
   const { id, data, type, sourcePosition, funcList, isConnectable, errorMapping } = props;
 
   function errorMapper(errorMapping: any, id: string) {
-    console.log({ errorMapping, id });
-    if (errorMapping.length > 0) {
-      return errorMapping?.map(x => {
-        if (x.name === id) {
-          return 'BugFuncNode';
-        } else {
-          return '';
-        }
-      });
-    } else {
-
-      return '';
-    }
+    const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
+    return errorNode ? 'BugFuncNode' : '';
   }
 
   return (
     <section className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
       <h4 className={`nodeTitle ${type}`} title={data.label}>{data.label}</h4>
-
       <div className={`flexProps ${type}`}>
-
-        {console.log({ errorMapping })}
-        {errorMapping?.map(x => {
-          if (x.name === id) {
-
-            return <p>{id} === {x.name} There is an Error in this function</p>;
-          }
-        })}
-        <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} />
+        <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} labels={data.label} />
       </div>
 
     </section>

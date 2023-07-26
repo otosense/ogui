@@ -43,7 +43,7 @@ function TextEditorNode(props: any) {
     }, [props.type]);
 
     function errorMapper(errorMapping: any, id: string) {
-        const errorNode = errorMapping.find((x: any) => x.id === id);
+        const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
         return errorNode ? 'bugNode' : '';
     }
 

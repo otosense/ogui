@@ -170,7 +170,8 @@ const DnDFlow = () => {
         setUploadOver(!uploadOver);
     }, [setNodes, setEdges, setUploadOver]);
 
-    const onSave = useCallback(() => {
+    const onSave = useCallback((e: { preventDefault: () => void; }) => {
+        e.preventDefault();
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
             const flow = reactFlowInstance.toObject();
@@ -179,7 +180,11 @@ const DnDFlow = () => {
             let MappedJson = {
                 func_nodes: convertJsonToFuncNodes(flow)
             };
+            console.log('getFuncNode', getFuncNode);
 
+            if (getFuncNode.length > 0) {
+                return errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+            }
             setErrorMapping(getFuncNode);
             setIsModal({
                 open: getFuncNode.length === 0,
@@ -190,7 +195,7 @@ const DnDFlow = () => {
             localStorage.setItem('MappedJson', JSON.stringify(MappedJson));
 
         }
-    }, [reactFlowInstance]);
+    }, [reactFlowInstance, errorMapping]);
 
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
         event.preventDefault();

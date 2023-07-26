@@ -1,5 +1,8 @@
 export function convertJsonToFuncNodes(jsonData: any) {
+    console.log('jsonData', jsonData);
     const { edges, nodes } = jsonData;
+
+    console.log({ edges, nodes });
     let funcNodes = nodes.filter((node: { type: string; }) => node.type === "custom");
     let varNodes = nodes.filter((node: { type: string; }) => node.type !== "custom");
     let mapping: any[] = [];

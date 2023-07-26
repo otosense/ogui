@@ -87,12 +87,38 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
 
 
-function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; }) {
-  const { id, data, type, sourcePosition, funcList, isConnectable } = props;
+function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; errorMapping: any; }) {
+  const { id, data, type, sourcePosition, funcList, isConnectable, errorMapping } = props;
+
+  function errorMapper(errorMapping: any, id: string) {
+    console.log({ errorMapping, id });
+    if (errorMapping.length > 0) {
+      return errorMapping?.map(x => {
+        if (x.name === id) {
+          return 'BugFuncNode';
+        } else {
+          return '';
+        }
+      });
+    } else {
+
+      return '';
+    }
+  }
+
   return (
-    <section className={`text-updater-node ${type}`}>
+    <section className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
       <h4 className={`nodeTitle ${type}`} title={data.label}>{data.label}</h4>
+
       <div className={`flexProps ${type}`}>
+
+        {console.log({ errorMapping })}
+        {errorMapping?.map(x => {
+          if (x.name === id) {
+
+            return <p>{id} === {x.name} There is an Error in this function</p>;
+          }
+        })}
         <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} />
       </div>
 

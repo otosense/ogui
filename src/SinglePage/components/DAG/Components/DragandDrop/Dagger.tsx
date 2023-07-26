@@ -28,6 +28,7 @@ import * as API from './../API/API';
 import 'reactflow/dist/style.css';
 import React from 'react';
 import SnackBar from '../../../../utilities/SnackBar';
+import { ValidationError } from './ErrorValidator';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -57,6 +58,7 @@ const DnDFlow = () => {
     const [showSnackbar, setShowSnackbar] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState('');
+    const [errorMapping, setErrorMapping] = useState([]);
 
 
     // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
@@ -91,9 +93,9 @@ const DnDFlow = () => {
     };
 
     const nodeTypes = useMemo(() => ({
-        textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcList={funcList} />,
-    }), [funcList]);
+        textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcList={funcList} errorMapping={errorMapping || []} />,
+    }), [funcList, errorMapping]);
 
 
     const onConnect = useCallback((params: Edge | Connection) => {
@@ -176,11 +178,14 @@ const DnDFlow = () => {
                 func_nodes: convertJsonToFuncNodes(flow)
             };
 
-            setIsModal({
-                open: true,
-                type: 'download',
-                data: MappedJson
-            });
+            const getFuncNode = ValidationError(MappedJson);
+            setErrorMapping(getFuncNode);
+            console.log('getFuncNode', getFuncNode);
+            // setIsModal({
+            //     open: true,
+            //     type: 'download',
+            //     data: MappedJson
+            // });
             localStorage.setItem(flowKey, JSON.stringify(flow));
             localStorage.setItem('MappedJson', JSON.stringify(MappedJson));
 

@@ -1,8 +1,8 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
-import { onNameHandlers, pythonIdentifierPattern } from '../Utilities/globalFunction';
+import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
 
-function NodeCreator(props: any) {
+function TextEditorNode(props: any) {
     const { id, isConnectable, type, sourcePosition, data } = props;
     const [valueText, setValueText] = useState(props.data.label);
     const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' });
@@ -58,7 +58,7 @@ function NodeCreator(props: any) {
     );
 }
 
-export default memo(NodeCreator);
+export default memo(TextEditorNode);
 
 
 

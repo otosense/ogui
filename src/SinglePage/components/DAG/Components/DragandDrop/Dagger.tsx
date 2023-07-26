@@ -19,9 +19,9 @@ import dagre from 'dagre';
 import Sidebar from './Sidebar';
 import { convertJsonToFuncNodes } from './convertJsonToFuncNodes';
 import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './convertFuncNodeToJson';
-import NodeCreator from './NodeCreator';
+import TextEditorNode from './NodeTypes/TextEditorNode';
 import { Dagger, changedDager, dd_dager } from '../../assets/SampleDag';
-import CustomNode from './CustomNode';
+import DropDownNode from './NodeTypes/DropDownNode';
 import Load from './Load';
 import Save from './Save';
 import * as API from './../API/API';
@@ -36,47 +36,17 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 200;
 const nodeHeight = 75;
 
-const getLayoutedElements = (nodes: any[], edges: any[], direction = 'TB') => {
-    const isHorizontal = direction === 'TB';
-    dagreGraph.setGraph({ rankdir: direction });
+// Handle the different types of Layouts like Horizontal and Vertical
+const getLayoutedElements = onLayoutHandlers();
 
-    nodes.forEach((node: { id: any; }) => {
-        dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-    });
-
-    edges.forEach((edge: { source: any; target: any; }) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-    });
-
-    dagre.layout(dagreGraph);
-
-    nodes.forEach((node: { id: any; targetPosition: string; sourcePosition: string; position: { x: number; y: number; }; }) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = isHorizontal ? 'left' : 'top';
-        node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
-        node.position = {
-            x: nodeWithPosition.x - nodeWidth / 2,
-            y: nodeWithPosition.y - nodeHeight / 2,
-        };
-
-        return node;
-    });
-
-    return { nodes, edges };
-};
-
+// Generating Random ID for nodes
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 // const nodeTypes = {
-//     // custom: (props: any) => <NodeCreator {...props} type='funcNode' />,
-//     textUpdater: (props: any) => <NodeCreator {...props} type='varNode' />,
-//     custom: (props: any) => <CustomNode {...props} type='funcNode' />,
+//     // custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
+//     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
+//     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
 // };
 const DnDFlow = () => {
-
-
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -94,45 +64,60 @@ const DnDFlow = () => {
         setShowSnackbar((prev) => !prev);
         // setSnackbarKey((prev) => prev + 1); // Update the key to force the Snackbar to re-render
     };
-
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const resolve = await API.getFuncNodes();
-                setFuncList(resolve);
-
-                // Adding Custom Function
-                const customFunction = {
-                    "value": "new",
-                    "label": "New Function"
-                };
-                setFuncList((prevData: any) => [...prevData, customFunction]);
-            } catch (error: any) {
-                // Handle error
-                console.log('Error in API.getFuncNodes', error.toString());
-            }
-        };
-
         fetchData();
     }, []);
 
+
+    useEffect(() => {
+        onLayout('TB'); // Set vertical layout on component load
+    }, [uploadOver]);
+
+    const fetchData = async () => {
+        try {
+            const resolve = await API.getFuncNodes();
+            setFuncList(resolve);
+
+            // Adding Custom Function
+            const customFunction = {
+                "value": "new",
+                "label": "New Function"
+            };
+            setFuncList((prevData: any) => [...prevData, customFunction]);
+        } catch (error: any) {
+            // Handle error
+            console.log('Error in API.getFuncNodes', error.toString());
+        }
+    };
+
     const nodeTypes = useMemo(() => ({
-        textUpdater: (props: any) => <NodeCreator {...props} type='varNode' />,
-        custom: (props: any) => <CustomNode {...props} type='funcNode' funcList={funcList} />,
+        textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcList={funcList} />,
     }), [funcList]);
 
 
     const onConnect = useCallback((params: Edge | Connection) => {
         const { source, target } = params;
+
+        const sourceNode = nodes.find((node) => node.id === source);
+
         // Check if the source node already has an outgoing edge
-        const existingOutgoingEdge = edges.find((edge) => edge.source === source);
+        const existingOutgoingEdge = edges.find((edge) => {
+            if (sourceNode?.type !== 'textUpdater') {
+                return edge.source === source;
+            }
+        });
         if (existingOutgoingEdge) {
             // An outgoing edge already exists, so prevent creating a new connection
             return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
         }
 
         // Check if the target node already has an incoming edge
-        const existingIncomingEdge = edges.find((edge) => edge.target === target);
+        const existingIncomingEdge = edges.find((edge) => {
+            if (sourceNode?.type !== 'textUpdater') {
+                return edge.target === target;
+            }
+        });
         if (existingIncomingEdge) {
             // An incoming edge already exists, so prevent creating a new connection
             return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an incoming connection');
@@ -160,13 +145,11 @@ const DnDFlow = () => {
         [nodes, edges]
     );
 
-    useEffect(() => {
-        onLayout('TB'); // Set vertical layout on component load
-    }, [uploadOver]);
+
 
     // const nodeTypes = useMemo(() => ({
-    //     custom: (props: any) => <NodeCreator {...props} type='funcNode' />,
-    //     textUpdater: (props: any) => <NodeCreator {...props} type='varNode'  />,
+    //     custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
+    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode'  />,
     // }), []);
 
     // const handleUpload = (data: any) => {
@@ -356,6 +339,40 @@ const DnDFlow = () => {
 };
 
 export default memo(DnDFlow);
+
+function onLayoutHandlers() {
+    return (nodes: any[], edges: any[], direction = 'TB') => {
+        const isHorizontal = direction === 'TB';
+        dagreGraph.setGraph({ rankdir: direction });
+
+        nodes.forEach((node: { id: any; }) => {
+            dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+        });
+
+        edges.forEach((edge: { source: any; target: any; }) => {
+            dagreGraph.setEdge(edge.source, edge.target);
+        });
+
+        dagre.layout(dagreGraph);
+
+        nodes.forEach((node: { id: any; targetPosition: string; sourcePosition: string; position: { x: number; y: number; }; }) => {
+            const nodeWithPosition = dagreGraph.node(node.id);
+            node.targetPosition = isHorizontal ? 'left' : 'top';
+            node.sourcePosition = isHorizontal ? 'right' : 'bottom';
+
+            // We are shifting the dagre node position (anchor=center center) to the top left
+            // so it matches the React Flow node anchor point (top left).
+            node.position = {
+                x: nodeWithPosition.x - nodeWidth / 2,
+                y: nodeWithPosition.y - nodeHeight / 2,
+            };
+
+            return node;
+        });
+
+        return { nodes, edges };
+    };
+}
 
 function errorHandler(setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, errorString: string) {
     setErrorMessage(errorString);

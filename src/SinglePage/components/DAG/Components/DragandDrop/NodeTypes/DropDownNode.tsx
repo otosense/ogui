@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
-import { onNameHandlers, pythonIdentifierPattern } from '../Utilities/globalFunction';
-import * as API from './../API/API';
+import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
+import * as API from '../../API/API';
 
 function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable }: any) {
   const { setNodes } = useReactFlow();
@@ -87,7 +87,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
 
 
-function CustomNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; }) {
+function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; }) {
   const { id, data, type, sourcePosition, funcList, isConnectable } = props;
   return (
     <section className={`text-updater-node ${type}`}>
@@ -100,4 +100,4 @@ function CustomNode(props: { id: any; data: any; type: any; sourcePosition: any;
   );
 }
 
-export default memo(CustomNode);
+export default memo(DropDownNode);

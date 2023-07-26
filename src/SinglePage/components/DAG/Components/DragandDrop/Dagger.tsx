@@ -183,7 +183,7 @@ const DnDFlow = () => {
             console.log('getFuncNode', getFuncNode);
 
             if (getFuncNode.length > 0) {
-                return errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+                errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
             }
             setErrorMapping(getFuncNode);
             setIsModal({

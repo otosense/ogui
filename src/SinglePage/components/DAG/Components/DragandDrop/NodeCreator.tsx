@@ -1,11 +1,10 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
-import { pythonIdentifierPattern } from '../Utilities/globalFunction';
+import { onNameHandlers, pythonIdentifierPattern } from '../Utilities/globalFunction';
 
 function NodeCreator(props: any) {
     const { id, isConnectable, type, sourcePosition, data } = props;
     const [valueText, setValueText] = useState(props.data.label);
-    const [allowConnection, setAllowConnection] = useState(!isConnectable);
     const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' });
     const [validationMsg, setValidationMsg] = useState(false);
     const { setNodes } = useReactFlow();
@@ -14,10 +13,11 @@ function NodeCreator(props: any) {
     const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
         const { nodeInternals } = store.getState();
         const inputValue = evt.target.value;
-        if (pythonIdentifierPattern.test(inputValue)) {
+        const nameValidator = onNameHandlers(inputValue); // onNameHandlers for variable names validation
+        // if (pythonIdentifierPattern.test(inputValue)) {
+        if (nameValidator) {
             setValidationMsg(false);
             setValueText(inputValue);
-            setAllowConnection(inputValue.length > 0);
             setNodes(
                 Array.from(nodeInternals.values()).map((node: any) => {
                     if (node.id === id) {
@@ -41,11 +41,6 @@ function NodeCreator(props: any) {
             setNodeType({ title: 'var_node', label: 'var_label', placeHolder: 'variable name' });
         }
     }, [props.type]);
-
-    useEffect(() => {
-        setAllowConnection(valueText?.length > 0);
-    }, [valueText]);
-
 
     return (
         <div className="text-updater-node">

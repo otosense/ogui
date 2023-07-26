@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
-import { pythonIdentifierPattern } from '../Utilities/globalFunction';
+import { onNameHandlers, pythonIdentifierPattern } from '../Utilities/globalFunction';
 import * as API from './../API/API';
 
 function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable }: any) {
@@ -9,7 +9,6 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const [customValue, setCustomValue] = useState();
   const [valueText, setValueText] = useState('');
   const [validationMsg, setValidationMsg] = useState(false);
-  const [allowConnection, setAllowConnection] = useState(isConnectable);
 
   const onChange = (evt: { target: { value: any; }; }) => {
     const { nodeInternals } = store.getState();
@@ -35,7 +34,9 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
     const { nodeInternals } = store.getState();
     const inputValue = evt.target.value;
-    if (pythonIdentifierPattern.test(inputValue)) {
+    const nameValidator = onNameHandlers(inputValue); // onNameHandlers for function names validation
+    // if (pythonIdentifierPattern.test(inputValue)) {
+    if (nameValidator) {
       setValueText(inputValue);
       setValidationMsg(false);
       setNodes(
@@ -54,11 +55,6 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
       setValidationMsg(true);
     }
   }, []);
-
-  useEffect(() => {
-    setAllowConnection(customValue === "new" ? valueText?.length > 0 : true);
-  }, [customValue, valueText]);
-
 
   return (
     <div className="custom-node__select">

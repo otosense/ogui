@@ -124,24 +124,28 @@ const DnDFlow = () => {
 
     const onConnect = useCallback((params: Edge | Connection) => {
         const { source, target } = params;
-
         // Check if the source node already has an outgoing edge
-        const existingEdge = edges.find((edge) => edge.source === source);
-
-        if (existingEdge) {
+        const existingOutgoingEdge = edges.find((edge) => edge.source === source);
+        if (existingOutgoingEdge) {
             // An outgoing edge already exists, so prevent creating a new connection
-            setErrorMessage('Already having a outgoing connection');
-            toggleSnackbar(); // Show the Snackbar
-            return;
+            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
         }
+
+        // Check if the target node already has an incoming edge
+        const existingIncomingEdge = edges.find((edge) => edge.target === target);
+        if (existingIncomingEdge) {
+            // An incoming edge already exists, so prevent creating a new connection
+            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an incoming connection');
+        }
+
         const newEdge = {
             ...params,
             type: 'smoothstep',
             animated: true,
         };
-        // No outgoing edge exists, create the new connection
+        // No outgoing or incoming edge exists, create the new connection
         setEdges((prevEdges) => addEdge(newEdge, prevEdges));
-    }, [edges]);
+    }, [nodes, edges]);
 
     const onLayout = useCallback(
         (direction: string | undefined) => {
@@ -238,17 +242,17 @@ const DnDFlow = () => {
             };
             if (type === 'custom') {
                 newNode.data = {
-                    label: 'FunctionNode',
-                    ddType: 'FunctionNode',
+                    label: funcList?.[0]?.label,
+                    ddType: funcList?.[0]?.label,
                     initialEdge: 'right',
                     selects: {
-                        [nodeTypeId]: 'FunctionNode',
+                        [nodeTypeId]: funcList?.[0]?.label,
                     },
                 };
             }
             setNodes((nds) => nds.concat(newNode));
         },
-        [reactFlowInstance]
+        [reactFlowInstance, funcList]
     );
 
 
@@ -260,50 +264,15 @@ const DnDFlow = () => {
         const targetNode = nodes.find((node) => node.id === target);
 
         if (!sourceNode || !targetNode) {
-            setErrorMessage('Invalid connection');
-            return false;
+            return errorHandler(setErrorMessage, toggleSnackbar, 'Invalid connection');
         }
-        console.log('sourceNode.data', sourceNode);
         const sourceType = sourceNode.type;
         const targetType = targetNode.type;
-        const sourceValue = sourceNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
-        const targetValue = targetNode.data?.label; // Assuming that the 'textUpdater' node's value is stored in 'label'
-        console.log('sourceValue', { sourceType, sourceValue, targetType, targetValue });
+
         if (sourceType === targetType) {
-            setErrorMessage('Same Connections not allowed');
-            // Show Snackbar alert for an empty 'CustomNode' value
-            toggleSnackbar();
-            return false;
+            return errorHandler(setErrorMessage, toggleSnackbar, 'Same Connections not allowed');
         }
-
-        // Check if the source node is of type 'custom' and if its value is empty
-        if (sourceType === 'custom' && targetType === 'textUpdater') {
-            if (targetValue.trim() === '') {
-                setErrorMessage('Invalid connection Please add value for Var Node');
-                toggleSnackbar();
-                return false; // Prevent the connection
-            }
-            else if ((sourceValue.trim() === 'new')) {
-                setErrorMessage('Invalid connection Please add value for new function node');
-                // Show Snackbar alert for an empty 'CustomNode' value
-                toggleSnackbar();
-                return false; // Prevent the connection
-            }
-
-        }
-
-
-
-
-
-        let isConnectionAllowed = sourceType !== targetType && !(sourceType === 'textUpdater' && sourceValue.trim() === '');
-        // Show Snackbar if the connection is not allowed and it's a new connection attempt
-        if (!isConnectionAllowed) {
-            setErrorMessage('Invalid connection  Please add value for new function node or Var node');
-            toggleSnackbar(); // Show the Snackbar
-        }
-
-        return isConnectionAllowed;
+        return sourceType !== targetType;
     };
 
 
@@ -386,5 +355,11 @@ const DnDFlow = () => {
 
 };
 
-export default memo(DnDFlow)
+export default memo(DnDFlow);
+
+function errorHandler(setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, errorString: string) {
+    setErrorMessage(errorString);
+    toggleSnackbar();
+    return false;
+}
 

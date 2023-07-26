@@ -250,9 +250,14 @@ input#text:focus-visible {
 
 .nodeTitle {
   margin: -1px;
-  padding: 2%;
+  padding: 2% 4%;
   color: #fff;
   text-align: center;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 26px;
 }
 
 .nodeTitle.funcNode {
@@ -301,6 +306,7 @@ h4.nodeTitle.varNode {
 .text-updater-node {
   overflow: hidden;
   width: 200px;
+  border-radius: 3px;
 }
 
 .ModalBox {

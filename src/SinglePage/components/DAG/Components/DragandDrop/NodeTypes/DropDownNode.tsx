@@ -91,7 +91,7 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
   const { id, data, type, sourcePosition, funcList, isConnectable } = props;
   return (
     <section className={`text-updater-node ${type}`}>
-      <h4 className={`nodeTitle ${type}`}>func_node</h4>
+      <h4 className={`nodeTitle ${type}`} title={data.label}>{data.label}</h4>
       <div className={`flexProps ${type}`}>
         <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} />
       </div>

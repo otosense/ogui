@@ -36,6 +36,7 @@ If you want to run the DataTable. please go to the Index.html file. and uncommen
 <script type="module" src="/src/DataTable/main.tsx"></script>
 ```
 
+Goto the DataTable Folder in Terminal and Start the server
 ```bash
   yarn dev
 ```
@@ -67,3 +68,16 @@ If you want to run the DataVisualizer Backend. Please see the Backend Folder the
 ```bash
   yarn dev
 ```
+
+### DPP
+If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DPP/main.tsx"></script>
+```
+
+Goto the DPP Folder in Terminal and Start the server
+
+```bash
+  yarn dev
+```
+

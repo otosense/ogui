@@ -52,6 +52,14 @@ If you want to run the DPP. please go to the Index.html file. and uncomment this
 
 ### DataVisualizer
 If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+
+If you want to run the DataVisualizer Backend. Please see the Backend Folder there do 
+
+```bash
+  yarn 
+  node ./index.js
+```
+
 ```
 <script type="module" src="/src/DataVisualizer/main.tsx"></script>
 ```

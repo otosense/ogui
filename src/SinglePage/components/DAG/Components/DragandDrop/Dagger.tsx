@@ -32,6 +32,7 @@ import { ValidationError } from './ErrorValidator';
 import { Button } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import LoadingOverlay from '../../../../utilities/Loader';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -59,6 +60,7 @@ const DnDFlow = () => {
     const [uploadOver, setUploadOver] = useState(false);
     const [funcList, setFuncList] = useState<any>([]);
     const [showSnackbar, setShowSnackbar] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
@@ -81,6 +83,7 @@ const DnDFlow = () => {
     const fetchData = async () => {
         try {
             const resolve = await API.getFuncNodes();
+            setLoading(false);
             setFuncList(resolve);
 
             // Adding Custom Function
@@ -104,10 +107,10 @@ const DnDFlow = () => {
     const onConnect = useCallback((params: Edge | Connection) => {
         const { source, target } = params;
 
-        const sourceNode = nodes.find((node) => node.id === source);
+        const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
 
         // Check if the source node already has an outgoing edge
-        const existingOutgoingEdge = edges.find((edge) => {
+        const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
             if (sourceNode?.type !== 'textUpdater') {
                 return edge.source === source;
             }
@@ -118,7 +121,7 @@ const DnDFlow = () => {
         }
 
         // Check if the target node already has an incoming edge
-        const existingIncomingEdge = edges.find((edge) => {
+        const existingIncomingEdge = edges.find((edge: { target: any; }) => {
             if (sourceNode?.type !== 'textUpdater') {
                 return edge.target === target;
             }
@@ -134,7 +137,7 @@ const DnDFlow = () => {
             animated: true,
         };
         // No outgoing or incoming edge exists, create the new connection
-        setEdges((prevEdges) => addEdge(newEdge, prevEdges));
+        setEdges((prevEdges: any) => addEdge(newEdge, prevEdges));
     }, [nodes, edges]);
 
     const onLayout = useCallback(
@@ -246,18 +249,18 @@ const DnDFlow = () => {
                     },
                 };
             }
-            setNodes((nds) => nds.concat(newNode));
+            setNodes((nds: string | any[]) => nds.concat(newNode));
         },
         [reactFlowInstance, funcList]
     );
 
 
-    const dataWithUpdates = nodes.map((node) => node);
+    const dataWithUpdates = nodes.map((node: any) => node);
 
     const isValidConnection = (connection: any) => {
         const { source, target } = connection;
-        const sourceNode = nodes.find((node) => node.id === source);
-        const targetNode = nodes.find((node) => node.id === target);
+        const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
+        const targetNode = nodes.find((node: { id: any; }) => node.id === target);
 
         if (!sourceNode || !targetNode) {
             return errorHandler(setErrorMessage, toggleSnackbar, 'Invalid connection');
@@ -294,6 +297,7 @@ const DnDFlow = () => {
 
     return (
         <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
+            {loading && <LoadingOverlay />}
             <ReactFlowProvider>
                 <Sidebar />
                 <div className="reactflow-wrapper" ref={reactFlowWrapper}>

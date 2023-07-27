@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     // Programmatically navigate to the desired route on component mount
-    navigate('/dataVisualization');
+    navigate('/dagger');
   }, []);
   return (
     <>

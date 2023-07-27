@@ -33,6 +33,8 @@ import { Button } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import LoadingOverlay from '../../../../utilities/Loader';
+import { dagDirections } from '../Utilities/globalFunction';
+import { Alert } from '@mui/material';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -61,6 +63,7 @@ const DnDFlow = () => {
     const [funcList, setFuncList] = useState<any>([]);
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
@@ -94,6 +97,8 @@ const DnDFlow = () => {
             setFuncList((prevData: any) => [...prevData, customFunction]);
         } catch (error: any) {
             // Handle error
+            setIsError(true);
+            setLoading(false);
             console.log('Error in API.getFuncNodes', error.toString());
         }
     };
@@ -237,13 +242,13 @@ const DnDFlow = () => {
                 type,
 
                 position,
-                data: { label: '', initialEdge: 'right', },
+                data: { label: '', initialEdge: dagDirections, },
             };
             if (type === 'custom') {
                 newNode.data = {
                     label: funcList?.[0]?.label,
                     ddType: funcList?.[0]?.label,
-                    initialEdge: 'right',
+                    initialEdge: dagDirections,
                     selects: {
                         [nodeTypeId]: funcList?.[0]?.label,
                     },
@@ -294,65 +299,68 @@ const DnDFlow = () => {
     };
 
 
-
     return (
-        <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
-            {loading && <LoadingOverlay />}
-            <ReactFlowProvider>
-                <Sidebar />
-                <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                    <ReactFlow
-                        // nodes={nodes}
-                        nodes={dataWithUpdates}
-                        snapToGrid={true}
-                        snapGrid={[2, 2]}
-                        // edges={edges}
-                        edges={edgesWithUpdatedTypes}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        isValidConnection={isValidConnection}
-                        onConnect={onConnect}
-                        onInit={setReactFlowInstance}
-                        onDrop={onDrop}
-                        onDragOver={onDragOver}
-                        fitView
-                        nodeTypes={nodeTypes}
-                    >
-                        <Background
-                            variant={BackgroundVariant.Lines}
-                            color="#2a2b2d"
-                            style={{ backgroundColor: "#1E1F22" }}
-                        />
-                        <Controls />
-                        <Panel position="top-right">
-                            {/* <button>save</button>
+        isError ? (<Alert severity='error' className='errorMessage'>
+            There is an Error in API
+        </Alert>) : (
+            <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
+                {loading && <LoadingOverlay />}
+
+                <ReactFlowProvider>
+                    <Sidebar />
+                    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                        <ReactFlow
+                            // nodes={nodes}
+                            nodes={dataWithUpdates}
+                            snapToGrid={true}
+                            snapGrid={[2, 2]}
+                            // edges={edges}
+                            edges={edgesWithUpdatedTypes}
+                            onNodesChange={onNodesChange}
+                            onEdgesChange={onEdgesChange}
+                            isValidConnection={isValidConnection}
+                            onConnect={onConnect}
+                            onInit={setReactFlowInstance}
+                            onDrop={onDrop}
+                            onDragOver={onDragOver}
+                            fitView
+                            nodeTypes={nodeTypes}
+                        >
+                            <Background
+                                variant={BackgroundVariant.Lines}
+                                color="#2a2b2d"
+                                style={{ backgroundColor: "#1E1F22" }}
+                            />
+                            <Controls />
+                            <Panel position="top-right">
+                                {/* <button>save</button>
                             <button onClick={uploadHandler} className='panelBtn'>load</button> */}
 
-                            <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
-                            <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
-                        </Panel>
+                                <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                                <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
+                            </Panel>
 
-                        {/* <Panel position="top-left">
+                            {/* <Panel position="top-left">
                             <button onClick={() => onLayout('TB')} className='saveBtn'>vertical layout</button>
                             <button onClick={() => onLayout('LR')}>horizontal layout</button>
                         </Panel> */}
-                    </ReactFlow>
-                </div>
+                        </ReactFlow>
+                    </div>
 
-            </ReactFlowProvider>
-            {isModal?.open && (
-                <div className='overlayPosition'>
-                    {isModal?.type === 'upload' ? (
-                        <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
-                    ) : (
-                        <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
-                    )}
-                </div>
-            )}
+                </ReactFlowProvider>
+                {isModal?.open && (
+                    <div className='overlayPosition'>
+                        {isModal?.type === 'upload' ? (
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                        ) : (
+                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                        )}
+                    </div>
+                )}
 
-            {showSnackbar && <SnackBar message={errorMessage} severity='error' />}
-        </div>
-
+                {showSnackbar && <SnackBar message={errorMessage} severity='error' />}
+            </div>
+        )
     );
 
 

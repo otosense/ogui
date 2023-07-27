@@ -80,7 +80,7 @@ const DnDFlow = () => {
 
 
     useEffect(() => {
-        onLayout('TB'); // Set vertical layout on component load
+        onLayout('LR'); // Set vertical layout on component load
     }, [uploadOver]);
 
     const fetchData = async () => {
@@ -224,6 +224,40 @@ const DnDFlow = () => {
         return edge;
     });
 
+    // const edgesWithUpdatedTypes = edges
+    //     .filter((edge) => {
+    //         const targetNode = nodes.find((node) => node.id === edge.target);
+    //         const edgeType = targetNode?.type === 'custom' ? targetNode?.id : null;
+    //         console.log('edge.target', edge.target, edgeType);
+    //         return edge.target == edgeType;
+    //     })
+    //     .map((edge: any) => {
+    //         if (edge.sourceHandle) {
+    //             edge.markerEnd = {
+    //                 type: MarkerType.ArrowClosed,
+    //             };
+    //         }
+    //         edge.id = `${edge.source} + ${edge.target}`;
+    //         return edge;
+    //     });
+
+
+
+
+
+    // const edgesWithUpdatedTypes = edges
+    //     .filter((edge) => edge.target !== edgeType) // Filter out edges that match the condition
+    //     .map((edge: any) => {
+    //         const edgeType = nodes.find((node) => node.type === 'custom')?.id;
+    //         if (edge.sourceHandle) {
+    //             edge.markerEnd = {
+    //                 type: MarkerType.ArrowClosed,
+    //             };
+    //         }
+    //         edge.id = `${edge.source} + ${edge.target}`;
+    //         return edge;
+    //     });
+
     const onDrop = useCallback(
         (event: { preventDefault: () => void; dataTransfer: { getData: (arg0: string) => any; }; clientX: number; clientY: number; }) => {
             event.preventDefault();
@@ -244,11 +278,13 @@ const DnDFlow = () => {
                 position,
                 data: { label: '', initialEdge: dagDirections, },
             };
+            console.log({ funcList });
             if (type === 'custom') {
                 newNode.data = {
                     label: funcList?.[0]?.label,
                     ddType: funcList?.[0]?.label,
                     initialEdge: dagDirections,
+                    params: funcList?.[0]?.inputs,
                     selects: {
                         [nodeTypeId]: funcList?.[0]?.label,
                     },

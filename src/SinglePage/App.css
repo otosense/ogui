@@ -217,7 +217,7 @@ div[role="tabpanel"] {
 
 .custom-node__select {
   /* margin: 5px; */
-  width: 90%;
+  /* width: 90%; */
   text-align: center;
 }
 
@@ -279,7 +279,7 @@ h4.nodeTitle.varNode {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 8%;
+  /* padding: 0 8%; */
   font-size: 12px;
   background: #1f2937;
   color: #fff;
@@ -498,6 +498,34 @@ select#dagList {
     width: 50%;
   }
 }
+
+
+/* ========================= DAG V2.0 starts========================= */
+
+section.handlers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* position: relative; */
+}
+
+.handlerText {
+  margin: 0 10px;
+}
+
+.resultEdger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.funcNode .react-flow__handle-left,
+.funcNode .react-flow__handle-right {
+  top: auto !important;
+  transform: unset !important
+}
+
+/* ========================= DAG V2.0 Ends========================= */
 
 
 /* ======================= DAG Builder CSS Ends here  =======================*/

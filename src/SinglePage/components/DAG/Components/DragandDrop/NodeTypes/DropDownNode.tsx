@@ -4,11 +4,20 @@ import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalF
 import * as API from '../../API/API';
 
 function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels }: any) {
+  console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels });
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [customValue, setCustomValue] = useState(value);
   const [valueText, setValueText] = useState(labels);
   const [validationMsg, setValidationMsg] = useState(false);
+  const [inputCreator, setInputCreator] = useState();
+
+  useEffect(() => {
+    const selectedFuncType = selector.find(x => x.value === customValue);
+    console.log('selectedFuncType', selectedFuncType);
+    setInputCreator(selectedFuncType.inputs);
+  }, [customValue]);
+
 
   const onChange = (evt: { target: { value: any; }; }) => {
     const { nodeInternals } = store.getState();
@@ -79,8 +88,20 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
           {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
         </>
       }
-      <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={isConnectable} />
-      <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
+      <section className='handlers'>
+        <div className='multiInput'>
+          {inputCreator?.map((x, i) => {
+            return (<div className='resultEdger' key={i}>
+              <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={x.toString()} className='connector' isConnectable={isConnectable} />
+              <span className='handlerText'>{x}</span>
+            </div>);
+          })}
+        </div>
+        <div className='resultEdger'>
+          <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
+          <span className='handlerText'>Output</span>
+        </div>
+      </section>
     </div>
   );
 }

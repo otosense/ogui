@@ -29,6 +29,9 @@ import 'reactflow/dist/style.css';
 import React from 'react';
 import SnackBar from '../../../../utilities/SnackBar';
 import { ValidationError } from './ErrorValidator';
+import { Button } from '@mui/material';
+import UploadIcon from '@mui/icons-material/Upload';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -318,8 +321,11 @@ const DnDFlow = () => {
                         />
                         <Controls />
                         <Panel position="top-right">
-                            <button onClick={onSave} className='saveBtn panelBtn'>save</button>
-                            <button onClick={uploadHandler} className='panelBtn'>load</button>
+                            {/* <button>save</button>
+                            <button onClick={uploadHandler} className='panelBtn'>load</button> */}
+
+                            <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                            <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                         </Panel>
 
                         {/* <Panel position="top-left">

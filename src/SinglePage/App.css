@@ -395,15 +395,14 @@ button.saveBtn {
 
 .react-flow__panel.top.right {
   margin: 1% 0;
-  width: 24%;
+  width: 20%;
 }
 
 button.panelBtn {
-  width: 35%;
+  width: 45%;
   text-align: center;
-  font-size: 100%;
-  background: #fff;
-  color: #000;
+  font-size: 88%;
+
 }
 
 .invalidMsg {

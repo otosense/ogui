@@ -11,9 +11,10 @@
     "prepack": "tsc",
     "clean-tsc": "yarn clean && tsc && yarn copy-files",
     "clean": "rm -rf ./lib",
-    "win-clean-tsc": "yarn win-clean && tsc && yarn copy-files",
-    "win-clean": "rmdir /s /q lib",
     "copy-files": "cp -r ./src/assets/ ./lib/assets/",
+    "win-clean-tsc": "yarn win-clean && tsc && yarn win-copy-files",
+    "win-clean": "rmdir /s /q lib",
+    "win-copy-files": "xcopy /E /I .\\src\\assets .\\lib\\assets",
     "tsc": "tsc",
     "dev": "vite",
     "start": "webpack serve --mode development --config webpack.config.development.js --hot --inline --progress --host 0.0.0.0 --port 3000 --open"

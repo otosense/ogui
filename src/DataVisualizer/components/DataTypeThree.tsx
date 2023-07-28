@@ -155,7 +155,9 @@ const DataTypeThree = (props: IProps) => {
         series: data.map((x: IChartData) => (
             {
 
-                data: x.data.map((x: { values: { [x: string]: string; }; }) => x.values[plotValue]),
+                // data: x.data.map((x: { values: { [x: string]: string; }; }) => x.values[plotValue]),
+                data: plotValue ? x.data.map((x: { values: { [x: string]: string; }; }) => x.values[plotValue]) : [],
+
                 name: x.channel,
                 turboThreshold: 100000,
                 pointPadding: 1,

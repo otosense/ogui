@@ -38,7 +38,7 @@ const DataTypeTwo = (props: IProps) => {
         const chart = chartRef.current?.chart;
         if (chart) {
             const updatedCategories = data.flatMap((channelData: IChannelData) => {
-                return channelData.data.map((val: IDataElement) => val.ts);
+                return channelData.data.map((val: IDataElement) => val?.ts);
             });
             // Update X Axis Data which is ts
             setXCategory(updatedCategories);
@@ -171,7 +171,7 @@ const DataTypeTwo = (props: IProps) => {
             xAxis: {
                 labels: {
                     formatter(this: Highcharts.AxisLabelsFormatterContextObject): string | number {
-                        const xValue = this.value;
+                        const xValue: any = this.value;
                         return (xCategory[xValue]);
                     },
                 },

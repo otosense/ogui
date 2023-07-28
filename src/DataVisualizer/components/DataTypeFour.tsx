@@ -116,7 +116,7 @@ const DataTypeFour = (props: IProps) => {
             formatter(this: Highcharts.TooltipFormatterContextObject): string {
                 if (this && this.points) {
                     let tooltip = '<b>' + 'ts : ' + this.x + '</b><br/>';
-                    this.points.forEach(function (point: Highcharts.Point): void {
+                    this.points.forEach(function (point: any): void {
                         const x = point.x.toFixed(2);
                         const x2 = point.x2 != null ? point.x2.toFixed(2) : '';
                         const yCategory = point?.yCategory !== null ? point.yCategory.toString() : '';

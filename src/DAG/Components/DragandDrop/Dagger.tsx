@@ -75,7 +75,7 @@ const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') 
 export const DnDFlow = () => {
 
 
-    const reactFlowWrapper = useRef(null);
+    const reactFlowWrapper = useRef<any>(null);;
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);

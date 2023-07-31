@@ -1,8 +1,5 @@
 export function convertJsonToFuncNodes(jsonData: any) {
-    console.log('jsonData', jsonData);
     const { edges, nodes } = jsonData;
-
-    console.log({ edges, nodes });
     let funcNodes = nodes.filter((node: { type: string; }) => node.type === "custom");
     let varNodes = nodes.filter((node: { type: string; }) => node.type !== "custom");
     let mapping: any[] = [];
@@ -16,7 +13,7 @@ export function convertJsonToFuncNodes(jsonData: any) {
         eachFuncNode['func_label'] = node.data.label;
         let bindObject = {};
         edges.map((edge: { id: string | any[]; target: any; source: any; }) => {
-            const edgerIds = (edge.id?.split("+"));
+            const edgerIds = (typeof edge.id === 'string' ? edge.id?.split("+") : '');
             if ((edgerIds[0].trim() === (node.id) || (edgerIds[1].trim() === (node.id)) && edge.target === node.id)) {
                 varNodes.map((varNode: {
                     id: string | any[]; data: {

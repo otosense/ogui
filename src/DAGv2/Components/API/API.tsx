@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const ApiUrl = {
-    getFuncNodes: "http://52.188.113.129:8080/get_list_of_functions",
-    loadDagList: "http://52.188.210.107:8080/get_list_of_dag",
-    saveDag: "http://52.188.210.107:8080/save_dag_data",
-    loadDag: "http://52.188.113.129:8080/get_dag",
+    getFuncNodes: "https://mocki.io/v1/0f770953-182c-4073-a9fc-f5effccb001d",
+    loadDagList: "https://mocki.io/v1/7dea7725-5f86-49ee-8280-05c24b8d2dd7",
+    saveDag: "https://mocki.io/v1/7dea7725-5f86-49ee-8280-05c24b8d2dd7",
+    loadDag: "https://dagger.free.beeceptor.com/",
 };
 
 
@@ -20,18 +20,18 @@ async function PostMethod(url: string, data: any) {
 
 export function getFuncNodes() {
     let url = ApiUrl.getFuncNodes;
-    return PostMethod(url, {});
+    return GetMethod(url);
 }
 
 export function getDagList() {
     let url = ApiUrl.loadDagList;
-    return PostMethod(url, {});
+    return GetMethod(url);
 }
 
 
 export const loadDag = async (data: any) => {
-    let url = ApiUrl.loadDag;
-    return PostMethod(url, { "name": data });
+    let url = ApiUrl.loadDag + data;
+    return GetMethod(url);
 };
 
 export const saveDag = async (data: any) => {

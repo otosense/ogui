@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import './App.css';
 
 import InfiniteScroll from './pages/InfiniteScroll';

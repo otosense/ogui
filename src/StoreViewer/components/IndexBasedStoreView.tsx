@@ -12,6 +12,7 @@ interface Child {
     children?: Child[];
     bt?: number[];
     tt?: number[];
+    [key: string]: any;
 }
 
 interface Device {
@@ -144,7 +145,7 @@ const StoreView = () => {
     }, []);
 
     const fetchData = async () => {
-        const response = await API.StoreConfig();
+        const response = await API.StoreConfig({ from_: Number(0), to_: Number(100) });
         console.log('response', response);
         setStoreConfig(response?.data || response);
         setIsLoading(false);
@@ -162,7 +163,7 @@ const StoreView = () => {
                     defaultCollapseIcon={<ExpandMoreIcon />}
                     defaultExpandIcon={<ChevronRightIcon />}
                 >
-                    {deviceNodes.map((node, i) => renderTree(node))}
+                    {deviceNodes.map((node, i) => renderTree(node, false, i))}
                 </TreeView>
             )}
         </>

@@ -11,6 +11,7 @@ interface Child {
     children?: Child[];
     bt?: number[];
     tt?: number[];
+    [key: string]: any;
 }
 
 interface Device {
@@ -76,7 +77,7 @@ const StoreView = () => {
 
     const fetchData = async () => {
         // ViewConfig API Called
-        const response = await API.StoreConfig();
+        const response = await API.StoreConfig({ from_: Number(0), to_: Number(100) });
         console.log('response', response);
         // Saved in Local Component state
         setStoreConfig(response.data);

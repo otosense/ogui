@@ -3,9 +3,11 @@ import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Alert from '@mui/material/Alert/Alert';
+import Alert, { AlertColor } from '@mui/material/Alert/Alert';
 
-function SnackBar(props) {
+function SnackBar(props: {
+    severity: AlertColor | undefined; message: string;
+}) {
     console.log('props', props);
     const [open, setOpen] = React.useState(props.message.length > 0);
 

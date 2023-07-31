@@ -192,12 +192,12 @@ export default memo(DataTypeOne);
 
 function dataMapping(data: IChannelMappingResponse[]): ISample[][] {
     // looping the initial data from the local state 
-    return data.map((channel: IChannelMappingResponse) => {
+    return data.map((channel: any) => {
         // extracting { data, sr, ts } 
         let { data, sr, ts } = channel.data;
         // converting the backend time to Epoch time and with proper sample rate and interval
         let timeDifferBetweenSamples = sr / (1000 * 1000);
-        let sampleTime = ts;
+        let sampleTime: number = ts;
         let sampledData: ISample[] = [];
         data.forEach((sampleValue: number, index: number) => {
             if (index !== 0) {

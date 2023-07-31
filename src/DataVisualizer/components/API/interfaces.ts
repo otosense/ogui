@@ -10,7 +10,7 @@ interface IViewProps {
 }
 
 interface IProps {
-    onZoomChange(min: number, max: number): unknown;
+    onZoomChange(min: number, max: number): any;
     configs: IViewProps & { chart_title?: string; plotValue?: string; };
     userConfig: any;
 }
@@ -22,7 +22,7 @@ interface ISample {
 
 interface IChannelData {
     channel: string;
-    data: number[];
+    data: IDataElement[];
     sr: number;
     ts: number;
 }

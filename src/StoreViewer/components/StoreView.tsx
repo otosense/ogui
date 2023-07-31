@@ -263,9 +263,9 @@ const StoreView = () => {
                     Load More
                 </Button> */}
             </section>
-            {error && (
+            {(error !== undefined && error) && (
                 <Alert severity='error' className='errorMessage'>
-                    {error.toString()}
+                    {error?.toString()}
                 </Alert>
             )}
             {copied && <SnackBar message={'Session ID Copied Successfully'} severity={'info'} />}

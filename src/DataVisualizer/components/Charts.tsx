@@ -10,11 +10,14 @@ import { IViewProps, IZoomRange } from './API/interfaces';
 export const ZoomContext = React.createContext<IZoomRange | null>(null);
 export default function Charts() {
     const [viewConfigs, setViewConfigs] = useState([]);
-    const [zoomLevel, setZoomLevel] = useState<IZoomRange>();
+    const [zoomLevel, setZoomLevel] = useState<IZoomRange | null>(null);
 
     const handleZoomChange = (min: number, max: number) => {
         // Setting zoom level in Global Store
-        setZoomLevel({ min, max });
+        // setZoomLevel({ min, max });
+        setZoomLevel((prevZoomLevel: any) => {
+            return { ...prevZoomLevel, min, max };
+        });
     };
     useEffect(() => {
         // when page Loaded calling ViewConfig API

@@ -11,6 +11,7 @@ function Save(props: {
     const { onClose } = props;
     const [copied, setCopied] = useState(false);
     const [dagName, setDagName] = useState('');
+    const [errorExist, setErrorExist] = useState(false);
 
 
     const handleCopy = () => {
@@ -33,6 +34,8 @@ function Save(props: {
             ...props.data,
         };
         onClose();
+
+        // console.log('combinedObj', JSON.stringify(combinedObj));
 
         API.saveDag(combinedObj).then(x => {
             // console.log('x', x);
@@ -60,6 +63,7 @@ function Save(props: {
                     required
                     readOnly
                 />
+                {errorExist && <p className='jsonError'>The JSON upload failed. Please check the variable Names and try again</p>}
                 <button type="submit" className='uploadSubmitButton btnSize'>Save</button>
                 <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
             </form>

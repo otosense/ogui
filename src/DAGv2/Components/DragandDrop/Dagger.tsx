@@ -86,6 +86,11 @@ const DnDFlow = () => {
         try {
             const resolve = await API.getFuncNodes();
             setLoading(false);
+            resolve.unshift({
+                label: 'select function Node',
+                value: '',
+                inputs: []
+            });
             setFuncList(resolve);
 
             // Adding Custom Function
@@ -104,8 +109,8 @@ const DnDFlow = () => {
 
     const nodeTypes = useMemo(() => ({
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcList={funcList} errorMapping={errorMapping || []} />,
-    }), [funcList, errorMapping]);
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} />,
+    }), [funcList]);
 
 
     const onConnect = useCallback((params: Edge | Connection) => {

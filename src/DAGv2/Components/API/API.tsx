@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { funcList } from './sampleFunction';
 
 const ApiUrl = {
     getFuncNodes: "http://52.188.113.129:8080/get_list_of_functions",
@@ -19,8 +20,10 @@ async function PostMethod(url: string, data: any) {
 }
 
 export function getFuncNodes() {
-    let url = ApiUrl.getFuncNodes;
-    return PostMethod(url, {});
+    // let url = ApiUrl.getFuncNodes;
+    // return PostMethod(url, {});
+
+    return funcList;
 }
 
 export function getDagList() {

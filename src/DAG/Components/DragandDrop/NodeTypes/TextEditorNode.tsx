@@ -38,7 +38,7 @@ function TextEditorNode(props: any) {
 
     useEffect(() => {
         if (type !== 'funcNode') {
-            setNodeType({ title: 'var_node', label: 'var_label', placeHolder: 'variable name' });
+            setNodeType({ title: 'varNode', label: 'var_label', placeHolder: 'variable name' });
         }
     }, [props.type]);
 
@@ -51,11 +51,11 @@ function TextEditorNode(props: any) {
     return (
         <div className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
             {/* <h4 className={`nodeTitle ${type}`} title={valueText}>{valueText.length === 0 ? 'Node Title' : valueText}</h4> */}
-            {/* <h4 className={`nodeTitle ${type}`}>{nodeType.title}</h4> */}
+            <h4 className={`nodeTitle ${type}`}>{nodeType.title}</h4>
             <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} isConnectable={isConnectable} className='connector' />
             <div className={`flexProps ${type}`}>
                 <div className="inputStyler">
-                    {/* <label htmlFor="text">{nodeType.label}:</label> */}
+                    <label htmlFor="text">{nodeType.label}:</label>
                     <input id="text" name="text" onChange={labelNameChange} className="titleBox" placeholder={nodeType.placeHolder} value={valueText} />
                 </div>
                 {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}

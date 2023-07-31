@@ -89,7 +89,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
 function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcList: any; isConnectable: boolean; errorMapping: any; }) {
   const { id, data, type, sourcePosition, funcList, isConnectable, errorMapping } = props;
-
+  console.log({ id, data, type, sourcePosition, funcList, isConnectable, errorMapping });
   function errorMapper(errorMapping: any, id: string) {
     const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
     return errorNode ? 'BugFuncNode' : '';
@@ -97,7 +97,7 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
 
   return (
     <section className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
-      <h4 className={`nodeTitle ${type}`} title={data.label}>{data.label}</h4>
+      <h4 className={`nodeTitle ${type}`} title={data.label}>{type}</h4>
       <div className={`flexProps ${type}`}>
         <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={funcList} isConnectable={isConnectable} labels={data.label} />
       </div>

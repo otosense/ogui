@@ -36,6 +36,17 @@ If you want to run the DataTable. please go to the Index.html file. and uncommen
 <script type="module" src="/src/DataTable/main.tsx"></script>
 ```
 
+Goto the DataTable Folder in Terminal and Start the server
+```bash
+  yarn dev
+```
+
+### DPP
+If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DPP/main.tsx"></script>
+```
+
 ```bash
   yarn dev
 ```
@@ -52,6 +63,16 @@ If you want to run the DPP. please go to the Index.html file. and uncomment this
 
 ### DataVisualizer
 If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+### DataVisualizer
+If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+
+If you want to run the DataVisualizer Backend. Please see the Backend Folder there do 
+
+```bash
+  yarn 
+  node ./index.js
+```
+
 ```
 <script type="module" src="/src/DataVisualizer/main.tsx"></script>
 ```
@@ -72,6 +93,13 @@ If you want to run the SinglePage Application. please go to the Index.html file.
 ```
 <script type="module" src="/src/SinglePage/main.tsx"></script>
 ```
+### DPP
+If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/DPP/main.tsx"></script>
+```
+
+Goto the DPP Folder in Terminal and Start the server
 
 ```bash
   yarn dev

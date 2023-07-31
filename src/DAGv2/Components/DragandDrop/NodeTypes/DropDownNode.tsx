@@ -28,15 +28,16 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
             label: selectedValue,
             ddType: selectedValue,
             selects: {
-              ...node.data.selects,
-              [handleId]: selectedValue,
+              // ...node.data.selects,
+              hasValue: inputCreator?.length,
+              [selectedValue]: selectedValue,
             },
           };
         }
         return node;
       })
     );
-  }, [selectedValue]);
+  }, [selectedValue, inputCreator]);
 
 
   const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
@@ -122,13 +123,13 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
     return errorNode ? 'BugFuncNode' : '';
   }
   console.log('funcLists?.[0]?.label', funcLists?.[0], funcLists?.[0]?.label);
-  const [selectedValue, setSelectedValue] = useState(funcLists?.[0]?.label);
+  const [selectedValue, setSelectedValue] = useState();
 
 
   console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
   return (
     <>
-      {(selectedValue === "select function Node") ?
+      {(selectedValue === "select function Node" || selectedValue === '') ?
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
           <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)}>

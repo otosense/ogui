@@ -110,14 +110,14 @@ const DnDFlow = () => {
     const nodeTypes = useMemo(() => ({
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} />,
-    }), [funcList]);
+    }), [funcList, errorMapping]);
 
 
     const onConnect = useCallback((params: Edge | Connection) => {
         const { source, target } = params;
 
         const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
-
+        console.log('sourceNode', sourceNode);
         // Check if the source node already has an outgoing edge
         const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
             if (sourceNode?.type !== 'textUpdater') {
@@ -255,6 +255,7 @@ const DnDFlow = () => {
                     initialEdge: dagDirections,
                     selects: {
                         [nodeTypeId]: funcList?.[0]?.label,
+                        hasValue: funcList?.[0]?.input?.length
                     },
                 };
             }

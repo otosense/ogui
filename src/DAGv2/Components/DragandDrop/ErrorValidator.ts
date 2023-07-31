@@ -17,6 +17,16 @@ export function ValidationError(flowJSON: { nodes: any; edges: any; }) {
                 if (edge.target === node?.id) {
                     localInputsValid.push(edge);
                 }
+
+                console.log('node', node);
+                // if (node.type === 'custom') {
+                //     // console.log('edge', edge);
+                //     if (edge.source !== node?.id) {
+                //         console.log('nodenode', node);
+                //         groupingNode.push(node);
+                //     }
+                // }
+
             });
             if (localInputsValid.length !== node?.data?.selects?.hasValue) {
                 groupingNode.push(node);

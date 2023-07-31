@@ -80,7 +80,8 @@ const DnDFlow = () => {
 
 
     useEffect(() => {
-        onLayout('TB'); // Set vertical layout on component load
+        // onLayout('TB'); // Set vertical layout on component load
+        onLayout('LR'); // Set vertical layout on component load
     }, [uploadOver]);
 
     const fetchData = async () => {

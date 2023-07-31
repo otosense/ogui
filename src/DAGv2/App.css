@@ -47,7 +47,6 @@
 }
 
 
-
 .dndflow {
   flex-direction: column;
   display: flex;
@@ -55,20 +54,34 @@
   height: 100%;
 }
 
+.connector:hover {
+  min-width: 12px !important;
+  min-height: 12px !important;
+  background: #cdcdcd !important;
+}
+
+.connector {
+  width: 10px !important;
+  height: 10px !important;
+  background: #1f2937 !important;
+}
+
 .dndflow aside {
   border-right: 1px solid #eee;
   padding: 15px 10px;
-  font-size: 12px;
+  font-size: 75%;
+  text-align: center;
   /* background: #fcfcfc; */
 }
 
 .dndflow aside .description {
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .dndflow .dndnode {
-  height: 20px;
-  padding: 4px;
+  /* height: 20px; */
+  padding: 8px;
   border: 3px solid #1a192b;
   border-radius: 2px;
   margin-bottom: 10px;
@@ -123,11 +136,14 @@
 
 .custom-node__select {
   /* margin: 5px; */
-  width: 90%;
+  width: 100%;
+  text-align: center;
 }
 
 .custom-node__select select {
-  width: 90%;
+  width: 100%;
+  text-align: center;
+  margin: 6% auto;
 }
 
 .custom-node__header {
@@ -140,7 +156,7 @@
   margin: 6%;
   width: 80%;
   color: #fff;
-  background: #4b5563;
+  background: #1f2937;
 }
 
 input#text:focus-visible {
@@ -155,8 +171,14 @@ input#text:focus-visible {
 
 .nodeTitle {
   margin: -1px;
-  padding: 2%;
+  padding: 2% 4%;
   color: #fff;
+  text-align: center;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 26px;
 }
 
 .nodeTitle.funcNode {
@@ -202,9 +224,23 @@ h4.nodeTitle.varNode {
   border: 1px solid #0891b2;
 }
 
+.BugFuncNode .nodeTitle.funcNode {
+  background: red;
+}
+
+.BugFuncNode .flexProps.funcNode {
+  border-color: red !important;
+}
+
+.bugNode .flexProps.varNode {
+  border-color: red !important;
+  background: red;
+}
+
 .text-updater-node {
   overflow: hidden;
   width: 200px;
+  border-radius: 3px;
 }
 
 .ModalBox {
@@ -212,6 +248,8 @@ h4.nodeTitle.varNode {
   /* padding: 1%; */
   width: 40%;
   border-radius: 1%;
+  border: 1px solid #ccc;
+  text-align: center;
 }
 
 .ModalTitle {
@@ -219,6 +257,8 @@ h4.nodeTitle.varNode {
   line-height: 3;
   border-bottom: 1px solid rgb(229, 231, 235);
   margin-bottom: 2%;
+  display: block !important;
+  text-align: center;
 }
 
 
@@ -235,12 +275,15 @@ h4.nodeTitle.varNode {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 99999;
 }
 
 textarea.textAreaSize {
   width: 95%;
   height: 350px;
-  border: 1px solid rgb(229, 231, 235);
+  border: 1px solid #cdcdcd;
+  background: #fff;
+  color: #000;
 }
 
 .uploadSubmitButton {
@@ -251,7 +294,9 @@ textarea.textAreaSize {
 
 .uploadCancelButton {
   background-color: #f9f9f9;
-  border: 1px solid #ccc;
+  border: 1px solid #cdcdcd;
+  background: #fff;
+  color: #000;
 }
 
 .btnSize {
@@ -271,25 +316,29 @@ button.saveBtn {
 
 .react-flow__panel.top.right {
   margin: 1% 0;
-  width: 24%;
+  width: 20%;
 }
 
 button.panelBtn {
-  width: 35%;
+  width: 45%;
   text-align: center;
+  font-size: 88%;
+
 }
 
 .invalidMsg {
   font-size: 12px;
-  color: orangered;
+  color: red;
 }
 
 .dagNameBox {
-  border: 1px solid #ccc;
+  border: 1px solid #cdcdcd;
   margin: 2% 0;
   width: 80%;
   padding: 3%;
   border-radius: 5px;
+  background: #fff;
+  color: #000;
 }
 
 .copyBtn {
@@ -327,6 +376,46 @@ button.panelBtn {
 select#dagList {
   padding: 2%;
   width: 60%;
-  border: 1px solid #ccc;
+  border: 1px solid #cdcdcd;
   margin: 2%;
+  background: #fff;
+  color: #000;
+}
+
+.DND {
+  width: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+
+  /* CSS rules for mobile devices */
+  .react-flow__panel.top.right {
+    margin: 3% 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .ModalBox {
+    width: 90%;
+  }
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+
+  /* CSS rules for tablet devices */
+  .react-flow__panel.top.right {
+    margin: 1% 0;
+    width: 32%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .ModalBox {
+    width: 50%;
+  }
 }

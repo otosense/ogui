@@ -186,19 +186,18 @@ const DnDFlow = () => {
         if (reactFlowInstance) {
             const flow = reactFlowInstance.toObject();
             // Handling Error if any of the nodes label are empty
-            // const getFuncNode = ValidationError(flow);
+            const getFuncNode = ValidationError(flow);
             let MappedJson = {
                 func_nodes: convertJsonToFuncNodes(flow)
             };
             // console.log('getFuncNode', getFuncNode);
 
-            // if (getFuncNode.length > 0) {
-            //     errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
-            // }
-            // setErrorMapping(getFuncNode);
+            if (getFuncNode.length > 0) {
+                errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+            }
+            setErrorMapping(getFuncNode);
             setIsModal({
-                // open: getFuncNode.length === 0,
-                open: true,
+                open: getFuncNode.length === 0,
                 type: 'download',
                 data: MappedJson
             });

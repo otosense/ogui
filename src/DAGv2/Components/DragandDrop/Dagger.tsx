@@ -63,6 +63,7 @@ const DnDFlow = () => {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isError, setIsError] = useState(false);
+    const [flowNodes, setFlowNodes] = useState([]);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
@@ -93,12 +94,12 @@ const DnDFlow = () => {
             });
             setFuncList(resolve);
 
-            // Adding Custom Function
-            const customFunction = {
-                "value": "new",
-                "label": "New Function"
-            };
-            setFuncList((prevData: any) => [...prevData, customFunction]);
+            // // Adding Custom Function
+            // const customFunction = {
+            //     "value": "new",
+            //     "label": "New Function"
+            // };
+            // setFuncList((prevData: any) => [...prevData, customFunction]);
         } catch (error: any) {
             // Handle error
             setIsError(true);
@@ -109,8 +110,8 @@ const DnDFlow = () => {
 
     const nodeTypes = useMemo(() => ({
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} />,
-    }), [funcList, errorMapping]);
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
+    }), [funcList, errorMapping, flowNodes]);
 
 
     const onConnect = useCallback((params: Edge | Connection) => {
@@ -190,7 +191,9 @@ const DnDFlow = () => {
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
             const flow = reactFlowInstance.toObject();
+            setFlowNodes(flow.nodes);
             // Handling Error if any of the nodes label are empty
+            console.log('flow', flow);
             const getFuncNode = ValidationError(flow);
             let MappedJson = {
                 func_nodes: convertJsonToFuncNodes(flow)
@@ -210,7 +213,7 @@ const DnDFlow = () => {
             localStorage.setItem('MappedJson', JSON.stringify(MappedJson));
 
         }
-    }, [reactFlowInstance, errorMapping]);
+    }, [reactFlowInstance]);
 
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
         event.preventDefault();

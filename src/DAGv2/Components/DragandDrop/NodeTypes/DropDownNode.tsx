@@ -10,9 +10,8 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const [validationMsg, setValidationMsg] = useState(false);
   const [inputCreator, setInputCreator] = useState();
 
-
   useEffect(() => {
-    const selectedFuncType = selector?.find(x => x.value === selectedValue);
+    const selectedFuncType = selector?.find((x: { value: string; }) => x.value === selectedValue);
     console.log('selectedFuncType', selectedFuncType);
     setInputCreator(selectedFuncType?.inputs);
   }, [customValue]);
@@ -96,7 +95,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
       <section className='handlers'>
         <div className='multiInput'>
-          {inputCreator?.map((x, i) => {
+          {inputCreator?.map((x: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => {
             return (<div className='resultEdger' key={i}>
               <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={x.toString()} className='connector' isConnectable={isConnectable} />
               <span className='handlerText'>{x}</span>
@@ -114,30 +113,36 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
 
 
-function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; }) {
+function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; flowNodes: any; }) {
 
-  const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping } = props;
+  const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
   console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
+
+  const [selectedValue, setSelectedValue] = useState();
+
+
   function errorMapper(errorMapping: any, id: string) {
     const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
     return errorNode ? 'BugFuncNode' : '';
   }
-  console.log('funcLists?.[0]?.label', funcLists?.[0], funcLists?.[0]?.label);
-  const [selectedValue, setSelectedValue] = useState();
+
+  useEffect(() => {
+    const selectedNode = flowNodes.find((x: { id: string; }) => x.id === id);
+    setSelectedValue(selectedNode?.data?.label);
+  }, [flowNodes]);
 
 
-  console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
+
   return (
     <>
-      {(selectedValue === "select function Node" || selectedValue === '') ?
+      {(selectedValue === "select function Node" || selectedValue === '' || selectedValue === undefined) ?
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
-          <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event) => setSelectedValue(event.target.value)}>
+          <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event) => setSelectedValue(event?.target?.value)}>
             {funcLists.map((funcList: { value: string; label: string; }) => {
               return <option key={funcList.value} value={funcList.value}>{funcList.label}</option>;
             })}
           </select>
-          {/* <p>Selected Value: {selectedValue}</p> */}
         </div>
         :
 
@@ -150,17 +155,7 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
         </section>
       }
     </>
-
-
-
-
   );
-
-
-
-  // return (
-
-  // );
 }
 
 export default memo(DropDownNode);

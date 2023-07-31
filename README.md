@@ -51,18 +51,6 @@ If you want to run the DPP. please go to the Index.html file. and uncomment this
   yarn dev
 ```
 
-### DPP
-If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
-```
-<script type="module" src="/src/DPP/main.tsx"></script>
-```
-
-```bash
-  yarn dev
-```
-
-### DataVisualizer
-If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ### DataVisualizer
 If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 
@@ -76,30 +64,6 @@ If you want to run the DataVisualizer Backend. Please see the Backend Folder the
 ```
 <script type="module" src="/src/DataVisualizer/main.tsx"></script>
 ```
-
-```bash
-  yarn dev
-```
-
-Note We need to run Backend also, so please find the 'Backend' folder and open the folder in Terminal and run the command
-
-```bash
-  node index.js
-```
-
-
-### SinglePage Application
-If you want to run the SinglePage Application. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
-```
-<script type="module" src="/src/SinglePage/main.tsx"></script>
-```
-### DPP
-If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
-```
-<script type="module" src="/src/DPP/main.tsx"></script>
-```
-
-Goto the DPP Folder in Terminal and Start the server
 
 ```bash
   yarn dev

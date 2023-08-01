@@ -36,6 +36,21 @@ const funcList = [
     }
 ];
 
+const sampleInput = {
+    "func_nodes": [
+        {
+            "name": "function_754",
+            "func_label": "opus.mboxes.wf_to_fvs.chks",
+            "bind": {
+                "1": "w",
+                "2": "b"
+            },
+            "out": "bb"
+        }
+    ]
+};
+
 export {
-    funcList
+    funcList,
+    sampleInput
 };

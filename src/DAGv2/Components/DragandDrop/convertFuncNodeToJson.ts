@@ -38,7 +38,6 @@ export function convertFuncNodeToJsonNode(jsonData: any) {
         };
         initialNodes.push(varObject);
     });
-
     return initialNodes;
 }
 
@@ -49,6 +48,7 @@ export function convertFuncNodeToJsonEdge(jsonData: any) {
     const { func_nodes } = jsonData;
     let initialEdges: { id: string; markerEnd: { type: string; }; source: string; sourceHandle: string; target: string; targetHandle: null; }[] = [];
     func_nodes.map((funcNode: {
+        func_label: any;
         bind(bind: any): unknown; out: string; name: string;
     }) => {
         const edgeObject: any = {
@@ -63,12 +63,14 @@ export function convertFuncNodeToJsonEdge(jsonData: any) {
         initialEdges.push(edgeObject);
 
 
-        Object.values(funcNode.bind).map(varNode => {
+        Object.values(funcNode.bind).map((varNode, index) => {
             const edgeObject: any = {
                 id: `${funcNode.out + "." + funcNode.name}_edge`,
                 markerEnd: { type: 'arrowclosed' },
                 source: varNode,
+                sourceHandle: funcNode.func_label,
                 target: funcNode.name,
+                targetHandle: Object.keys(funcNode.bind)[index],
                 type: 'smoothstep',
                 animated: true
             };
@@ -77,9 +79,8 @@ export function convertFuncNodeToJsonEdge(jsonData: any) {
         });
 
     });
-
     return initialEdges;
-}
+};
 
 // { id: 'e1-2', source: '1', target: '2', label: 'this is an edge label' },
 // { id: 'e1-3', source: '1', target: '3', animated: true },

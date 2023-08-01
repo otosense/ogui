@@ -75,7 +75,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
           ))
         }
       </select> */}
-      <h3 className='selectedFuncNode'>{selectedValue}</h3>
+      <h3 className='selectedFuncNode'>{selectedValue?.split('.').pop() || ''}</h3>
       <hr className='asas' />
       {(customValue === 'new') &&
         <>
@@ -140,7 +140,8 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
           <h3 className='titleAddNode'>Add Nodes</h3>
           <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event) => setSelectedValue(event?.target?.value)}>
             {funcLists.map((funcList: { value: string; label: string; }) => {
-              return <option key={funcList.value} value={funcList.value}>{funcList.label}</option>;
+              const functionName = funcList.label?.split('.').pop() || '';
+              return <option key={funcList.value} value={funcList.value}>{functionName}</option>;
             })}
           </select>
         </div>

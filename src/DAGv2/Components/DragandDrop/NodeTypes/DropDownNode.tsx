@@ -12,7 +12,6 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
   useEffect(() => {
     const selectedFuncType = selector?.find((x: { value: string; }) => x.value === selectedValue);
-    console.log('selectedFuncType', selectedFuncType);
     setInputCreator(selectedFuncType?.inputs);
   }, [customValue]);
 
@@ -116,7 +115,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; flowNodes: any; }) {
 
   const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
-  console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
+  // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
 
   const [selectedValue, setSelectedValue] = useState();
 

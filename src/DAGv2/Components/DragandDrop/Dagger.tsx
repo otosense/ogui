@@ -119,7 +119,6 @@ const DnDFlow = () => {
         const { source, target } = params;
 
         const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
-        console.log('sourceNode', sourceNode);
         // Check if the source node already has an outgoing edge
         const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
             if (sourceNode?.type !== 'textUpdater') {
@@ -194,12 +193,10 @@ const DnDFlow = () => {
             const flow = reactFlowInstance.toObject();
             setFlowNodes(flow.nodes);
             // Handling Error if any of the nodes label are empty
-            console.log('flow', flow);
             const getFuncNode = ValidationError(flow);
             let MappedJson = {
                 func_nodes: convertJsonToFuncNodes(flow)
             };
-            // console.log('getFuncNode', getFuncNode);
 
             if (getFuncNode.length > 0) {
                 errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');

@@ -1,0 +1,17 @@
+[
+    {
+        "chart_title": "Chart 4",
+        "data_type": "annot",
+        "chart_type": "xrange",
+        "x_label": "Time",
+        "y_label": "Tag",
+        "miniMap": true,
+        "data_limit": 1000,
+        "src_channels": [
+            {
+                "channel": "get_session_annotation",
+                "name": "annotation1"
+            }
+        ]
+    }
+]

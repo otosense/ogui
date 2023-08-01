@@ -69,15 +69,8 @@ If you want to run the DataVisualizer Backend. Please see the Backend Folder the
   yarn dev
 ```
 
-### DPP
-If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
-```
-<script type="module" src="/src/DPP/main.tsx"></script>
-```
-
-Goto the DPP Folder in Terminal and Start the server
+Note We need to run Backend also, so please find the 'Backend' folder and open the folder in Terminal and run the command
 
 ```bash
-  yarn dev
+  node index.js
 ```
-

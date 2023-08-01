@@ -1,0 +1,57 @@
+    /* 
+    Note: Which Smart Components supports which DataType are mentioned below
+
+    DataTypeOne => will have data Structure like ( wf, plc )below 
+    
+    ```
+        "data": [0,0,0]
+    ```
+    DataTypeTwo =>  will have data Structure like (volume) below 
+
+    ```
+        "data": [
+            {
+                "value": 0.4685317155388221,
+                "ts": 0.6031073392919892
+            },
+        ] 
+    ```
+
+    DataTypeThree =>  will have data Structure like (mixed) below 
+
+    ```
+        "data": [
+                {
+                    "values": {
+                        "mean": 0.00014688624667242239,
+                        "std": 0.476557482488626
+                    },
+                    "ts": 0.35223049787552263
+                }
+            ]
+    ```
+
+    DataTypeThree =>  will have data Structure like (Annotations) below :
+
+    ```
+          "data": [
+                { "tag": "normal", "bt": 1.3555504237496248, "tt": 3.0553881157382206 }
+            ];
+    ```
+   */
+
+    // Mapping of Chart to Smart Components based on data_type, for data_type, please refer above comments
+
+
+  // return viewConfigs.map((viewConfig: IViewProps, index: number) => {
+        //     const { data_type } = viewConfig;
+        //     if (data_type === "volume") {
+        //         return <DataTypeTwo key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeTwo} />;
+        //     } else if (data_type === "annot") {
+        //         return <DataTypeFour key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} />;
+        //     } else if (data_type === "wf") {
+        //         return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
+        //     } else if (data_type === "mixed") {
+        //         return <DataTypeThree key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeThree} />;
+        //     }
+        // });

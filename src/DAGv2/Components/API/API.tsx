@@ -2,7 +2,7 @@ import axios from 'axios';
 import { funcList } from './sampleFunction';
 
 const ApiUrl = {
-    getFuncNodes: "http://52.188.113.129:8080/get_list_of_functions",
+    getFuncNodes: "http://52.188.113.129:8080/dag_func_node_source_store",
     loadDagList: "http://52.188.210.107:8080/get_list_of_dag",
     saveDag: "http://52.188.210.107:8080/save_dag_data",
     loadDag: "http://52.188.113.129:8080/get_dag",
@@ -21,7 +21,9 @@ async function PostMethod(url: string, data: any) {
 
 export function getFuncNodes() {
     // let url = ApiUrl.getFuncNodes;
-    // return PostMethod(url, {});
+    // return PostMethod(url, {
+    //     "_attr_name": "__iter__"
+    // });
 
     return funcList;
 }

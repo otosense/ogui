@@ -115,9 +115,9 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; flowNodes: any; }) {
 
   const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
-  // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping });
+  // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
-  const [selectedValue, setSelectedValue] = useState();
+  const [selectedValue, setSelectedValue] = useState<string | undefined>();
 
 
   function errorMapper(errorMapping: any, id: string) {
@@ -127,8 +127,12 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
 
   useEffect(() => {
     const selectedNode = flowNodes.find((x: { id: string; }) => x.id === id);
-    setSelectedValue(selectedNode?.data?.label);
+    // re-mount the selected node after saving the node 
+    // also Dag while DAG is Loaded this is set the Func Node functions
+    setSelectedValue(selectedNode ? selectedNode?.data?.label : data?.label);
   }, [flowNodes]);
+
+
 
 
 
@@ -137,7 +141,7 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
       {(selectedValue === "select function Node" || selectedValue === '' || selectedValue === undefined) ?
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
-          <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event) => setSelectedValue(event?.target?.value)}>
+          <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
             {funcLists.map((funcList: { value: string; label: string; }) => {
               const functionName = funcList.label?.split('.').pop() || '';
               return <option key={funcList.value} value={funcList.value}>{functionName}</option>;

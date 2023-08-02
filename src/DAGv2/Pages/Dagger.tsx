@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect, memo, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useEffect, memo, useMemo } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -14,35 +14,31 @@ import ReactFlow, {
     BackgroundVariant,
     Node,
 } from 'reactflow';
-import 'reactflow/dist/style.css';
+import { Button, Alert } from '@mui/material';
+import UploadIcon from '@mui/icons-material/Upload';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
+import dagre from 'dagre';
 
 
 import Sidebar from '../Components/DragandDrop/Sidebar';
-import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJsonToFuncNodes';
-import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
-import TextEditorNode from '../Components/DragandDrop/NodeTypes/TextEditorNode';
-import DropDownNode from '../Components/DragandDrop/NodeTypes/DropDownNode';
-import Load from '../Components/DragandDrop/Load';
-import Save from '../Components/DragandDrop/Save';
-import * as API from '../Components/API/API';
-import 'reactflow/dist/style.css';
-import React from 'react';
-import { ValidationError } from '../Components/Utilities/ErrorValidator';
-import { Button } from '@mui/material';
-import UploadIcon from '@mui/icons-material/Upload';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import { dagDirections, errorHandler, functionList } from '../Components/Utilities/globalFunction';
-import { Alert } from '@mui/material';
 import LoadingOverlay from '../../utilities/Loader';
 import SnackBar from '../../utilities/SnackBar';
-import { sampleInput } from '../Components/API/sampleFunction';
-import { autoLayoutStructure, } from '../Components/Utilities/Layouts';
+import TextEditorNode from '../Components/DragandDrop/NodeTypes/TextEditorNode';
+import DropDownNode from '../Components/DragandDrop/NodeTypes/DropDownNode';
+import Save from '../Components/DragandDrop/Save';
+import Load from '../Components/DragandDrop/Load';
+
+
+import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJsonToFuncNodes';
+import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
+import { ValidationError } from '../Components/Utilities/ErrorValidator';
+
+import { dagDirections, errorHandler, functionList } from '../Components/Utilities/globalFunction';
 import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
-import { apiMethod, getFunctionList } from '../Components/API/ApiCalls';
-import { useQuery } from '@tanstack/react-query';
-import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
-import dagre from 'dagre';
+import { apiMethod } from '../Components/API/ApiCalls';
+
 const nodeWidth = 200;
 const nodeHeight = 75;
 
@@ -76,20 +72,20 @@ const Dagger = () => {
     const payload = {
         "_attr_name": "__iter__",
     };
+    const { data, status, error, isLoading, isFetching } = apiMethod(payload);
+
     // useEffect(() => {
     //     fetchData();
     // }, []);
     // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
 
-    const { data, status, error, isLoading, isFetching } = apiMethod(payload);
+
 
     // console.log({ data, status, error, isLoading, isFetching });
 
     useEffect(() => {
         if (data) {
-
             const list = functionList(data);
-            console.log('list', list);
             setFuncList(list.funcstore);
             setDagStore(list.dag_store);
         }
@@ -97,7 +93,6 @@ const Dagger = () => {
 
 
     useEffect(() => {
-        console.log('uploadOver', uploadOver);
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         onLayout('LR'); // Set vertical layout on component load Left to Right Layout
     }, [uploadOver]);
@@ -224,7 +219,6 @@ const Dagger = () => {
                 data: { label: '', initialEdge: dagDirections, },
             };
 
-            console.log('funcList', funcList);
             if (type === 'custom') {
                 newNode.data = {
                     label: '',

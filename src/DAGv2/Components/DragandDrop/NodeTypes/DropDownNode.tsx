@@ -8,7 +8,7 @@ import Spinner from '../../Utilities/Spinner';
 
 function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue }: any) {
 
-  console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue });
+  // console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue });
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [customValue, setCustomValue] = useState(value);
@@ -30,18 +30,11 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
   const response = apiMethod(payload);
 
-  if (!isEmpty(response?.error)) {
-    console.log('response.error', response?.error);
-    // return <p>There is no Input defined API error</p>;
-  }
-
   useEffect(() => {
     // const selectedFuncType = selector?.find((x: { value: string; }) => x.value === selectedValue);
     // console.log('selectedFuncType', selectedFuncType);
     // calling parameters list for selected functionNode 
-    console.log('response?.data', response?.data?.signature?.parameters);
     const inputs = response?.data?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
-    console.log('inputs', inputs);
     setInputCreator(inputs);
   }, [customValue, response?.data]);
 
@@ -127,7 +120,6 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
       }
       {/* <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={isConnectable} />
       <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} /> */}
-      {console.log('rererere', response.isFetching, response.isLoading)}
       {response.isLoading && <div className='Spinner'><Spinner /></div>}
       {!isEmpty(response.error) ? <p>{response.error}</p> :
 
@@ -155,7 +147,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; flowNodes: any; }) {
 
   const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
-  console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
+  // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>();
   const [functionList, setFunctionList] = useState(funcLists);

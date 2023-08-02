@@ -3,16 +3,16 @@ import * as API from '../API/API';
 import { listMapping } from '../Utilities/Mapping/listMapping';
 
 function Load(props: {
-    loadList(loadList: any): any;
     onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
+    loadList: any;
 }) {
-    const { onClose } = props;
+    const { onClose, loadList } = props;
     const [data, setData] = useState(JSON.stringify(props.data, null, 2));
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
     const [selectDag, setSelectDag] = useState('');
-    const [dagListResponse, setDagListResponse] = useState<any>(props?.loadList);
+    const [dagListResponse, setDagListResponse] = useState<any>(loadList);
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
@@ -26,9 +26,9 @@ function Load(props: {
         // };
         // fetchData();
 
-        const result = listMapping(props?.loadList);
+        const result = listMapping(loadList);
         setDagListResponse(result);
-    }, [props?.loadList]);
+    }, [loadList]);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();

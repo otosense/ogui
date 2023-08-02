@@ -54,3 +54,17 @@ export {
     funcList,
     sampleInput
 };
+
+
+  // const nodeTypes = useMemo(() => ({
+    //     custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
+    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode'  />,
+    // }), []);
+
+    // const handleUpload = (data: any) => {
+    //     const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
+    //     const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
+    //     setNodes(funcToJsonNode);
+    //     setEdges(funcToJsonEdge);
+    //     setUploadOver(true);
+    // };

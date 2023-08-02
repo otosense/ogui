@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
 import 'reactflow/dist/style.css';
-import DnDFlow from './Components/DragandDrop/Dagger';
+import Dagger from './Pages/Dagger';
 
 function App() {
 
   return (
-    <DnDFlow />
+    <Dagger />
   );
 }
 

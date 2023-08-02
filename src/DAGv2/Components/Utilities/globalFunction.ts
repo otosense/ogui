@@ -5,8 +5,16 @@ const pythonIdentifierPattern = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 const onNameHandlers = (inputValue: string) => pythonIdentifierPattern.test(inputValue);
 const dagDirections = 'left';
 
+function errorHandler(setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, errorString: string) {
+    setErrorMessage(errorString);
+    toggleSnackbar();
+    return false;
+}
+
+
 export {
     pythonIdentifierPattern,
     onNameHandlers,
-    dagDirections
+    dagDirections,
+    errorHandler
 };

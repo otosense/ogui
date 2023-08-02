@@ -28,7 +28,10 @@ export function getFuncNodes() {
     // });
 
     // attr = '__getitem__';
-
+    // let url = ApiUrl.getFuncNodes;
+    // return PostMethod(url, {
+    //     "_attr_name": "__iter__",
+    // });
 
 
     return funcList;

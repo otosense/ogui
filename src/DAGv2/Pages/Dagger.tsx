@@ -12,39 +12,39 @@ import ReactFlow, {
     ReactFlowInstance,
     MarkerType,
     BackgroundVariant,
+    Node,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import dagre from 'dagre';
 
-import Sidebar from './Sidebar';
-import { convertJsonToFuncNodes } from './convertJsonToFuncNodes';
-import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './convertFuncNodeToJson';
-import TextEditorNode from './NodeTypes/TextEditorNode';
-import DropDownNode from './NodeTypes/DropDownNode';
-import Load from './Load';
-import Save from './Save';
-import * as API from './../API/API';
+
+import Sidebar from '../Components/DragandDrop/Sidebar';
+import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJsonToFuncNodes';
+import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
+import TextEditorNode from '../Components/DragandDrop/NodeTypes/TextEditorNode';
+import DropDownNode from '../Components/DragandDrop/NodeTypes/DropDownNode';
+import Load from '../Components/DragandDrop/Load';
+import Save from '../Components/DragandDrop/Save';
+import * as API from '../Components/API/API';
 import 'reactflow/dist/style.css';
 import React from 'react';
-import { ValidationError } from './ErrorValidator';
+import { ValidationError } from '../Components/Utilities/ErrorValidator';
 import { Button } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import { dagDirections } from '../Utilities/globalFunction';
+import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
 import { Alert } from '@mui/material';
-import LoadingOverlay from '../../../utilities/Loader';
-import SnackBar from '../../../utilities/SnackBar';
-import { sampleInput } from '../API/sampleFunction';
+import LoadingOverlay from '../../utilities/Loader';
+import SnackBar from '../../utilities/SnackBar';
+import { sampleInput } from '../Components/API/sampleFunction';
+import { autoLayoutStructure, onLayoutHandlers } from '../Components/Utilities/Layouts';
+import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
+import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
 
 
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const nodeWidth = 200;
-const nodeHeight = 75;
 
-// Handle the different types of Layouts like Horizontal and Vertical
-const getLayoutedElements = onLayoutHandlers();
+
+
 
 // Generating Random ID for nodes
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
@@ -53,7 +53,7 @@ const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') 
 //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
 //     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
 // };
-const DnDFlow = () => {
+const Dagger = () => {
     const reactFlowWrapper = useRef<any>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -116,68 +116,9 @@ const DnDFlow = () => {
     }), [funcList, errorMapping, flowNodes]);
 
 
-    const onConnect = useCallback((params: Edge | Connection) => {
-        const { source, target } = params;
+    const onConnect = connectionHandlers(nodes, edges, setErrorMessage, toggleSnackbar, setEdges);
 
-        const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
-        // Check if the source node already has an outgoing edge
-        const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
-            if (sourceNode?.type !== 'textUpdater') {
-                return edge.source === source;
-            }
-        });
-        if (existingOutgoingEdge) {
-            // An outgoing edge already exists, so prevent creating a new connection
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
-        }
-
-        // Check if the target node already has an incoming edge
-        const existingIncomingEdge = edges.find((edge: { target: any; }) => {
-            if (sourceNode?.type !== 'textUpdater') {
-                return edge.target === target;
-            }
-        });
-        if (existingIncomingEdge) {
-            // An incoming edge already exists, so prevent creating a new connection
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an incoming connection');
-        }
-
-        const newEdge = {
-            ...params,
-            type: 'smoothstep',
-            animated: true,
-        };
-        // No outgoing or incoming edge exists, create the new connection
-        setEdges((prevEdges: any) => addEdge(newEdge, prevEdges));
-    }, [nodes, edges]);
-
-    const onLayout = useCallback(
-        (direction: string | undefined) => {
-            const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-                nodes,
-                edges,
-                direction
-            );
-            setNodes([...layoutedNodes]);
-            setEdges([...layoutedEdges]);
-        },
-        [nodes, edges]
-    );
-
-
-
-    // const nodeTypes = useMemo(() => ({
-    //     custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
-    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode'  />,
-    // }), []);
-
-    // const handleUpload = (data: any) => {
-    //     const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
-    //     const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
-    //     setNodes(funcToJsonNode);
-    //     setEdges(funcToJsonEdge);
-    //     setUploadOver(true);
-    // };
+    const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
 
     const handleUpload = useCallback((data: any) => {
         const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
@@ -268,23 +209,7 @@ const DnDFlow = () => {
 
 
     const dataWithUpdates = nodes.map((node: any) => node);
-
-    const isValidConnection = (connection: any) => {
-        const { source, target } = connection;
-        const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
-        const targetNode = nodes.find((node: { id: any; }) => node.id === target);
-
-        if (!sourceNode || !targetNode) {
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Invalid connection');
-        }
-        const sourceType = sourceNode.type;
-        const targetType = targetNode.type;
-
-        if (sourceType === targetType) {
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Same Connections not allowed');
-        }
-        return sourceType !== targetType;
-    };
+    const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
 
 
 
@@ -340,17 +265,9 @@ const DnDFlow = () => {
                             />
                             <Controls />
                             <Panel position="top-right">
-                                {/* <button>save</button>
-                            <button onClick={uploadHandler} className='panelBtn'>load</button> */}
-
                                 <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                             </Panel>
-
-                            {/* <Panel position="top-left">
-                            <button onClick={() => onLayout('TB')} className='saveBtn'>vertical layout</button>
-                            <button onClick={() => onLayout('LR')}>horizontal layout</button>
-                        </Panel> */}
                         </ReactFlow>
                     </div>
 
@@ -373,45 +290,13 @@ const DnDFlow = () => {
 
 };
 
-export default memo(DnDFlow);
+export default memo(Dagger);
 
-function onLayoutHandlers() {
-    return (nodes: any[], edges: any[], direction = 'TB') => {
-        const isHorizontal = direction === 'TB';
-        dagreGraph.setGraph({ rankdir: direction });
 
-        nodes.forEach((node: { id: any; }) => {
-            dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-        });
 
-        edges.forEach((edge: { source: any; target: any; }) => {
-            dagreGraph.setEdge(edge.source, edge.target);
-        });
 
-        dagre.layout(dagreGraph);
 
-        nodes.forEach((node: { id: any; targetPosition: string; sourcePosition: string; position: { x: number; y: number; }; }) => {
-            const nodeWithPosition = dagreGraph.node(node.id);
-            node.targetPosition = isHorizontal ? 'left' : 'top';
-            node.sourcePosition = isHorizontal ? 'right' : 'bottom';
 
-            // We are shifting the dagre node position (anchor=center center) to the top left
-            // so it matches the React Flow node anchor point (top left).
-            node.position = {
-                x: nodeWithPosition.x - nodeWidth / 2,
-                y: nodeWithPosition.y - nodeHeight / 2,
-            };
 
-            return node;
-        });
 
-        return { nodes, edges };
-    };
-}
-
-function errorHandler(setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, errorString: string) {
-    setErrorMessage(errorString);
-    toggleSnackbar();
-    return false;
-}
 

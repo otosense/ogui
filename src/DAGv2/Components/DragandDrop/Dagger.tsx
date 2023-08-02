@@ -53,7 +53,7 @@ const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') 
 //     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
 // };
 const DnDFlow = () => {
-    const reactFlowWrapper = useRef(null);
+    const reactFlowWrapper = useRef<any>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
@@ -253,7 +253,7 @@ const DnDFlow = () => {
                     },
                 };
             }
-            setNodes((nds: string | any[]) => nds.concat(newNode));
+            setNodes((nds: any) => nds.concat(newNode));
         },
         [reactFlowInstance, funcList]
     );

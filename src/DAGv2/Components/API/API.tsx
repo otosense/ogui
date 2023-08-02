@@ -2,17 +2,10 @@ import axios from 'axios';
 import { funcList } from './sampleFunction';
 
 const ApiUrl = {
-    getFuncNodes: "http://52.188.113.129:8080/dag_func_node_source_store",
-    loadDagList: "http://52.188.210.107:8080/get_list_of_dag",
-    saveDag: "http://52.188.210.107:8080/save_dag_data",
-    loadDag: "http://52.188.113.129:8080/get_dag",
+    getStore: "http://20.219.8.178:8080/dag_func_node_source_store",
+    dagSaveLoad: "http://20.219.8.178:8080/dag_store",
 };
 
-
-const GetMethod = async (url: any) => {
-    const response = await axios.get(url);
-    return response.data;
-};
 
 async function PostMethod(url: string, data: any) {
     try {
@@ -26,43 +19,18 @@ async function PostMethod(url: string, data: any) {
 }
 
 export function getFuncNodes(data: { _attr_name: string; }) {
-    let url = ApiUrl.getFuncNodes;
+    let url = ApiUrl.getStore;
     return PostMethod(url, data);
-
-
-
-    // return PostMethod(url, {
-    //     // "_attr_name": "__iter__",
-    //     "_attr_name": '__getitem__',
-    //     "k": ['funcstore', 'apply_fitted_model']
-    // });
-
-    // attr = '__getitem__';
-    // let url = ApiUrl.getFuncNodes;
-    // return PostMethod(url, {
-    //     "_attr_name": "__iter__",
-    // });
-
-
-    return funcList;
+    // return funcList;
 }
-
-
-
-
-export function getDagList() {
-    let url = ApiUrl.loadDagList;
-    return PostMethod(url, {});
-}
-
 
 export const loadDag = async (data: any) => {
-    let url = ApiUrl.loadDag;
-    return PostMethod(url, { "name": data });
+    let url = ApiUrl.dagSaveLoad;
+    return PostMethod(url, data);
 };
 
 export const saveDag = async (data: any) => {
-    let url = ApiUrl.saveDag;
+    let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };
 

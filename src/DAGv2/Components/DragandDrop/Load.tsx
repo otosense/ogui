@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import * as API from '../API/API';
-import { functionListMapping } from '../Utilities/Mapping/functionListMapping';
+import { listMapping } from '../Utilities/Mapping/listMapping';
 
 function Load(props: {
     loadList(loadList: any): any;
@@ -12,7 +12,7 @@ function Load(props: {
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
     const [selectDag, setSelectDag] = useState('');
-    const [dagListResponse, setDagListResponse] = useState(props?.loadList);
+    const [dagListResponse, setDagListResponse] = useState<any>(props?.loadList);
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
@@ -26,15 +26,17 @@ function Load(props: {
         // };
         // fetchData();
 
-        const result = functionListMapping(props?.loadList);
-        console.log('resultresultresultresult', result);
+        const result = listMapping(props?.loadList);
         setDagListResponse(result);
     }, [props?.loadList]);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        // mutation.mutate(selectDag);
-        API.loadDag(selectDag).then(x => {
+        const payload = {
+            "_attr_name": "__getitem__",
+            "k": selectDag
+        };
+        API.loadDag(payload).then(x => {
             props.onDataUploaded(x);
             setShowErrorMessage(false);
             onClose();

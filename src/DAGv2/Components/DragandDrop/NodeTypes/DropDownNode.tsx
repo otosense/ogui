@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
-import { functionListMapping } from '../../Utilities/Mapping/functionListMapping';
+import { listMapping } from '../../Utilities/Mapping/listMapping';
 import { apiMethod } from '../../API/ApiCalls';
 import { isEmpty } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
@@ -177,7 +177,7 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
   useEffect(() => {
     // Mapping the Data for UI elements, creating structures like 
     // [  { value: 'add', label: 'add' },  { value: 'apply_fitted_model', label: 'apply_fitted_model' }]
-    const result = functionListMapping(functionList);
+    const result = listMapping(functionList);
     setFunctionList(result);
   }, [functionList]);
 

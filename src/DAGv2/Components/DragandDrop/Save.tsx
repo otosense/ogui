@@ -29,16 +29,21 @@ function Save(props: {
 
     const submitHandler = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
+
+
         const combinedObj = {
             dagName,
             ...props.data,
         };
+
+        const payload = {
+            "_attr_name": '__setitem__',
+            k: dagName,
+            v: combinedObj
+        };
         onClose();
 
-        // console.log('combinedObj', JSON.stringify(combinedObj));
-
-        API.saveDag(combinedObj).then(x => {
-            // console.log('x', x);
+        API.saveDag(payload).then(x => {
             // Response Handler
         }).catch(err => console.log('error', err.message));
     };

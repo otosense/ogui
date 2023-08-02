@@ -1,6 +1,6 @@
 import { map } from 'lodash';
 
-const functionListMapping = (funcList: string[] | any[]) => {
+const listMapping = (funcList: any[]) => {
     // Check if funcList is an array of objects or an array of strings
     if (funcList.length && typeof funcList[0] === 'object' && 'value' in funcList[0] && 'label' in funcList[0]) {
         // If funcList is an array of objects, return it as is
@@ -18,4 +18,4 @@ const functionListMapping = (funcList: string[] | any[]) => {
     }
 };
 
-export { functionListMapping };
+export { listMapping };

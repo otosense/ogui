@@ -15,12 +15,22 @@ const GetMethod = async (url: any) => {
 };
 
 async function PostMethod(url: string, data: any) {
-    const response = await axios.post(url, data);
-    return response.data;
+    try {
+        const response = await axios.post(url, data);
+        return response.data;
+    } catch (error: any) {
+        // Handle the error here
+        const errorMessage = error?.response?.data?.error || error?.message + ' ' + error?.config?.url;
+        throw errorMessage;
+    }
 }
 
-export function getFuncNodes() {
-    // let url = ApiUrl.getFuncNodes;
+export function getFuncNodes(data: { _attr_name: string; }) {
+    let url = ApiUrl.getFuncNodes;
+    return PostMethod(url, data);
+
+
+
     // return PostMethod(url, {
     //     // "_attr_name": "__iter__",
     //     "_attr_name": '__getitem__',

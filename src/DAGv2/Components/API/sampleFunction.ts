@@ -68,3 +68,13 @@ export {
     //     setEdges(funcToJsonEdge);
     //     setUploadOver(true);
     // };
+
+
+    // const nodeTypes = {
+//     // custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
+//     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
+//     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
+// };
+
+
+    // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);

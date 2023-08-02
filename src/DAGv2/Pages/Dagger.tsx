@@ -31,7 +31,7 @@ import { ValidationError } from '../Components/Utilities/ErrorValidator';
 import { Button } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
+import { dagDirections, errorHandler, functionList } from '../Components/Utilities/globalFunction';
 import { Alert } from '@mui/material';
 import LoadingOverlay from '../../utilities/Loader';
 import SnackBar from '../../utilities/SnackBar';
@@ -39,21 +39,13 @@ import { sampleInput } from '../Components/API/sampleFunction';
 import { autoLayoutStructure, onLayoutHandlers } from '../Components/Utilities/Layouts';
 import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
-import { getFunctionList } from '../Components/API/ApiCalls';
-
-
-
-
-
-
+import { apiMethod, getFunctionList } from '../Components/API/ApiCalls';
+import { useQuery } from '@tanstack/react-query';
+import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 
 // Generating Random ID for nodes
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
-// const nodeTypes = {
-//     // custom: (props: any) => <TextEditorNode {...props} type='funcNode' />,
-//     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' />,
-//     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
-// };
+
 const Dagger = () => {
     const reactFlowWrapper = useRef<any>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -63,30 +55,44 @@ const Dagger = () => {
     const [uploadOver, setUploadOver] = useState(false);
     const [funcList, setFuncList] = useState<any>([]);
     const [showSnackbar, setShowSnackbar] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
     const [flowNodes, setFlowNodes] = useState<any>([]);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
+    const [dagStore, setDagStore] = useState<string[]>([]);
 
 
-    // const onConnect = useCallback((params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)), []);
     const toggleSnackbar = () => {
         setShowSnackbar((prev) => !prev);
-        // setSnackbarKey((prev) => prev + 1); // Update the key to force the Snackbar to re-render
     };
 
+    const payload = {
+        "_attr_name": "__iter__",
+    };
+    // useEffect(() => {
+    //     fetchData();
+    // }, []);
+    // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
 
-    const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
+    const { data, status, error, isLoading, isFetching } = apiMethod(payload);
+
+    // console.log({ data, status, error, isLoading, isFetching });
+
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (data) {
+
+            const list = functionList(data);
+            console.log('list', list);
+            setFuncList(list.funcstore);
+            setDagStore(list.dag_store);
+        }
+    }, [data]);
 
 
     useEffect(() => {
-        // onLayout('TB'); // Set vertical layout on component load
-        onLayout('LR'); // Set vertical layout on component load
+        console.log('uploadOver', uploadOver);
+        // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
+        onLayout('LR'); // Set vertical layout on component load Left to Right Layout
     }, [uploadOver]);
 
 
@@ -94,6 +100,29 @@ const Dagger = () => {
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
     }), [funcList, errorMapping, flowNodes]);
+
+    // const nodeTypes = {
+    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+    //     custom: (props: any) => (
+    //         <DropDownNode
+    //             {...props}
+    //             type='funcNode'
+    //             funcLists={funcList}
+    //             errorMapping={errorMapping || []}
+    //             flowNodes={flowNodes}
+    //         />
+    //     ),
+    // };
+
+    // ... (rest of the component code)
+
+
+
+
+
+
+
+
 
 
     const onConnect = connectionHandlers(nodes, edges, setErrorMessage, toggleSnackbar, setEdges);
@@ -174,20 +203,22 @@ const Dagger = () => {
                 position,
                 data: { label: '', initialEdge: dagDirections, },
             };
+
+            console.log('funcList', funcList);
             if (type === 'custom') {
                 newNode.data = {
-                    label: funcList?.[0]?.label,
-                    ddType: funcList?.[0]?.label,
+                    label: '',
+                    ddType: '',
                     initialEdge: dagDirections,
                     selects: {
-                        [nodeTypeId]: funcList?.[0]?.label,
-                        hasValue: funcList?.[0]?.input?.length
+                        [nodeTypeId]: '',
+                        hasValue: 0
                     },
                 };
             }
             setNodes((nds: any) => nds.concat(newNode));
         },
-        [reactFlowInstance, funcList]
+        [reactFlowInstance] // funcList
     );
 
     const uploadHandler = () => {
@@ -209,11 +240,11 @@ const Dagger = () => {
 
 
     return (
-        isError ? (<Alert severity='error' className='errorMessage'>
+        error ? (<Alert severity='error' className='errorMessage'>
             There is an Error in API
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
-                {loading && <LoadingOverlay />}
+                {isLoading && <LoadingOverlay />}
 
                 <ReactFlowProvider>
                     <Sidebar />
@@ -222,7 +253,7 @@ const Dagger = () => {
                             // nodes={nodes}
                             nodes={dataWithUpdates}
                             snapToGrid={true}
-                            snapGrid={[2, 2]}
+                            snapGrid={[3, 3]}
                             // edges={edges}
                             edges={edgesWithUpdatedTypes}
                             onNodesChange={onNodesChange}
@@ -245,6 +276,12 @@ const Dagger = () => {
                                 <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                             </Panel>
+                            <Panel position="top-left">
+                                {/* <button onClick={() => onLayout('TB')} className='saveBtn'>vertical layout</button> */}
+                                {/* <button onClick={() => onLayout('LR')}>horizontal layout</button> */}
+                                <Button variant="contained" onClick={() => onLayout('LR')} className='panelBtnLayout' startIcon={<AlignHorizontalLeftIcon />}>Horizontal layout</Button>
+
+                            </Panel>
                         </ReactFlow>
                     </div>
 
@@ -252,7 +289,7 @@ const Dagger = () => {
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} loadList={dagStore} />
                         ) : (
                             <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
                         )}
@@ -268,6 +305,8 @@ const Dagger = () => {
 };
 
 export default memo(Dagger);
+
+
 
 
 

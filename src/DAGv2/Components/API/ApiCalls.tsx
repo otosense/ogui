@@ -1,9 +1,20 @@
+import { useQuery } from "@tanstack/react-query";
 import { getFuncNodes } from "./API";
 
 function getFunctionList(setLoading: React.Dispatch<React.SetStateAction<boolean>>, setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>) {
     return async () => {
+
+
+        const payload = {
+            "_attr_name": "__iter__",
+        };
+
+
+
         try {
-            const resolve = await getFuncNodes();
+
+            const resolve = await getFuncNodes(payload);
+            functionListFromResponse(resolve);
             setLoading(false);
             resolve.unshift({
                 label: 'select function Node',
@@ -27,7 +38,24 @@ function getFunctionList(setLoading: React.Dispatch<React.SetStateAction<boolean
     };
 }
 
+function apiMethod(payload: { _attr_name: string; }): { data: any; status: any; error: any; isLoading: any; isFetching: any; } {
+    return useQuery({
+        queryKey: ['funcNodes', payload],
+        queryFn: async () => {
+            return getFuncNodes(payload);
+        },
+        keepPreviousData: false,
+        refetchOnWindowFocus: false,
+        cacheTime: 5 * 60 * 1000,
+        staleTime: 1 * 60 * 1000,
+    });
+}
 
 export {
-    getFunctionList
+    getFunctionList,
+    apiMethod
 };
+
+function functionListFromResponse(resolve: any) {
+    console.log('resolve', resolve);
+}

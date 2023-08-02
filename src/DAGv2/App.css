@@ -430,7 +430,8 @@ section.handlers {
 }
 
 .handlerText {
-  margin: 0 10px;
+  margin: 2 0px;
+  font-size: 9px;
 }
 
 .resultEdger {
@@ -474,6 +475,18 @@ select#funcLists {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+
+.Spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Spinner .MuiCircularProgress-indeterminate {
+  width: 15px !important;
+  height: 15px !important;
 }
 
 /* ========================= DAG V2.0 Ends========================= */

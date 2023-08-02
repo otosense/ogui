@@ -1,7 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import * as API from '../API/API';
+import { functionListMapping } from '../Utilities/Mapping/functionListMapping';
 
 function Load(props: {
+    loadList(loadList: any): any;
     onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
 }) {
     const { onClose } = props;
@@ -10,7 +12,7 @@ function Load(props: {
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
     const [selectDag, setSelectDag] = useState('');
-    const [dagListResponse, setDagListResponse] = useState([]);
+    const [dagListResponse, setDagListResponse] = useState(props?.loadList);
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
@@ -18,12 +20,16 @@ function Load(props: {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            const resp = await API.getDagList();
-            setDagListResponse(resp);
-        };
-        fetchData();
-    }, []);
+        // const fetchData = async () => {
+        //     const resp = await API.getDagList();
+        //     setDagListResponse(resp);
+        // };
+        // fetchData();
+
+        const result = functionListMapping(props?.loadList);
+        console.log('resultresultresultresult', result);
+        setDagListResponse(result);
+    }, [props?.loadList]);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -67,7 +73,7 @@ function Load(props: {
                     <div className='dagList'>
                         <label htmlFor="dagList">Choose your Dag:</label>
                         <select name="dagList" id="dagList" defaultValue="" onChange={loadDag}>
-                            <option disabled value="">Select a Dag</option>
+                            {/* <option disabled value="">Select a Dag</option> */}
                             {
                                 dagListResponse?.map((option: { value: string, label: string; }) => (
                                     <option key={option?.value} value={option?.value}>

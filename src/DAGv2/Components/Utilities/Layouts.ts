@@ -7,7 +7,7 @@ const nodeHeight = 75;
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
-
+const getLayoutedElements = onLayoutHandlers();
 function onLayoutHandlers() {
     return (nodes: any[], edges: any[], direction = 'TB') => {
         const isHorizontal = direction === 'TB';
@@ -43,7 +43,7 @@ function onLayoutHandlers() {
 }
 function autoLayoutStructure(nodes: any[], edges: any[], setNodes: { (value: React.SetStateAction<Node<any, string | undefined>[]>): void; (arg0: any[]): void; }, setEdges: React.Dispatch<React.SetStateAction<any[]>>) {
     // Handle the different types of Layouts like Horizontal and Vertical
-    const getLayoutedElements = onLayoutHandlers();
+
 
     return useCallback(
         (direction: string | undefined) => {

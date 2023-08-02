@@ -33,16 +33,16 @@ function getFunctionList(setLoading: React.Dispatch<React.SetStateAction<boolean
     };
 }
 
-function apiMethod(payload: { _attr_name: string; }): { data: any; status: any; error: any; isLoading: any; isFetching: any; } {
+function apiMethod(payload: { _attr_name: string; }, key = ''): { data: any; status: any; error: any; isLoading: any; isFetching: any; } {
     return useQuery({
-        queryKey: ['funcNodes', payload],
+        queryKey: ['funcNodes', payload, key],
         queryFn: async () => {
             return getFuncNodes(payload);
         },
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-        cacheTime: 5 * 60 * 1000,
-        staleTime: 1 * 60 * 1000,
+        keepPreviousData: false,
+        refetchOnWindowFocus: true,
+        cacheTime: 50 * 60 * 1000,
+        staleTime: 10 * 60 * 1000,
     });
 }
 

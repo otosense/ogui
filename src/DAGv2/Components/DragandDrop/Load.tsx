@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../Utilities/Mapping/listMapping';
 import { dagSaveLoad, getFuncNodes } from '../API/API';
+import { apiMethod } from '../API/ApiCalls';
 
 function Load(props: {
     onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
@@ -18,8 +19,15 @@ function Load(props: {
         setData(event.target.value);
     };
 
+    const payload = {
+        "_attr_name": "__iter__",
+    };
+    const respo = apiMethod(payload, 'load');
+    console.log('data payload', respo.data);
 
     useEffect(() => {
+
+
         const result = listMapping(loadList);
         setDagListResponse(result);
     }, [loadList]);

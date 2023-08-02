@@ -4,8 +4,8 @@ import { errorHandler } from "../globalFunction";
 
 function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>) {
     return useCallback((params: Edge | Connection) => {
-        const { source, target } = params;
-
+        const { source, target, targetHandle } = params;
+        console.log('params', params);
         const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
         // Check if the source node already has an outgoing edge
         const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
@@ -19,9 +19,17 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: R
         }
 
         // Check if the target node already has an incoming edge
-        const existingIncomingEdge = edges.find((edge: { target: any; }) => {
+        const existingIncomingEdge = edges.find((edge) => {
+            console.log('sourceNode?.type', sourceNode);
+            console.log('edge', edge, target);
             if (sourceNode?.type !== 'textUpdater') {
                 return edge.target === target;
+            } else {
+                return edge.targetHandle === targetHandle;
+            }
+
+            if (sourceNode?.type === 'textUpdater') {
+
             }
         });
         if (existingIncomingEdge) {

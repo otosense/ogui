@@ -39,6 +39,7 @@ import { sampleInput } from '../Components/API/sampleFunction';
 import { autoLayoutStructure, onLayoutHandlers } from '../Components/Utilities/Layouts';
 import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
+import { getFunctionList } from '../Components/API/ApiCalls';
 
 
 
@@ -75,6 +76,9 @@ const Dagger = () => {
         setShowSnackbar((prev) => !prev);
         // setSnackbarKey((prev) => prev + 1); // Update the key to force the Snackbar to re-render
     };
+
+
+    const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
     useEffect(() => {
         fetchData();
     }, []);
@@ -85,30 +89,6 @@ const Dagger = () => {
         onLayout('LR'); // Set vertical layout on component load
     }, [uploadOver]);
 
-    const fetchData = async () => {
-        try {
-            const resolve = await API.getFuncNodes();
-            setLoading(false);
-            resolve.unshift({
-                label: 'select function Node',
-                value: '',
-                inputs: []
-            });
-            setFuncList(resolve);
-
-            // // Adding Custom Function
-            // const customFunction = {
-            //     "value": "new",
-            //     "label": "New Function"
-            // };
-            // setFuncList((prevData: any) => [...prevData, customFunction]);
-        } catch (error: any) {
-            // Handle error
-            setIsError(true);
-            setLoading(false);
-            console.log('Error in API.getFuncNodes', error.toString());
-        }
-    };
 
     const nodeTypes = useMemo(() => ({
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
@@ -119,6 +99,9 @@ const Dagger = () => {
     const onConnect = connectionHandlers(nodes, edges, setErrorMessage, toggleSnackbar, setEdges);
 
     const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
+
+    const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
+    const dataWithUpdates = nodes.map((node: any) => node);
 
     const handleUpload = useCallback((data: any) => {
         const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
@@ -207,12 +190,6 @@ const Dagger = () => {
         [reactFlowInstance, funcList]
     );
 
-
-    const dataWithUpdates = nodes.map((node: any) => node);
-    const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
-
-
-
     const uploadHandler = () => {
         setUploadOver(false);
         setIsModal({
@@ -291,6 +268,7 @@ const Dagger = () => {
 };
 
 export default memo(Dagger);
+
 
 
 

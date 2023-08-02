@@ -62,7 +62,6 @@ const Dagger = () => {
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
-    const [dagStore, setDagStore] = useState<string[]>([]);
 
 
     const toggleSnackbar = () => {
@@ -87,7 +86,6 @@ const Dagger = () => {
         if (data) {
             const list = functionList(data);
             setFuncList(list.funcstore);
-            setDagStore(list.dag_store);
         }
     }, [data]);
 
@@ -314,7 +312,7 @@ const Dagger = () => {
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} loadList={dagStore} />
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
                         ) : (
                             <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
                         )}

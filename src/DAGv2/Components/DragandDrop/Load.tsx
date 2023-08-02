@@ -1,19 +1,19 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../Utilities/Mapping/listMapping';
 import { dagSaveLoad, getFuncNodes } from '../API/API';
-import { apiMethod } from '../API/ApiCalls';
+import { apiMethod, loadMethod } from '../API/ApiCalls';
+import { functionList } from '../Utilities/globalFunction';
 
 function Load(props: {
     onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
-    loadList: any;
 }) {
-    const { onClose, loadList } = props;
+    const { onClose } = props;
     const [data, setData] = useState(JSON.stringify(props.data, null, 2));
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
     const [selectDag, setSelectDag] = useState('');
-    const [dagListResponse, setDagListResponse] = useState<any>(loadList);
+    const [dagListResponse, setDagListResponse] = useState<any>();
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
@@ -22,15 +22,23 @@ function Load(props: {
     const payload = {
         "_attr_name": "__iter__",
     };
-    const respo = apiMethod(payload, 'load');
+    const respo = loadMethod(payload, 'load');
     console.log('data payload', respo.data);
 
+
     useEffect(() => {
-
-
-        const result = listMapping(loadList);
+        const list = functionList(respo.data);
+        const result = listMapping(list.dag_store);
         setDagListResponse(result);
-    }, [loadList]);
+    }, [respo.data]);
+
+
+    // useEffect(() => {
+
+
+    //     const result = listMapping(loadList);
+    //     setDagListResponse(result);
+    // }, [loadList]);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();

@@ -94,14 +94,31 @@ const Dagger = () => {
 
     useEffect(() => {
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
-        onLayout('LR'); // Set vertical layout on component load Left to Right Layout
+        // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
+
+        setTimeout(() => {
+            onLayout('LR');
+        }, 500);
     }, [uploadOver]);
 
+    // const nodeTypes = useMemo(
+    //     () => ({
+    //         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+    //         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
+    //     }),
+    //     [funcList, errorMapping, flowNodes]
+    // );
 
     const nodeTypes = useMemo(() => ({
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
     }), [funcList, errorMapping, flowNodes]);
+
+
+    // const nodeTypes = useMemo(() => ({
+    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+    //     custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
+    // }), [funcList, errorMapping, flowNodes]);
 
     // const nodeTypes = {
     //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
@@ -289,12 +306,6 @@ const Dagger = () => {
                             <Panel position="top-right">
                                 <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
-                            </Panel>
-                            <Panel position="top-left">
-                                {/* <button onClick={() => onLayout('TB')} className='saveBtn'>vertical layout</button> */}
-                                {/* <button onClick={() => onLayout('LR')}>horizontal layout</button> */}
-                                <Button variant="contained" onClick={() => onLayout('LR')} className='panelBtnLayout' startIcon={<AlignHorizontalLeftIcon />}>Horizontal layout</Button>
-
                             </Panel>
                         </ReactFlow>
                     </div>

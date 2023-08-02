@@ -3,14 +3,9 @@ import { getFuncNodes } from "./API";
 
 function getFunctionList(setLoading: React.Dispatch<React.SetStateAction<boolean>>, setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>) {
     return async () => {
-
-
         const payload = {
             "_attr_name": "__iter__",
         };
-
-
-
         try {
 
             const resolve = await getFuncNodes(payload);
@@ -44,7 +39,7 @@ function apiMethod(payload: { _attr_name: string; }): { data: any; status: any; 
         queryFn: async () => {
             return getFuncNodes(payload);
         },
-        keepPreviousData: false,
+        keepPreviousData: true,
         refetchOnWindowFocus: false,
         cacheTime: 5 * 60 * 1000,
         staleTime: 1 * 60 * 1000,
@@ -59,3 +54,11 @@ export {
 function functionListFromResponse(resolve: any) {
     console.log('resolve', resolve);
 }
+
+
+{/* <Panel position="top-left"> */ }
+{/* <button onClick={() => onLayout('TB')} className='saveBtn'>vertical layout</button> */ }
+{/* <button onClick={() => onLayout('LR')}>horizontal layout</button> */ }
+{/* <Button variant="contained" onClick={() => onLayout('LR')} className='panelBtnLayout' startIcon={<AlignHorizontalLeftIcon />}>Horizontal layout</Button> */ }
+
+// </Panel>

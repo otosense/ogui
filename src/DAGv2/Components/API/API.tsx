@@ -24,7 +24,7 @@ export function getFuncNodes(data: { _attr_name: string; }) {
     // return funcList;
 }
 
-export const loadDag = async (data: any) => {
+export const dagSaveLoad = async (data: any) => {
     let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };

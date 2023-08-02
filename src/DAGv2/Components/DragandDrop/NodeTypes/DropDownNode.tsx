@@ -14,7 +14,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const [customValue, setCustomValue] = useState(value);
   const [valueText, setValueText] = useState(labels);
   const [validationMsg, setValidationMsg] = useState(false);
-  const [inputCreator, setInputCreator] = useState<string[]>();
+  const [paramsLists, setParamsLists] = useState<string[]>();
 
 
 
@@ -35,7 +35,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
     // console.log('selectedFuncType', selectedFuncType);
     // calling parameters list for selected functionNode 
     const inputs = response?.data?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
-    setInputCreator(inputs);
+    setParamsLists(inputs);
   }, [customValue, response?.data]);
 
 
@@ -54,7 +54,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
             ddType: selectedValue,
             selects: {
               // ...node.data.selects,
-              hasValue: inputCreator?.length,
+              hasValue: paramsLists?.length,
               [selectedValue]: selectedValue,
             },
           };
@@ -62,7 +62,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
         return node;
       })
     );
-  }, [selectedValue, inputCreator]);
+  }, [selectedValue, paramsLists]);
 
 
   const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
@@ -89,11 +89,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
       setValidationMsg(true);
     }
   }, []);
-
   return (
-
-
-
     <div className="custom-node__select">
       {/* <select className="nodrag titleBox" onChange={onChange} value={value}>
         {
@@ -125,10 +121,10 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
 
         <section className='handlers'>
           <div className='multiInput'>
-            {inputCreator?.map((x: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => {
+            {paramsLists?.map((paramsList: string, i: number) => {
               return (<div className='resultEdger' key={i}>
-                <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={x?.toString()} className='connector' isConnectable={isConnectable} />
-                <span className='handlerText'>{x}</span>
+                <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={paramsList?.toString()} className='connector' isConnectable={isConnectable} />
+                <span className='handlerText'>{paramsList}</span>
               </div>);
             })}
           </div>

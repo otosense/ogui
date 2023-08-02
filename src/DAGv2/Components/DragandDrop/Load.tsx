@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import * as API from '../API/API';
 import { listMapping } from '../Utilities/Mapping/listMapping';
+import { dagSaveLoad, getFuncNodes } from '../API/API';
 
 function Load(props: {
     onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
@@ -20,12 +20,6 @@ function Load(props: {
 
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     const resp = await API.getDagList();
-        //     setDagListResponse(resp);
-        // };
-        // fetchData();
-
         const result = listMapping(loadList);
         setDagListResponse(result);
     }, [loadList]);
@@ -36,7 +30,7 @@ function Load(props: {
             "_attr_name": "__getitem__",
             "k": selectDag
         };
-        API.loadDag(payload).then(x => {
+        dagSaveLoad(payload).then(x => {
             props.onDataUploaded(x);
             setShowErrorMessage(false);
             onClose();
@@ -77,8 +71,8 @@ function Load(props: {
                         <select name="dagList" id="dagList" defaultValue="" onChange={loadDag}>
                             {/* <option disabled value="">Select a Dag</option> */}
                             {
-                                dagListResponse?.map((option: { value: string, label: string; }) => (
-                                    <option key={option?.value} value={option?.value}>
+                                dagListResponse?.map((option: { value: string, label: string; }, index: number) => (
+                                    <option key={index} value={option?.value}>
                                         {option?.label}
                                     </option>
                                 ))

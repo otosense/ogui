@@ -8,9 +8,8 @@ const listMapping = (funcList: any[]) => {
     } else {
         // If funcList is an array of strings, map it to an array of objects
         let result = map(funcList, (value) => ({ value, label: value }));
-        console.log('result', result);
         result.unshift({
-            label: 'select function Node',
+            label: 'select Node',
             value: '',
             // inputs: []
         });

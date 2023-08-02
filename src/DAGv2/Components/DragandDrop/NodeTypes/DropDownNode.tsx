@@ -8,7 +8,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const [customValue, setCustomValue] = useState(value);
   const [valueText, setValueText] = useState(labels);
   const [validationMsg, setValidationMsg] = useState(false);
-  const [inputCreator, setInputCreator] = useState();
+  const [inputCreator, setInputCreator] = useState<string[]>();
 
   useEffect(() => {
     const selectedFuncType = selector?.find((x: { value: string; }) => x.value === selectedValue);
@@ -96,7 +96,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
         <div className='multiInput'>
           {inputCreator?.map((x: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => {
             return (<div className='resultEdger' key={i}>
-              <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={x.toString()} className='connector' isConnectable={isConnectable} />
+              <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={x?.toString()} className='connector' isConnectable={isConnectable} />
               <span className='handlerText'>{x}</span>
             </div>);
           })}

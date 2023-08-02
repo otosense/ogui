@@ -22,11 +22,20 @@ async function PostMethod(url: string, data: any) {
 export function getFuncNodes() {
     // let url = ApiUrl.getFuncNodes;
     // return PostMethod(url, {
-    //     "_attr_name": "__iter__"
+    //     // "_attr_name": "__iter__",
+    //     "_attr_name": '__getitem__',
+    //     "k": ['funcstore', 'apply_fitted_model']
     // });
+
+    // attr = '__getitem__';
+
+
 
     return funcList;
 }
+
+
+
 
 export function getDagList() {
     let url = ApiUrl.loadDagList;

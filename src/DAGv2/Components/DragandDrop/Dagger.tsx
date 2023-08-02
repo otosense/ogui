@@ -34,6 +34,7 @@ import { dagDirections } from '../Utilities/globalFunction';
 import { Alert } from '@mui/material';
 import LoadingOverlay from '../../../utilities/Loader';
 import SnackBar from '../../../utilities/SnackBar';
+import { sampleInput } from '../API/sampleFunction';
 
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -53,7 +54,7 @@ const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') 
 //     custom: (props: any) => <DropDownNode {...props} type='funcNode' />,
 // };
 const DnDFlow = () => {
-    const reactFlowWrapper = useRef(null);
+    const reactFlowWrapper = useRef<any>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
@@ -63,7 +64,7 @@ const DnDFlow = () => {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [loading, setLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const [flowNodes, setFlowNodes] = useState([]);
+    const [flowNodes, setFlowNodes] = useState<any>([]);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [errorMapping, setErrorMapping] = useState([]);
@@ -260,7 +261,7 @@ const DnDFlow = () => {
                     },
                 };
             }
-            setNodes((nds: string | any[]) => nds.concat(newNode));
+            setNodes((nds: any) => nds.concat(newNode));
         },
         [reactFlowInstance, funcList]
     );

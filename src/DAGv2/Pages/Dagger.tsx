@@ -34,43 +34,50 @@ import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJ
 import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
 import { ValidationError } from '../Components/Utilities/ErrorValidator';
 
-import { dagDirections, errorHandler, functionList } from '../Components/Utilities/globalFunction';
+import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
 import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
 import { apiMethod } from '../Components/API/ApiCalls';
+import { storeGrouping } from '../Components/Utilities/Mapping/storeGrouping';
 
+// Each Node Width and Height Mentioned here
 const nodeWidth = 200;
 const nodeHeight = 75;
 
+// Layout / Structure are handled by this plugin
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
+const getLayoutedElements = onLayoutHandlers();
 
 // Generating Random ID for nodes
-const getLayoutedElements = onLayoutHandlers();
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 
+// Main component Starts here
 const Dagger = () => {
-    const reactFlowWrapper = useRef<any>(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
-    const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} });
-    const [uploadOver, setUploadOver] = useState(false);
-    const [funcList, setFuncList] = useState<any>([]);
-    const [showSnackbar, setShowSnackbar] = useState(false);
-    const [flowNodes, setFlowNodes] = useState<any>([]);
+    const reactFlowWrapper = useRef<any>(null); // Creating Reference for the DAG
+    const [nodes, setNodes, onNodesChange] = useNodesState([]); // In-build function to handle Nodes
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]); // In-build function to handle Edges
+    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null); // Initial Load of Each Nodes takes place here
+    const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} }); // Modal for Save and Load
+    const [uploadOver, setUploadOver] = useState(false); // check Save completion status
+    const [funcList, setFuncList] = useState<any>([]); // Store Function List / FuncNode List
+    const [showSnackbar, setShowSnackbar] = useState(false); // Handle Snack Bar for error handlings
+    const [flowNodes, setFlowNodes] = useState<any>([]); // Re-append the nodes to UI
 
-    const [errorMessage, setErrorMessage] = useState('');
-    const [errorMapping, setErrorMapping] = useState([]);
-
+    const [errorMessage, setErrorMessage] = useState(''); // Error Message Handler
+    const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
 
     const toggleSnackbar = () => {
+        // Snackbar Toggle to shown in UI
         setShowSnackbar((prev) => !prev);
     };
 
+    // Paylaod for API
     const payload = {
         "_attr_name": "__iter__",
     };
+
+    // Initiating API call 
     const { data, status, error, isLoading, isFetching } = apiMethod(payload);
 
     // useEffect(() => {
@@ -83,9 +90,11 @@ const Dagger = () => {
     // console.log({ data, status, error, isLoading, isFetching });
 
     useEffect(() => {
+        // Once data received from API Extract only the function List /  FuncNode List
         if (data) {
-            const list = functionList(data);
-            setFuncList(list.funcstore);
+            // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
+            const list = storeGrouping(data);
+            setFuncList(list.funcstore); // storing FuncList
         }
     }, [data]);
 
@@ -94,58 +103,24 @@ const Dagger = () => {
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
 
-        setTimeout(() => {
-            onLayout('LR');
+        setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
+            onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
     }, [uploadOver]);
 
-    // const nodeTypes = useMemo(
-    //     () => ({
-    //         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-    //         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
-    //     }),
-    //     [funcList, errorMapping, flowNodes]
-    // );
-
     const nodeTypes = useMemo(() => ({
+        // textUpdater is "TextEditorNode" component which holds varNode functionality
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+        // custom is "DropDownNode" component which holds funcNode functionality
         custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
     }), [funcList, errorMapping, flowNodes]);
 
-
-    // const nodeTypes = useMemo(() => ({
-    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-    //     custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
-    // }), [funcList, errorMapping, flowNodes]);
-
-    // const nodeTypes = {
-    //     textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-    //     custom: (props: any) => (
-    //         <DropDownNode
-    //             {...props}
-    //             type='funcNode'
-    //             funcLists={funcList}
-    //             errorMapping={errorMapping || []}
-    //             flowNodes={flowNodes}
-    //         />
-    //     ),
-    // };
-
-    // ... (rest of the component code)
-
-
-
-
-
-
-
-
-
-
+    // Connection Handlers => Rules for the connections
     const onConnect = connectionHandlers(nodes, edges, setErrorMessage, toggleSnackbar, setEdges);
 
     // const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
 
+    // Reason for Auto Alignment of Nodes and Edges
     const onLayout = useCallback(
         (direction: string | undefined) => {
             const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
@@ -159,9 +134,12 @@ const Dagger = () => {
         [nodes, edges]
     );
 
+    // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
     const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
+    // passing the updated nodes in the UI Dag
     const dataWithUpdates = nodes.map((node: any) => node);
 
+    // convert FuncNode to JSON structure how the UI / Dag wants
     const handleUpload = useCallback((data: any) => {
         const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
         const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
@@ -170,6 +148,7 @@ const Dagger = () => {
         setUploadOver(!uploadOver);
     }, [setNodes, setEdges, setUploadOver]);
 
+    // Saving the Dag and Prevent saving is any validationError are there  refer function "ValidationError"
     const onSave = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const flowKey = 'DAG-flow';
@@ -178,30 +157,32 @@ const Dagger = () => {
             setFlowNodes(flow.nodes);
             // Handling Error if any of the nodes label are empty
             const getFuncNode = ValidationError(flow);
-            let MappedJson = {
+            let MappedJson = { // Mapping JSON
                 func_nodes: convertJsonToFuncNodes(flow)
             };
 
-            if (getFuncNode.length > 0) {
+            if (getFuncNode.length > 0) { // if Error is there show Snackbar
                 errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
             }
-            setErrorMapping(getFuncNode);
+            setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
             setIsModal({
-                open: getFuncNode.length === 0,
+                open: getFuncNode.length === 0, // if node error modal box will open
                 type: 'download',
                 data: MappedJson
             });
-            localStorage.setItem(flowKey, JSON.stringify(flow));
-            localStorage.setItem('MappedJson', JSON.stringify(MappedJson));
+            localStorage.setItem(flowKey, JSON.stringify(flow)); // backup saving the  Actual nodes in localStorage 
+            localStorage.setItem('MappedJson', JSON.stringify(MappedJson)); // backup saving the converted for our JSON requirement nodes in localStorage
 
         }
     }, [reactFlowInstance]);
 
+    // Handled Drag-in node from Left side panel to Dag Area
     const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    // passing the updated Edges in the UI Dag
     const edgesWithUpdatedTypes = edges.map((edge: any) => {
         if (edge.sourceHandle) {
             // const edgeType = nodes.find((node) => node.type === 'custom')?.data.selects[edge.sourceHandle];
@@ -213,6 +194,7 @@ const Dagger = () => {
         return edge;
     });
 
+    // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area
     const onDrop = useCallback(
         (event: { preventDefault: () => void; dataTransfer: { getData: (arg0: string) => any; }; clientX: number; clientY: number; }) => {
             event.preventDefault();
@@ -221,24 +203,23 @@ const Dagger = () => {
             if (typeof type === 'undefined' || !type) {
                 return;
             }
-            const position = reactFlowInstance?.project({
+            const position = reactFlowInstance?.project({ // Hanlde positon of Nodes
                 x: event.clientX - reactFlowBounds.left,
                 y: event.clientY - reactFlowBounds.top,
             });
-            const nodeTypeId = getId(type);
-            let newNode: any = {
+            const nodeTypeId = getId(type); // generating unique id for each nodes
+            let newNode: any = { // Normal var node creation structure
                 id: nodeTypeId,
                 type,
-
                 position,
-                data: { label: '', initialEdge: dagDirections, },
+                data: { label: '', initialEdge: dagDirections, }, // dagDirections will tell the Dag what layout to use LR or TB
             };
             console.log('object created');
-            if (type === 'custom') {
+            if (type === 'custom') { /// Normal func node creation structure
                 newNode.data = {
                     label: '',
                     ddType: '',
-                    initialEdge: dagDirections,
+                    initialEdge: dagDirections, // dagDirections will tell the Dag what layout to use LR or TB
                     selects: {
                         [nodeTypeId]: '',
                         hasValue: 0
@@ -250,7 +231,7 @@ const Dagger = () => {
         [reactFlowInstance] // funcList
     );
 
-    const uploadHandler = () => {
+    const uploadHandler = () => { // open Load Modal-box
         setUploadOver(false);
         setIsModal({
             ...isModal,
@@ -269,13 +250,15 @@ const Dagger = () => {
 
 
     return (
+        // Any error in API Component will not load show the actual error message
         error ? (<Alert severity='error' className='errorMessage'>
             There is an Error in API
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
-
+                {/* Actual Dag Structure Everything starts here */}
                 <ReactFlowProvider>
+                    {/* Side Bar which contains list of node to Drag  */}
                     <Sidebar />
                     <div className="reactflow-wrapper" ref={reactFlowWrapper}>
                         <ReactFlow

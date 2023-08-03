@@ -6,6 +6,7 @@ import Dagger from './Pages/Dagger';
 function App() {
 
   return (
+    // Main component Starts at Dagger 
     <Dagger />
   );
 }

@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getFuncNodes } from "./API";
 import { ApiPayloadAttrName, ApiPayloadWithK } from "../Utilities/Interfaces";
 
+// the "dag_store" / "funcstore" / "funcfactoriesstore" 
 function apiMethod(payload: ApiPayloadAttrName): { data: any; status: string; error: any; isLoading: boolean; isFetching: boolean; } {
     return useQuery({
         queryKey: ['funcNodes', payload],
@@ -10,11 +11,12 @@ function apiMethod(payload: ApiPayloadAttrName): { data: any; status: string; er
         },
         keepPreviousData: false,
         refetchOnWindowFocus: false,
-        cacheTime: 50 * 60 * 1000,
-        staleTime: 10 * 60 * 1000,
+        cacheTime: 50 * 60 * 1000, // cache time in milliseconds
+        staleTime: 10 * 60 * 1000, // stale time in milliseconds
     });
 }
 
+// Load the List of Available Dags
 function loadMethod(payload: ApiPayloadAttrName, key = ''): { data: any; status: string; error: any; isLoading: boolean; isFetching: boolean; } {
     return useQuery({
         queryKey: ['funcNodes', payload, key],
@@ -26,6 +28,7 @@ function loadMethod(payload: ApiPayloadAttrName, key = ''): { data: any; status:
     });
 }
 
+// Getting Params from the selected FuncNodes
 function getParams(payload: ApiPayloadWithK, setResponse: React.Dispatch<React.SetStateAction<{}>>, setErrorMessage: React.Dispatch<React.SetStateAction<string>>) {
     return useMutation((data: string) => getFuncNodes(payload), {
         onSuccess: (data) => {

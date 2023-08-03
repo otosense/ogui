@@ -1,12 +1,14 @@
 import { IFuncNode, IEdges, IEdgeObject } from "../Interfaces";
 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
+    // converting the user give / selected from the Dag List node into UI understanding Nodes
     const { func_nodes } = jsonData;
+    // expected node structure is mentioned below
     let initialNodes: { id: string; type: string; data: { label: string; }; }[] = [];
-    let varNodeCollection: any[] = [];
-    let outNodeCollection: string[] = [];
+    let varNodeCollection: any[] = []; // Creating node collection
+    let outNodeCollection: string[] = []; // Creating Edge collection
     func_nodes.map((funcNode, index: number) => {
-        const funcObject = {
+        const funcObject = { // Converting it as function node will takes place here
             id: funcNode.name,
             type: 'custom',
             data: {
@@ -16,17 +18,16 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
             position: { x: randomPosition(), y: randomPosition() },
             // position: { x: 0, y: 0 },
         };
-        initialNodes.push(funcObject);
+        initialNodes.push(funcObject); // creating the Nodes
 
-        Object.values(funcNode.bind).map(varNode => {
+        Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
             varNodeCollection.push(varNode);
             outNodeCollection.push(funcNode.out);
         });
     });
-    console.log('varNodeCollection', varNodeCollection);
     const varNodes = [...new Set([...new Set(varNodeCollection)].concat([...new Set(outNodeCollection)]))];
     varNodes.map((varNode, index) => {
-        const varObject = {
+        const varObject = { // Converting it as varNode will takes place here
             id: varNode,
             type: 'textUpdater',
             data: {
@@ -44,12 +45,11 @@ export function randomPosition() {
     return Math.floor(Math.random() * 350);
 }
 export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }) {
+    // converting the user give / selected from the Dag List node into UI understanding Edges
     const { func_nodes } = jsonData;
-    console.log({ func_nodes });
     let initialEdges: IEdges[] = [];
     func_nodes.map((funcNode) => {
-        console.log('funcNode', funcNode);
-        const edgeObject: IEdgeObject = {
+        const edgeObject: IEdgeObject = { // Creating edges for nodes
             id: `${funcNode.out + "." + funcNode.name}_edge`,
             markerEnd: { type: 'arrowclosed' },
             source: funcNode.name,
@@ -59,12 +59,11 @@ export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }
             type: 'smoothstep',
             animated: true,
         };
-        console.log('edgeObject', edgeObject);
         initialEdges.push(edgeObject);
 
 
         Object.values(funcNode.bind).map((varNode, index) => {
-            const edgeObject: IEdgeObject = {
+            const edgeObject: IEdgeObject = { // Creating edges for bind / input params Nodes for each funcNodes
                 id: `${funcNode.out + "." + funcNode.name}_edge`,
                 markerEnd: { type: 'arrowclosed' },
                 source: varNode,

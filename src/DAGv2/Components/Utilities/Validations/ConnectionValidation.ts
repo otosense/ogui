@@ -2,6 +2,8 @@ import { errorHandler } from "../globalFunction";
 
 function connectionValidation(nodes: any[], setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void) {
     return (connection: any) => {
+
+        // Prevent Edge connection from varNode to varNode and funcNode to funcNode
         const { source, target } = connection;
         const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
         const targetNode = nodes.find((node: { id: string; }) => node.id === target);

@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../Utilities/Mapping/listMapping';
-import { dagSaveLoad } from '../API/API';
+import { loadDag } from '../API/API';
 import { loadMethod } from '../API/ApiCalls';
-import { functionList } from '../Utilities/globalFunction';
-import { ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
+import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
+import { storeGrouping } from '../Utilities/Mapping/storeGrouping';
 
 function Load(props: ILoadProps) {
     const { onClose } = props;
@@ -21,11 +21,13 @@ function Load(props: ILoadProps) {
     const payload = {
         "_attr_name": "__iter__",
     };
+
+    // Load the List of Available Dags
     const response = loadMethod(payload, 'load');
 
 
     useEffect(() => {
-        const list = functionList(response.data);
+        const list = storeGrouping(response.data);
         const result = listMapping(list.dag_store);
         setDagListResponse(result);
     }, [response.data]);
@@ -40,12 +42,12 @@ function Load(props: ILoadProps) {
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        const payload: ApiPayloadWithKWithName = {
+        const payload: ApiPayloadWithK = {
             "_attr_name": "__getitem__",
             "k": selectDag
         };
 
-        dagSaveLoad(payload).then(resp => {
+        loadDag(payload).then(resp => {
             props.onDataUploaded && props.onDataUploaded(resp);
             setShowErrorMessage(false);
             onClose && onClose();
@@ -73,7 +75,7 @@ function Load(props: ILoadProps) {
         onClose && onClose();
     };
 
-    const loadDag = async (e: { target: { value: string; }; }) => {
+    const loadDagHandler = async (e: { target: { value: string; }; }) => {
         setSelectDag(e.target.value);
     };
     return (
@@ -83,7 +85,7 @@ function Load(props: ILoadProps) {
                 <form onSubmit={handleDagSubmit}>
                     <div className='dagList'>
                         <label htmlFor="dagList">Choose your Dag:</label>
-                        <select name="dagList" id="dagList" defaultValue="" onChange={loadDag}>
+                        <select name="dagList" id="dagList" defaultValue="" onChange={loadDagHandler}>
                             {/* <option disabled value="">Select a Dag</option> */}
                             {
                                 dagListResponse?.map((option: { value: string, label: string; }, index: number) => (

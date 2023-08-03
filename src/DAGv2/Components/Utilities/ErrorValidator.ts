@@ -4,11 +4,13 @@ export function ValidationError(flowJSON: { nodes: any; edges: any; }) {
 
     // console.log({ nodes, edges });
     nodes.filter((node: any) => {
+        // if any node label is empty, grouping the nodes
         if (node?.data?.label === '' || node.data?.label === 'new') {
             // console.log('node', node?.data?.label);
             groupingNode.push(node);
         }
 
+        // if the no of parameters is for the func node should get value from varNode, if any empty params exists will group the nodes together
         if (node?.data?.selects?.hasValue) {
             let localInputsValid: any = [];
             // console.log('node', node?.id);

@@ -19,18 +19,20 @@ async function PostMethod(url: string, data: ApiPayloadAttrName) {
     }
 }
 
+// getting all the "dag_store" / "funcstore" / "funcfactoriesstore" 
 export function getFuncNodes(data: ApiPayloadAttrName) {
     let url = ApiUrl.getStore;
     return PostMethod(url, data);
     // return funcList;
 }
 
-export const dagSaveLoad = async (data: ApiPayloadWithK) => {
+// Load and Save in Same API
+export const loadDag = async (data: ApiPayloadWithK) => {
     console.log('data', data);
     let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };
-
+// Save the Dag in Same API
 export const saveDag = async (data: ApiPayloadWithV) => {
     let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);

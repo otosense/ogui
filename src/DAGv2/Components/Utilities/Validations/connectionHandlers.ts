@@ -4,6 +4,7 @@ import { errorHandler } from "../globalFunction";
 
 function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>) {
     return useCallback((params: Edge | Connection) => {
+        // Connection Rules are handled here
         const { source, target, targetHandle } = params;
         console.log('params', params);
         const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
@@ -25,11 +26,7 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: R
             if (sourceNode?.type !== 'textUpdater') {
                 return edge.target === target;
             } else {
-                return edge.targetHandle === targetHandle;
-            }
-
-            if (sourceNode?.type === 'textUpdater') {
-
+                return edge.targetHandle === targetHandle; // check if the funcNode is already having an incoming edge
             }
         });
         if (existingIncomingEdge) {

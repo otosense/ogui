@@ -49,7 +49,6 @@ function TextEditorNode(props: ITextEditorNode) {
         return errorNode ? 'bugNode' : '';
     }
 
-
     return (
         <div className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
             {/* <h4 className={`nodeTitle ${type}`} title={valueText}>{valueText.length === 0 ? 'Node Title' : valueText}</h4> */}
@@ -62,7 +61,8 @@ function TextEditorNode(props: ITextEditorNode) {
                 </div>
                 {validationMsg && <span className='invalidMsg'>Invalid Entry</span>}
             </div>
-            <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} isConnectable={isConnectable} className='connector' />
+            <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={id} isConnectable={isConnectable} className='connector' />
+
         </div>
     );
 }

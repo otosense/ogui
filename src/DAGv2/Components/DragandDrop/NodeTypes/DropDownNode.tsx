@@ -5,7 +5,7 @@ import { listMapping } from '../../Utilities/Mapping/listMapping';
 import { apiMethod, getParams } from '../../API/ApiCalls';
 import { isEmpty } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getFuncNodes } from '../../API/API';
 import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/Interfaces';
 import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
@@ -18,7 +18,7 @@ function Select(props: IParamsDropDown) {
   const [customValue, setCustomValue] = useState(value);
   const [valueText, setValueText] = useState(labels);
   const [validationMsg, setValidationMsg] = useState(false);
-  const [paramsLists, setParamsLists] = useState<string[]>();
+  const [paramsLists, setParamsLists] = useState<string[]>([]);
 
   const [response, setResponse] = useState<any>({ signature: { parameters: [] } });;
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -27,7 +27,6 @@ function Select(props: IParamsDropDown) {
     "_attr_name": '__getitem__',
     "k": ['funcstore', value]
   };
-
 
   const mutation = getParams(payload, setResponse, setErrorMessage);
 
@@ -48,7 +47,7 @@ function Select(props: IParamsDropDown) {
     // calling parameters list for selected functionNode 
     const inputs = response?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
     setParamsLists(inputs);
-  }, [customValue, response]);
+  }, [response]);
 
   useEffect(() => {
     const { nodeInternals } = store.getState();
@@ -99,17 +98,8 @@ function Select(props: IParamsDropDown) {
   }, []);
   return (
     <div className="custom-node__select">
-      {/* <select className="nodrag titleBox" onChange={onChange} value={value}>
-        {
-          selector?.map((option: { value: string, label: string; }) => (
-            <option key={option?.value} value={option?.value}>
-              {option?.label}
-            </option>
-          ))
-        }
-      </select> */}
       <h3 className='selectedFuncNode'>{selectedValue?.split('.').pop() || ''}</h3>
-      <hr className='asas' />
+      <hr className='bottomLine' />
       {(customValue === 'new') &&
         <>
           <input id="text" name="text"
@@ -124,23 +114,25 @@ function Select(props: IParamsDropDown) {
       }
       {/* <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={isConnectable} />
       <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} /> */}
-      {/* {response.isLoading && <div className='Spinner'><Spinner /></div>} */}
-      {!isEmpty(errorMessage) ? <p>{errorMessage}</p> :
+      {/* {mutation.isLoading && <div className='Spinner'><Spinner /></div>} */}
 
-        <section className='handlers'>
-          <div className='multiInput'>
-            {paramsLists?.map((paramsList: string, i: number) => {
-              return (<div className='resultEdger' key={i}>
-                <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={paramsList?.toString()} className='connector' isConnectable={isConnectable} />
-                <span className='handlerText'>{paramsList}</span>
-              </div>);
-            })}
-          </div>
-          <div className='resultEdger'>
-            <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
-            <span className='handlerText'>Output</span>
-          </div>
-        </section>
+      {!isEmpty(errorMessage) ? <p>{errorMessage}</p> :
+        (
+          paramsLists.length > 0 &&
+          <section className='handlers'>
+            <div className='multiInput'>
+              {paramsLists?.map((paramsList: string, i: number) => {
+                return (<div className='resultEdger' key={i}>
+                  <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={paramsList} className='connector' isConnectable={isConnectable} />
+                  <span className='handlerText'>{paramsList}</span>
+                </div>);
+              })}
+            </div>
+            <div className='resultEdger'>
+              <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
+              <span className='handlerText'>Output</span>
+            </div>
+          </section>)
       }
     </div>
   );

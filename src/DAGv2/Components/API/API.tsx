@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { funcList } from './sampleFunction';
+import { ApiPayloadAttrName, ApiPayloadWithK, ApiPayloadWithV } from '../Utilities/interfaces';
 
 const ApiUrl = {
     getStore: "http://20.219.8.178:8080/dag_func_node_source_store",
@@ -7,7 +8,7 @@ const ApiUrl = {
 };
 
 
-async function PostMethod(url: string, data: any) {
+async function PostMethod(url: string, data: ApiPayloadAttrName) {
     try {
         const response = await axios.post(url, data);
         return response.data;
@@ -18,18 +19,19 @@ async function PostMethod(url: string, data: any) {
     }
 }
 
-export function getFuncNodes(data: { _attr_name: string; }) {
+export function getFuncNodes(data: ApiPayloadAttrName) {
     let url = ApiUrl.getStore;
     return PostMethod(url, data);
     // return funcList;
 }
 
-export const dagSaveLoad = async (data: any) => {
+export const dagSaveLoad = async (data: ApiPayloadWithK) => {
+    console.log('data', data);
     let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };
 
-export const saveDag = async (data: any) => {
+export const saveDag = async (data: ApiPayloadWithV) => {
     let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };

@@ -1,13 +1,17 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
-import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
+import { pythonIdentifierPattern } from '../../Utilities/globalFunction';
 import { listMapping } from '../../Utilities/Mapping/listMapping';
-import { apiMethod } from '../../API/ApiCalls';
+import { apiMethod, getParams } from '../../API/ApiCalls';
 import { isEmpty } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
+import { useMutation } from '@tanstack/react-query';
+import { getFuncNodes } from '../../API/API';
+import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/interfaces';
+import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
-function Select({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue }: any) {
-
+function Select(props: IParamsDropDown) {
+  const { value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue } = props;
   // console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue });
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
@@ -16,31 +20,35 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   const [validationMsg, setValidationMsg] = useState(false);
   const [paramsLists, setParamsLists] = useState<string[]>();
 
+  const [response, setResponse] = useState<any>({ signature: { parameters: [] } });;
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
-
-  const payload = {
+  const payload: ApiPayloadWithK = {
     "_attr_name": '__getitem__',
     "k": ['funcstore', value]
   };
+
+
+  const mutation = getParams(payload, setResponse, setErrorMessage);
+
+  useEffect(() => {
+    if (!isEmpty(value)) {
+      mutation.mutate(value);
+    }
+  }, [value]);
 
   // useEffect(() => {
   //     fetchData();
   // }, []);
   // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
 
-  const response = apiMethod(payload);
-
   useEffect(() => {
     // const selectedFuncType = selector?.find((x: { value: string; }) => x.value === selectedValue);
     // console.log('selectedFuncType', selectedFuncType);
     // calling parameters list for selected functionNode 
-    const inputs = response?.data?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
+    const inputs = response?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
     setParamsLists(inputs);
-  }, [customValue, response?.data]);
-
-
-
-
+  }, [customValue, response]);
 
   useEffect(() => {
     const { nodeInternals } = store.getState();
@@ -65,7 +73,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   }, [selectedValue, paramsLists]);
 
 
-  const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
+  const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {
     const { nodeInternals } = store.getState();
     const inputValue = evt.target.value;
     const nameValidator = onNameHandlers(inputValue); // onNameHandlers for function names validation
@@ -74,7 +82,7 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
       setValueText(inputValue);
       setValidationMsg(false);
       setNodes(
-        Array.from(nodeInternals.values()).map((node: any) => {
+        Array.from(nodeInternals.values()).map((node) => {
           if (node.id === nodeId) {
             node.data = {
               ...node.data,
@@ -116,8 +124,8 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
       }
       {/* <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={handleId} className='connector' isConnectable={isConnectable} />
       <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} /> */}
-      {response.isLoading && <div className='Spinner'><Spinner /></div>}
-      {!isEmpty(response.error) ? <p>{response.error}</p> :
+      {/* {response.isLoading && <div className='Spinner'><Spinner /></div>} */}
+      {!isEmpty(errorMessage) ? <p>{errorMessage}</p> :
 
         <section className='handlers'>
           <div className='multiInput'>
@@ -138,40 +146,38 @@ function Select({ value, handleId, nodeId, sourcePosition, data, selector, isCon
   );
 }
 
+// function caller(payload: { _attr_name: string; k: any[]; }) {
+//   return apiMethod(payload);
+// }
 
-
-function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: any; funcLists: any; isConnectable: boolean; errorMapping: any; flowNodes: any; }) {
-
+function DropDownNode(props: IDropDownNode) {
   const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
   // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
-  const [selectedValue, setSelectedValue] = useState<string | undefined>();
+  const [selectedValue, setSelectedValue] = useState<string>();
   const [functionList, setFunctionList] = useState(funcLists);
 
 
-  function errorMapper(errorMapping: any, id: string) {
-    const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
+  function errorMapper(errorMapping: any[], id: string) {
+    const errorNode = errorMapping.find((x: IFlowNode) => x.id === id);
     return errorNode ? 'BugFuncNode' : '';
   }
 
   useEffect(() => {
-    const selectedNode = flowNodes.find((x: { id: string; }) => x.id === id);
+    const selectedNode: any = flowNodes.find((x: { id: string; }) => x.id === id);
     // re-mount the selected node after saving the node 
     // also Dag while DAG is Loaded this is set the Func Node functions
-    setSelectedValue(selectedNode ? selectedNode?.data?.label : data?.label);
+    setSelectedValue(selectedNode?.data?.label || data?.label);
   }, [flowNodes]);
+
 
 
   useEffect(() => {
     // Mapping the Data for UI elements, creating structures like 
     // [  { value: 'add', label: 'add' },  { value: 'apply_fitted_model', label: 'apply_fitted_model' }]
-    const result = listMapping(functionList);
+    const result: any = listMapping(functionList);
     setFunctionList(result);
   }, [functionList]);
-
-
-
-
 
   return (
     <>
@@ -179,14 +185,10 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
           <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
-            {functionList.map((funcList: { value: string; label: string; }, index: number) => {
+            {functionList.map((funcList, index: number) => {
               // const functionName = funcList.label?.split('.').pop() || '';
               return <option key={index} value={funcList.value}>{funcList.label}</option>;
             })}
-
-            {/* {funcLists.map((funcList: string, index: number) => {
-              return <option key={index} value={funcList}>{funcList}</option>;
-            })} */}
           </select>
         </div>
         :
@@ -194,7 +196,16 @@ function DropDownNode(props: { id: any; data: any; type: any; sourcePosition: an
         <section className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
           {/* <h4 className={`nodeTitle ${type}`} title={data.label}>{data.label}</h4> */}
           <div className={`flexProps ${type}`}>
-            <Select nodeId={id} value={data.ddType === 'new' ? data.ddType : data.label} handleId={data.label} sourcePosition={sourcePosition} data={data} selector={functionList} isConnectable={isConnectable} labels={data.label} selectedValue={selectedValue} />
+            <Select
+              nodeId={id}
+              value={data.ddType === 'new' ? data.ddType : data.label}
+              handleId={data.label}
+              sourcePosition={sourcePosition}
+              data={data}
+              selector={functionList}
+              isConnectable={isConnectable}
+              labels={data.label}
+              selectedValue={selectedValue} />
           </div>
 
         </section>

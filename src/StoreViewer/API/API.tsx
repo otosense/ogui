@@ -4,7 +4,7 @@ const ApiUrl = {
     // StoreConfig: "http://localhost:3000/storeViewer",
     // StoreConfig: "http://52.188.113.129:3000/storeViewer",
     // StoreConfig: "http://52.188.113.129:8080/list_all_sessions",
-    StoreConfig: "http://52.188.113.129:8080/get_all_sessions"
+    StoreConfig: "http://20.219.8.178:8080/get_all_sessions"
 
 };
 

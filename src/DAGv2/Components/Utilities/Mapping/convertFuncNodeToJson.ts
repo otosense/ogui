@@ -1,3 +1,5 @@
+import { IEdgeObject } from "../interfaces";
+
 export function convertFuncNodeToJsonNode(jsonData: any) {
     const { func_nodes } = jsonData;
     let initialNodes: { id: any; type: string; data: { label: any; }; }[] = [];
@@ -51,20 +53,23 @@ export function convertFuncNodeToJsonEdge(jsonData: any) {
         func_label: any;
         bind(bind: any): unknown; out: string; name: string;
     }) => {
-        const edgeObject: any = {
+        console.log('funcNode', funcNode);
+        const edgeObject: IEdgeObject = {
             id: `${funcNode.out + "." + funcNode.name}_edge`,
             markerEnd: { type: 'arrowclosed' },
             source: funcNode.name,
             target: funcNode.out,
+            targetHandle: funcNode.out,
+            sourceHandle: funcNode.name,
             type: 'smoothstep',
             animated: true
         };
-
+        console.log('edgeObject', edgeObject);
         initialEdges.push(edgeObject);
 
 
         Object.values(funcNode.bind).map((varNode, index) => {
-            const edgeObject: any = {
+            const edgeObject: IEdgeObject = {
                 id: `${funcNode.out + "." + funcNode.name}_edge`,
                 markerEnd: { type: 'arrowclosed' },
                 source: varNode,

@@ -1,16 +1,18 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
-import { onNameHandlers, pythonIdentifierPattern } from '../../Utilities/globalFunction';
+import { ITextEditorNode } from '../../Utilities/interfaces';
+import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
-function TextEditorNode(props: any) {
+function TextEditorNode(props: ITextEditorNode) {
     const { id, isConnectable, type, sourcePosition, data, errorMapping } = props;
+    // console.log({ id, isConnectable, type, sourcePosition, data, errorMapping });
     const [valueText, setValueText] = useState(props.data.label);
     const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' });
     const [validationMsg, setValidationMsg] = useState(false);
     const { setNodes } = useReactFlow();
-    const store: any = useStoreApi();
+    const store = useStoreApi();
 
-    const labelNameChange = useCallback((evt: { target: { value: any; }; }) => {
+    const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {
         const { nodeInternals } = store.getState();
         const inputValue = evt.target.value;
         const nameValidator = onNameHandlers(inputValue); // onNameHandlers for variable names validation
@@ -19,7 +21,7 @@ function TextEditorNode(props: any) {
             setValidationMsg(false);
             setValueText(inputValue);
             setNodes(
-                Array.from(nodeInternals.values()).map((node: any) => {
+                Array.from(nodeInternals.values()).map((node) => {
                     if (node.id === id) {
                         node.data = {
                             ...node.data,
@@ -42,7 +44,7 @@ function TextEditorNode(props: any) {
         }
     }, [props.type]);
 
-    function errorMapper(errorMapping: any, id: string) {
+    function errorMapper(errorMapping: any[], id: string) {
         const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
         return errorNode ? 'bugNode' : '';
     }

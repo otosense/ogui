@@ -233,7 +233,7 @@ const Dagger = () => {
                 position,
                 data: { label: '', initialEdge: dagDirections, },
             };
-
+            console.log('object created');
             if (type === 'custom') {
                 newNode.data = {
                     label: '',

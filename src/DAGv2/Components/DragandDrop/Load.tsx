@@ -1,18 +1,17 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../Utilities/Mapping/listMapping';
-import { dagSaveLoad, getFuncNodes } from '../API/API';
-import { apiMethod, loadMethod } from '../API/ApiCalls';
+import { dagSaveLoad } from '../API/API';
+import { loadMethod } from '../API/ApiCalls';
 import { functionList } from '../Utilities/globalFunction';
+import { ApiPayloadWithKWithName, ILoadProps } from '../Utilities/interfaces';
 
-function Load(props: {
-    onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
-}) {
+function Load(props: ILoadProps) {
     const { onClose } = props;
-    const [data, setData] = useState(JSON.stringify(props.data, null, 2));
+    const [data, setData] = useState<string>(JSON.stringify(props.data, null, 2));
     const [showErrorMessage, setShowErrorMessage] = useState(false);
     const [openEditor, setOpenEditor] = useState(false);
     const [errorExist, setErrorExist] = useState(false);
-    const [selectDag, setSelectDag] = useState('');
+    const [selectDag, setSelectDag] = useState<string>('');
     const [dagListResponse, setDagListResponse] = useState<any>();
 
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -22,15 +21,14 @@ function Load(props: {
     const payload = {
         "_attr_name": "__iter__",
     };
-    const respo = loadMethod(payload, 'load');
-    console.log('data payload', respo.data);
+    const response = loadMethod(payload, 'load');
 
 
     useEffect(() => {
-        const list = functionList(respo.data);
+        const list = functionList(response.data);
         const result = listMapping(list.dag_store);
         setDagListResponse(result);
-    }, [respo.data]);
+    }, [response.data]);
 
 
     // useEffect(() => {
@@ -42,16 +40,17 @@ function Load(props: {
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-        const payload = {
+        const payload: ApiPayloadWithKWithName = {
             "_attr_name": "__getitem__",
             "k": selectDag
         };
-        dagSaveLoad(payload).then(x => {
-            props.onDataUploaded(x);
+
+        dagSaveLoad(payload).then(resp => {
+            props.onDataUploaded && props.onDataUploaded(resp);
             setShowErrorMessage(false);
-            onClose();
+            onClose && onClose();
         }).catch(err => {
-            console.log('errpr', err.message);
+            console.log('error', err.message);
             setShowErrorMessage(true);
         });
     };
@@ -61,7 +60,7 @@ function Load(props: {
         event.preventDefault();
         try {
             const parsedData = JSON.parse(data);
-            props.onDataUploaded(parsedData);
+            props.onDataUploaded && props.onDataUploaded(parsedData);
         } catch (error) {
             setErrorExist(true);
             return;
@@ -71,7 +70,7 @@ function Load(props: {
         } else {
             navigator.clipboard.writeText(data);
         }
-        onClose();
+        onClose && onClose();
     };
 
     const loadDag = async (e: { target: { value: string; }; }) => {

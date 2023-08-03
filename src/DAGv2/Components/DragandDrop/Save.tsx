@@ -2,10 +2,9 @@ import React, { useState, memo, useEffect } from 'react';
 import CopyIcon from './../../assets/images/files.png';
 import * as API from '../API/API';
 import { pythonIdentifierPattern } from '../Utilities/globalFunction';
+import { ApiPayloadWithV } from '../Utilities/interfaces';
 
-function Save(props: {
-    onDataUploaded(parsedData: any): unknown; data?: any; type?: any; onClose?: any;
-}) {
+function Save(props: { data?: any; onClose?: () => void; }) {
 
     const data = JSON.stringify(props.data, null, 2);
     const { onClose } = props;
@@ -29,19 +28,16 @@ function Save(props: {
 
     const submitHandler = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
-
-
         const combinedObj = {
             dagName,
             ...props.data,
         };
-
-        const payload = {
+        const payload: ApiPayloadWithV = {
             "_attr_name": '__setitem__',
             k: dagName,
             v: combinedObj
         };
-        onClose();
+        onClose && onClose();
 
         API.saveDag(payload).then(x => {
             // Response Handler

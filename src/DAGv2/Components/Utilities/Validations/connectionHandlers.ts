@@ -6,9 +6,9 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: R
     return useCallback((params: Edge | Connection) => {
         const { source, target, targetHandle } = params;
         console.log('params', params);
-        const sourceNode = nodes.find((node: { id: any; }) => node.id === source);
+        const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
         // Check if the source node already has an outgoing edge
-        const existingOutgoingEdge = edges.find((edge: { source: any; }) => {
+        const existingOutgoingEdge = edges.find((edge: { source: string; }) => {
             if (sourceNode?.type !== 'textUpdater') {
                 return edge.source === source;
             }
@@ -43,7 +43,7 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setErrorMessage: R
             animated: true,
         };
         // No outgoing or incoming edge exists, create the new connection
-        setEdges((prevEdges: any) => addEdge(newEdge, prevEdges));
+        setEdges((prevEdges: Edge<any>[]) => addEdge(newEdge, prevEdges));
     }, [nodes, edges]);
 }
 

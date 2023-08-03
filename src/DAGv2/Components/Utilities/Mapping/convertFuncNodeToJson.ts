@@ -1,14 +1,11 @@
-import { IEdgeObject } from "../interfaces";
+import { IFuncNode, IEdges, IEdgeObject } from "../Interfaces";
 
-export function convertFuncNodeToJsonNode(jsonData: any) {
+export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     const { func_nodes } = jsonData;
-    let initialNodes: { id: any; type: string; data: { label: any; }; }[] = [];
+    let initialNodes: { id: string; type: string; data: { label: string; }; }[] = [];
     let varNodeCollection: any[] = [];
-    let outNodeCollection: ((arg0: string, out: any) => unknown)[] = [];
-    func_nodes.map((funcNode: {
-        out(arg0: string, out: any): unknown;
-        bind(arg0: string, bind: any): unknown; name: any; func_label: any;
-    }, index: number) => {
+    let outNodeCollection: string[] = [];
+    func_nodes.map((funcNode, index: number) => {
         const funcObject = {
             id: funcNode.name,
             type: 'custom',
@@ -26,7 +23,7 @@ export function convertFuncNodeToJsonNode(jsonData: any) {
             outNodeCollection.push(funcNode.out);
         });
     });
-
+    console.log('varNodeCollection', varNodeCollection);
     const varNodes = [...new Set([...new Set(varNodeCollection)].concat([...new Set(outNodeCollection)]))];
     varNodes.map((varNode, index) => {
         const varObject = {
@@ -46,13 +43,11 @@ export function convertFuncNodeToJsonNode(jsonData: any) {
 export function randomPosition() {
     return Math.floor(Math.random() * 350);
 }
-export function convertFuncNodeToJsonEdge(jsonData: any) {
+export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }) {
     const { func_nodes } = jsonData;
-    let initialEdges: { id: string; markerEnd: { type: string; }; source: string; sourceHandle: string; target: string; targetHandle: null; }[] = [];
-    func_nodes.map((funcNode: {
-        func_label: any;
-        bind(bind: any): unknown; out: string; name: string;
-    }) => {
+    console.log({ func_nodes });
+    let initialEdges: IEdges[] = [];
+    func_nodes.map((funcNode) => {
         console.log('funcNode', funcNode);
         const edgeObject: IEdgeObject = {
             id: `${funcNode.out + "." + funcNode.name}_edge`,
@@ -62,7 +57,7 @@ export function convertFuncNodeToJsonEdge(jsonData: any) {
             targetHandle: funcNode.out,
             sourceHandle: funcNode.name,
             type: 'smoothstep',
-            animated: true
+            animated: true,
         };
         console.log('edgeObject', edgeObject);
         initialEdges.push(edgeObject);

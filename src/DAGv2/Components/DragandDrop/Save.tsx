@@ -2,9 +2,9 @@ import React, { useState, memo, useEffect } from 'react';
 import CopyIcon from './../../assets/images/files.png';
 import * as API from '../API/API';
 import { pythonIdentifierPattern } from '../Utilities/globalFunction';
-import { ApiPayloadWithV } from '../Utilities/interfaces';
+import { ApiPayloadWithV, ILoadProps } from '../Utilities/Interfaces';
 
-function Save(props: { data?: any; onClose?: () => void; }) {
+function Save(props: ILoadProps) {
 
     const data = JSON.stringify(props.data, null, 2);
     const { onClose } = props;

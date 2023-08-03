@@ -1,6 +1,6 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
-import { ITextEditorNode } from '../../Utilities/interfaces';
+import { ITextEditorNode } from '../../Utilities/Interfaces';
 import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
 function TextEditorNode(props: ITextEditorNode) {

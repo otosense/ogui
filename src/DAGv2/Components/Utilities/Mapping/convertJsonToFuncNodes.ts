@@ -1,30 +1,27 @@
-export function convertJsonToFuncNodes(jsonData: any) {
-    console.log('jsonData', jsonData);
+import { Viewport } from "reactflow";
+import { IEachFuncNode, IEdges, INodes } from "../Interfaces";
+
+export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewport?: Viewport; }) {
     const { edges, nodes } = jsonData;
 
     console.log({ edges, nodes });
     let funcNodes = nodes.filter((node: { type: string; }) => node.type === "custom");
     let varNodes = nodes.filter((node: { type: string; }) => node.type !== "custom");
-    let mapping: any[] = [];
-    funcNodes.forEach((node: {
-        id: any; data: {
-            label: any; userInput: any;
+    let mapping: any = [];
+    funcNodes.forEach((node: INodes) => {
+        let eachFuncNode: IEachFuncNode = {
+            name: "",
+            func_label: "",
+            out: "",
+            bind: undefined
         };
-    }) => {
-        let eachFuncNode: any = {};
         eachFuncNode['name'] = node.id;
         eachFuncNode['func_label'] = node.data.label;
         let bindObject = {};
-        edges.map((edge: {
-            targetHandle: any; id: string | any[]; target: any; source: any;
-        }) => {
+        edges.map((edge: IEdges) => {
             const edgerIds = (typeof edge.id === 'string' ? edge.id?.split("+") : '');
             if ((edgerIds[0].trim() === (node.id) || (edgerIds[1].trim() === (node.id)) && edge.target === node.id)) {
-                varNodes.map((varNode: {
-                    id: string | any[]; data: {
-                        label: any; userInput: any;
-                    };
-                }) => {
+                varNodes.map((varNode: INodes) => {
 
                     if (varNode.id === (edge.source)) {
                         // if (varNode.data.userInput) {
@@ -39,11 +36,7 @@ export function convertJsonToFuncNodes(jsonData: any) {
             }
             eachFuncNode['bind'] = bindObject;
             if ((edgerIds[0].trim() === (node.id) || (edgerIds[1].trim() === (node.id)) && edge.source === node.id)) {
-                varNodes.map((varNode: {
-                    id: string | any[]; data: {
-                        label: any; userInput: any;
-                    };
-                }) => {
+                varNodes.map((varNode: INodes) => {
                     if (varNode.id === (edge.target)) {
                         eachFuncNode['out'] = varNode.data.label;
                     }
@@ -51,7 +44,7 @@ export function convertJsonToFuncNodes(jsonData: any) {
             }
 
         });
-
+        console.log('eachFuncNode', eachFuncNode);
         mapping.push(eachFuncNode);
     });
     return mapping;

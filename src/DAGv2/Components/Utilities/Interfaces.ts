@@ -84,7 +84,38 @@ interface IEdgeObject {
     animated: boolean;
 }
 
+interface IEdges {
+    id: string;
+    markerEnd: { type: string; };
+    source: string;
+    sourceHandle: string;
+    target: string;
+    targetHandle: any;
+};
 
+
+interface IFuncNode {
+    bind: any;
+    func: string;
+    func_label: string;
+    name: string;
+    out: string;
+}
+
+interface IEachFuncNode {
+    name: string;
+    func_label: string;
+    out: string;
+    bind: any;
+
+}
+
+interface INodes {
+    id: string;
+    data: {
+        label: string; userInput: string;
+    };
+}
 
 
 export type {
@@ -98,5 +129,9 @@ export type {
     ITextEditorNode,
     ApiPayloadWithKWithName,
     ILoadProps,
-    IEdgeObject
+    IEdgeObject,
+    IEdges,
+    IFuncNode,
+    INodes,
+    IEachFuncNode
 };

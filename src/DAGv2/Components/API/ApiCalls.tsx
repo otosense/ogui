@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getFuncNodes } from "./API";
-import { ApiPayloadAttrName, ApiPayloadWithK } from "../Utilities/interfaces";
+import { ApiPayloadAttrName, ApiPayloadWithK } from "../Utilities/Interfaces";
 
 function apiMethod(payload: ApiPayloadAttrName): { data: any; status: string; error: any; isLoading: boolean; isFetching: boolean; } {
     return useQuery({

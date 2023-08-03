@@ -3,7 +3,7 @@ import { listMapping } from '../Utilities/Mapping/listMapping';
 import { dagSaveLoad } from '../API/API';
 import { loadMethod } from '../API/ApiCalls';
 import { functionList } from '../Utilities/globalFunction';
-import { ApiPayloadWithKWithName, ILoadProps } from '../Utilities/interfaces';
+import { ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
 
 function Load(props: ILoadProps) {
     const { onClose } = props;

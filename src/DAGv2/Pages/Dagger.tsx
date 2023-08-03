@@ -174,7 +174,7 @@ const Dagger = () => {
         e.preventDefault();
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
-            const flow = reactFlowInstance.toObject();
+            const flow: any = reactFlowInstance.toObject();
             setFlowNodes(flow.nodes);
             // Handling Error if any of the nodes label are empty
             const getFuncNode = ValidationError(flow);

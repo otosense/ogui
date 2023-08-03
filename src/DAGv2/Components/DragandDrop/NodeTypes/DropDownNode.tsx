@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
 import { useMutation } from '@tanstack/react-query';
 import { getFuncNodes } from '../../API/API';
-import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/interfaces';
+import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/Interfaces';
 import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
 function Select(props: IParamsDropDown) {

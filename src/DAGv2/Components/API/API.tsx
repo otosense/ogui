@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { funcList } from './sampleFunction';
-import { ApiPayloadAttrName, ApiPayloadWithK, ApiPayloadWithV } from '../Utilities/interfaces';
+import { ApiPayloadAttrName, ApiPayloadWithK, ApiPayloadWithV } from '../Utilities/Interfaces';
 
 const ApiUrl = {
     getStore: "http://20.219.8.178:8080/dag_func_node_source_store",

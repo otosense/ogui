@@ -6,14 +6,16 @@ import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from '../Utiliti
 import { storeGrouping } from '../Utilities/Mapping/storeGrouping';
 
 function Load(props: ILoadProps) {
-    const { onClose } = props;
-    const [data, setData] = useState<string>(JSON.stringify(props.data, null, 2));
-    const [showErrorMessage, setShowErrorMessage] = useState(false);
-    const [openEditor, setOpenEditor] = useState(false);
-    const [errorExist, setErrorExist] = useState(false);
-    const [selectDag, setSelectDag] = useState<string>('');
-    const [dagListResponse, setDagListResponse] = useState<any>();
+    // Loading the User created already a Dag or by Entering in the input text area
+    const { onClose } = props; // handle close event of the modal
+    const [data, setData] = useState<string>(JSON.stringify(props.data, null, 2)); // get the dag Json which is Entered by the user
+    const [showErrorMessage, setShowErrorMessage] = useState(false); // Handle error message and validation for valid JSON are allowed
+    const [openEditor, setOpenEditor] = useState(false); // Text area where the user can enter their own JSON
+    const [errorExist, setErrorExist] = useState(false); // Error check
+    const [selectDag, setSelectDag] = useState<string>(''); // Selecting the Dag from the DagStore
+    const [dagListResponse, setDagListResponse] = useState<any>(); // storing the response and showing in UI
 
+    // which make an API call to get the List of dag available in DagStore
     const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
         setData(event.target.value);
     };
@@ -22,14 +24,14 @@ function Load(props: ILoadProps) {
         "_attr_name": "__iter__",
     };
 
-    // Load the List of Available Dags
+    // Load the List of Available Dags API Methods
     const response = loadMethod(payload, 'load');
 
 
     useEffect(() => {
-        const list = storeGrouping(response.data);
-        const result = listMapping(list.dag_store);
-        setDagListResponse(result);
+        const list = storeGrouping(response.data); // Grouping the API
+        const result = listMapping(list.dag_store); // Extracting only the dag_Store
+        setDagListResponse(result); // saving the Result
     }, [response.data]);
 
 
@@ -41,6 +43,7 @@ function Load(props: ILoadProps) {
     // }, [loadList]);
 
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
+        // Creating the Payload which backend needs 
         event.preventDefault();
         const payload: ApiPayloadWithK = {
             "_attr_name": "__getitem__",
@@ -57,7 +60,7 @@ function Load(props: ILoadProps) {
         });
     };
 
-
+    //  this will show the Dag in UI which the user enter in his textarea box
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         event.preventDefault();
         try {
@@ -76,7 +79,7 @@ function Load(props: ILoadProps) {
     };
 
     const loadDagHandler = async (e: { target: { value: string; }; }) => {
-        setSelectDag(e.target.value);
+        setSelectDag(e.target.value); // selecting the Dag from the dag_Store
     };
     return (
         <div className='ModalBox'>

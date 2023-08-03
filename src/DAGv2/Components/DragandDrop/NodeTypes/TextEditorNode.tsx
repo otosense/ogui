@@ -3,15 +3,17 @@ import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
 import { ITextEditorNode } from '../../Utilities/Interfaces';
 import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
+// varNode component 
 function TextEditorNode(props: ITextEditorNode) {
     const { id, isConnectable, type, sourcePosition, data, errorMapping } = props;
     // console.log({ id, isConnectable, type, sourcePosition, data, errorMapping });
-    const [valueText, setValueText] = useState(props.data.label);
-    const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' });
-    const [validationMsg, setValidationMsg] = useState(false);
-    const { setNodes } = useReactFlow();
-    const store = useStoreApi();
+    const [valueText, setValueText] = useState(props.data.label); // while loading already saved dag data it will set the varNode name
+    const [nodeType, setNodeType] = useState({ title: 'func_node', label: 'func_label', placeHolder: 'function name' }); // Basic varNode structure
+    const [validationMsg, setValidationMsg] = useState(false); // Python Identifier validation
+    const { setNodes } = useReactFlow(); // in-build function to update nodes
+    const store = useStoreApi(); // in-build function for nodes which will be stored in store api
 
+    // When user enter the varNode label which is handled here
     const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {
         const { nodeInternals } = store.getState();
         const inputValue = evt.target.value;
@@ -20,7 +22,7 @@ function TextEditorNode(props: ITextEditorNode) {
         if (nameValidator) {
             setValidationMsg(false);
             setValueText(inputValue);
-            setNodes(
+            setNodes( // updating the each node based on user enters inputs
                 Array.from(nodeInternals.values()).map((node) => {
                     if (node.id === id) {
                         node.data = {
@@ -39,11 +41,13 @@ function TextEditorNode(props: ITextEditorNode) {
     }, [props]);
 
     useEffect(() => {
+        // Creating an Empty Node
         if (type !== 'funcNode') {
             setNodeType({ title: 'varNode', label: 'var_label', placeHolder: 'variable name' });
         }
     }, [props.type]);
 
+    // errorMapper => help us to find the empty nodes
     function errorMapper(errorMapping: any[], id: string) {
         const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
         return errorNode ? 'bugNode' : '';

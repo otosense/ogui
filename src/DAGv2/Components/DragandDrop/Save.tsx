@@ -5,28 +5,27 @@ import { pythonIdentifierPattern } from '../Utilities/globalFunction';
 import { ApiPayloadWithV, ILoadProps } from '../Utilities/Interfaces';
 
 function Save(props: ILoadProps) {
-
-    const data = JSON.stringify(props.data, null, 2);
-    const { onClose } = props;
-    const [copied, setCopied] = useState(false);
-    const [dagName, setDagName] = useState('');
-    const [errorExist, setErrorExist] = useState(false);
-
+    // Saving the User created Dag will takes place here
+    const data = JSON.stringify(props.data, null, 2); // get the dag Json from Dagger component
+    const { onClose } = props; // handle close event of the modal
+    const [copied, setCopied] = useState(false);  // handle Copy of Selected Dag
+    const [dagName, setDagName] = useState(''); // Dag Title given by the user
+    const [errorExist, setErrorExist] = useState(false); // Error Exists in saving Dag will handled here
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(data);
+        navigator.clipboard.writeText(data); // in-build Js method to copy text from box
         setCopied(true);
     };
 
     const dagNameHandler = (event: { target: { value: string; }; }) => {
-        const inputValue = event.target.value;
+        const inputValue = event.target.value; //  Dag Title given by the user
         if (pythonIdentifierPattern.test(inputValue)) {
             setDagName(inputValue);
         }
     };
 
-
     const submitHandler = async (event: { preventDefault: () => void; }) => {
+        // Creating the Payload which backend needs 
         event.preventDefault();
         const combinedObj = {
             dagName,
@@ -38,13 +37,11 @@ function Save(props: ILoadProps) {
             v: combinedObj
         };
         onClose && onClose();
-
+        // Saving the Dag to Backend using API
         API.saveDag(payload).then(x => {
             // Response Handler
         }).catch(err => console.log('error', err.message));
     };
-
-
 
     return (
         <div className='ModalBox'>

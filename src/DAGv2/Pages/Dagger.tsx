@@ -94,7 +94,7 @@ const Dagger = () => {
         if (data) {
             // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
             const list = storeGrouping(data);
-            setFuncList(list.funcstore); // storing FuncList
+            setFuncList(list.funcs); // storing FuncList
         }
     }, [data]);
 

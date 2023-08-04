@@ -25,7 +25,7 @@ function Select(props: IParamsDropDown) {
   // Making API call when user Select the funcNode form the List 
   const payload: ApiPayloadWithK = {
     "_attr_name": '__getitem__',
-    "k": ['funcstore', value]
+    "k": ['funcs', value]
   };
   // API Handling Methods
   const mutation = getParams(payload, setResponse, setErrorMessage);
@@ -178,7 +178,7 @@ function DropDownNode(props: IDropDownNode) {
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
           <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
-            {functionList.map((funcList, index: number) => {
+            {functionList?.map((funcList, index: number) => {
               // const functionName = funcList.label?.split('.').pop() || '';
               return <option key={index} value={funcList.value}>{funcList.label}</option>;
             })}

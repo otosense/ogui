@@ -65,6 +65,7 @@
     "@typeform/embed-react": "^2.21.0",
     "@types/lodash": "^4.14.196",
     "@types/react-table": "^7.7.14",
+    "@types/react-window": "^1.8.5",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
     "dagre": "^0.8.5",

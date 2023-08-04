@@ -2,7 +2,7 @@
   max-width: 1280px;
   /* margin: 0 auto; */
   padding: 8px;
-  width: 30%;
+  width: 50%;
   /* text-align: center; */
 }
 
@@ -152,4 +152,12 @@ button.copy:focus {
   #root {
     width: 100%;
   }
+}
+
+
+.Mui-expanded+div,
+.Mui-expanded {
+  background: #fff;
+  z-index: 999999;
+  position: relative;
 }

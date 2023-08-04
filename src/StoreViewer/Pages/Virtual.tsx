@@ -13,6 +13,7 @@ import { Alert } from '@mui/material';
 import LoadingOverlay from '../../utilities/Loader';
 import SnackBar from '../../utilities/SnackBar';
 import { StyledTreeItem } from '../components/StoreViewStyle';
+import { map } from 'lodash';
 
 interface Child {
     id: string;
@@ -215,8 +216,9 @@ const StoreView = () => {
         };
 
         observer.current = new IntersectionObserver(handleIntersect, options);
+        console.log('object');
         if (observer.current && !isLoading && !isFetching && searchResults.length >= fetchSize) {
-            observer.current.observe(document.getElementById('bottomObserver')!);
+            observer.current?.observe(document.getElementById('bottomObserver')!);
         }
 
         return () => {
@@ -253,7 +255,38 @@ const StoreView = () => {
     const getItemSize = (index: number) => {
         const node = searchResults[index];
         // Calculate the estimated height based on the content
-        return 25 + Math.floor(JSON.stringify(node).length / 200);
+        return 50 + Math.floor(JSON.stringify(node).length / 200);
+    };
+
+    const Row = ({ index, style }) => {
+        console.log('searchResults', searchResults);
+        return (<div
+            className={index % 2 === 0 ? "RowEven" : "RowOdd"}
+            style={{
+                ...style,
+                top: `${parseFloat(style.top) + 20}px`
+            }}
+        >
+            {/* {map(searchResults, 'id')[index]} */}
+
+            <TreeView
+                aria-label='Store View'
+                defaultCollapseIcon={<ExpandMoreIcon style={{ color: '#0880ae' }} />}
+                defaultExpandIcon={<ChevronRightIcon style={{ color: '#0880ae' }} />}
+            >
+                {renderTree(map(searchResults)[index], true, index, searchQuery, setCopied)}
+                {/* {searchResults.length > 0 ? (
+                    searchResults.map((node, i) =>
+                        renderTree(node, true, i, searchQuery, setCopied)
+                    )
+                ) : !isFetching && !isLoading ? (
+                    <StyledTreeItem
+                        nodeId='no-results'
+                        label='No matching nodes found'
+                    />
+                ) : null} */}
+            </TreeView>
+        </div>);
     };
 
     return (
@@ -286,10 +319,14 @@ const StoreView = () => {
             <VariableSizeList
                 height={500}
                 itemCount={searchResults.length}
-                itemSize={getItemSize}
+                itemSize={index => getItemSize(index)}
                 width='100%'
                 ref={listRef}
             >
+                {/* 
+itemCount={sessionIDList?.length}
+        itemSize={1000} */}
+                {Row}
                 {/* <section className='storeViewerLayout'>
                     <TreeView
                         aria-label='Store View'
@@ -309,8 +346,8 @@ const StoreView = () => {
                     </TreeView>
                     <div id='bottomObserver' style={{ height: '10px' }}></div>
                 </section> */}
-                {/* <div id='bottomObserver' style={{ height: '10px' }}></div> */}
             </VariableSizeList>
+            <div id='bottomObserver' style={{ height: '100px' }}></div>
 
         </>
     );

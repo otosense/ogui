@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const ApiUrl = {
-    getFuncNodes: "http://52.188.113.129:8080/get_list_of_functions",
-    loadDagList: "http://52.188.113.129:8080/get_list_of_dag",
-    saveDag: "http://52.188.113.129:8080/save_dag_data",
-    loadDag: "http://52.188.113.129:8080/get_dag",
+    getFuncNodes: "http://20.219.8.178:8080/get_list_of_functions",
+    loadDagList: "http://20.219.8.178:8080/get_list_of_dag",
+    saveDag: "http://20.219.8.178:8080/save_dag_data",
+    loadDag: "http://20.219.8.178:8080/get_dag",
 };
 
 

@@ -8,18 +8,18 @@ const ApiUrl = {
     // waveForm: "http://localhost:3000/wf",
     // mixed: "http://localhost:3000/mixed",
 
-    // getAnnotations: "http://52.188.113.129:3000/annotation",
-    getVolumes: "http://52.188.113.129:3000/volume",
-    // viewConfig: "http://52.188.113.129:3000/viewConfig",
-    // baseURl: "http://52.188.113.129:3000",
-    waveForm: "http://52.188.113.129:3000/wf",
-    mixed: "http://52.188.113.129:3000/mixed",
+    // getAnnotations: "http://20.219.8.178:3000/annotation",
+    getVolumes: "http://20.219.8.178:3000/volume",
+    // viewConfig: "http://20.219.8.178:3000/viewConfig",
+    // baseURl: "http://20.219.8.178:3000",
+    waveForm: "http://20.219.8.178:3000/wf",
+    mixed: "http://20.219.8.178:3000/mixed",
 
-    baseURl: "http://52.188.113.129:8080",
-    getAnnotations: "http://52.188.113.129:8080/get_session_annotation",
-    getWaveForm: "http://52.188.113.129:8080/get_session_wf_data",
+    baseURl: "http://20.219.8.178:8080",
+    getAnnotations: "http://20.219.8.178:8080/get_session_annotation",
+    getWaveForm: "http://20.219.8.178:8080/get_session_wf_data",
 
-    getSessionDetails: "http://52.188.113.129:8080/get_session_data"
+    getSessionDetails: "http://20.219.8.178:8080/get_session_data"
 };
 
 

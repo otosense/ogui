@@ -78,7 +78,7 @@ const configuration = {
 
 const configuration2 = {
     apiHandler: {
-        endPoint: 'http://52.188.113.129:8080/get_all_sessions', // API endpoint
+        endPoint: 'http://20.219.8.178:8080/get_all_sessions', // API endpoint
         fetchSize: 100,  // Fetch Data count
         dataKey: 'get_all_sessions' // Mandatory Unique identifier key for the api response to get data, Based on the Key we get value Also to store column in local storage.
     },

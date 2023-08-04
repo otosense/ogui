@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const ApiUrl = {
     // StoreConfig: "http://localhost:3000/storeViewer",
-    // StoreConfig: "http://52.188.113.129:3000/storeViewer",
-    // StoreConfig: "http://52.188.113.129:8080/list_all_sessions",
-    StoreConfig: "http://52.188.113.129:8080/get_all_sessions"
+    // StoreConfig: "http://20.219.8.178:3000/storeViewer",
+    // StoreConfig: "http://20.219.8.178:8080/list_all_sessions",
+    StoreConfig: "http://20.219.8.178:8080/get_all_sessions"
 
 };
 
@@ -25,7 +25,7 @@ async function PostMethod(url: string, data: any) {
     }
 }
 
-export function StoreConfig(data) {
+export function StoreConfig(data: { from_: number; to_: number; } | undefined) {
     const url = ApiUrl.StoreConfig;
     // return GetMethod(url);
     return PostMethod(url, data);

@@ -105,6 +105,7 @@ interface IFuncNode {
 interface IEachFuncNode {
     name: string;
     func_label: string;
+    func: string;
     out: string;
     bind: any;
 

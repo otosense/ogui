@@ -30,7 +30,7 @@ function Load(props: ILoadProps) {
 
     useEffect(() => {
         const list = storeGrouping(response.data); // Grouping the API
-        const result = listMapping(list.dag_store); // Extracting only the dag_Store
+        const result = listMapping(list.dags); // Extracting only the dag_Store
         setDagListResponse(result); // saving the Result
     }, [response.data]);
 

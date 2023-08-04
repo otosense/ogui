@@ -267,15 +267,15 @@ const StoreView = () => {
                 top: `${parseFloat(style.top) + 20}px`
             }}
         >
-            {/* {map(searchResults, 'id')[index]} */}
+            {map(searchResults, 'id')[index]}
 
-            <TreeView
+            {/* <TreeView
                 aria-label='Store View'
                 defaultCollapseIcon={<ExpandMoreIcon style={{ color: '#0880ae' }} />}
                 defaultExpandIcon={<ChevronRightIcon style={{ color: '#0880ae' }} />}
             >
                 {renderTree(map(searchResults)[index], true, index, searchQuery, setCopied)}
-                {/* {searchResults.length > 0 ? (
+                {searchResults.length > 0 ? (
                     searchResults.map((node, i) =>
                         renderTree(node, true, i, searchQuery, setCopied)
                     )
@@ -284,8 +284,8 @@ const StoreView = () => {
                         nodeId='no-results'
                         label='No matching nodes found'
                     />
-                ) : null} */}
-            </TreeView>
+                ) : null}
+            </TreeView> */}
         </div>);
     };
 

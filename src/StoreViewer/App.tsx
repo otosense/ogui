@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import StoreView from './components/StoreView';
+import StoreView from './Pages/Virtual';
 
 function App() {
 

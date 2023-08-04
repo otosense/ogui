@@ -258,7 +258,7 @@ const StoreView = () => {
         return 50 + Math.floor(JSON.stringify(node).length / 200);
     };
 
-    const Row = ({ index, style }) => {
+    const Row = ({ index, style }: any) => {
         console.log('searchResults', searchResults);
         return (<div
             className={index % 2 === 0 ? "RowEven" : "RowOdd"}

@@ -15,7 +15,7 @@ const StoreViewer = () => {
 
     useEffect(() => {
         if (data) {
-            const sessionLists = fetchingSessionID(data);
+            const sessionLists: any = fetchingSessionID(data);
             console.log('sessionLists', sessionLists);
             setSessionIDList(sessionLists);
             setSearchResults(data);
@@ -57,14 +57,14 @@ const StoreViewer = () => {
         }));
     };
 
-    const getItemSize = (index) => {
+    const getItemSize = (index: number) => {
         console.log(' getItemSize sessionIDList', sessionIDList);
         // Return the size of each item in the list here.
         // Replace the following line with the correct logic for accessing the item size from sessionIDList.
         return Number(sessionIDList?.[index]);
     };
 
-    const Row = ({ index, style }) => {
+    const Row = ({ index, style }: any) => {
         console.log(' Row sessionIDList', sessionIDList);
         // Render each item in the list here.
         // Replace the following line with your desired rendering logic.

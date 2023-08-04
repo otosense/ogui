@@ -39,7 +39,7 @@ const Example = () => {
     };
 
 
-    const Row = ({ index, style }) => (
+    const Row = ({ index, style }: any) => (
         <div
             className={index % 2 === 0 ? "RowEven" : "RowOdd"}
             style={{
@@ -67,7 +67,7 @@ const Example = () => {
     </List>);
 };
 
-const innerElementType = forwardRef(({ style, ...rest }, ref) => {
+const innerElementType = forwardRef(({ style, ...rest }: any, ref) => {
     { console.log('style', style); }
     return <div
         ref={ref}

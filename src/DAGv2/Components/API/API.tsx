@@ -1,41 +1,40 @@
 import axios from 'axios';
+import { funcList } from './sampleFunction';
+import { ApiPayloadAttrName, ApiPayloadWithK, ApiPayloadWithV } from '../Utilities/Interfaces';
 
 const ApiUrl = {
-    getFuncNodes: "http://52.188.113.129:8080/get_list_of_functions",
-    loadDagList: "http://52.188.210.107:8080/get_list_of_dag",
-    saveDag: "http://52.188.210.107:8080/save_dag_data",
-    loadDag: "http://52.188.113.129:8080/get_dag",
+    getStore: "http://20.219.8.178:8080/dag_func_node_source_store",
+    dagSaveLoad: "http://20.219.8.178:8080/dag_store",
 };
 
 
-const GetMethod = async (url: any) => {
-    const response = await axios.get(url);
-    return response.data;
+async function PostMethod(url: string, data: ApiPayloadAttrName) {
+    try {
+        const response = await axios.post(url, data);
+        return response.data;
+    } catch (error: any) {
+        // Handle the error here
+        const errorMessage = error?.response?.data?.error || error?.message + ' ' + error?.config?.url;
+        throw errorMessage;
+    }
+}
+
+// getting all the "dag_store" / "funcstore" / "funcfactoriesstore" 
+export function getFuncNodes(data: ApiPayloadAttrName) {
+    let url = ApiUrl.getStore;
+    return PostMethod(url, data);
+    // return funcList;
+}
+
+// Load and Save in Same API
+export const loadDag = async (data: ApiPayloadWithK) => {
+    console.log('data', data);
+    let url = ApiUrl.dagSaveLoad;
+    return PostMethod(url, data);
 };
-
-async function PostMethod(url: string, data: any) {
-    const response = await axios.post(url, data);
-    return response.data;
-}
-
-export function getFuncNodes() {
-    let url = ApiUrl.getFuncNodes;
-    return PostMethod(url, {});
-}
-
-export function getDagList() {
-    let url = ApiUrl.loadDagList;
-    return PostMethod(url, {});
-}
-
-
-export const loadDag = async (data: any) => {
-    let url = ApiUrl.loadDag;
-    return PostMethod(url, { "name": data });
-};
-
-export const saveDag = async (data: any) => {
-    let url = ApiUrl.saveDag;
+// Save the Dag in Same API
+export const saveDag = async (data: ApiPayloadWithV) => {
+    let url = ApiUrl.dagSaveLoad;
     return PostMethod(url, data);
 };
 

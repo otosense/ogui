@@ -419,3 +419,74 @@ select#dagList {
     width: 50%;
   }
 }
+
+/* ========================= DAG V2.0 starts========================= */
+
+section.handlers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* position: relative; */
+}
+
+.handlerText {
+  margin: 2 0px;
+  font-size: 9px;
+}
+
+.resultEdger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.funcNode .react-flow__handle-left,
+.funcNode .react-flow__handle-right {
+  top: auto !important;
+  transform: unset !important
+}
+
+.addNode {
+  border: 1px solid #6b7280;
+  color: #fff;
+  overflow: hidden;
+  width: 200px;
+  border-radius: 3px;
+  margin: 0 auto;
+  background: #1f2937;
+}
+
+.titleAddNode {
+  background: #6b7280;
+  margin: 0;
+}
+
+select#funcLists {
+  width: 90%;
+  margin: 3%;
+  background: #1f2937;
+  color: #fff;
+}
+
+.selectedFuncNode {
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.Spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Spinner .MuiCircularProgress-indeterminate {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/* ========================= DAG V2.0 Ends========================= */

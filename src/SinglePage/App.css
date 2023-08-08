@@ -45,7 +45,7 @@
 }
 
 .MuiListItem-padding:hover {
-  background-color: #DCF2FF !important;
+  background-color: #dcf2ff !important;
   color: #3db5fe !important;
   /* border-bottom: 1px solid #cdcdcd !important; */
 }
@@ -127,7 +127,6 @@ div[role="tabpanel"] {
 
 /* ======================= DAG Builder CSS Starts here  =======================*/
 
-
 .dndflow {
   flex-direction: column;
   display: flex;
@@ -183,7 +182,6 @@ div[role="tabpanel"] {
 .dndflow .dndnode.function {
   border-color: #0891b2;
 }
-
 
 .dndflow .reactflow-wrapper {
   flex-grow: 1;
@@ -246,8 +244,6 @@ input#text:focus-visible {
   display: none;
 }
 
-
-
 .nodeTitle {
   margin: -1px;
   padding: 2% 4%;
@@ -266,7 +262,6 @@ input#text:focus-visible {
 
 h4.nodeTitle.varNode {
   background: #c2410c;
-
 }
 
 /* .nodeTitle {
@@ -340,8 +335,6 @@ h4.nodeTitle.varNode {
   text-align: center;
 }
 
-
-
 .overlayPosition {
   position: absolute;
   top: 50%;
@@ -402,7 +395,6 @@ button.panelBtn {
   width: 45%;
   text-align: center;
   font-size: 88%;
-
 }
 
 .invalidMsg {
@@ -466,7 +458,6 @@ select#dagList {
 }
 
 @media only screen and (max-width: 767px) {
-
   /* CSS rules for mobile devices */
   .react-flow__panel.top.right {
     margin: 3% 0;
@@ -480,11 +471,9 @@ select#dagList {
   .ModalBox {
     width: 90%;
   }
-
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-
   /* CSS rules for tablet devices */
   .react-flow__panel.top.right {
     margin: 1% 0;
@@ -499,9 +488,7 @@ select#dagList {
   }
 }
 
-
 /* ======================= DAG Builder CSS Ends here  =======================*/
-
 
 /* ======================= Data Visualization CSS Starts here  =======================*/
 .chartParent {
@@ -534,52 +521,42 @@ select#dagList {
   color: #fff;
 }
 
-.getSessionIdBox {
-  width: 75% !important;
-}
-
-
 .FormSection {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 47%;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  /* align-items: center; */
+  width: 100%;
 }
 
 @media only screen and (max-width: 767px) {
-
   /* CSS rules for mobile devices */
   section.storeViewerLayout {
     width: 100%;
   }
 
   section.topLayout {
-    top: 56px;
+    top: 500px;
   }
 }
 
 @media only screen and (max-width: 767px) {
-
   /* CSS rules for mobile devices */
   .getSessionIdBox {
-    width: 75% !important;
+    width: 300px !important;
     margin-right: 10px !important;
   }
 }
 
-@media only screen and (min-width: 768px) and (max-width: 1023px) {
-
+@media only screen and (min-width: 768px) {
   /* CSS rules for tablet devices */
   .getSessionIdBox {
-    width: 75% !important;
+    width: 450px !important;
     margin-right: 10px !important;
   }
-
-
 }
 
 /* ======================= Data Visualization CSS Ends here  =======================*/
-
 
 /* ======================= Data Table CSS Starts here  =======================*/
 
@@ -637,7 +614,6 @@ main.mainTableView {
   align-items: center;
 }
 
-
 .columnName {
   display: flex;
   justify-content: space-between;
@@ -667,8 +643,6 @@ p.lineInfo {
   background: #fff;
 }
 
-
-
 .css-apqrd9-MuiTableBody-root {
   text-align: left;
 }
@@ -689,7 +663,6 @@ p.lineInfo {
 
 /* ======================= Data Table CSS Ends here  =======================*/
 
-
 /* ======================= StoreView CSS starts here  =======================*/
 
 .MuiCollapse-wrapperInner {
@@ -697,7 +670,7 @@ p.lineInfo {
 }
 
 .MuiTreeItem-content.Mui-selected:hover {
-  background-color: #DCF2FF !important;
+  background-color: #dcf2ff !important;
 }
 
 .MuiTreeItem-content.Mui-selected {
@@ -727,13 +700,12 @@ section.renderNodes {
   /* border-bottom: 1px solid #D6D6D6; */
 }
 
-button.copy+.MuiTreeItem-root {
-  border-bottom: 1px solid #D6D6D6;
+button.copy + .MuiTreeItem-root {
+  border-bottom: 1px solid #d6d6d6;
   padding: 8px !important;
-
 }
 
-.renderNodes li>div.MuiTreeItem-content {
+.renderNodes li > div.MuiTreeItem-content {
   padding: 4px !important;
 }
 
@@ -753,7 +725,7 @@ button.copy {
   background: transparent;
   padding: 0;
   cursor: pointer;
-  top: 12px
+  top: 12px;
 }
 
 main.mainArea {
@@ -768,7 +740,6 @@ button.copy:focus {
 }
 
 @media only screen and (max-width: 767px) {
-
   /* CSS rules for mobile devices */
   section.storeViewerLayout {
     width: 100%;
@@ -780,7 +751,6 @@ button.copy:focus {
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-
   /* CSS rules for tablet devices */
   section.storeViewerLayout {
     width: 100%;
@@ -793,8 +763,6 @@ button.copy:focus {
 
 /* ======================= StoreView CSS Ends here  =======================*/
 
-
-
 .common-Error-Msg {
   display: flex;
   justify-content: center;
@@ -806,7 +774,9 @@ button.copy:focus {
 }
 
 .ReturnBtn {
-  background: transparent linear-gradient(0deg, #393939 0%, #5D6364 0%, #000000 100%) 0% 0% no-repeat padding-box;
+  background: transparent
+    linear-gradient(0deg, #393939 0%, #5d6364 0%, #000000 100%) 0% 0% no-repeat
+    padding-box;
   opacity: 1;
   border-radius: 10px;
   color: #fff;
@@ -817,3 +787,7 @@ button.copy:focus {
   padding: 1%;
   border: 0;
 }
+
+/* .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  width: 100% !important;
+} */

@@ -8,7 +8,6 @@ import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts
 import * as API from "./API/API";
 import { ZoomContext } from "./Charts";
 import {
-  IChannelDataTypeFour,
   IProps,
   ISingleChannelData,
   ISrcChannel,
@@ -29,7 +28,7 @@ xrange(Highcharts);
 HighchartsBoost(Highcharts);
 let Yaxis: string[] = [];
 
-const DataTypeFour = (props: any) => {
+const XrangeChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
   const {
     chart_title,
@@ -40,71 +39,38 @@ const DataTypeFour = (props: any) => {
     data_limit,
     src_channels,
   } = props.configs;
-  // Props Received from the Charts.tsx component from userConfig
-  const { minimap, combineZoom } = props.userConfig;
+
+  const { get_data } = src_channels;
+
   // Create Chart Reference
   const chartRef = useRef<HighchartsReact.Props>(null);
-  const [data, setData] = useState<IChannelDataTypeFour[]>(src_channels); // handling Data for visualization
-  const [start, setStart] = useState(0); // handling for API from , to counts
-  const [xAxisCategory, setXAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
-  const [plotting, setPlotting] = useState<IChannelDataTypeFour[]>([]); // handling X-Axis for plotting in Chart
-  const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
+  const [data, setData] = useState<IChannelXrangeChart[]>(src_channels); // handling Data for visualization
+  const [yAxisCategory, setYAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
+  const [seriesData, setSeriesData] = useState<IChannelXrangeChart[]>([]); // handling X-Axis for plotting in Chart
+  //   const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
   const [legendName, setLegendName] = useState<string>(""); // legend for the chart
-
-  const fetchData = async () => {
-    const newStart = start + 5000;
-    setStart(newStart);
-    // Note: Mapping Data based on src_channels
-    // await explicitChannelMapping(src_channels, start, newStart, data, setData);
-  };
-
-  useEffect(() => {
-    // when component Loaded respective API from the backend
-    fetchData();
-  }, []);
 
   useEffect(() => {
     // Any changes happening data will be called and updated the charts
     const chart = chartRef.current?.chart;
     if (chart && data) {
-      dataMapping(data, setXAxisCategory, setPlotting, setLegendName); // Mapping the Data based on the data Type
+      const data = get_data();
+      const yCategories = data[0];
+      const seriesdata = data[1];
 
-      // Handling Zoom and setting the zoom level in Global Store
-      chart.update({
-        xAxis: {
-          events: {
-            // afterSetExtremes: syncCharts
-            afterSetExtremes: function (e: IZoomRange) {
-              settingZoomInGlobalStore(combineZoom, e, props);
-            },
-          },
-        },
-      });
+      setSeriesData(seriesdata);
+      setYAxisCategory(yCategories);
     }
   }, [props]);
 
-  useEffect(() => {
-    // updating the Zoom level from the Global Store if any changes are made on other charts
-    updatingZoomFromGlobalStore(chartRef, zoomLevel, combineZoom);
-  }, [zoomLevel]);
-
-  const handlePan = () => {
-    // when LoadMore is clicked calling the next set of data from backend
-    fetchData();
-  };
-
-  // Chart Options
-  /* 
-        Note: in xAxis.categories are responsible for the x axis data,
-            series are responsible for the y axis data.
-    
-    */
+  //   const handlePan = () => {
+  //     // when LoadMore is clicked calling the next set of data from backend
+  //     fetchData();
+  //   };
 
   const Options = {
     chart: {
       type: String(chart_type),
-      // type: 'xrange',
-      // animation: Highcharts.svg, // don't animate in old IE
       marginRight: 10,
       zoomType: "xy",
       panning: true,
@@ -136,7 +102,7 @@ const DataTypeFour = (props: any) => {
       title: {
         text: String(y_label),
       },
-      categories: xAxisCategory,
+      categories: yAxisCategory,
       labels: {
         formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
           // Truncate the label text
@@ -182,7 +148,7 @@ const DataTypeFour = (props: any) => {
     series: [
       {
         name: legendName,
-        data: plotting,
+        data: seriesData,
         turboThreshold: 100000,
         pointPadding: 1,
         groupPadding: 1,
@@ -239,42 +205,4 @@ const DataTypeFour = (props: any) => {
     </div>
   );
 };
-// type: IChannelDataTypeFour
-export default memo(DataTypeFour);
-
-function dataMapping(
-  data: any[],
-  setXAxisCategory: (value: string[]) => void,
-  setPlotting: (value: any) => void,
-  setLegendName: (channel: string) => void
-): void {
-  let uniqueArray: string[] = [];
-
-  // looping the initial data from the local state
-  data.map((channelData) => {
-    channelData?.data?.data
-      .flat()
-      ?.map((singleChannelData: ISingleChannelData) => {
-        Yaxis.push(singleChannelData.tag);
-        uniqueArray = [...new Set(Yaxis)];
-        setXAxisCategory(uniqueArray);
-        const chartData = {
-          x: singleChannelData.bt,
-          x2: singleChannelData.tt,
-          y: uniqueArray?.indexOf(singleChannelData.tag),
-          title: singleChannelData.tag,
-        };
-        // setting the legend
-        setLegendName(channelData.channel);
-        // data prepared to display in the chart
-        setPlotting((prevData: any) => [...prevData, chartData]);
-      });
-  });
-}
-
-function caller(val) {
-  const dateString = new Date(val).toUTCString();
-  const dateObject = new Date(dateString);
-  const unixTimestamp = Math.floor(dateObject.getTime() / 1000);
-  return unixTimestamp;
-}
+export default memo(XrangeChart);

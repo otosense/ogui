@@ -21,7 +21,7 @@ import { ZoomContext } from "./Charts";
 
 HighchartsStock(Highcharts); // initialize the module
 
-const DataTypeOne = (props: any) => {
+const LineChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
   const {
     chart_title,
@@ -32,80 +32,33 @@ const DataTypeOne = (props: any) => {
     data_limit,
     src_channels,
   } = props?.configs;
-  // Props Received from the Charts.tsx component from userConfig
-  const { minimap, combineZoom } = props.userConfig;
+  const { get_data } = src_channels;
+
   // Create Chart Reference
   const chartRef = useRef<HighchartsReact.Props>(null);
-  const [data, setData] = useState<IChannelMappingResponse[]>(src_channels); // handling Data for visualization
-  const [start, setStart] = useState(0); // handling for API from , to counts
+  //const [data, setData] = useState<IChannelMappingResponse[]>(src_channels); // handling Data for visualization
   const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
-  const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
   const [isLoading, setIsLoading] = useState(false);
-
-  // const fetchData = async () => {
-  //     const newStart = start + 5000;
-  //     setStart(newStart);
-  //     // Note: Mapping Data based on src_channels
-  // await implicitChannelMapping(src_channels, start, newStart, data, setData);
-  // };
-
-  // useEffect(() => {
-  //     // when component Loaded respective API from the backend
-  //     fetchData();
-  // }, []);
 
   useEffect(() => {
     // Any changes happening data will be called and updated the charts
     const chart = chartRef.current?.chart;
     if (chart) {
       // console.log('data', data);
-      const updatedSeries = dataMapping(data, setIsLoading);
+      const data = get_data();
 
-      const flattenSamples = updatedSeries?.flat();
-      console.log("fla", flattenSamples);
-      const yAxisData = flattenSamples?.map((series: ISample) => series?.value);
+      const xAxisCategories = data[0];
+      const seriesData = data[1];
 
-      console.log("yAxisData", yAxisData);
-      const xAxisTs = flattenSamples?.map((series: ISample) => series?.time);
-      console.log("xAxisTs", xAxisTs);
-
-      // setXCategory(xAxisTs);
       setIsLoading(false);
-      chart.update({ xAxis: { categories: xAxisTs } });
-      chart.update({ series: [{ data: yAxisData }] });
+      chart.update({ xAxis: { categories: xAxisCategories } });
+      chart.update({ series: [{ data: seriesData }] });
 
-      // Handling Zoom and setting the zoom level in Global Store
-      chart.update({
-        xAxis: {
-          events: {
-            // afterSetExtremes: syncCharts
-            afterSetExtremes: function (e: IZoomRange) {
-              settingZoomInGlobalStore(combineZoom, e, props);
-            },
-          },
-        },
-      });
       // Re-Draw the chart default behavior of the Highcharts
       chart.redraw();
     }
   }, [props]);
 
-  useEffect(() => {
-    // updating the Zoom level from the Global Store if any changes are made on other charts
-    updatingZoomFromGlobalStore(chartRef, zoomLevel, combineZoom);
-  }, [zoomLevel]);
-
-  // const handlePan = () => {
-  //     // when LoadMore is clicked calling the next set of data from backend
-  //     fetchData();
-  // };
-
-  // Chart Options
-  /* 
-        Note: in xAxis.categories are responsible for the x axis data,
-            series are responsible for the y axis data.
-    
-    */
   const options = {
     chart: {
       // type: "line",
@@ -125,9 +78,6 @@ const DataTypeOne = (props: any) => {
       title: {
         text: String(x_label),
       },
-      // categories: [],
-      // categories: xCategory,
-
       labels: {
         rotation: -25,
         formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
@@ -144,8 +94,6 @@ const DataTypeOne = (props: any) => {
         text: String(y_label),
       },
       allowDecimals: false,
-      // min: -10000
-      // softMin: -1,
     },
     tooltip: {
       shared: true,
@@ -236,37 +184,4 @@ const DataTypeOne = (props: any) => {
   );
 };
 // type: IChannelMappingResponse
-export default memo(DataTypeOne);
-
-function dataMapping(
-  srcData: IChannelMappingResponse[],
-  setIsLoading: any
-): ISample[][] {
-  setIsLoading(true);
-  console.log("called dataMapping");
-  console.log("data before", srcData);
-
-  return srcData?.map((channel: IChannelMappingResponse) => {
-    const { data } = channel;
-    if (data) {
-      const timeDifferBetweenSamples = data?.sr / (1000 * 1000);
-      let sampleTime = data?.ts;
-      const sampledData: ISample[] = [];
-
-      data.data[0].forEach((sampleValue: number, index: number) => {
-        if (index !== 0) {
-          sampleTime += timeDifferBetweenSamples;
-        }
-        const sample: ISample = {
-          value: sampleValue,
-          time: epochConverted(sampleTime),
-        };
-        sampledData.push(sample);
-      });
-
-      console.log("sampledData", sampledData);
-      return sampledData;
-    }
-    return [];
-  });
-}
+export default memo(LineChart);

@@ -3,7 +3,6 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts Stock module
 
-
 import {
   IChannelMappingResponse,
   IProps,
@@ -16,39 +15,61 @@ HighchartsStock(Highcharts); // initialize the module
 
 const LineChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
-  const {
-    chart_title,
-    chart_type,
-    x_label,
-    y_label,
-    src_channels,
-  } = props?.configs;
-  const { get_data } = src_channels;
+  const { chart_title, chart_type, x_label, y_label, src_channels } =
+    props?.configs;
 
   const chartRef = useRef<HighchartsReact.Props>(null);
-  const [xCategory, setXCategory] = useState<string[]>([]); 
-  const [seriesData, setSeriesData] = useState<number[]>([])
+  const [xCategory, setXCategory] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [seriesOptions, setSeriesOptions] = useState([]);
 
   useEffect(() => {
     // Any changes happening data will be called and updated the charts
     const chart = chartRef.current?.chart;
     if (chart) {
+      let allSeriesOptions = [];
       setIsLoading(true);
-      const chartData = get_data();
-      console.log('data', chartData);
+      src_channels.map((chartConfig: any, index: number) => {
+        const { get_data } = chartConfig;
+        const chartData = get_data();
 
-      const xAxisCategories = chartData.xAxisCategories;
-      const seriesData = chartData.seriesData;
+        const xAxisCategories = chartData.xAxisCategories;
+        const seriesData = chartData.seriesData;
 
+        if (index == 0) {
+          setXCategory(xAxisCategories);
+        }
+        let oneSeriesOptions = {
+          name: chartConfig.name,
+          data: seriesData,
+          turboThreshold: Number.MAX_SAFE_INTEGER,
+          pointPadding: 1,
+          groupPadding: 1,
+          borderColor: "gray",
+          pointWidth: 20,
+          dataLabels: {
+            enabled: false,
+            align: "center",
+            style: {
+              fontSize: "14px",
+              fontWeight: "bold",
+            },
+            formatter(
+              this: Highcharts.AxisLabelsFormatterContextObject
+            ): string {
+              // return this.point?.title;
+              return String(this.value);
+            },
+          },
+          stickyTracking: true,
+          dataGrouping: {
+            enabled: false,
+          },
+        };
+        allSeriesOptions.push(oneSeriesOptions);
+      });
       setIsLoading(false);
-      setXCategory(xAxisCategories);
-      setSeriesData(seriesData);
-      // chart.update({ xAxis: { categories: xAxisCategories } });
-      // chart.update({ series: [{ data: seriesData }] });
-
-      // // Re-Draw the chart default behavior of the Highcharts
-      // chart.redraw();
+      setSeriesOptions(allSeriesOptions);
     }
   }, [props]);
 
@@ -103,31 +124,7 @@ const LineChart = (props: any) => {
     exporting: {
       enabled: true,
     },
-    series:{
-      name:"series name",
-      data:seriesData,
-      turboThreshold: Number.MAX_SAFE_INTEGER,
-      pointPadding: 1,
-      groupPadding: 1,
-      borderColor: "gray",
-      pointWidth: 20,
-      dataLabels: {
-        enabled: false,
-        align: "center",
-        style: {
-          fontSize: "14px",
-          fontWeight: "bold",
-        },
-        formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-          // return this.point?.title;
-          return String(this.value);
-        },
-      },
-      stickyTracking: true,
-      dataGrouping: {
-        enabled: false,
-      },
-    },
+    series: seriesOptions,
     // series: data.map((channel: IChannelMappingResponse) => ({
     //   name: channel.channel,
     //   turboThreshold: Number.MAX_SAFE_INTEGER,
@@ -153,7 +150,6 @@ const LineChart = (props: any) => {
     //   },
     // })),
 
-    
     // navigator: {
     //   enabled: Boolean(minimap === undefined ? true : minimap), // enable the navigator
     //   adaptToUpdatedData: true,

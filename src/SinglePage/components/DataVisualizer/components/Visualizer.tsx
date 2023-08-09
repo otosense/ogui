@@ -137,15 +137,11 @@ const Visualizer = () => {
           </Button>
         )}
       </section>
-      {!isFetching && (
-        <section className="chartArea">
-          <MainChart
-            chartType={chartType}
-            chartsConfig={chartsConfig}
-            gridSpec="2*2"
-          />
+      {
+        <section>
+          <MainChart chartsConfig={chartsConfig} gridSpec="2*1" />
         </section>
-      )}
+      }
     </>
   );
 };

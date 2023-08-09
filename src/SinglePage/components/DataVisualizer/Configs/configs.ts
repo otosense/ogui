@@ -1,28 +1,22 @@
-const getAnnotData = () => {
-  //function which calls api and returns data in expected format
-  ///expected format: return yAxisCategories, seriesdata
-  //yAxisCategories: [] of unique strings on y axis, seriesdata: [{x:, x2:, y:},{x:,x2:,y:},etc,....] list of objects
+// const getAnnotData = () => {
+//   //function which calls api and returns data in expected format
+//   ///expected format: return yAxisCategories, seriesdata
+//   //yAxisCategories: [] of unique strings on y axis, seriesdata: [{x:, x2:, y:},{x:,x2:,y:},etc,....] list of objects
 
-  return "";
-};
-const getWfData = () => {
-  //function which calls api and returns the data in expected format
-  //expected format : return xAxisCategories, seriesData
-  //xAxisCategories: [] of x values, seriesData: [1,2,3,4] of y values
-  return "";
-};
-
-// const getAnnotMappingData = () => {
+//   return "";
+// };
+// const getWfData = () => {
+//   //function which calls api and returns the data in expected format
+//   //expected format : return xAxisCategories, seriesData
+//   //xAxisCategories: [] of x values, seriesData: [1,2,3,4] of y values
 //   return "";
 // };
 
-// const getWfMappedData = () => {
-//   return "";
-// };
+import { getAnnotData, getWfData } from "./Datafunctions";
 
 const chartsConfig = [
   {
-    chart_title: "Chart 1",
+    chart_title: "Annot Chart",
     data_type: "annot",
     chart_type: "xrange",
     x_label: "Time",

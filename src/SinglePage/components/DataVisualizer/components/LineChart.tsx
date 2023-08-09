@@ -1,15 +1,9 @@
-import React, { memo, useContext, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts Stock module
 
-import {
-  defaultZoomBehavior,
-  epochConverted,
-  implicitChannelMapping,
-  settingZoomInGlobalStore,
-  updatingZoomFromGlobalStore,
-} from "./globalConfigs";
+
 import {
   IChannelMappingResponse,
   IProps,
@@ -17,7 +11,6 @@ import {
   ISrcChannel,
   IZoomRange,
 } from "./API/interfaces";
-import { ZoomContext } from "./Charts";
 
 HighchartsStock(Highcharts); // initialize the module
 
@@ -28,42 +21,40 @@ const LineChart = (props: any) => {
     chart_type,
     x_label,
     y_label,
-    miniMap,
-    data_limit,
     src_channels,
   } = props?.configs;
   const { get_data } = src_channels;
 
-  // Create Chart Reference
   const chartRef = useRef<HighchartsReact.Props>(null);
-  //const [data, setData] = useState<IChannelMappingResponse[]>(src_channels); // handling Data for visualization
-  const [xCategory, setXCategory] = useState<string[]>([]); // handling X-Axis for plotting
+  const [xCategory, setXCategory] = useState<string[]>([]); 
+  const [seriesData, setSeriesData] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Any changes happening data will be called and updated the charts
     const chart = chartRef.current?.chart;
     if (chart) {
-      // console.log('data', data);
-      const data = get_data();
+      setIsLoading(true);
+      const chartData = get_data();
+      console.log('data', chartData);
 
-      const xAxisCategories = data[0];
-      const seriesData = data[1];
+      const xAxisCategories = chartData.xAxisCategories;
+      const seriesData = chartData.seriesData;
 
       setIsLoading(false);
-      chart.update({ xAxis: { categories: xAxisCategories } });
-      chart.update({ series: [{ data: seriesData }] });
+      setXCategory(xAxisCategories);
+      setSeriesData(seriesData);
+      // chart.update({ xAxis: { categories: xAxisCategories } });
+      // chart.update({ series: [{ data: seriesData }] });
 
-      // Re-Draw the chart default behavior of the Highcharts
-      chart.redraw();
+      // // Re-Draw the chart default behavior of the Highcharts
+      // chart.redraw();
     }
   }, [props]);
 
   const options = {
     chart: {
-      // type: "line",
       type: String(chart_type),
-      // animation: Highcharts.svg, // don't animate in old IE
       marginRight: 10,
       zoomType: "xy",
       panning: true,
@@ -73,11 +64,11 @@ const LineChart = (props: any) => {
       text: String(chart_title),
     },
     xAxis: {
-      // type: "datetime",
       tickPixelInterval: 100,
       title: {
         text: String(x_label),
       },
+      categories: xCategory,
       labels: {
         rotation: -25,
         formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
@@ -98,9 +89,6 @@ const LineChart = (props: any) => {
     tooltip: {
       shared: true,
       formatter(this: Highcharts.TooltipFormatterContextObject): string {
-        // return `<b>${this.x}</b><br/><b>${this.y}</b>`;
-        console.log("this", this);
-
         return `<b>${this.x}</b><br/><b>${Math.round(this.y)}</b>`; // Round
       },
     },
@@ -115,9 +103,9 @@ const LineChart = (props: any) => {
     exporting: {
       enabled: true,
     },
-    series: data.map((channel: IChannelMappingResponse) => ({
-      name: channel.channel,
-      // turboThreshold: 100000,
+    series:{
+      name:"series name",
+      data:seriesData,
       turboThreshold: Number.MAX_SAFE_INTEGER,
       pointPadding: 1,
       groupPadding: 1,
@@ -139,22 +127,48 @@ const LineChart = (props: any) => {
       dataGrouping: {
         enabled: false,
       },
-    })),
-    navigator: {
-      enabled: Boolean(minimap === undefined ? true : minimap), // enable the navigator
-      adaptToUpdatedData: true,
-      xAxis: {
-        labels: {
-          formatter(
-            this: Highcharts.AxisLabelsFormatterContextObject
-          ): string | number {
-            // Format the label based on the x-axis value
-            const xValue: any = this.value || "";
-            return xCategory[xValue];
-          },
-        },
-      },
     },
+    // series: data.map((channel: IChannelMappingResponse) => ({
+    //   name: channel.channel,
+    //   turboThreshold: Number.MAX_SAFE_INTEGER,
+    //   pointPadding: 1,
+    //   groupPadding: 1,
+    //   borderColor: "gray",
+    //   pointWidth: 20,
+    //   dataLabels: {
+    //     enabled: false,
+    //     align: "center",
+    //     style: {
+    //       fontSize: "14px",
+    //       fontWeight: "bold",
+    //     },
+    //     formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+    //       // return this.point?.title;
+    //       return String(this.value);
+    //     },
+    //   },
+    //   stickyTracking: true,
+    //   dataGrouping: {
+    //     enabled: false,
+    //   },
+    // })),
+
+    
+    // navigator: {
+    //   enabled: Boolean(minimap === undefined ? true : minimap), // enable the navigator
+    //   adaptToUpdatedData: true,
+    //   xAxis: {
+    //     labels: {
+    //       formatter(
+    //         this: Highcharts.AxisLabelsFormatterContextObject
+    //       ): string | number {
+    //         // Format the label based on the x-axis value
+    //         const xValue: any = this.value || "";
+    //         return xCategory[xValue];
+    //       },
+    //     },
+    //   },
+    // },
     scrollbar: {
       enabled: false, // enable the scrollbar
     },
@@ -183,5 +197,5 @@ const LineChart = (props: any) => {
     </div>
   );
 };
-// type: IChannelMappingResponse
+
 export default memo(LineChart);

@@ -142,7 +142,7 @@ const Visualizer = () => {
           <MainChart
             chartType={chartType}
             chartsConfig={chartsConfig}
-            gridSpec="1*1"
+            gridSpec="2*2"
           />
         </section>
       )}

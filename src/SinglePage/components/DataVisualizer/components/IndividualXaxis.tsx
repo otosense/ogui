@@ -17,7 +17,7 @@ import XrangeChart from "./XrangeChart";
 // };
 
 const IndividualXaxis = (props: any) => {
-  const { sessionChartData, gridSpec } = props;
+  const { chartsConfig, gridSpec } = props;
 
   // console.log("gri", gridSpec);
   const gridRows = gridSpec.split("*")[0];
@@ -36,7 +36,7 @@ const IndividualXaxis = (props: any) => {
 
   const renderChartsInGrid = () => {
     // console.log("sd", sessionChartData);
-    return sessionChartData.map((chartData: any, index: number) => {
+    return chartsConfig.map((chartData: any, index: number) => {
       {
         setPresentRowCol();
       }

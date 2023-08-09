@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import xrange from "highcharts/modules/xrange";
@@ -26,7 +26,6 @@ import {
 HighchartsStock(Highcharts); // initialize the module
 xrange(Highcharts);
 HighchartsBoost(Highcharts);
-let Yaxis: string[] = [];
 
 const XrangeChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
@@ -43,30 +42,21 @@ const XrangeChart = (props: any) => {
   const { get_data } = src_channels;
 
   // Create Chart Reference
-  const chartRef = useRef<HighchartsReact.Props>(null);
-  const [data, setData] = useState<IChannelXrangeChart[]>(src_channels); // handling Data for visualization
+  //const chartRef = useRef<HighchartsReact.Props>(null);
+  //const [data, setData] = useState<any[]>(src_channels); // handling Data for visualization
   const [yAxisCategory, setYAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
-  const [seriesData, setSeriesData] = useState<IChannelXrangeChart[]>([]); // handling X-Axis for plotting in Chart
+  const [seriesData, setSeriesData] = useState<any[]>([]); // handling X-Axis for plotting in Chart
   //   const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
-  const [legendName, setLegendName] = useState<string>(""); // legend for the chart
+  //   const [legendName, setLegendName] = useState<string>(""); // legend for the chart
 
   useEffect(() => {
-    // Any changes happening data will be called and updated the charts
-    const chart = chartRef.current?.chart;
-    if (chart && data) {
-      const data = get_data();
-      const yCategories = data[0];
-      const seriesdata = data[1];
+    const dataBackend = get_data();
+    const yCategories = dataBackend["uniqueArray"];
+    const seriesdata = dataBackend["series"];
 
-      setSeriesData(seriesdata);
-      setYAxisCategory(yCategories);
-    }
-  }, [props]);
-
-  //   const handlePan = () => {
-  //     // when LoadMore is clicked calling the next set of data from backend
-  //     fetchData();
-  //   };
+    setSeriesData(seriesdata);
+    setYAxisCategory(yCategories);
+  }, []);
 
   const Options = {
     chart: {
@@ -84,7 +74,7 @@ const XrangeChart = (props: any) => {
     xAxis: {
       type: "datetime",
       dateFormat: "%Y-%m-%d %H:%M:%S",
-      visible: false,
+      visible: true,
       tickPixelInterval: 100,
       labels: {
         formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
@@ -103,37 +93,37 @@ const XrangeChart = (props: any) => {
         text: String(y_label),
       },
       categories: yAxisCategory,
-      labels: {
-        formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-          // Truncate the label text
-          var maxLength = 4; // Maximum number of characters
-          var label: string | number = this.value;
-          if (label?.length > maxLength) {
-            label = label?.substring(0, maxLength) + "...";
-          }
-          return String(label);
-        },
-      },
+      //   labels: {
+      //     formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+      //       // Truncate the label text
+      //       var maxLength = 4; // Maximum number of characters
+      //       var label: string | number = this.value;
+      //       if (label?.length > maxLength) {
+      //         label = label?.substring(0, maxLength) + "...";
+      //       }
+      //       return String(label);
+      //     },
+      //   },
     },
-    tooltip: {
-      shared: true,
-      formatter(this: Highcharts.TooltipFormatterContextObject): string {
-        if (this && this.points) {
-          // let tooltip = '<b>' + 'ts : ' + epochConverted(this.x) + '</b><br/>';
-          let tooltip = "";
-          this.points.forEach(function (point: Highcharts.Point): void {
-            const x = epochConverted(point.x);
-            const x2 = point.x2 != null ? epochConverted(point.x2) : "";
-            const yCategory =
-              point?.yCategory !== null ? point.yCategory?.toString() : "";
-            tooltip += `<b>From: ${x} - To: ${x2}</b><br/><b>${yCategory}> `;
-          });
-          return tooltip;
-        } else {
-          return "";
-        }
-      },
-    },
+    // tooltip: {
+    //   shared: true,
+    //   formatter(this: Highcharts.TooltipFormatterContextObject): string {
+    //     if (this && this.points) {
+    //       // let tooltip = '<b>' + 'ts : ' + epochConverted(this.x) + '</b><br/>';
+    //       let tooltip = "";
+    //       this.points.forEach(function (point: Highcharts.Point): void {
+    //         const x = epochConverted(point.x);
+    //         const x2 = point.x2 != null ? epochConverted(point.x2) : "";
+    //         const yCategory =
+    //           point?.yCategory !== null ? point.yCategory?.toString() : "";
+    //         tooltip += `<b>From: ${x} - To: ${x2}</b><br/><b>${yCategory}> `;
+    //       });
+    //       return tooltip;
+    //     } else {
+    //       return "";
+    //     }
+    //   },
+    // },
     legend: {
       enabled: true,
       verticalAlign: "top",
@@ -147,7 +137,7 @@ const XrangeChart = (props: any) => {
     },
     series: [
       {
-        name: legendName,
+        name: "legendname",
         data: seriesData,
         turboThreshold: 100000,
         pointPadding: 1,
@@ -168,19 +158,19 @@ const XrangeChart = (props: any) => {
       },
     ],
 
-    navigator: {
-      enabled: Boolean(minimap === undefined ? true : minimap),
-      // enabled: false,
-      adaptToUpdatedData: true,
-      xAxis: {
-        labels: {
-          formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-            const xValue = this.value;
-            return String(xValue);
-          },
-        },
-      },
-    },
+    // navigator: {
+    //   enabled: Boolean(minimap === undefined ? true : minimap),
+    //   // enabled: false,
+    //   adaptToUpdatedData: true,
+    //   xAxis: {
+    //     labels: {
+    //       formatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+    //         const xValue = this.value;
+    //         return String(xValue);
+    //       },
+    //     },
+    //   },
+    // },
     scrollbar: {
       enabled: false, // enable the scrollbar
     },
@@ -193,11 +183,10 @@ const XrangeChart = (props: any) => {
   };
 
   return (
-    // style={{ width: 1000 }}
     <div className="chartParent">
       <HighchartsReact
         highcharts={Highcharts}
-        ref={chartRef}
+        //ref={chartRef}
         options={Options}
         constructorType={"stockChart"} // use stockChart constructor
       />

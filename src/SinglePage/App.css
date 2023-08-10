@@ -491,15 +491,6 @@ select#dagList {
 /* ======================= DAG Builder CSS Ends here  =======================*/
 
 /* ======================= Data Visualization CSS Starts here  =======================*/
-.chartParent {
-  position: relative;
-  /* border: 1px solid #eaeaea;
-  background-color: #ccc;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
-  margin-bottom: 20px;
-  width: 100%;
-  /* max-width: 1/2; */
-}
 
 .chartArea {
   display: flex;

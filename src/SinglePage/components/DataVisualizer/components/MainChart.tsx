@@ -1,21 +1,7 @@
-import DataTypeFour from "./DataTypeFour";
-import DataTypeOne from "./DataTypeOne";
-// import DataTypeOne from "./DataTypeOne";
-import HighChart from "./HighChart";
 import "./index.css";
 import LineChart from "./LineChart";
 import SingleXaxisChart from "./SingleXaxis";
 import XrangeChart from "./XrangeChart";
-
-// const userConfigurationsTypeFour = {
-//   minimap: true,
-//   // combineZoom: false
-// };
-
-// const userConfigurationsTypeOne = {
-//   minimap: true,
-//   // combineZoom: false
-// };
 
 const MainChart = (props: any) => {
   const { chartsConfig, gridSpec } = props;
@@ -27,7 +13,7 @@ const MainChart = (props: any) => {
   let presentRow = 1;
 
   const setPresentRowCol = () => {
-    if (presentCol == gridCols) {
+    if (presentCol == gridCols && presentRow < gridRows) {
       presentCol = 1;
       presentRow = presentRow + 1;
     } else {
@@ -63,7 +49,11 @@ const MainChart = (props: any) => {
       } else if (chartData.chart_type == "singlexaxis") {
         return (
           <div
-            style={{ gridRow: `${presentRow}`, gridColumn: `${presentCol}` }}
+            style={{
+              gridRow: `${presentRow}`,
+              gridColumn: `${presentCol}`,
+              width: `${width}%`,
+            }}
           >
             <SingleXaxisChart configs={chartData} />
           </div>

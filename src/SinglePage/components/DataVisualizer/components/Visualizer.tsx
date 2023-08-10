@@ -4,13 +4,14 @@ import MainChart from "./MainChart";
 import "../../../App.css";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { chartsConfig } from "../Configs/configs";
+import { chartsConfig, singleXaxisChartConfig } from "../Configs/configs";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import * as API from "./API/API";
 import { useQuery } from "@tanstack/react-query";
 import LoadingOverlay from "../../../utilities/Loader";
 import "./index.css";
+import SingleXaxis from "./SingleXaxis";
 
 const fetchSize = 1000;
 
@@ -140,6 +141,7 @@ const Visualizer = () => {
       {
         <section>
           <MainChart chartsConfig={chartsConfig} gridSpec="2*1" />
+          {/* <SingleXaxis chartsConfig={singleXaxisChartConfig} /> */}
         </section>
       }
     </>

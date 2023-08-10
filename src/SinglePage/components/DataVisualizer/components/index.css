@@ -1,35 +1,21 @@
-/* .gridItemsContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-}
-
-.item1 {
-  grid-column: 1 / 3;
-  grid-row: 1;
-}
-
-.item2 {
-  grid-column: 3/ 5;
-  grid-row: 1;
-} */
-
 * {
   box-sizing: border-box;
 }
+
 .wrapper {
   width: 93vw;
   margin: 0px;
   /* border: none; */
-  border: 2px solid rgb(245, 69, 45);
 }
 
 .wrapper > div {
   border: 2px solid rgb(233 171 88);
   border-radius: 5px;
   background-color: rgb(18, 201, 115);
-  padding: 1em;
+  padding: 8px;
   color: #0f7bd9;
+  /* overflow-x: scroll; */
+  /* overflow-y: scroll; */
   width: 99%;
 }
 
@@ -40,24 +26,25 @@
   width: 100vw !important;
 }
 
-.chart-container > div:first-child {
-  height: 98vh !important;
-}
-
-@media only screen and (max-width: 767px) {
-  /* CSS rules for mobile devices */
-  .chart-container > div:first-child {
-    height: calc(100vh - 10vh) !important;
-  }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 1023px) {
-  /* CSS rules for tablet devices */
-  .chart-container > div:first-child {
-    height: calc(100vh - 10vh) !important;
-  }
-}
-
 .highcharts-scrollbar-thumb {
   display: none !important;
+}
+
+.chartParent {
+  /* position: relative; */
+  /* border: 10px solid #c8118e; */
+  /* background-color: #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); */
+  /* margin-bottom: 10px; */
+  width: 100%;
+  /* overflow-x: scroll; */
+  /* -webkit-overflow-scrolling: touch; */
+  /* height: 1000px; */
+  /* max-width: 1/2; */
+}
+
+.single-xaxis-bg-container {
+  width: 100%;
+  height: 95vw;
+  /* border: 2px solid green; */
 }

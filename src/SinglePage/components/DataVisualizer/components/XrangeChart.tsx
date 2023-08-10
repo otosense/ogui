@@ -5,58 +5,29 @@ import xrange from "highcharts/modules/xrange";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts Stock module
 
-import * as API from "./API/API";
-import { ZoomContext } from "./Charts";
-import {
-  IProps,
-  ISingleChannelData,
-  ISrcChannel,
-  IZoomRange,
-} from "./API/interfaces";
-
-import {
-  defaultZoomBehavior,
-  epochConverted,
-  explicitChannelMapping,
-  settingZoomInGlobalStore,
-  formatDate,
-  updatingZoomFromGlobalStore,
-} from "./globalConfigs";
-
 HighchartsStock(Highcharts); // initialize the module
 xrange(Highcharts);
 HighchartsBoost(Highcharts);
 
 const XrangeChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
-  const {
-    chart_title,
-    chart_type,
-    x_label,
-    y_label,
-    miniMap,
-    data_limit,
-    src_channels,
-  } = props.configs;
+  const { chart_title, chart_type, x_label, y_label, miniMap, src_channels } =
+    props.configs;
 
-  const { get_data } = src_channels;
-
-  // Create Chart Reference
-  //const chartRef = useRef<HighchartsReact.Props>(null);
-  //const [data, setData] = useState<any[]>(src_channels); // handling Data for visualization
+  const chartRef = useRef<HighchartsReact.Props>(null);
   const [yAxisCategory, setYAxisCategory] = useState<string[]>([]); // handling X-Axis for Data
   const [seriesData, setSeriesData] = useState<any[]>([]); // handling X-Axis for plotting in Chart
-  //   const zoomLevel = useContext(ZoomContext); // Access Global Properties ZoomLevel
-  //   const [legendName, setLegendName] = useState<string>(""); // legend for the chart
 
   useEffect(() => {
-    const dataBackend = get_data();
-    const yCategories = dataBackend["uniqueArray"];
-    const seriesdata = dataBackend["series"];
+    const { get_data } = src_channels;
 
-    setSeriesData(seriesdata);
-    setYAxisCategory(yCategories);
-  }, []);
+    const backendData = get_data();
+    const backendYCategories = backendData.yAxisCategories;
+    const backendSeriesData = backendData.seriesData;
+
+    setSeriesData(backendSeriesData);
+    setYAxisCategory(backendYCategories);
+  }, [props]);
 
   const Options = {
     chart: {
@@ -69,7 +40,6 @@ const XrangeChart = (props: any) => {
 
     title: {
       text: String(chart_title),
-      // text: 'Title',
     },
     xAxis: {
       type: "datetime",
@@ -137,7 +107,7 @@ const XrangeChart = (props: any) => {
     },
     series: [
       {
-        name: "legendname",
+        name: src_channels.name,
         data: seriesData,
         turboThreshold: 100000,
         pointPadding: 1,
@@ -186,11 +156,10 @@ const XrangeChart = (props: any) => {
     <div className="chartParent">
       <HighchartsReact
         highcharts={Highcharts}
-        //ref={chartRef}
+        ref={chartRef}
         options={Options}
         constructorType={"stockChart"} // use stockChart constructor
       />
-      {/* <button onClick={handlePan} className='loadMoreButton'>Load More</button> */}
     </div>
   );
 };

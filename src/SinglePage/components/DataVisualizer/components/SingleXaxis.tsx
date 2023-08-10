@@ -3,18 +3,12 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts Stock module
 
-import {
-  IChannelMappingResponse,
-  IProps,
-  ISample,
-  ISrcChannel,
-  IZoomRange,
-} from "./API/interfaces";
-
 HighchartsStock(Highcharts); // initialize the module
 
 const SingleXaxisChart = (props: any) => {
   // Props Received from the Charts.tsx component from Backend API
+  console.log("props", props);
+  console.log("charts", props.chartsConfig);
   const {
     chart_title,
     chart_type,
@@ -22,7 +16,7 @@ const SingleXaxisChart = (props: any) => {
     y_label,
     src_channels,
     yAxis_conf,
-  } = props?.configs;
+  } = props.chartsConfig;
 
   const chartRef = useRef<HighchartsReact.Props>(null);
   const [xCategory, setXCategory] = useState<string[]>([]);
@@ -87,21 +81,23 @@ const SingleXaxisChart = (props: any) => {
       };
       allSeriesOptions.push(oneSeriesOptions);
     });
-    console.log("allSeriesOptions", allSeriesOptions);
+    // console.log("allSeriesOptions", allSeriesOptions);
     setSeriesOptions(allSeriesOptions);
-    console.log("yAxis_conf", yAxis_conf);
+    // console.log("yAxis_conf", yAxis_conf);
   }, []);
 
   const options = {
     chart: {
       type: String(chart_type),
+      //height: null,
+      //width: 1000,
       marginRight: 10,
       zoomType: "xy",
       panning: true,
       panKey: "shift",
       scrollablePlotArea: {
         minHeight: 3000,
-        minWidth: 10,
+        // minWidth: 1000,
       },
     },
     title: {
@@ -191,7 +187,7 @@ const SingleXaxisChart = (props: any) => {
     },
   };
   return (
-    <div className="chartParent">
+    <div className="single-xaxis-bg-container">
       {!isLoading ? (
         <>
           <HighchartsReact

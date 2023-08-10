@@ -94,11 +94,11 @@ const getAnnotData = () => {
       y: uniqueArray?.indexOf(singleChannelData.tag),
       title: singleChannelData.tag,
     };
-    seriesData = [...seriesData, chartData];
+    seriesData.push(chartData);
   });
-  console.log("ua", uniqueArray);
-  console.log("se", seriesData);
-  let formattedData = { uniqueArray: uniqueArray, series: seriesData };
+  // console.log("ua", uniqueArray);
+  // console.log("se", seriesData);
+  let formattedData = { yAxisCategories: uniqueArray, seriesData: seriesData };
   return formattedData;
 };
 

@@ -87,6 +87,7 @@ interface IChartData {
 }
 
 export type {
+  IOchartProps,
   IProps,
   IViewProps,
   ISample,

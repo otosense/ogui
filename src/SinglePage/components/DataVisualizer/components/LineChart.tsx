@@ -3,14 +3,6 @@ import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts Stock module
 
-import {
-  IChannelMappingResponse,
-  IProps,
-  ISample,
-  ISrcChannel,
-  IZoomRange,
-} from "./API/interfaces";
-
 HighchartsStock(Highcharts); // initialize the module
 
 const LineChart = (props: any) => {
@@ -101,7 +93,6 @@ const LineChart = (props: any) => {
     yAxis: {
       lineWidth: 1,
       opposite: false,
-      type: "linear",
       title: {
         text: String(y_label),
       },

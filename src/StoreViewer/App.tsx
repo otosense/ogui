@@ -1,19 +1,33 @@
-import React from 'react';
-import './App.css';
-import StoreView from './Pages/Virtual';
-import StoreViewer from './Pages/StoreViewer';
-import Example from './Pages/sample';
+import React from "react";
+import "./App.css";
+import StoreView from "./Pages/StoreView";
+import StoreViewer from "./Pages/StoreViewer";
+import Example from "./Pages/sample";
+import { apiMethod } from "./API/ApiCalls";
+
+// const getData = (passer: { from_: number; to_: number; }) => {
+// return apiMethod(passer)
+// }
+
+const getData: (
+	val: string[],
+	passer: { from_: number; to_: number }
+) => { data: any; status: any; error: any; isLoading: any; isFetching: any } = (
+	val,
+	passer
+) => {
+	return apiMethod(passer);
+};
 
 function App() {
-
-  return (
-    <>
-      {/* {<Infinite />} */}
-      {/* <Example /> */}
-      <StoreView />
-      {/* <StoreViewer /> */}
-    </>
-  );
+	return (
+		<>
+			{/* {<Infinite />} */}
+			{/* <Example /> */}
+			<StoreView getData={getData} />
+			{/* <StoreViewer /> */}
+		</>
+	);
 }
 
 export default App;

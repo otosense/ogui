@@ -26,7 +26,8 @@ const schema: RJSFSchema = {
         firstName: {
             type: 'string',
             title: 'First Name',
-            minLength: 10
+            minLength: 10,
+            default: "Sathish" // which set value to the input field
         },
         lastName: {
             type: 'string',
@@ -137,9 +138,9 @@ const ExampleForm = () => {
             <Form
                 schema={schema}
                 uiSchema={uiSchema}
+                formData={initialFormData} // Pass initial form data
                 onSubmit={handleSubmit}
                 validator={validator}
-                formData={initialFormData} // Pass initial form data
                 liveValidate={false}
                 noHtml5Validate
             />

@@ -3,6 +3,7 @@ import React from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { RJSFSchema, UiSchema } from '@rjsf/utils';
+import Select from 'react-select';
 
 // Note: 
 
@@ -85,6 +86,31 @@ const schema: RJSFSchema = {
     }
 };
 
+const CustomMultiChoiceWidget = (props: { id: any; options: any; value: any; onChange: any; }) => {
+    const { id, options, value, onChange } = props;
+
+    const handleChange = (selectedOptions: any) => {
+        const selectedValues = selectedOptions?.map((option: { value: any; }) => option.value);
+        onChange(selectedValues);
+    };
+    console.log(' options.enum', options);
+    const mappedOptions = options.enumOptions?.map((enumValue: any) => ({
+        value: enumValue.value,
+        label: enumValue.label
+    }));
+
+    return (
+        <Select
+            id={id}
+            isMulti
+            options={mappedOptions}
+            value={mappedOptions?.filter((option: { value: any; }) => value.includes(option.value))}
+            onChange={handleChange}
+            placeholder="Select option(s)..."
+        />
+    );
+};
+
 const uiSchema: UiSchema = {
 
     "ui:order": ["firstName", "lastName", "age", "password", "multiChoiceWithArray", "someNumber", "check", "multiChoiceWithCheckBox", "additionalItems", "done", "fileUpload"],
@@ -119,12 +145,18 @@ const uiSchema: UiSchema = {
     },
     age: {
         "ui:help": "The Age that can be used to contact you"
-    }
+    },
+    multiChoiceWithArray: {
+        'ui:widget': CustomMultiChoiceWidget // Use the custom widget
+    },
 };
 
-const ExampleForm = () => {
+
+
+
+const CustomSearchable = () => {
     const initialFormData = {
-        lastName: 'Smith' // Set your default value here
+        lastName: 'Smit' // Set your default value here
     };
     const handleSubmit = ({ formData }: any) => {
         console.log('Form data submitted:', formData);
@@ -145,6 +177,9 @@ const ExampleForm = () => {
             />
         </div>
     );
+
+
 };
 
-export default ExampleForm;
+export default CustomSearchable;
+

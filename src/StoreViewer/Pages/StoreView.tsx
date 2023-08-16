@@ -1,4 +1,3 @@
-/* eslint-disable no-tabs */
 import React, { useEffect, useState, useRef } from "react";
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -21,19 +20,40 @@ interface storeViewIProps {
 	sentinel: string;
 }
 
-const testData = {
-	id: "123e234r23",
-	sr: 44100,
-	annotation: {
-		a: 1,
-		b: 2,
+const testData = [
+	{
+		id: "123e234r23",
+		sr: "notloaded",
+		annotation: [
+			{
+				a: [{ as: 12, df: "notloaded" }],
+				b: "notloaded",
+			},
+			{
+				s: [1, 2, 3],
+				c: { sd: 12, rt: 45 },
+			},
+		],
+		channel: ["c1", "c2"],
 	},
-	channel: ["c1", "c2"],
-};
+	{
+		id: "09876543",
+		sr: "notloaded",
+		bt: { u: 67, o: 899 },
+		annotationTesting: [
+			{
+				a: { op: 12, gh: "notloaded" },
+				b: "notloaded",
+			},
+			{
+				s: [1, 2, 3],
+				c: { sd: 12, rt: 45 },
+			},
+		],
+		channel: ["c1", "c2"],
+	},
+];
 
-const onNodeClick = () => {
-	console.log("testing");
-};
 const handleCopy = async (
 	label: string,
 	setCopied: React.Dispatch<React.SetStateAction<boolean>>
@@ -47,105 +67,31 @@ const handleCopy = async (
 	}
 };
 
-const renderSessionDetails = (session: any, getData: any) => {
-	const sessionKeys = Object.keys(session);
+function getAllKeys(obj, path: string[] = []): string[][] {
+	let keys = [];
 
-	return (
-		<>
-			{sessionKeys.map((key) => {
-				const value = session[key];
+	for (let key in obj) {
+		const currentPath = path.concat(key);
 
-				if (
-					Array.isArray(value) ||
-					value instanceof Object ||
-					value === "notloaded"
-				) {
-					if (value === "notloaded") {
-						return (
-							<StyledTreeItem
-								key={`${session.id}-${key}`}
-								nodeId={`${session.id}-${key}`}
-								label={`${key}: ${value}`}
-								onClick={() => {
-									onNodeClick();
-								}}
-							/>
-						);
-					}
+		if (Array.isArray(obj) && typeof obj[key] !== "object") {
+			continue; // Skip primitive array elements
+		}
 
-					if (Array.isArray(value)) {
-						<StyledTreeItem
-							key={`${session.id}-${key}`}
-							nodeId={`${session.id}-${key}`}
-							label={String(key)}
-						>
-							{value.map((arrayItem, index) => {
-								if (arrayItem instanceof Object) {
-									return renderSessionDetails(arrayItem, getData);
-								} else {
-									return (
-										<StyledTreeItem
-											key={`${session.id}-channel-${index}`}
-											nodeId={`${session.id}-channel-${index}`}
-											label={String(arrayItem)}
-										/>
-									);
-								}
-							})}
-							;
-						</StyledTreeItem>;
-					}
+		keys.push(currentPath);
 
-					if (value instanceof Object) {
-						<StyledTreeItem
-							key={`${session.id}-${key}`}
-							nodeId={`${session.id}-${key}`}
-							label={String(key)}
-						>
-							return renderSessionDetails(value, getData);
-						</StyledTreeItem>;
-					}
+		if (typeof obj[key] === "object" && obj[key] !== null) {
+			keys = keys.concat(getAllKeys(obj[key], currentPath));
+		}
+	}
 
-					return null; // Return null if no conditions match.
-				} else {
-					return (
-						<StyledTreeItem
-							key={`${session.id}-${key}`}
-							nodeId={`${session.id}-${key}`}
-							label={`${key}: ${value}`}
-						/>
-					);
-				}
-			})}
-		</>
+	return keys;
+}
+
+function findSublistWithValue(keysList: [], targetValue: string): string[] {
+	return keysList.find(
+		(sublist) => sublist[sublist.length - 1] === targetValue
 	);
-};
-
-const renderTree = (
-	nodes: any,
-	isRoot: boolean,
-	i: number,
-	searchQuery: string,
-	setCopied: React.Dispatch<React.SetStateAction<boolean>>,
-	getData: any
-) => (
-	<section key={i} style={{ position: "relative" }} className="renderNodes">
-		{isRoot && (
-			<button
-				className="copy"
-				onClick={async () => {
-					await handleCopy(`${nodes.id}`, setCopied);
-				}}
-				title="Click to Copy"
-			>
-				<InfoOutlinedIcon style={{ color: "#0880ae" }} />
-			</button>
-		)}
-		<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
-			{renderSessionDetails(nodes, getData)}
-		</StyledTreeItem>
-	</section>
-);
+}
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -163,6 +109,8 @@ const useDebounce = (value: string, delay: number) => {
 	return debouncedValue;
 };
 
+const notLoaded = "notloaded";
+
 const StoreView = (props: storeViewIProps) => {
 	const fetchSize = 100;
 	const observer = useRef<IntersectionObserver | null>(null);
@@ -177,7 +125,6 @@ const StoreView = (props: storeViewIProps) => {
 	const [copied, setCopied] = useState(false);
 
 	const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
 	const { getData } = props;
 
 	const { data, status, error, isLoading, isFetching } = getData(
@@ -192,6 +139,129 @@ const StoreView = (props: storeViewIProps) => {
 			to_: Number(prevPasser.to_ + fetchSize),
 		}));
 	};
+
+	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
+		console.log("key", clickedKeyParentStructure);
+		getData(clickedKeyParentStructure, passer);
+	};
+
+	const renderSessionDetails = (session: any, sessionId = "", keysList: []) => {
+		const sessionKeys = Object.keys(session);
+		return (
+			<>
+				{sessionKeys.map((key) => {
+					const value = session[key];
+
+					if (
+						Array.isArray(value) ||
+						value instanceof Object ||
+						value === notLoaded
+					) {
+						if (value === notLoaded) {
+							return (
+								<StyledTreeItem
+									key={`${sessionId}-${key}`}
+									nodeId={`${sessionId}-${key}`}
+									label={`${key}: ${value}`}
+									onClick={() => {
+										let clickedKeyParentStructure: string[] =
+											findSublistWithValue(keysList, key);
+										clickedKeyParentStructure.push;
+										clickedKeyParentStructure = [
+											sessionId,
+											...clickedKeyParentStructure,
+										];
+
+										onClickOfNotLoaded(clickedKeyParentStructure);
+									}}
+								/>
+							);
+						}
+						if (Array.isArray(value)) {
+							return (
+								<StyledTreeItem
+									key={`${sessionId}-${key}`}
+									nodeId={`${sessionId}-${key}`}
+									label={String(key)}
+								>
+									{value.map((arrayItem, index) => {
+										if (Object.values(arrayItem).includes("notloaded")) {
+											return renderSessionDetails(
+												arrayItem,
+												sessionId,
+												keysList
+											);
+										}
+										if (arrayItem instanceof Object) {
+											// console.log("array of objects", arrayItem, getData);
+											return renderSessionDetails(
+												arrayItem,
+												sessionId,
+												keysList
+											);
+										} else {
+											return (
+												<StyledTreeItem
+													key={`${sessionId}--${index}`}
+													nodeId={`${sessionId}--${index}`}
+													label={String(arrayItem)}
+												/>
+											);
+										}
+									})}
+								</StyledTreeItem>
+							);
+						}
+						if (value instanceof Object) {
+							return (
+								<StyledTreeItem
+									key={`${sessionId}-${key}`}
+									nodeId={`${sessionId}-${key}`}
+									label={String(key)}
+								>
+									{renderSessionDetails(value, sessionId, keysList)}
+								</StyledTreeItem>
+							);
+						}
+					} else {
+						return (
+							<StyledTreeItem
+								key={`${sessionId}-${key}`}
+								nodeId={`${sessionId}-${key}`}
+								label={`${key}: ${value}`}
+							/>
+						);
+					}
+				})}
+			</>
+		);
+	};
+
+	const renderTree = (
+		nodes: any,
+		isRoot: boolean,
+		i: number,
+		searchQuery: string,
+		setCopied: React.Dispatch<React.SetStateAction<boolean>>,
+		getData: any
+	) => (
+		<section key={i} style={{ position: "relative" }} className="renderNodes">
+			{isRoot && (
+				<button
+					className="copy"
+					onClick={async () => {
+						await handleCopy(`${nodes.id}`, setCopied);
+					}}
+					title="Click to Copy"
+				>
+					<InfoOutlinedIcon style={{ color: "#0880ae" }} />
+				</button>
+			)}
+			<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
+				{renderSessionDetails(nodes, nodes?.id, getAllKeys(nodes))}
+			</StyledTreeItem>
+		</section>
+	);
 
 	useEffect(() => {
 		if (!isLoading && status === "success" && data) {
@@ -212,7 +282,7 @@ const StoreView = (props: storeViewIProps) => {
 	useEffect(() => {
 		if (storeData.data) {
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
-			setSearchResults(filteredData);
+			setSearchResults(testData);
 		}
 	}, [storeData, debouncedSearchQuery]);
 

@@ -78,10 +78,10 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 ### Table JSON maker
 ```
 interface IProps {
-  schema: RJSFSchema;
-  liveValidate: boolean;
-  uiSchema: UiSchema;
-  handleSubmit: ({ formData }: any) => void;
+  func: (...args: any[]) => any
+  schema: FuncSigSchema
+  uiSchema: UiSchema
+  liveValidate: boolean 
 }
 ```
 

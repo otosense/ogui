@@ -1,5 +1,5 @@
 import React from 'react';
-import Main from './pages/Main';
+import FunctionCaller from './pages/Main';
 import { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 
@@ -108,12 +108,12 @@ function App() {
     }
   };
 
-  const handleSubmit = ({ formData }: any) => {
+  const func = ({ formData }: any) => {
     console.log('Form data submitted:', formData);
   };
 
   return (
-    <Main schema={schema} liveValidate={false} uiSchema={uiSchema} handleSubmit={handleSubmit} />
+    <FunctionCaller schema={schema} liveValidate={false} uiSchema={uiSchema} func={func} />
   );
 }
 

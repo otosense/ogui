@@ -4,8 +4,8 @@ import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { RJSFSchema, UiSchema } from '@rjsf/utils';
 
-const ExampleForm = (props: { schema: RJSFSchema; liveValidate: boolean; uiSchema: UiSchema; handleSubmit: ({ formData }: any) => void; }) => {
-    const { schema, liveValidate, uiSchema, handleSubmit } = props;
+const FunctionCaller = (props: { schema: RJSFSchema; liveValidate: boolean; uiSchema: UiSchema; func: (...args: any[]) => any; }) => {
+    const { schema, liveValidate, uiSchema, func } = props;
 
     return (
         <div>
@@ -14,7 +14,7 @@ const ExampleForm = (props: { schema: RJSFSchema; liveValidate: boolean; uiSchem
                 schema={schema}
                 uiSchema={uiSchema}
                 liveValidate={liveValidate}
-                onSubmit={handleSubmit}
+                onSubmit={func}
                 validator={validator}
                 noHtml5Validate
             />
@@ -22,4 +22,4 @@ const ExampleForm = (props: { schema: RJSFSchema; liveValidate: boolean; uiSchem
     );
 };
 
-export default memo(ExampleForm);
+export default memo(FunctionCaller);

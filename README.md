@@ -76,13 +76,14 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 ```
 
 ### Table JSON maker
-
+```
 interface IProps {
   schema: RJSFSchema;
   liveValidate: boolean;
   uiSchema: UiSchema;
   handleSubmit: ({ formData }: any) => void;
 }
+```
 
 If you want to run the Table JSON maker. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ```

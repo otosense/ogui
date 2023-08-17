@@ -24,3 +24,18 @@
                 }
             ]
         },
+
+
+        // Note: 
+
+// input text => where user can input we can validate input (rules are per user given)
+// dependency check
+// dropdown with multiple choices =>  need tick mark => we need to do customize
+// single and multiple select checkbox
+
+
+
+// add searchable dropdown
+// add ReadOnly (not Editable)
+// customize example: input box with searchable icon, 
+// instead of highlighting the dropdown provide tick mark

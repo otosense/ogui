@@ -1,5 +1,5 @@
 import React from 'react';
-import FunctionCaller from './pages/Main';
+import FunctionCaller from './pages/FunctionCaller';
 import { RJSFSchema, UiSchema } from '@rjsf/utils';
 
 

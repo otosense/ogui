@@ -109,8 +109,6 @@ const useDebounce = (value: string, delay: number) => {
 	return debouncedValue;
 };
 
-const notLoaded = "notloaded";
-
 const StoreView = (props: storeViewIProps) => {
 	const fetchSize = 100;
 	const observer = useRef<IntersectionObserver | null>(null);
@@ -125,7 +123,7 @@ const StoreView = (props: storeViewIProps) => {
 	const [copied, setCopied] = useState(false);
 
 	const debouncedSearchQuery = useDebounce(searchQuery, 500);
-	const { getData } = props;
+	const { getData, sentinel } = props;
 
 	const { data, status, error, isLoading, isFetching } = getData(
 		["key1", "key2"],
@@ -141,7 +139,7 @@ const StoreView = (props: storeViewIProps) => {
 	};
 
 	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
-		console.log("key", clickedKeyParentStructure);
+		// console.log("key", clickedKeyParentStructure);
 		getData(clickedKeyParentStructure, passer);
 	};
 
@@ -155,9 +153,9 @@ const StoreView = (props: storeViewIProps) => {
 					if (
 						Array.isArray(value) ||
 						value instanceof Object ||
-						value === notLoaded
+						value === sentinel
 					) {
-						if (value === notLoaded) {
+						if (value === sentinel) {
 							return (
 								<StyledTreeItem
 									key={`${sessionId}-${key}`}
@@ -185,15 +183,7 @@ const StoreView = (props: storeViewIProps) => {
 									label={String(key)}
 								>
 									{value.map((arrayItem, index) => {
-										if (Object.values(arrayItem).includes("notloaded")) {
-											return renderSessionDetails(
-												arrayItem,
-												sessionId,
-												keysList
-											);
-										}
 										if (arrayItem instanceof Object) {
-											// console.log("array of objects", arrayItem, getData);
 											return renderSessionDetails(
 												arrayItem,
 												sessionId,
@@ -242,8 +232,7 @@ const StoreView = (props: storeViewIProps) => {
 		isRoot: boolean,
 		i: number,
 		searchQuery: string,
-		setCopied: React.Dispatch<React.SetStateAction<boolean>>,
-		getData: any
+		setCopied: React.Dispatch<React.SetStateAction<boolean>>
 	) => (
 		<section key={i} style={{ position: "relative" }} className="renderNodes">
 			{isRoot && (

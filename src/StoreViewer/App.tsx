@@ -5,10 +5,6 @@ import StoreViewer from "./Pages/StoreViewer";
 import Example from "./Pages/sample";
 import { apiMethod } from "./API/ApiCalls";
 
-// const getData = (passer: { from_: number; to_: number; }) => {
-// return apiMethod(passer)
-// }
-
 const getData: (
 	val: string[],
 	passer: { from_: number; to_: number }
@@ -24,7 +20,7 @@ function App() {
 		<>
 			{/* {<Infinite />} */}
 			{/* <Example /> */}
-			<StoreView getData={getData} />
+			<StoreView getData={getData} sentinel={"notloaded"} />
 			{/* <StoreViewer /> */}
 		</>
 	);

@@ -1,10 +1,13 @@
 import React, { memo } from 'react';
 import './App.css';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import InfiniteScroll from './pages/InfiniteScroll';
 import { Box, Typography } from '@mui/material';
 import { APIresponse } from './assets/sample';
 import LocalDataTable from './pages/LocalDataTable';
+const queryClient = new QueryClient();
 
 const configuration = {
   apiHandler: {
@@ -284,12 +287,12 @@ const configuration4 = {
 function App() {
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <InfiniteScroll config={configuration} />
       <InfiniteScroll config={configuration2} />
       <InfiniteScroll config={configuration3} />
       <InfiniteScroll config={configuration4} />
-    </>
+    </QueryClientProvider>
   );
 }
 

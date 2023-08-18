@@ -41,6 +41,12 @@ Goto the DataTable Folder in Terminal and Start the server
   yarn dev
 ```
 
+# To use this DataTable in  other projects import like below
+
+```bash
+const DataTable = lazy(() => import('@otosense/ogui/src/DataTable/App'));
+```
+
 ### DPP
 If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ```
@@ -49,6 +55,12 @@ If you want to run the DPP. please go to the Index.html file. and uncomment this
 
 ```bash
   yarn dev
+```
+
+# To use this DPP in  other projects import like below
+
+```bash 
+const Dagger = lazy(() => import('@otosense/ogui/src/DAGv2/App'));
 ```
 
 ### DataVisualizer
@@ -73,4 +85,28 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 
 ```bash
   node index.js
+```
+
+# To use this Charts in  other projects import like below
+
+```bash
+const Charts = lazy(() => import('@otosense/ogui/src/DataVisualizer/App'));
+```
+
+
+
+### StoreViewer
+If you want to run the StoreViewer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/StoreViewer/main.tsx"></script>
+```
+
+```bash
+  yarn dev
+```
+
+# To use this StoreViewer in  other projects import like below
+
+```bash
+const StoreView = lazy(() => import('@otosense/ogui/src/StoreViewer/App'));
 ```

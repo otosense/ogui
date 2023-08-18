@@ -15,8 +15,6 @@ const GetMethod = async (url: any) => {
 export async function PostMethod(url: string, data: any) {
 	try {
 		const response = await axios.post(url, data);
-		console.log("re", response);
-		console.log("res.data", response.data);
 		return response.data;
 	} catch (error: any) {
 		// Handle the error here
@@ -26,10 +24,8 @@ export async function PostMethod(url: string, data: any) {
 	}
 }
 
-export async function StoreConfig(
-	data: { from_: number; to_: number } | undefined
-) {
+export function StoreConfig(data: { from_: number; to_: number } | undefined) {
 	const url = ApiUrl.StoreConfig;
 	// return GetMethod(url);
-	return await PostMethod(url, data);
+	return PostMethod(url, data);
 }

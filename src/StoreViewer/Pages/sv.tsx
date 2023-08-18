@@ -6,13 +6,46 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField/TextField";
 import Button from "@mui/material/Button/Button";
 import { Alert } from "@mui/material";
+
 import SnackBar from "../../utilities/SnackBar";
 import LoadingOverlay from "../../utilities/Loader";
 import { apiMethod } from "../API/ApiCalls";
 import { StyledTreeItem } from "../components/StoreViewStyle";
 import { storeViewIProps } from "../Utilities/Interfaces";
-import { da } from "date-fns/locale";
-import Pagination from "@mui/material/Pagination";
+
+const testData = [
+	{
+		id: "123e234r23",
+		sr: "notloaded",
+		annotation: [
+			{
+				a: [{ as: 12, df: "notloaded" }],
+				b: "notloaded",
+			},
+			{
+				s: [1, 2, 3],
+				c: { sd: 12, rt: 45 },
+			},
+		],
+		channel: ["c1", "c2"],
+	},
+	{
+		id: "09876543",
+		sr: "notloaded",
+		bt: { u: 67, o: 899 },
+		annotationTesting: [
+			{
+				a: { op: 12, gh: "notloaded" },
+				b: "notloaded",
+			},
+			{
+				s: [1, 2, 3],
+				c: { sd: 12, rt: 45 },
+			},
+		],
+		channel: ["c1", "c2"],
+	},
+];
 
 const handleCopy = async (
 	label: string,
@@ -73,24 +106,36 @@ const StoreView = (props: storeViewIProps) => {
 	const { getRootNodeData, sentinel, getChildNodeData, fetchSize } = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
+
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
 	const [passer, setPasser] = useState({
 		from_: Number(0),
 		to_: Number(fetchSize),
 	});
+	const [loadedData, setLoadedData] = useState({ data: {} });
 	const [storeData, setStoreData] = useState({ data: [] });
 	const [copied, setCopied] = useState(false);
-	const [loadedData, setLoadedData] = useState({ data: {} });
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
 
 	const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
-	// const { data,, isLoading, isFetching } =
-	// 	getRootNodeData(passer);
+	const { data, status, error, isLoading, isFetching } =
+		getRootNodeData(passer);
 
-	// console.log("data", data);
+	// ###:testing to check data
+	console.log("data coming from passer:", getRootNodeData(passer));
+	console.log(
+		"data",
+		data,
+		"status",
+		status,
+		"error",
+		error,
+		"isLoading",
+		isLoading,
+		"isFetching",
+		isFetching
+	);
 
 	const loadMore = () => {
 		setPasser((prevPasser) => ({
@@ -100,10 +145,11 @@ const StoreView = (props: storeViewIProps) => {
 	};
 
 	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
-		// console.log("key", clickedKeyParentStructure);
-		//	getData(clickedKeyParentStructure, passer);
+		console.log("clickedKeyParentStructure", clickedKeyParentStructure);
 		const childNodeLoadedData = getChildNodeData(clickedKeyParentStructure);
+		console.log("childNodeLoadedData", childNodeLoadedData);
 		setLoadedData(childNodeLoadedData);
+		console.log("loaded", loadedData);
 	};
 
 	const renderSessionDetails = (session: any, sessionId = "", keysList: []) => {
@@ -215,24 +261,26 @@ const StoreView = (props: storeViewIProps) => {
 		</section>
 	);
 
-	// useEffect(() => {
-	// 	if (!loading) {
-	// 		setStoreData((prevData: any) => {
-	// 			const newData = data.data.filter(
-	// 				(newItem: { id: any }) =>
-	// 					!prevData.data.some((item: { id: any }) => item.id === newItem.id)
-	// 			);
+	useEffect(() => {
+		if (!isLoading && status === "success" && data) {
+			setStoreData((prevData: any) => {
+				const newData = data.data.filter(
+					(newItem: { id: any }) =>
+						!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+				);
 
-	// 			return {
-	// 				...prevData,
-	// 				data: [...prevData.data, ...newData],
-	// 			};
-	// 		});
-	// 	}
-	// }, [loading]);
+				return {
+					...prevData,
+					data: [...prevData.data, ...newData],
+				};
+			});
+		}
+		console.log("store", storeData);
+	}, [data, isLoading, status, loadedData]);
 
 	useEffect(() => {
 		if (storeData.data) {
+			// console.log("debouncedSearchQuery", debouncedSearchQuery);
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
 			setSearchResults(filteredData);
 		}
@@ -254,7 +302,12 @@ const StoreView = (props: storeViewIProps) => {
 		};
 
 		observer.current = new IntersectionObserver(handleIntersect, options);
-		if (observer.current && !loading && searchResults.length >= fetchSize) {
+		if (
+			observer.current &&
+			!isLoading &&
+			!isFetching &&
+			searchResults.length >= fetchSize
+		) {
 			observer.current.observe(document.getElementById("bottomObserver")!);
 		}
 
@@ -263,13 +316,18 @@ const StoreView = (props: storeViewIProps) => {
 				observer.current.disconnect();
 			}
 		};
-	}, [loading, searchResults]);
+	}, [isLoading, isFetching, searchResults]);
 
 	useEffect(() => {
-		console.log("not loaded use efffect");
-		searchResults.map((eachItem, index) =>
-			eachItem?.id === loadedData.data.id ? loadedData : eachItem
-		);
+		console.log("triggered loade");
+		console.log("storeData", storeData);
+		console.log("loadedData", loadedData);
+		let updatedStoreData = storeData.data.map((eachItem, index) => {
+			console.log("eachItem?.id", eachItem?.id);
+			console.log("loadedData.data.id", loadedData.data.id);
+			eachItem?.id === loadedData.data.id ? loadedData.data : eachItem;
+		});
+		console.log("data after upate", updatedStoreData);
 	}, [loadedData]);
 
 	const handleSearchQueryChange = (
@@ -279,7 +337,6 @@ const StoreView = (props: storeViewIProps) => {
 	};
 
 	const filterData = (nodes: any[], query: string) => {
-		console.log("nodes", nodes);
 		const filteredNodes: any = nodes.filter((node) => {
 			if (node.id.toLowerCase().includes(query.toLowerCase())) {
 				return true;
@@ -290,40 +347,13 @@ const StoreView = (props: storeViewIProps) => {
 			}
 			return false;
 		});
+		console.log("filtered data called", filteredNodes);
 		return filteredNodes;
 	};
 
-	useEffect(() => {
-		// async function fetchAndSetData() {
-		// 	try {
-		// 		const result = await getRootNodeData(passer);
-		// 		console.log("reslu", result);
-		// 		// setStoreData(result);
-		// 		setStoreData((prevData: any) => {
-		// 			const newData = result.data.data.filter(
-		// 				(newItem: { id: any }) =>
-		// 					!prevData.data.some((item: { id: any }) => item.id === newItem.id)
-		// 			);
-
-		// 			return {
-		// 				...prevData,
-		// 				data: [...prevData.data, ...newData],
-		// 			};
-		// 		});
-		// 	} catch (error) {
-		// 		setError(error);
-		// 	} finally {
-		// 		setLoading(false);
-		// 	}
-		// }
-
-		// fetchAndSetData();
-		console.log(getRootNodeData(passer));
-	}, []);
-
 	return (
 		<main className="mainArea">
-			{loading && <LoadingOverlay />}
+			{isLoading && <LoadingOverlay />}
 			<section className="topLayout">
 				<TextField
 					fullWidth
@@ -337,6 +367,9 @@ const StoreView = (props: storeViewIProps) => {
 					required
 					size="small"
 				/>
+				{/* <Button variant='contained' onClick={loadMore}>
+                    Load More
+                </Button> */}
 			</section>
 			{error !== undefined && error && (
 				<Alert severity="error" className="errorMessage">
@@ -359,7 +392,7 @@ const StoreView = (props: storeViewIProps) => {
 						searchResults.map((node, i) =>
 							renderTree(node, true, i, searchQuery, setCopied)
 						)
-					) : !loading ? (
+					) : !isFetching && !isLoading ? (
 						<StyledTreeItem
 							nodeId="no-results"
 							label="No matching nodes found"

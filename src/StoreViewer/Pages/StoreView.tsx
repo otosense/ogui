@@ -6,53 +6,13 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField/TextField";
 import Button from "@mui/material/Button/Button";
 import { Alert } from "@mui/material";
-
 import SnackBar from "../../utilities/SnackBar";
 import LoadingOverlay from "../../utilities/Loader";
 import { apiMethod } from "../API/ApiCalls";
 import { StyledTreeItem } from "../components/StoreViewStyle";
-
-interface storeViewIProps {
-	getData: (
-		val: string[],
-		passer: { from_: number; to_: number }
-	) => { data: any; status: any; error: any; isLoading: any; isFetching: any };
-	sentinel: string;
-}
-
-const testData = [
-	{
-		id: "123e234r23",
-		sr: "notloaded",
-		annotation: [
-			{
-				a: [{ as: 12, df: "notloaded" }],
-				b: "notloaded",
-			},
-			{
-				s: [1, 2, 3],
-				c: { sd: 12, rt: 45 },
-			},
-		],
-		channel: ["c1", "c2"],
-	},
-	{
-		id: "09876543",
-		sr: "notloaded",
-		bt: { u: 67, o: 899 },
-		annotationTesting: [
-			{
-				a: { op: 12, gh: "notloaded" },
-				b: "notloaded",
-			},
-			{
-				s: [1, 2, 3],
-				c: { sd: 12, rt: 45 },
-			},
-		],
-		channel: ["c1", "c2"],
-	},
-];
+import { storeViewIProps } from "../Utilities/Interfaces";
+import { da } from "date-fns/locale";
+import Pagination from "@mui/material/Pagination";
 
 const handleCopy = async (
 	label: string,
@@ -110,9 +70,9 @@ const useDebounce = (value: string, delay: number) => {
 };
 
 const StoreView = (props: storeViewIProps) => {
-	const fetchSize = 100;
-	const observer = useRef<IntersectionObserver | null>(null);
+	const { getRootNodeData, sentinel, getChildNodeData, fetchSize } = props;
 
+	const observer = useRef<IntersectionObserver | null>(null);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
 	const [passer, setPasser] = useState({
@@ -121,15 +81,16 @@ const StoreView = (props: storeViewIProps) => {
 	});
 	const [storeData, setStoreData] = useState({ data: [] });
 	const [copied, setCopied] = useState(false);
+	const [loadedData, setLoadedData] = useState({ data: {} });
+	const [loading, setLoading] = useState(true);
+	// const [error, setError] = useState(null);
 
 	const debouncedSearchQuery = useDebounce(searchQuery, 500);
-	const { getData, sentinel } = props;
 
-	const { data, status, error, isLoading, isFetching } = getData(
-		["key1", "key2"],
-		passer
-	);
-	//  const { data, status, error, isLoading, isFetching } = apiMethod(passer);
+	// const { data,, isLoading, isFetching } =
+	// 	getRootNodeData(passer);
+
+	// console.log("data", data);
 
 	const loadMore = () => {
 		setPasser((prevPasser) => ({
@@ -140,7 +101,9 @@ const StoreView = (props: storeViewIProps) => {
 
 	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
 		// console.log("key", clickedKeyParentStructure);
-		getData(clickedKeyParentStructure, passer);
+		//	getData(clickedKeyParentStructure, passer);
+		const childNodeLoadedData = getChildNodeData(clickedKeyParentStructure);
+		setLoadedData(childNodeLoadedData);
 	};
 
 	const renderSessionDetails = (session: any, sessionId = "", keysList: []) => {
@@ -252,8 +215,8 @@ const StoreView = (props: storeViewIProps) => {
 		</section>
 	);
 
-	useEffect(() => {
-		if (!isLoading && status === "success" && data) {
+	/*useEffect(() => {
+		if (!isLoading && data) {
 			setStoreData((prevData: any) => {
 				const newData = data.data.filter(
 					(newItem: { id: any }) =>
@@ -266,12 +229,12 @@ const StoreView = (props: storeViewIProps) => {
 				};
 			});
 		}
-	}, [data, isLoading, status]);
+	}, [loading]);*/
 
 	useEffect(() => {
 		if (storeData.data) {
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
-			setSearchResults(testData);
+			setSearchResults(filteredData);
 		}
 	}, [storeData, debouncedSearchQuery]);
 
@@ -291,12 +254,7 @@ const StoreView = (props: storeViewIProps) => {
 		};
 
 		observer.current = new IntersectionObserver(handleIntersect, options);
-		if (
-			observer.current &&
-			!isLoading &&
-			!isFetching &&
-			searchResults.length >= fetchSize
-		) {
+		if (observer.current && !loading && searchResults.length >= fetchSize) {
 			observer.current.observe(document.getElementById("bottomObserver")!);
 		}
 
@@ -305,7 +263,13 @@ const StoreView = (props: storeViewIProps) => {
 				observer.current.disconnect();
 			}
 		};
-	}, [isLoading, isFetching, searchResults]);
+	}, [loading, searchResults]);
+
+	useEffect(() => {
+		searchResults.map((eachItem, index) =>
+			eachItem?.id === loadedData.data.id ? loadedData : eachItem
+		);
+	}, [loadedData]);
 
 	const handleSearchQueryChange = (
 		event: React.ChangeEvent<HTMLInputElement>
@@ -327,9 +291,17 @@ const StoreView = (props: storeViewIProps) => {
 		return filteredNodes;
 	};
 
+	useEffect(() => {
+		setLoading(true);
+		const data = getRootNodeData(passer);
+		setStoreData(data);
+		console.log("data", data);
+		setLoading(false);
+	}, []);
+
 	return (
 		<main className="mainArea">
-			{isLoading && <LoadingOverlay />}
+			{loading && <LoadingOverlay />}
 			<section className="topLayout">
 				<TextField
 					fullWidth
@@ -343,15 +315,12 @@ const StoreView = (props: storeViewIProps) => {
 					required
 					size="small"
 				/>
-				{/* <Button variant='contained' onClick={loadMore}>
-                    Load More
-                </Button> */}
 			</section>
-			{error !== undefined && error && (
+			{/* {error !== undefined && error && (
 				<Alert severity="error" className="errorMessage">
 					{error?.toString()}
 				</Alert>
-			)}
+			)} */}
 			{copied && (
 				<SnackBar
 					message={"Session ID Copied Successfully"}
@@ -366,9 +335,9 @@ const StoreView = (props: storeViewIProps) => {
 				>
 					{searchResults.length > 0 ? (
 						searchResults.map((node, i) =>
-							renderTree(node, true, i, searchQuery, setCopied, getData)
+							renderTree(node, true, i, searchQuery, setCopied)
 						)
-					) : !isFetching && !isLoading ? (
+					) : !loading ? (
 						<StyledTreeItem
 							nodeId="no-results"
 							label="No matching nodes found"

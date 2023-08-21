@@ -336,4 +336,5 @@ StoreView.defaultProps = {
 	fetchSize: 100,
 	sentinel: "notloaded",
 };
-export default StoreView;
+
+export default React.memo(StoreView);

@@ -64,7 +64,7 @@ const annotationSample = [
 	},
 	{
 		id: "1213", // level 2
-		bt: 123,
+		bt: "notloaded",
 		tt: 456,
 		name: "Sub device",
 		annotation: "notloaded",

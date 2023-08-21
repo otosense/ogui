@@ -15,22 +15,22 @@ async function fetchData(passer: {
 }): Promise<FetchResult> {
 	const url = "http://20.219.8.178:8080/get_all_sessions";
 	try {
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(passer),
-		});
+		// const response = await fetch(url, {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify(passer),
+		// });
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
+		// if (!response.ok) {
+		// 	throw new Error(`HTTP error! Status: ${response.status}`);
+		// }
 
-		const data = await response.json();
-		console.log("data", data.data);
-		return { status: "success", data: data.data };
-		// return { status: "success", data: annotationSample };
+		// const data = await response.json();
+		// console.log("data", data.data);
+		// return { status: "success", data: data.data };
+		return { status: "success", data: annotationSample };
 	} catch (error: any) {
 		return { status: "error", error: error.toString() };
 	}
@@ -38,26 +38,43 @@ async function fetchData(passer: {
 
 const childNodeTestData: storeDataObject = {
 	id: "1213",
-	annotation: [
-		{
-			name: "templ",
-			bt: 1,
-			tt: 2,
-			id: "annot7",
-		},
-		{
-			name: "temp2",
-			bt: 12,
-			tt: 21,
-			id: "annot8",
-		},
-	],
+	bt: "testing code",
+	// annotation: [
+	// 	{
+	// 		name: "templ",
+	// 		bt: 1,
+	// 		tt: "notloaded",
+	// 		id: "annot7",
+	// 	},
+	// 	{
+	// 		name: "temp2",
+	// 		bt: 12,
+	// 		tt: 21,
+	// 		id: "annot8",
+	// 	},
+	// ],
 };
 
 const fetchChildData: (keysArray: string[]) => Promise<childDataFetchResult> = (
 	keysArray
 ) => {
 	try {
+		// let url = "";
+		// const response = await fetch(url, {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify(keysArray),
+		// });
+
+		// if (!response.ok) {
+		// 	throw new Error(`HTTP error! Status: ${response.status}`);
+		// }
+
+		// const data = await response.json();
+		// console.log("data", data.data);
+		// return { status: "success", data: data.data };
 		return { status: "success", data: childNodeTestData };
 	} catch (error: any) {
 		return { status: "error", error: error.message || "Unknown error" };

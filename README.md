@@ -74,3 +74,21 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 ```bash
   node index.js
 ```
+
+### Table JSON maker
+```
+interface IFunctionCallerProps {
+    schema: Object; // please refer to Schema File inside assets Folder. that how the schema structure is expected 
+    liveValidate: boolean;
+    func: (...args: any[]) => any | void;
+}
+```
+
+If you want to run the Table JSON maker. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/JsonForm/src/main.tsx"></script>
+```
+
+```bash
+  yarn dev
+```

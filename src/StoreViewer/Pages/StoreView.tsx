@@ -4,15 +4,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField/TextField";
-import Button from "@mui/material/Button/Button";
 import { Alert } from "@mui/material";
+
 import SnackBar from "../../utilities/SnackBar";
 import LoadingOverlay from "../../utilities/Loader";
-import { apiMethod } from "../API/ApiCalls";
 import { StyledTreeItem } from "../components/StoreViewStyle";
-import { storeViewIProps } from "../Utilities/Interfaces";
-import { da } from "date-fns/locale";
-import Pagination from "@mui/material/Pagination";
+import { storeViewIProps, storeDataObject } from "../Utilities/Interfaces";
 
 const handleCopy = async (
 	label: string,
@@ -27,13 +24,16 @@ const handleCopy = async (
 	}
 };
 
-function getAllKeys(obj, path: string[] = []): string[][] {
-	let keys = [];
+function getAllKeys(obj: Record<string, any>, path: string[] = []): string[][] {
+	let keys: any = [];
 
 	for (let key in obj) {
 		const currentPath = path.concat(key);
 
-		if (Array.isArray(obj) && typeof obj[key] !== "object") {
+		if (
+			Array.isArray(obj) &&
+			typeof (obj as Record<string, any>)[key] !== "object"
+		) {
 			continue; // Skip primitive array elements
 		}
 
@@ -47,7 +47,10 @@ function getAllKeys(obj, path: string[] = []): string[][] {
 	return keys;
 }
 
-function findSublistWithValue(keysList: [], targetValue: string): string[] {
+function findSublistWithValue(
+	keysList: string[][],
+	targetValue: string
+): string[] | undefined {
 	return keysList.find(
 		(sublist) => sublist[sublist.length - 1] === targetValue
 	);
@@ -73,24 +76,22 @@ const StoreView = (props: storeViewIProps) => {
 	const { getRootNodeData, sentinel, getChildNodeData, fetchSize } = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
+
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
 	const [passer, setPasser] = useState({
 		from_: Number(0),
 		to_: Number(fetchSize),
 	});
-	const [storeData, setStoreData] = useState({ data: [] });
+	const [loadedData, setLoadedData] = useState<{ data: storeDataObject }>();
+	const [storeData, setStoreData] = useState<{ data: storeDataObject[] }>({
+		data: [],
+	});
 	const [copied, setCopied] = useState(false);
-	const [loadedData, setLoadedData] = useState({ data: {} });
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
 
 	const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
-	// const { data,, isLoading, isFetching } =
-	// 	getRootNodeData(passer);
-
-	// console.log("data", data);
+	const [isLoading, setLoading] = useState(true);
+	const [error, setError] = useState("");
 
 	const loadMore = () => {
 		setPasser((prevPasser) => ({
@@ -100,13 +101,15 @@ const StoreView = (props: storeViewIProps) => {
 	};
 
 	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
-		// console.log("key", clickedKeyParentStructure);
-		//	getData(clickedKeyParentStructure, passer);
 		const childNodeLoadedData = getChildNodeData(clickedKeyParentStructure);
 		setLoadedData(childNodeLoadedData);
 	};
 
-	const renderSessionDetails = (session: any, sessionId = "", keysList: []) => {
+	const renderSessionDetails = (
+		session: any,
+		sessionId = "",
+		keysList: string[][]
+	) => {
 		const sessionKeys = Object.keys(session);
 		return (
 			<>
@@ -125,15 +128,16 @@ const StoreView = (props: storeViewIProps) => {
 									nodeId={`${sessionId}-${key}`}
 									label={`${key}: ${value}`}
 									onClick={() => {
-										let clickedKeyParentStructure: string[] =
+										let clickedKeyParentStructure: string[] | undefined =
 											findSublistWithValue(keysList, key);
-										clickedKeyParentStructure.push;
-										clickedKeyParentStructure = [
-											sessionId,
-											...clickedKeyParentStructure,
-										];
 
-										onClickOfNotLoaded(clickedKeyParentStructure);
+										if (clickedKeyParentStructure) {
+											clickedKeyParentStructure = [
+												sessionId,
+												...clickedKeyParentStructure,
+											];
+											onClickOfNotLoaded(clickedKeyParentStructure);
+										}
 									}}
 								/>
 							);
@@ -215,24 +219,53 @@ const StoreView = (props: storeViewIProps) => {
 		</section>
 	);
 
-	// useEffect(() => {
-	// 	if (!loading) {
-	// 		setStoreData((prevData: any) => {
-	// 			const newData = data.data.filter(
-	// 				(newItem: { id: any }) =>
-	// 					!prevData.data.some((item: { id: any }) => item.id === newItem.id)
-	// 			);
+	const handleSearchQueryChange = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setSearchQuery(event.target.value);
+	};
 
-	// 			return {
-	// 				...prevData,
-	// 				data: [...prevData.data, ...newData],
-	// 			};
-	// 		});
-	// 	}
-	// }, [loading]);
+	const filterData = (nodes: any[], query: string) => {
+		const filteredNodes: any = nodes.filter((node) => {
+			if (node.id.toLowerCase().includes(query.toLowerCase())) {
+				return true;
+			}
+			if (node.children && node.children.length > 0) {
+				const filteredChildren = filterData(node.children, query);
+				return filteredChildren.length > 0;
+			}
+			return false;
+		});
+		return filteredNodes;
+	};
 
 	useEffect(() => {
-		if (storeData.data) {
+		// Use an async function inside the useEffect hook
+		async function fetchDataAndSet() {
+			const fetchedData = await getRootNodeData(passer);
+			setLoading(false);
+			if (fetchedData.status === "success") {
+				setStoreData((prevData: any) => {
+					const newData = fetchedData.data.filter(
+						(newItem: { id: any }) =>
+							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+					);
+
+					return {
+						...prevData,
+						data: [...prevData.data, ...newData],
+					};
+				});
+			} else if (fetchedData.status === "error") {
+				setError(fetchedData.error);
+			}
+		}
+
+		fetchDataAndSet();
+	}, [getRootNodeData, passer]);
+
+	useEffect(() => {
+		if (storeData) {
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
 			setSearchResults(filteredData);
 		}
@@ -254,7 +287,7 @@ const StoreView = (props: storeViewIProps) => {
 		};
 
 		observer.current = new IntersectionObserver(handleIntersect, options);
-		if (observer.current && !loading && searchResults.length >= fetchSize) {
+		if (observer.current && !isLoading && searchResults.length >= fetchSize) {
 			observer.current.observe(document.getElementById("bottomObserver")!);
 		}
 
@@ -263,67 +296,18 @@ const StoreView = (props: storeViewIProps) => {
 				observer.current.disconnect();
 			}
 		};
-	}, [loading, searchResults]);
+	}, [isLoading, searchResults]);
 
 	useEffect(() => {
-		console.log("not loaded use efffect");
-		searchResults.map((eachItem, index) =>
-			eachItem?.id === loadedData.data.id ? loadedData : eachItem
+		let updatedStoreData = storeData.data.map((eachItem, index) =>
+			eachItem?.id === loadedData?.data.id ? loadedData.data : eachItem
 		);
+		setStoreData({ data: updatedStoreData });
 	}, [loadedData]);
-
-	const handleSearchQueryChange = (
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		setSearchQuery(event.target.value);
-	};
-
-	const filterData = (nodes: any[], query: string) => {
-		console.log("nodes", nodes);
-		const filteredNodes: any = nodes.filter((node) => {
-			if (node.id.toLowerCase().includes(query.toLowerCase())) {
-				return true;
-			}
-			if (node.children && node.children.length > 0) {
-				const filteredChildren = filterData(node.children, query);
-				return filteredChildren.length > 0;
-			}
-			return false;
-		});
-		return filteredNodes;
-	};
-
-	useEffect(() => {
-		// async function fetchAndSetData() {
-		// 	try {
-		// 		const result = await getRootNodeData(passer);
-		// 		console.log("reslu", result);
-		// 		// setStoreData(result);
-		// 		setStoreData((prevData: any) => {
-		// 			const newData = result.data.data.filter(
-		// 				(newItem: { id: any }) =>
-		// 					!prevData.data.some((item: { id: any }) => item.id === newItem.id)
-		// 			);
-
-		// 			return {
-		// 				...prevData,
-		// 				data: [...prevData.data, ...newData],
-		// 			};
-		// 		});
-		// 	} catch (error) {
-		// 		setError(error);
-		// 	} finally {
-		// 		setLoading(false);
-		// 	}
-		// }
-
-		// fetchAndSetData();
-		console.log(getRootNodeData(passer));
-	}, []);
 
 	return (
 		<main className="mainArea">
-			{loading && <LoadingOverlay />}
+			{isLoading && <LoadingOverlay />}
 			<section className="topLayout">
 				<TextField
 					fullWidth
@@ -359,7 +343,7 @@ const StoreView = (props: storeViewIProps) => {
 						searchResults.map((node, i) =>
 							renderTree(node, true, i, searchQuery, setCopied)
 						)
-					) : !loading ? (
+					) : !isLoading ? (
 						<StyledTreeItem
 							nodeId="no-results"
 							label="No matching nodes found"

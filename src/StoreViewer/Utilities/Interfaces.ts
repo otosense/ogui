@@ -14,19 +14,25 @@ interface Device {
 	tt?: number[];
 }
 
+type FetchResult =
+	| { status: "success"; data: [] }
+	| { status: "error"; error: string };
+
 interface storeViewIProps {
-	getRootNodeData: (passer: { from_: number; to_: number }) => {
-		data: any;
-		status: any;
-		error: any;
-		isLoading: any;
-		isFetching: any;
-	};
 	getChildNodeData: (keysArray: string[]) => {
 		data: any;
 	};
 	sentinel: string;
 	fetchSize: number;
+	getRootNodeData: (passer: {
+		from_: number;
+		to_: number;
+	}) => Promise<FetchResult>;
 }
 
-export type { Child, Device, storeViewIProps };
+interface storeDataObject {
+	id: string;
+	[key: string]: any;
+}
+
+export type { Child, Device, storeViewIProps, storeDataObject };

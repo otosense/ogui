@@ -66,8 +66,8 @@ const fetchChildData: (keysArray: string[]) => Promise<childDataFetchResult> = (
 
 let storeViewProps: storeViewIProps = {
 	getRootNodeData: fetchData,
-	sentinel: "notloaded",
-	fetchSize: 100,
+	// sentinel: "notloaded",
+	// fetchSize: 100,
 	getChildNodeData: fetchChildData,
 };
 

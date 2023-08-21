@@ -29,8 +29,8 @@ type FetchResult =
 
 interface storeViewIProps {
 	getChildNodeData: (keysArray: string[]) => Promise<childDataFetchResult>;
-	sentinel: string;
-	fetchSize: number;
+	sentinel?: string;
+	fetchSize?: number;
 	getRootNodeData: (passer: {
 		from_: number;
 		to_: number;

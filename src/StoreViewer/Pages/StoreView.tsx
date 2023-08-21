@@ -332,5 +332,8 @@ const StoreView = (props: storeViewIProps) => {
 		</main>
 	);
 };
-
+StoreView.defaultProps = {
+	fetchSize: 100,
+	sentinel: "notloaded",
+};
 export default StoreView;

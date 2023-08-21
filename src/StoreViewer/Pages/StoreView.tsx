@@ -44,8 +44,8 @@ const StoreView = (props: storeViewIProps) => {
 		from_: Number(0),
 		to_: Number(fetchSize),
 	});
-	const [loadedData, setLoadedData] = useState<{ data: storeDataObject }>();
-	const [storeData, setStoreData] = useState<{ data: storeDataObject[] }>({
+	const [loadedData, setLoadedData] = useState<{ data: storeDataObject; }>();
+	const [storeData, setStoreData] = useState<{ data: storeDataObject[]; }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -222,8 +222,8 @@ const StoreView = (props: storeViewIProps) => {
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
 					const newData = fetchedData.data.filter(
-						(newItem: { id: any }) =>
-							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+						(newItem: { id: any; }) =>
+							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
 					);
 
 					return {
@@ -283,20 +283,20 @@ const StoreView = (props: storeViewIProps) => {
 	}, [loadedData]);
 
 	return (
-		<main className="mainArea">
+		<main className='mainArea'>
 			{isLoading && <LoadingOverlay />}
-			<section className="topLayout">
+			<section className='topLayout'>
 				<TextField
 					fullWidth
-					id="myInput"
-					label="Search Session Id"
-					variant="outlined"
-					name="sessionId"
+					id='myInput'
+					label='Search Session Id'
+					variant='outlined'
+					name='sessionId'
 					defaultValue={searchQuery}
-					className="sessionIdBox"
+					className='sessionIdBox'
 					onChange={handleSearchQueryChange}
 					required
-					size="small"
+					size='small'
 				/>
 			</section>
 			{error !== undefined && error && (
@@ -304,17 +304,12 @@ const StoreView = (props: storeViewIProps) => {
 					{error?.toString()}
 				</Alert>
 			)}
-			{copied && (
-				<SnackBar
-					message={"Session ID Copied Successfully"}
-					severity={"info"}
-				/>
-			)}
-			<section className="storeViewerLayout">
+			{copied && <SnackBar message={'Session ID Copied Successfully'} severity={'info'} />}
+			<section className='storeViewerLayout'>
 				<TreeView
-					aria-label="Store View"
-					defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
-					defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
+					aria-label='Store View'
+					defaultCollapseIcon={<ExpandMoreIcon style={{ color: '#0880ae' }} />}
+					defaultExpandIcon={<ChevronRightIcon style={{ color: '#0880ae' }} />}
 				>
 					{searchResults.length > 0 ? (
 						searchResults.map((node, i) =>
@@ -322,12 +317,12 @@ const StoreView = (props: storeViewIProps) => {
 						)
 					) : !isLoading && !error ? (
 						<StyledTreeItem
-							nodeId="no-results"
-							label="No matching nodes found"
+							nodeId='no-results'
+							label='No matching nodes found'
 						/>
 					) : null}
 				</TreeView>
-				<div id="bottomObserver" style={{ height: "10px" }}></div>
+				<div id='bottomObserver' style={{ height: '10px' }}></div>
 			</section>
 		</main>
 	);

@@ -29,7 +29,7 @@ function App() {
   };
 
   return (
-    <FunctionCaller schema={schema} liveValidate={false} />
+    <FunctionCaller schema={schema} liveValidate={false} func={sum} />
   );
 }
 export default App;

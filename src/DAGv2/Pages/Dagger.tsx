@@ -187,9 +187,9 @@ const Dagger = () => {
         if (edge.sourceHandle) {
             // const edgeType = nodes.find((node) => node.type === 'custom')?.data.selects[edge.sourceHandle];
             // edge.type = edgeType;
-            edge.markerEnd = {
-                type: MarkerType.ArrowClosed,
-            };
+            // edge.markerEnd = {
+            //     type: MarkerType.ArrowClosed,
+            // };
         } edge.id = `${edge.source} + ${edge.target}`;
         return edge;
     });

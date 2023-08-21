@@ -1,20 +1,23 @@
 import React, { memo } from 'react';
-// import Form from '@rjsf/core';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
-import { RJSFSchema, UiSchema } from '@rjsf/utils';
+import { IFormData, IFunctionCallerProps } from '../assets/Interfaces';
 
-const FunctionCaller = (props: { schema: RJSFSchema; liveValidate: boolean; uiSchema: UiSchema; func: (...args: any[]) => any; }) => {
-    const { schema, liveValidate, uiSchema, func } = props;
+const FunctionCaller = (props: IFunctionCallerProps) => {
+    const { schema, liveValidate, func } = props;
+
+    const onSubmit = ({ formData }: IFormData) => {
+        return func(...Object.values(formData));
+    };
 
     return (
         <div>
             <h1>React JSON Schema Form Example</h1>
             <Form
                 schema={schema}
-                uiSchema={uiSchema}
+                // uiSchema={uiSchema} // optional for handling custom things in UI
                 liveValidate={liveValidate}
-                onSubmit={func}
+                onSubmit={onSubmit}
                 validator={validator}
                 noHtml5Validate
             />
@@ -22,4 +25,11 @@ const FunctionCaller = (props: { schema: RJSFSchema; liveValidate: boolean; uiSc
     );
 };
 
-export default memo(FunctionCaller);
+
+FunctionCaller.defaultProps = {
+    liveValidate: false,
+    schema: {},
+    func: (...args: any[]) => { },
+};
+
+export default (FunctionCaller);

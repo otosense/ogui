@@ -77,11 +77,10 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 
 ### Table JSON maker
 ```
-interface IProps {
-  func: (...args: any[]) => any
-  schema: FuncSigSchema
-  uiSchema: UiSchema
-  liveValidate: boolean 
+interface IFunctionCallerProps {
+    schema: Object; // please refer to Schema File inside assets Folder. that how the schema structure is expected 
+    liveValidate: boolean;
+    func: (...args: any[]) => any | void;
 }
 ```
 

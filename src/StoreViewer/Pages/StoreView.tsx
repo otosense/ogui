@@ -10,51 +10,12 @@ import SnackBar from "../../utilities/SnackBar";
 import LoadingOverlay from "../../utilities/Loader";
 import { StyledTreeItem } from "../components/StoreViewStyle";
 import { storeViewIProps, storeDataObject } from "../Utilities/Interfaces";
-
-const handleCopy = async (
-	label: string,
-	setCopied: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-	setCopied(false);
-	try {
-		await navigator?.clipboard?.writeText(label);
-		setCopied(true);
-	} catch (error) {
-		console.log("Copy Failed");
-	}
-};
-
-function getAllKeys(obj: Record<string, any>, path: string[] = []): string[][] {
-	let keys: any = [];
-
-	for (let key in obj) {
-		const currentPath = path.concat(key);
-
-		if (
-			Array.isArray(obj) &&
-			typeof (obj as Record<string, any>)[key] !== "object"
-		) {
-			continue; // Skip primitive array elements
-		}
-
-		keys.push(currentPath);
-
-		if (typeof obj[key] === "object" && obj[key] !== null) {
-			keys = keys.concat(getAllKeys(obj[key], currentPath));
-		}
-	}
-
-	return keys;
-}
-
-function findSublistWithValue(
-	keysList: string[][],
-	targetValue: string
-): string[] | undefined {
-	return keysList.find(
-		(sublist) => sublist[sublist.length - 1] === targetValue
-	);
-}
+import {
+	deepMerge,
+	getAllKeys,
+	handleCopy,
+	findSublistWithValue,
+} from "../Utilities/UtilFunctions";
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -77,7 +38,7 @@ const StoreView = (props: storeViewIProps) => {
 
 	const observer = useRef<IntersectionObserver | null>(null);
 
-	const [searchQuery, setSearchQuery] = useState("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [searchResults, setSearchResults] = useState([]);
 	const [passer, setPasser] = useState({
 		from_: Number(0),
@@ -100,9 +61,17 @@ const StoreView = (props: storeViewIProps) => {
 		}));
 	};
 
-	const onClickOfNotLoaded = (clickedKeyParentStructure: string[]) => {
-		const childNodeLoadedData = getChildNodeData(clickedKeyParentStructure);
-		setLoadedData(childNodeLoadedData);
+	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
+		try {
+			const childNodeLoadedData = await getChildNodeData(
+				clickedKeyParentStructure
+			);
+			if (childNodeLoadedData.status === "success") {
+				setLoadedData({ data: childNodeLoadedData.data });
+			}
+		} catch (error) {
+			console.error("Error fetching child node data:", error);
+		}
 	};
 
 	const renderSessionDetails = (
@@ -111,6 +80,7 @@ const StoreView = (props: storeViewIProps) => {
 		keysList: string[][]
 	) => {
 		const sessionKeys = Object.keys(session);
+		// console.log("returning", sessionId);
 		return (
 			<>
 				{sessionKeys.map((key) => {
@@ -151,10 +121,14 @@ const StoreView = (props: storeViewIProps) => {
 								>
 									{value.map((arrayItem, index) => {
 										if (arrayItem instanceof Object) {
-											return renderSessionDetails(
-												arrayItem,
-												sessionId,
-												keysList
+											return (
+												<StyledTreeItem
+													key={`${sessionId}--${index}`}
+													nodeId={`${sessionId}--${index}`}
+													label={String(index)}
+												>
+													{renderSessionDetails(arrayItem, sessionId, keysList)}
+												</StyledTreeItem>
 											);
 										} else {
 											return (
@@ -201,6 +175,7 @@ const StoreView = (props: storeViewIProps) => {
 		searchQuery: string,
 		setCopied: React.Dispatch<React.SetStateAction<boolean>>
 	) => (
+		// console.log("returning", i);
 		<section key={i} style={{ position: "relative" }} className="renderNodes">
 			{isRoot && (
 				<button
@@ -299,8 +274,10 @@ const StoreView = (props: storeViewIProps) => {
 	}, [isLoading, searchResults]);
 
 	useEffect(() => {
-		let updatedStoreData = storeData.data.map((eachItem, index) =>
-			eachItem?.id === loadedData?.data.id ? loadedData.data : eachItem
+		let updatedStoreData = storeData.data.map((eachItem) =>
+			eachItem?.id === loadedData?.data.id
+				? deepMerge(eachItem, loadedData.data)
+				: eachItem
 		);
 		setStoreData({ data: updatedStoreData });
 	}, [loadedData]);
@@ -343,7 +320,7 @@ const StoreView = (props: storeViewIProps) => {
 						searchResults.map((node, i) =>
 							renderTree(node, true, i, searchQuery, setCopied)
 						)
-					) : !isLoading ? (
+					) : !isLoading && !error ? (
 						<StyledTreeItem
 							nodeId="no-results"
 							label="No matching nodes found"
@@ -356,4 +333,4 @@ const StoreView = (props: storeViewIProps) => {
 	);
 };
 
-export default React.memo(StoreView);
+export default StoreView;

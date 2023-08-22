@@ -20,11 +20,11 @@ interface storeDataObject {
 }
 
 type childDataFetchResult =
-	| { status: "success"; data: {} }
+	| { status: "success"; data: storeDataObject }
 	| { status: "error"; error: string };
 
 type FetchResult =
-	| { status: "success"; data: [] }
+	| { status: "success"; data: storeDataObject[] }
 	| { status: "error"; error: string };
 
 interface storeViewIProps {

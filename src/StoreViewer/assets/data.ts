@@ -44,18 +44,18 @@ const annotationSample = [
 	{
 		id: "91011", // level 2
 		bt: 123,
-		tt: 456,
+		tt: "345",
 		name: "Sub device2",
 		annotation: [
 			// level 2
 			{
-				name: "temp3", // level 3
+				name: { a: "testing" }, // level 3
 				bt: 1,
 				tt: 2,
-				id: "annot5",
+				id: { as: "test key" },
 			},
 			{
-				name: "temp4",
+				name: "name", // level 3
 				bt: 12,
 				tt: 21,
 				id: "annot6",
@@ -64,10 +64,18 @@ const annotationSample = [
 	},
 	{
 		id: "1213", // level 2
-		bt: "notloaded",
+		bt: "2432",
 		tt: 456,
-		name: "Sub device",
+		name: "1213name",
 		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
 	},
 ];
 

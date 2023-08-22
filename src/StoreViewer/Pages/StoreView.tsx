@@ -10,12 +10,7 @@ import SnackBar from "../../utilities/SnackBar";
 import LoadingOverlay from "../../utilities/Loader";
 import { StyledTreeItem } from "../components/StoreViewStyle";
 import { storeViewIProps, storeDataObject } from "../Utilities/Interfaces";
-import {
-	deepMerge,
-	getAllKeys,
-	handleCopy,
-	findSublistWithValue,
-} from "../Utilities/UtilFunctions";
+import { deepMerge, handleCopy } from "../Utilities/UtilFunctions";
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -34,7 +29,12 @@ const useDebounce = (value: string, delay: number) => {
 };
 
 const StoreView = (props: storeViewIProps) => {
-	const { getRootNodeData, sentinel, getChildNodeData, fetchSize } = props;
+	const {
+		getRootNodeData,
+		sentinel,
+		getChildNodeData,
+		fetchSize = 100,
+	} = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
 
@@ -44,6 +44,7 @@ const StoreView = (props: storeViewIProps) => {
 		from_: Number(0),
 		to_: Number(fetchSize),
 	});
+
 	const [loadedData, setLoadedData] = useState<{ data: storeDataObject }>();
 	const [storeData, setStoreData] = useState<{ data: storeDataObject[] }>({
 		data: [],
@@ -63,11 +64,15 @@ const StoreView = (props: storeViewIProps) => {
 
 	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
 		try {
+			// console.log("clickedKeyParentStructure", clickedKeyParentStructure);
 			const childNodeLoadedData = await getChildNodeData(
 				clickedKeyParentStructure
 			);
 			if (childNodeLoadedData.status === "success") {
-				setLoadedData({ data: childNodeLoadedData.data });
+				console.log("childNodeLoadedData.data", childNodeLoadedData.data);
+				let childData: storeDataObject =
+					childNodeLoadedData.data as storeDataObject;
+				setLoadedData({ data: childData });
 			}
 		} catch (error) {
 			console.error("Error fetching child node data:", error);
@@ -77,10 +82,9 @@ const StoreView = (props: storeViewIProps) => {
 	const renderSessionDetails = (
 		session: any,
 		sessionId = "",
-		keysList: string[][]
+		parentKeys: string[]
 	) => {
 		const sessionKeys = Object.keys(session);
-		// console.log("returning", sessionId);
 		return (
 			<>
 				{sessionKeys.map((key) => {
@@ -98,16 +102,11 @@ const StoreView = (props: storeViewIProps) => {
 									nodeId={`${sessionId}-${key}`}
 									label={`${key}: ${value}`}
 									onClick={() => {
-										let clickedKeyParentStructure: string[] | undefined =
-											findSublistWithValue(keysList, key);
-
-										if (clickedKeyParentStructure) {
-											clickedKeyParentStructure = [
-												sessionId,
-												...clickedKeyParentStructure,
-											];
-											onClickOfNotLoaded(clickedKeyParentStructure);
-										}
+										let clickedKeyParentStructure: string[] = [
+											...parentKeys,
+											key,
+										];
+										onClickOfNotLoaded(clickedKeyParentStructure);
 									}}
 								/>
 							);
@@ -115,8 +114,8 @@ const StoreView = (props: storeViewIProps) => {
 						if (Array.isArray(value)) {
 							return (
 								<StyledTreeItem
-									key={`${sessionId}-${key}`}
-									nodeId={`${sessionId}-${key}`}
+									key={`${sessionId}-array-${key}`}
+									nodeId={`${sessionId}-array-${key}`}
 									label={String(key)}
 								>
 									{value.map((arrayItem, index) => {
@@ -127,14 +126,20 @@ const StoreView = (props: storeViewIProps) => {
 													nodeId={`${sessionId}--${index}`}
 													label={String(index)}
 												>
-													{renderSessionDetails(arrayItem, sessionId, keysList)}
+													{renderSessionDetails(arrayItem, sessionId, [
+														...parentKeys,
+														key,
+														index.toString(),
+													])}
 												</StyledTreeItem>
 											);
 										} else {
 											return (
 												<StyledTreeItem
-													key={`${sessionId}--${index}`}
-													nodeId={`${sessionId}--${index}`}
+													key={`${sessionId}--${index}--${String(arrayItem)}`}
+													nodeId={`${sessionId}--${index}--${String(
+														arrayItem
+													)}`}
 													label={String(arrayItem)}
 												/>
 											);
@@ -150,15 +155,15 @@ const StoreView = (props: storeViewIProps) => {
 									nodeId={`${sessionId}-${key}`}
 									label={String(key)}
 								>
-									{renderSessionDetails(value, sessionId, keysList)}
+									{renderSessionDetails(value, sessionId, [...parentKeys, key])}
 								</StyledTreeItem>
 							);
 						}
 					} else {
 						return (
 							<StyledTreeItem
-								key={`${sessionId}-${key}`}
-								nodeId={`${sessionId}-${key}`}
+								key={`${sessionId}-${key}-${parentKeys}`}
+								nodeId={`${sessionId}-${key}-${parentKeys.join("-")}`}
 								label={`${key}: ${value}`}
 							/>
 						);
@@ -189,7 +194,7 @@ const StoreView = (props: storeViewIProps) => {
 				</button>
 			)}
 			<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
-				{renderSessionDetails(nodes, nodes?.id, getAllKeys(nodes))}
+				{renderSessionDetails(nodes, nodes?.id, [nodes.id])}
 			</StyledTreeItem>
 		</section>
 	);

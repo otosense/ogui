@@ -38,26 +38,26 @@ async function fetchData(passer: {
 
 const childNodeTestData: storeDataObject = {
 	id: "1213",
-	bt: "testing code",
-	// annotation: [
-	// 	{
-	// 		name: "templ",
-	// 		bt: 1,
-	// 		tt: "notloaded",
-	// 		id: "annot7",
-	// 	},
-	// 	{
-	// 		name: "temp2",
-	// 		bt: 12,
-	// 		tt: 21,
-	// 		id: "annot8",
-	// 	},
-	// ],
+	// bt: "testing code",
+	annotation: [
+		{
+			name: "templ",
+			bt: 1,
+			tt: "notloaded",
+			id: "annot7",
+		},
+		{
+			name: "temp2",
+			bt: "notloaded",
+			tt: "notloaded",
+			id: "annot8",
+		},
+	],
 };
 
-const fetchChildData: (keysArray: string[]) => Promise<childDataFetchResult> = (
-	keysArray
-) => {
+async function fetchChildData(
+	keysArray: string[]
+): Promise<childDataFetchResult> {
 	try {
 		// let url = "";
 		// const response = await fetch(url, {
@@ -77,14 +77,14 @@ const fetchChildData: (keysArray: string[]) => Promise<childDataFetchResult> = (
 		// return { status: "success", data: data.data };
 		return { status: "success", data: childNodeTestData };
 	} catch (error: any) {
-		return { status: "error", error: error.message || "Unknown error" };
+		return { status: "error", error: error.toString() };
 	}
-};
+}
 
 let storeViewProps: storeViewIProps = {
 	getRootNodeData: fetchData,
-	// sentinel: "notloaded",
-	// fetchSize: 100,
+	sentinel: "notloaded",
+	fetchSize: 100,
 	getChildNodeData: fetchChildData,
 };
 

@@ -51,8 +51,8 @@ const annotationSample = [
 			{
 				name: { a: "testing" }, // level 3
 				bt: 1,
-				tt: 2,
-				id: { as: "test key" },
+				tt: { as: "test key" },
+				id: "34",
 			},
 			{
 				name: "name", // level 3

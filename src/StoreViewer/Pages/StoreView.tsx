@@ -69,7 +69,7 @@ const StoreView = (props: storeViewIProps) => {
 				clickedKeyParentStructure
 			);
 			if (childNodeLoadedData.status === "success") {
-				console.log("childNodeLoadedData.data", childNodeLoadedData.data);
+				// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
 				let childData: storeDataObject =
 					childNodeLoadedData.data as storeDataObject;
 				setLoadedData({ data: childData });
@@ -79,16 +79,16 @@ const StoreView = (props: storeViewIProps) => {
 		}
 	};
 
-	const renderSessionDetails = (
-		session: any,
-		sessionId = "",
+	const renderNodeItemDetails = (
+		nodeItem: any,
+		nodeItemId = "",
 		parentKeys: string[]
 	) => {
-		const sessionKeys = Object.keys(session);
+		const nodeItemKeys = Object.keys(nodeItem);
 		return (
 			<>
-				{sessionKeys.map((key) => {
-					const value = session[key];
+				{nodeItemKeys.map((key) => {
+					const value = nodeItem[key];
 
 					if (
 						Array.isArray(value) ||
@@ -98,8 +98,8 @@ const StoreView = (props: storeViewIProps) => {
 						if (value === sentinel) {
 							return (
 								<StyledTreeItem
-									key={`${sessionId}-${key}`}
-									nodeId={`${sessionId}-${key}`}
+									key={`${nodeItemId}-${key}`}
+									nodeId={`${nodeItemId}-${key}`}
 									label={`${key}: ${value}`}
 									onClick={() => {
 										let clickedKeyParentStructure: string[] = [
@@ -114,19 +114,19 @@ const StoreView = (props: storeViewIProps) => {
 						if (Array.isArray(value)) {
 							return (
 								<StyledTreeItem
-									key={`${sessionId}-array-${key}`}
-									nodeId={`${sessionId}-array-${key}`}
+									key={`${nodeItemId}-array-${key}`}
+									nodeId={`${nodeItemId}-array-${key}`}
 									label={String(key)}
 								>
 									{value.map((arrayItem, index) => {
 										if (arrayItem instanceof Object) {
 											return (
 												<StyledTreeItem
-													key={`${sessionId}--${index}`}
-													nodeId={`${sessionId}--${index}`}
+													key={`${nodeItemId}--${index}`}
+													nodeId={`${nodeItemId}--${index}`}
 													label={String(index)}
 												>
-													{renderSessionDetails(arrayItem, sessionId, [
+													{renderNodeItemDetails(arrayItem, nodeItemId, [
 														...parentKeys,
 														key,
 														index.toString(),
@@ -136,8 +136,8 @@ const StoreView = (props: storeViewIProps) => {
 										} else {
 											return (
 												<StyledTreeItem
-													key={`${sessionId}--${index}--${String(arrayItem)}`}
-													nodeId={`${sessionId}--${index}--${String(
+													key={`${nodeItemId}--${index}--${String(arrayItem)}`}
+													nodeId={`${nodeItemId}--${index}--${String(
 														arrayItem
 													)}`}
 													label={String(arrayItem)}
@@ -151,19 +151,22 @@ const StoreView = (props: storeViewIProps) => {
 						if (value instanceof Object) {
 							return (
 								<StyledTreeItem
-									key={`${sessionId}-${key}`}
-									nodeId={`${sessionId}-${key}`}
+									key={`${nodeItemId}-${key}`}
+									nodeId={`${nodeItemId}-${key}`}
 									label={String(key)}
 								>
-									{renderSessionDetails(value, sessionId, [...parentKeys, key])}
+									{renderNodeItemDetails(value, nodeItemId, [
+										...parentKeys,
+										key,
+									])}
 								</StyledTreeItem>
 							);
 						}
 					} else {
 						return (
 							<StyledTreeItem
-								key={`${sessionId}-${key}-${parentKeys}`}
-								nodeId={`${sessionId}-${key}-${parentKeys.join("-")}`}
+								key={`${nodeItemId}-${key}-${parentKeys}`}
+								nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								label={`${key}: ${value}`}
 							/>
 						);
@@ -194,7 +197,7 @@ const StoreView = (props: storeViewIProps) => {
 				</button>
 			)}
 			<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
-				{renderSessionDetails(nodes, nodes?.id, [nodes.id])}
+				{renderNodeItemDetails(nodes, nodes?.id, [nodes.id])}
 			</StyledTreeItem>
 		</section>
 	);
@@ -294,11 +297,10 @@ const StoreView = (props: storeViewIProps) => {
 				<TextField
 					fullWidth
 					id="myInput"
-					label="Search Session Id"
+					label="Search Id"
 					variant="outlined"
-					name="sessionId"
+					name="storeItemId"
 					defaultValue={searchQuery}
-					className="sessionIdBox"
 					onChange={handleSearchQueryChange}
 					required
 					size="small"
@@ -310,10 +312,7 @@ const StoreView = (props: storeViewIProps) => {
 				</Alert>
 			)}
 			{copied && (
-				<SnackBar
-					message={"Session ID Copied Successfully"}
-					severity={"info"}
-				/>
+				<SnackBar message={"ID Copied Successfully"} severity={"info"} />
 			)}
 			<section className="storeViewerLayout">
 				<TreeView

@@ -8,6 +8,7 @@ import {
 	storeViewIProps,
 } from "./Utilities/Interfaces";
 import { annotationSample } from "./assets/data";
+import SimpleLineChart from "./assets/SimpleLineChart";
 
 async function fetchData(passer: {
 	from_: number;
@@ -81,11 +82,35 @@ async function fetchChildData(
 	}
 }
 
+
+const MyNumberComponent = (props: any) => {
+	// return <i><b>{props.v}</b></i>;
+	// return <img src="" alt={props.v} />;
+	return <SimpleLineChart />;
+};
+
+const MyStringComponent = (props: any) => {
+	// return <strong>{props.v}</strong>;
+	return <img src="" alt={'props.v'} />;
+
+};
+
+const userRenderer = (key: any, value: any) => {
+	if (key === 'annotation') {
+		return <MyNumberComponent v={value} k={key} />;
+	} else if (key === '') {
+		return <MyStringComponent v={value} k={key} />;
+	} else {
+		return null;
+	}
+};
+
 let storeViewProps: storeViewIProps = {
 	getRootNodeData: fetchData,
 	sentinel: "notloaded",
 	fetchSize: 100,
 	getChildNodeData: fetchChildData,
+	renderer: userRenderer
 };
 
 function App() {

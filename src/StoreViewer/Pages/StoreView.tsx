@@ -34,6 +34,7 @@ const StoreView = (props: storeViewIProps) => {
 		sentinel,
 		getChildNodeData,
 		fetchSize = 100,
+		renderer
 	} = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
@@ -45,8 +46,8 @@ const StoreView = (props: storeViewIProps) => {
 		to_: Number(fetchSize),
 	});
 
-	const [loadedData, setLoadedData] = useState<{ data: storeDataObject }>();
-	const [storeData, setStoreData] = useState<{ data: storeDataObject[] }>({
+	const [loadedData, setLoadedData] = useState<{ data: storeDataObject; }>();
+	const [storeData, setStoreData] = useState<{ data: storeDataObject[]; }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -111,56 +112,68 @@ const StoreView = (props: storeViewIProps) => {
 								/>
 							);
 						}
-						if (Array.isArray(value)) {
-							return (
-								<StyledTreeItem
-									key={`${nodeItemId}-array-${key}`}
-									nodeId={`${nodeItemId}-array-${key}`}
-									label={String(key)}
-								>
-									{value.map((arrayItem, index) => {
-										if (arrayItem instanceof Object) {
-											return (
-												<StyledTreeItem
-													key={`${nodeItemId}--${index}`}
-													nodeId={`${nodeItemId}--${index}`}
-													label={String(index)}
-												>
-													{renderNodeItemDetails(arrayItem, nodeItemId, [
-														...parentKeys,
-														key,
-														index.toString(),
-													])}
-												</StyledTreeItem>
-											);
-										} else {
-											return (
-												<StyledTreeItem
-													key={`${nodeItemId}--${index}--${String(arrayItem)}`}
-													nodeId={`${nodeItemId}--${index}--${String(
-														arrayItem
-													)}`}
-													label={String(arrayItem)}
-												/>
-											);
-										}
-									})}
-								</StyledTreeItem>
-							);
-						}
-						if (value instanceof Object) {
+						if (renderer()) {
 							return (
 								<StyledTreeItem
 									key={`${nodeItemId}-${key}`}
 									nodeId={`${nodeItemId}-${key}`}
 									label={String(key)}
 								>
-									{renderNodeItemDetails(value, nodeItemId, [
-										...parentKeys,
-										key,
-									])}
+									{renderer()}
 								</StyledTreeItem>
 							);
+						} else {
+							if (Array.isArray(value)) {
+								return (
+									<StyledTreeItem
+										key={`${nodeItemId}-array-${key}`}
+										nodeId={`${nodeItemId}-array-${key}`}
+										label={String(key)}
+									>
+										{value.map((arrayItem, index) => {
+											if (arrayItem instanceof Object) {
+												return (
+													<StyledTreeItem
+														key={`${nodeItemId}--${index}`}
+														nodeId={`${nodeItemId}--${index}`}
+														label={String(index)}
+													>
+														{renderNodeItemDetails(arrayItem, nodeItemId, [
+															...parentKeys,
+															key,
+															index.toString(),
+														])}
+													</StyledTreeItem>
+												);
+											} else {
+												return (
+													<StyledTreeItem
+														key={`${nodeItemId}--${index}--${String(arrayItem)}`}
+														nodeId={`${nodeItemId}--${index}--${String(
+															arrayItem
+														)}`}
+														label={String(arrayItem)}
+													/>
+												);
+											}
+										})}
+									</StyledTreeItem>
+								);
+							}
+							if (value instanceof Object) {
+								return (
+									<StyledTreeItem
+										key={`${nodeItemId}-${key}`}
+										nodeId={`${nodeItemId}-${key}`}
+										label={String(key)}
+									>
+										{renderNodeItemDetails(value, nodeItemId, [
+											...parentKeys,
+											key,
+										])}
+									</StyledTreeItem>
+								);
+							}
 						}
 					} else {
 						return (
@@ -230,8 +243,8 @@ const StoreView = (props: storeViewIProps) => {
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
 					const newData = fetchedData.data.filter(
-						(newItem: { id: any }) =>
-							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+						(newItem: { id: any; }) =>
+							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
 					);
 
 					return {

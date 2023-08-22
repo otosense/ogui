@@ -20,12 +20,12 @@ interface storeDataObject {
 }
 
 type childDataFetchResult =
-	| { status: "success"; data: storeDataObject }
-	| { status: "error"; error: string };
+	| { status: "success"; data: storeDataObject; }
+	| { status: "error"; error: string; };
 
 type FetchResult =
-	| { status: "success"; data: storeDataObject[] }
-	| { status: "error"; error: string };
+	| { status: "success"; data: storeDataObject[]; }
+	| { status: "error"; error: string; };
 
 interface storeViewIProps {
 	getChildNodeData: (keysArray: string[]) => Promise<childDataFetchResult>;
@@ -35,6 +35,7 @@ interface storeViewIProps {
 		from_: number;
 		to_: number;
 	}) => Promise<FetchResult>;
+	renderer?: JSX.Element | any;
 }
 
 export type {

@@ -35,7 +35,6 @@ export function InfintieColumns(data: any[] = [], columnConfigurations: any = []
                 }
             }
         }
-        // console.log('afterColumnConfigurations', column);
         return column;
     });
 }

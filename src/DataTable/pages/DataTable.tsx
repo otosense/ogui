@@ -13,21 +13,21 @@ import MaterialReactTable, {
     MRT_Row,
 
 } from 'material-react-table';
-import { Box, IconButton, Tooltip, Zoom } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { InfintieColumns } from '../components/Table/InfintieColumns';
 import ColumnStore from '../components/Table/ColumnStore';
-import useGlobalConfig from '../components/Table/useGlobalConfig';
 import { IDataTableProps } from '../assets/Interfaces';
+import { isEmpty } from 'lodash';
 
-function DataTable(props: { config: IDataTableProps; }) {
+function DataTable(props: IDataTableProps) {
 
-    const { config } = props;
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
     const [flatRowData, setFlatRowData] = useState<any>([]);
+    const [columns, setColumns] = useState<MRT_ColumnDef<any>[]>([]);
     //optionally, you can manage the row selection state yourself
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
@@ -35,9 +35,9 @@ function DataTable(props: { config: IDataTableProps; }) {
 
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
-    const columnConfigurations = config.columnConfig;
-    const data = config.data;
-    const dataKey = config.dataKey;
+    const columnConfigurations = props.columnConfig;
+    const data = props.data;
+    const dataKey = props.dataKey;
 
 
     const {
@@ -63,23 +63,41 @@ function DataTable(props: { config: IDataTableProps; }) {
         globalFilterFn,
         filterFn,
         hideColumnsDefault
-    }: any = config;
+    }: any = props;
 
 
     // Preparing Table Data
     let flatData = useMemo(() => {
-        if (!data) return [];
-        const tableData = data;
-        setFlatRowData(tableData);
-        return tableData;
+        // if (!data) return [];
+        // const tableData = data;
+        // setFlatRowData(tableData);
+        // return tableData;
+        if (data) {
+            return data().then((dataArray: any) => {
+                setFlatRowData(dataArray);
+            });
+        } else {
+            return [];
+        }
     }, [data]);
 
+
     // Column headers creation
-    const columns: MRT_ColumnDef<any>[] = useMemo(() => {
-        if (!data) return [];
-        const firstRow = (data[0]);
-        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+    useMemo(() => {
+        if (data) {
+            return data().then(async (dataArray: any) => {
+                const firstRow = (dataArray?.[0]);
+                const generatedColumns = await InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+                setColumns(generatedColumns);
+            });
+        } else {
+            return [];
+        }
     }, [data]);
+
+    console.log({ flatData });
+    const totalDBRowCount = flatRowData?.length;
+    const totalFetched = flatRowData.length;
 
     //scroll to top of table when sorting or filters change
     useEffect(() => {
@@ -92,10 +110,10 @@ function DataTable(props: { config: IDataTableProps; }) {
         }
     }, [sorting, columnFilters, globalFilter]);
 
-
+    console.log({ globalFilterFn, enablePinning });
     return (
         <>
-            <section> {
+            <section> {(!isEmpty(columns)) &&
                 <MaterialReactTable
                     columns={columns} // Columns For Table 
                     data={flatRowData} // Data For Table 
@@ -108,7 +126,7 @@ function DataTable(props: { config: IDataTableProps; }) {
                     enableStickyHeader={enableStickyHeader} // Set the sticky header property
 
                     enableExpandAll={enableExpandAll} //Row Expand All Property
-                    renderDetailPanel={config.rowExpandedDetails} //Row Expand Component
+                    renderDetailPanel={props.rowExpandedDetails} //Row Expand Component
                     // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
@@ -131,7 +149,7 @@ function DataTable(props: { config: IDataTableProps; }) {
                     enableRowSelection={enableRowSelection} // Enable row selection property
                     enableMultiRowSelection={enableMultiRowSelection}  // Enable Multi row selection property
 
-                    enablePinning={enablePinning} // Enable Column Pinning property
+                    enablePinning={columns && enablePinning} // Enable Column Pinning property
 
                     enableDensityToggle={enableDensityToggle} //enable density toggle Property
                     enableFullScreenToggle={enableFullScreenToggle} //enable full screen toggle Property
@@ -144,6 +162,12 @@ function DataTable(props: { config: IDataTableProps; }) {
                     onColumnFiltersChange={setColumnFilters}
                     onGlobalFilterChange={setGlobalFilter}
                     onSortingChange={setSorting}
+
+                    renderBottomToolbarCustomActions={() => ( // Rows fetched from the server along with total number of Rows in the table
+                        <Typography>
+                            Fetched {totalFetched} of {totalDBRowCount} total rows.
+                        </Typography>
+                    )}
 
                     onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
 
@@ -204,6 +228,8 @@ function DataTable(props: { config: IDataTableProps; }) {
 export default DataTable;
 
 DataTable.defaultProps = {
+    data: [],
+    columnConfig: [],
     dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
     enablePinning: true, // allow pinning the columns to left
     enableRowSelection: true, // enable Row Single Selection
@@ -216,14 +242,14 @@ DataTable.defaultProps = {
     enableExpandAll: true, // Expand All Property
     enableColumnResizing: true, // Column Resizing Property
     enableFilterMatchHighlighting: true,
-    enablePagination: true, // Pagination Property,
+    enablePagination: false, // Pagination Property,
     enableColumnFilters: true, // Column Filters Property
     enableSorting: true, // Sorting Property
     enableGlobalFilter: true, // Global Filter Property,
     enableGlobalFilterModes: true, // Global Filter Mode Property
     globalFilterFn: 'contains', // Global Filter
     filterFn: 'startsWith', // Individual Column Filter
-    enableDensityToggle: true, // Enable density toggle padding property
+    enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: true, // Enable full screen toggle property
     enableRowVirtualization: true, // Enable row virtualization,
 };

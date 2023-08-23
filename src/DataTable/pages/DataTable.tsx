@@ -19,8 +19,11 @@ import InfoIcon from '@mui/icons-material/Info';
 import { InfintieColumns } from '../components/Table/InfintieColumns';
 import ColumnStore from '../components/Table/ColumnStore';
 import useGlobalConfig from '../components/Table/useGlobalConfig';
+import { IDataTableProps } from '../assets/Interfaces';
 
-function LocalDataTable({ config }: any) {
+function DataTable(props: { config: IDataTableProps; }) {
+
+    const { config } = props;
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
@@ -37,7 +40,6 @@ function LocalDataTable({ config }: any) {
     const dataKey = config.dataKey;
 
 
-    const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,
         enableRowSelection,
@@ -61,7 +63,7 @@ function LocalDataTable({ config }: any) {
         globalFilterFn,
         filterFn,
         hideColumnsDefault
-    }: any = globalConfig;
+    }: any = config;
 
 
     // Preparing Table Data
@@ -106,7 +108,7 @@ function LocalDataTable({ config }: any) {
                     enableStickyHeader={enableStickyHeader} // Set the sticky header property
 
                     enableExpandAll={enableExpandAll} //Row Expand All Property
-                    renderDetailPanel={config.rowExpandedDetails || null} //Row Expand Component
+                    renderDetailPanel={config.rowExpandedDetails} //Row Expand Component
                     // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
@@ -199,7 +201,33 @@ function LocalDataTable({ config }: any) {
 
 }
 
-export default LocalDataTable;
+export default DataTable;
+
+DataTable.defaultProps = {
+    dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
+    enablePinning: true, // allow pinning the columns to left
+    enableRowSelection: true, // enable Row Single Selection
+    enableMultiRowSelection: true, // enable Row Multi Selection
+    enableRowOrdering: true, // enable Drag and Drop of Rows
+    enableColumnOrdering: true, // enable Drag and Drop of Columns
+    enableRowNumbers: true, // turn on row numbers # of rows
+    enableHiding: true, // Hiding Columns Property
+    enableStickyHeader: true, // Sticky Header Property
+    enableExpandAll: true, // Expand All Property
+    enableColumnResizing: true, // Column Resizing Property
+    enableFilterMatchHighlighting: true,
+    enablePagination: true, // Pagination Property,
+    enableColumnFilters: true, // Column Filters Property
+    enableSorting: true, // Sorting Property
+    enableGlobalFilter: true, // Global Filter Property,
+    enableGlobalFilterModes: true, // Global Filter Mode Property
+    globalFilterFn: 'contains', // Global Filter
+    filterFn: 'startsWith', // Individual Column Filter
+    enableDensityToggle: true, // Enable density toggle padding property
+    enableFullScreenToggle: true, // Enable full screen toggle property
+    enableRowVirtualization: true, // Enable row virtualization,
+};
+
 function CustomInfoButton() {
     return <Box>
         <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">

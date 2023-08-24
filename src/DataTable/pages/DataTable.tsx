@@ -2,7 +2,8 @@ import React, {
     useEffect,
     useMemo,
     useRef,
-    useState
+    useState,
+    memo
 } from 'react';
 import MaterialReactTable, {
     MRT_RowSelectionState,
@@ -37,12 +38,7 @@ function DataTable(props: IDataTableProps) {
 
     const columnConfigurations = props.columnConfig;
     const data = props.data;
-    console.log('typeog', typeof data);
     const dataKey = props.dataKey;
-
-    // data: loadTableData.data, => Object
-    // data: sampleFunction, with async / without async  => function
-    // 
 
     const {
         enablePinning,
@@ -71,70 +67,48 @@ function DataTable(props: IDataTableProps) {
 
 
     // Preparing Table Data
-    let flatData = useMemo(() => {
-        // if (!data) return [];
-        // const tableData = data;
-        // setFlatRowData(tableData);
-        // return tableData;
-        if (data) {
-            if (typeof data === 'function') {
+    useMemo(() => {
+        if (!data) {
+            return []; // Return an empty array if data is not provided
+        }
 
-            } else if (typeof data === 'object') {
-                const tableData = data;
-                setFlatRowData(tableData);
-                return tableData;
+        if (typeof data === 'function') {
+            // Check if data is a function
+            const result: any = data();
+            if (typeof result.then === 'function') {
+                // Check if the result of the function is a promise
+                return result.then((dataArray: any) => {
+                    setFlatRowData(dataArray);
+                    return dataArray;
+                });
             } else {
-                return [];
+                const dataArray = result as any[]; // Assuming the result is an array
+                setFlatRowData(dataArray);
+                return dataArray; // Return the result of the function
             }
-            // if (data) {
-            //     return data().then((dataArray: any) => {
-            //         setFlatRowData(dataArray);
-            //     });
-            // } else {
-            //     return [];
-            // }
+        } else if (Array.isArray(data)) {
+            // Check if data is an array
+            setFlatRowData(data);
+            return data; // Return the provided array
         } else {
-            return [];
+            return []; // Return an empty array for unknown data types
         }
     }, [data]);
+
+
 
 
     // Column headers creation
     useMemo(() => {
-
-
-        if (data) {
-            if (typeof data === 'function') {
-
-            } else if (typeof data === 'object') {
-                const firstRow = (data[0]);
-                const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
-                setColumns(generatedColumns);
-            } else {
-                return [];
-            }
-            // if (data) {
-            //     return data().then((dataArray: any) => {
-            //         setFlatRowData(dataArray);
-            //     });
-            // } else {
-            //     return [];
-            // }
-        } else {
+        if (!data) {
             return [];
         }
-        // if (data) {
-        //     return data().then(async (dataArray: any) => {
-        //         const firstRow = (dataArray?.[0]);
-        //         const generatedColumns = await InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
-        //         setColumns(generatedColumns);
-        //     });
-        // } else {
-        //     return [];
-        // }
-    }, [data]);
+        const firstRow = flatRowData?.[0];
+        const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        setColumns(generatedColumns);
+    }, [data, flatRowData]);
 
-    console.log({ flatData });
+
     const totalDBRowCount = flatRowData?.length;
     const totalFetched = flatRowData.length;
 
@@ -149,7 +123,6 @@ function DataTable(props: IDataTableProps) {
         }
     }, [sorting, columnFilters, globalFilter]);
 
-    console.log({ globalFilterFn, enablePinning });
     return (
         <>
             <section> {(!isEmpty(columns)) &&
@@ -188,7 +161,7 @@ function DataTable(props: IDataTableProps) {
                     enableRowSelection={enableRowSelection} // Enable row selection property
                     enableMultiRowSelection={enableMultiRowSelection}  // Enable Multi row selection property
 
-                    enablePinning={columns && enablePinning} // Enable Column Pinning property
+                    enablePinning={enablePinning} // Enable Column Pinning property
 
                     enableDensityToggle={enableDensityToggle} //enable density toggle Property
                     enableFullScreenToggle={enableFullScreenToggle} //enable full screen toggle Property
@@ -221,9 +194,6 @@ function DataTable(props: IDataTableProps) {
                     state={{ // State of the table
                         columnFilters,
                         globalFilter,
-                        // isLoading,
-                        // showAlertBanner: isError,
-                        // showProgressBars: isFetching,
                         sorting,
                         density: 'compact',
                         rowSelection
@@ -232,15 +202,15 @@ function DataTable(props: IDataTableProps) {
                     muiTableBodyRowDragHandleProps={({ table }) => ({ // Row drag handler
                         onDragEnd: () => {
                             const { draggingRow, hoveredRow } = table.getState();
-                            if (hoveredRow && draggingRow && flatData) {
-                                flatData?.splice(
+                            if (hoveredRow && draggingRow && flatRowData) {
+                                flatRowData?.splice(
                                     (hoveredRow as MRT_Row).index,
                                     0,
-                                    flatData?.splice(draggingRow.index, 1)[0],
+                                    flatRowData?.splice(draggingRow.index, 1)[0],
                                 );
                                 // setData([...data]);
-                                // flatData = [...flatData];
-                                setFlatRowData([...flatData]);
+                                // flatRowData = [...flatRowData];
+                                setFlatRowData([...flatRowData]);
                             }
                         },
                     })}
@@ -264,7 +234,7 @@ function DataTable(props: IDataTableProps) {
 
 }
 
-export default DataTable;
+export default memo(DataTable);
 
 DataTable.defaultProps = {
     data: [],

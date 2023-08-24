@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import InfiniteScroll from './assets/backup_codes/InfiniteScroll';
 import { Box, Typography } from '@mui/material';
 import { loadTableData } from './assets/sample';
@@ -8,43 +8,33 @@ import { IDataTableProps } from './assets/Interfaces';
 
 function AppTest() {
 
-  // const sampleFunction = async () => {
-  //   return loadTableData.data;
-
-  //   try {
-  //     const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         from_: 0,
-  //         to_: 100
-  //       }),
-  //       headers: {
-  //         "Content-type": "application/json; charset=UTF-8"
-  //       }
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Network response was not ok");
-  //     }
-
-  //     const json = await response.json();
-  //     console.log('json', json);
-  //     return json.data;
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //     return []; // Return an empty array or handle the error appropriately
-  //   }
-  // };
-
-  // const sampleFunction = async () => {
-  //   return await loadTableData.data;
-  // };
-
-
-  const sampleFunction = () => {
+  const sampleFunction = async () => {
     return loadTableData.data;
+
+    try {
+      const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {
+        method: "POST",
+        body: JSON.stringify({
+          from_: 0,
+          to_: 100
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const json = await response.json();
+      console.log('json', json);
+      return json.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return []; // Return an empty array or handle the error appropriately
+    }
   };
-  // return loadTableData.data;
 
   const configuration: IDataTableProps = {
     // data: sampleFunction,
@@ -118,5 +108,5 @@ function AppTest() {
   );
 }
 
-export default AppTest;
+export default memo(AppTest);
 

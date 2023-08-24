@@ -1,9 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { memo } from 'react';
 import AppTest from './AppTest';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+function App() {
+  return (
     <AppTest />
-  </React.StrictMode>,
-);
+  );
+}
+
+export default memo(App);

@@ -35,7 +35,7 @@ const TreeViewer = (props: storeViewIProps) => {
 		sentinel,
 		getChildNodeData,
 		fetchSize = 100,
-		renderer
+		renderer,
 	} = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
@@ -47,8 +47,8 @@ const TreeViewer = (props: storeViewIProps) => {
 		to_: Number(fetchSize),
 	});
 
-	const [loadedData, setLoadedData] = useState<{ data: any; }>();
-	const [storeData, setStoreData] = useState<{ data: any[]; }>({
+	const [loadedData, setLoadedData] = useState<{ data: any }>();
+	const [storeData, setStoreData] = useState<{ data: any[] }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -131,33 +131,43 @@ const TreeViewer = (props: storeViewIProps) => {
 										nodeId={`${nodeItemId}-array-${key}`}
 										label={String(key)}
 									>
-										{value.map((arrayItem, index) => {
-											if (arrayItem instanceof Object) {
-												return (
-													<StyledTreeItem
-														key={`${nodeItemId}--${index}`}
-														nodeId={`${nodeItemId}--${index}`}
-														label={String(index)}
-													>
-														{renderNodeItemDetails(arrayItem, nodeItemId, [
-															...parentKeys,
-															key,
-															index.toString(),
-														])}
-													</StyledTreeItem>
-												);
-											} else {
-												return (
-													<StyledTreeItem
-														key={`${nodeItemId}--${index}--${String(arrayItem)}`}
-														nodeId={`${nodeItemId}--${index}--${String(
-															arrayItem
-														)}`}
-														label={String(arrayItem)}
-													/>
-												);
-											}
-										})}
+										{value.length > 0 ? (
+											value.map((arrayItem, index) => {
+												if (arrayItem instanceof Object) {
+													return (
+														<StyledTreeItem
+															key={`${nodeItemId}--${index}`}
+															nodeId={`${nodeItemId}--${index}`}
+															label={String(index)}
+														>
+															{renderNodeItemDetails(arrayItem, nodeItemId, [
+																...parentKeys,
+																key,
+																index.toString(),
+															])}
+														</StyledTreeItem>
+													);
+												} else {
+													return (
+														<StyledTreeItem
+															key={`${nodeItemId}--${index}--${String(
+																arrayItem
+															)}`}
+															nodeId={`${nodeItemId}--${index}--${String(
+																arrayItem
+															)}`}
+															label={String(arrayItem)}
+														/>
+													);
+												}
+											})
+										) : (
+											<StyledTreeItem
+												key={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
+												nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
+												label={"[]"}
+											/>
+										)}
 									</StyledTreeItem>
 								);
 							}
@@ -179,7 +189,7 @@ const TreeViewer = (props: storeViewIProps) => {
 					} else {
 						return (
 							<StyledTreeItem
-								key={`${nodeItemId}-${key}-${parentKeys}`}
+								key={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								label={`${key}: ${value}`}
 							/>
@@ -244,8 +254,8 @@ const TreeViewer = (props: storeViewIProps) => {
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
 					const newData = fetchedData.data.filter(
-						(newItem: { id: any; }) =>
-							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
+						(newItem: { id: any }) =>
+							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
 					);
 
 					return {

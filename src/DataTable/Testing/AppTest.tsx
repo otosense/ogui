@@ -1,15 +1,13 @@
 import React, { memo } from 'react';
-import InfiniteScroll from './assets/backup_codes/InfiniteScroll';
 import { Box, Typography } from '@mui/material';
-import { loadTableData } from './assets/sample';
-import DataTable from './pages/DataTable';
-import LocalDataTable from './pages/DataTable';
-import { IDataTableProps } from './assets/Interfaces';
+import { loadTableData } from './SampleData';
+import DataTable from '../DataTable';
+import { IDataTableProps } from '../components/Interfaces';
 
 function AppTest() {
 
   const sampleFunction = async () => {
-    return loadTableData.data;
+    // return loadTableData.data;
 
     try {
       const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {

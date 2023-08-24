@@ -2,7 +2,8 @@ import React, {
     useEffect,
     useMemo,
     useRef,
-    useState
+    useState,
+    memo
 } from 'react';
 import MaterialReactTable, {
     MRT_RowSelectionState,
@@ -13,18 +14,22 @@ import MaterialReactTable, {
     MRT_Row,
 
 } from 'material-react-table';
-import { Box, IconButton, Tooltip, Zoom } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
-import { InfintieColumns } from '../../components/Table/InfintieColumns';
-import ColumnStore from '../../components/Table/ColumnStore';
-import useGlobalConfig from '../../components/Table/useGlobalConfig';
+import { InfintieColumns } from './components/InfintieColumns';
+import ColumnStore from './components/ColumnStore';
+import { IDataTableProps } from './components/Interfaces';
+import { isEmpty } from 'lodash';
+import './css/DataTable.css';
 
-function LocalDataTable({ config }: any) {
+function DataTable(props: IDataTableProps) {
+
     const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>();
     const [sorting, setSorting] = useState<MRT_SortingState>([]);
     const [flatRowData, setFlatRowData] = useState<any>([]);
+    const [columns, setColumns] = useState<MRT_ColumnDef<any>[]>([]);
     //optionally, you can manage the row selection state yourself
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
@@ -32,12 +37,10 @@ function LocalDataTable({ config }: any) {
 
     const rowVirtualizerInstanceRef = useRef<MRT_Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null); //we can get access to the underlying Virtualizer instance and call its scrollToIndex method
 
-    const columnConfigurations = config.columnConfig;
-    const data = config.data;
-    const dataKey = config.dataKey;
+    const columnConfigurations = props.columnConfig;
+    const data = props.data;
+    const dataKey = props.dataKey;
 
-
-    const globalConfig = useGlobalConfig(config.globalConfig);
     const {
         enablePinning,
         enableRowSelection,
@@ -61,23 +64,54 @@ function LocalDataTable({ config }: any) {
         globalFilterFn,
         filterFn,
         hideColumnsDefault
-    }: any = globalConfig;
+    }: any = props;
 
 
     // Preparing Table Data
-    let flatData = useMemo(() => {
-        if (!data) return [];
-        const tableData = data;
-        setFlatRowData(tableData);
-        return tableData;
+    useMemo(() => {
+        if (!data) {
+            return []; // Return an empty array if data is not provided
+        }
+
+        if (typeof data === 'function') {
+            // Check if data is a function
+            const result: any = data();
+            if (typeof result.then === 'function') {
+                // Check if the result of the function is a promise
+                return result.then((dataArray: any) => {
+                    setFlatRowData(dataArray);
+                    return dataArray;
+                });
+            } else {
+                const dataArray = result as any[]; // Assuming the result is an array
+                setFlatRowData(dataArray);
+                return dataArray; // Return the result of the function
+            }
+        } else if (Array.isArray(data)) {
+            // Check if data is an array
+            setFlatRowData(data);
+            return data; // Return the provided array
+        } else {
+            return []; // Return an empty array for unknown data types
+        }
     }, [data]);
 
+
+
+
     // Column headers creation
-    const columns: MRT_ColumnDef<any>[] = useMemo(() => {
-        if (!data) return [];
-        const firstRow = (data[0]);
-        return InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
-    }, [data]);
+    useMemo(() => {
+        if (!data) {
+            return [];
+        }
+        const firstRow = flatRowData?.[0];
+        const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        setColumns(generatedColumns);
+    }, [data, flatRowData]);
+
+
+    const totalDBRowCount = flatRowData?.length;
+    const totalFetched = flatRowData.length;
 
     //scroll to top of table when sorting or filters change
     useEffect(() => {
@@ -90,10 +124,9 @@ function LocalDataTable({ config }: any) {
         }
     }, [sorting, columnFilters, globalFilter]);
 
-
     return (
         <>
-            <section> {
+            <section> {(!isEmpty(columns)) &&
                 <MaterialReactTable
                     columns={columns} // Columns For Table 
                     data={flatRowData} // Data For Table 
@@ -106,7 +139,7 @@ function LocalDataTable({ config }: any) {
                     enableStickyHeader={enableStickyHeader} // Set the sticky header property
 
                     enableExpandAll={enableExpandAll} //Row Expand All Property
-                    renderDetailPanel={config.rowExpandedDetails || null} //Row Expand Component
+                    renderDetailPanel={props.rowExpandedDetails} //Row Expand Component
                     // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                     muiTableBodyProps={({ table }): any => {
@@ -143,6 +176,12 @@ function LocalDataTable({ config }: any) {
                     onGlobalFilterChange={setGlobalFilter}
                     onSortingChange={setSorting}
 
+                    renderBottomToolbarCustomActions={() => ( // Rows fetched from the server along with total number of Rows in the table
+                        <Typography>
+                            Fetched {totalFetched} of {totalDBRowCount} total rows.
+                        </Typography>
+                    )}
+
                     onRowSelectionChange={setRowSelection} //connect internal row selection state to your own
 
 
@@ -156,9 +195,6 @@ function LocalDataTable({ config }: any) {
                     state={{ // State of the table
                         columnFilters,
                         globalFilter,
-                        // isLoading,
-                        // showAlertBanner: isError,
-                        // showProgressBars: isFetching,
                         sorting,
                         density: 'compact',
                         rowSelection
@@ -167,15 +203,15 @@ function LocalDataTable({ config }: any) {
                     muiTableBodyRowDragHandleProps={({ table }) => ({ // Row drag handler
                         onDragEnd: () => {
                             const { draggingRow, hoveredRow } = table.getState();
-                            if (hoveredRow && draggingRow && flatData) {
-                                flatData?.splice(
+                            if (hoveredRow && draggingRow && flatRowData) {
+                                flatRowData?.splice(
                                     (hoveredRow as MRT_Row).index,
                                     0,
-                                    flatData?.splice(draggingRow.index, 1)[0],
+                                    flatRowData?.splice(draggingRow.index, 1)[0],
                                 );
                                 // setData([...data]);
-                                // flatData = [...flatData];
-                                setFlatRowData([...flatData]);
+                                // flatRowData = [...flatRowData];
+                                setFlatRowData([...flatRowData]);
                             }
                         },
                     })}
@@ -199,7 +235,35 @@ function LocalDataTable({ config }: any) {
 
 }
 
-export default LocalDataTable;
+export default memo(DataTable);
+
+DataTable.defaultProps = {
+    data: [],
+    columnConfig: [],
+    dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
+    enablePinning: true, // allow pinning the columns to left
+    enableRowSelection: true, // enable Row Single Selection
+    enableMultiRowSelection: true, // enable Row Multi Selection
+    enableRowOrdering: true, // enable Drag and Drop of Rows
+    enableColumnOrdering: true, // enable Drag and Drop of Columns
+    enableRowNumbers: true, // turn on row numbers # of rows
+    enableHiding: true, // Hiding Columns Property
+    enableStickyHeader: true, // Sticky Header Property
+    enableExpandAll: true, // Expand All Property
+    enableColumnResizing: true, // Column Resizing Property
+    enableFilterMatchHighlighting: true,
+    enablePagination: false, // Pagination Property,
+    enableColumnFilters: true, // Column Filters Property
+    enableSorting: true, // Sorting Property
+    enableGlobalFilter: true, // Global Filter Property,
+    enableGlobalFilterModes: true, // Global Filter Mode Property
+    globalFilterFn: 'contains', // Global Filter
+    filterFn: 'startsWith', // Individual Column Filter
+    enableDensityToggle: false, // Enable density toggle padding property
+    enableFullScreenToggle: true, // Enable full screen toggle property
+    enableRowVirtualization: true, // Enable row virtualization,
+};
+
 function CustomInfoButton() {
     return <Box>
         <Tooltip TransitionComponent={Zoom} title="To perform multiple sorting, please press and hold down the Shift key.">

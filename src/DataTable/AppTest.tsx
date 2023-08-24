@@ -8,69 +8,79 @@ import { IDataTableProps } from './assets/Interfaces';
 
 function AppTest() {
 
-  const sampleFunction = async () => {
+  // const sampleFunction = async () => {
+  //   return loadTableData.data;
+
+  //   try {
+  //     const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         from_: 0,
+  //         to_: 100
+  //       }),
+  //       headers: {
+  //         "Content-type": "application/json; charset=UTF-8"
+  //       }
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     const json = await response.json();
+  //     console.log('json', json);
+  //     return json.data;
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     return []; // Return an empty array or handle the error appropriately
+  //   }
+  // };
+
+  // const sampleFunction = async () => {
+  //   return await loadTableData.data;
+  // };
+
+
+  const sampleFunction = () => {
     return loadTableData.data;
-
-    try {
-      const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {
-        method: "POST",
-        body: JSON.stringify({
-          from_: 0,
-          to_: 100
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const json = await response.json();
-      console.log('json', json);
-      return json.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return []; // Return an empty array or handle the error appropriately
-    }
   };
-
-
-
   // return loadTableData.data;
 
   const configuration: IDataTableProps = {
-    data: sampleFunction,
+    // data: sampleFunction,
+    data: loadTableData.data,
     dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
-    // columnConfig: [
-    //   {
-    //     header: 'picture',
-    //     enableColumnFilter: false,
-    //     enableSorting: false,
-    //     filterFn: 'contains',
-    //     Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
-    //   },
-    //   {
-    //     header: 'eyeColor',
-    //     enableColumnFilter: false,
-    //     enableSorting: false,
-    //     Cell: ({ cell }: { cell: any; }) => (
-    //       <p
-    //         style={{
-    //           backgroundColor: cell.getValue(),
-    //         }}
-    //         className='colorBox'
-    //       >
-    //         &nbsp;
-    //       </p>)
-    //   }
+    columnConfig: [
+      {
+        header: 'picture',
+        enableColumnFilter: false,
+        enableSorting: false,
+        filterFn: 'contains',
+        Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
+      },
+      {
+        header: 'eyeColor',
+        enableColumnFilter: false,
+        enableSorting: false,
+        Cell: ({ cell }: { cell: any; }) => (
+          <p
+            style={{
+              backgroundColor: cell.getValue(),
+            }}
+            className='colorBox'
+          >
+            &nbsp;
+          </p>)
+      }
 
 
-    // ],
+    ],
     rowExpandedDetails: ({ row }: any) => {
-      const { channel } = row.original;
-      return <p>{channel}</p>;
+      const { channel, annotations } = row.original;
+      return <>
+        <p>{channel}</p>;
+        <pre>{JSON.stringify(annotations)}</pre>
+      </>;
     },
     // enablePinning: false, // allow pinning the columns to left
     // enableRowSelection: true, // enable Row Single Selection

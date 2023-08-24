@@ -37,8 +37,12 @@ function DataTable(props: IDataTableProps) {
 
     const columnConfigurations = props.columnConfig;
     const data = props.data;
+    console.log('typeog', typeof data);
     const dataKey = props.dataKey;
 
+    // data: loadTableData.data, => Object
+    // data: sampleFunction, with async / without async  => function
+    // 
 
     const {
         enablePinning,
@@ -73,9 +77,22 @@ function DataTable(props: IDataTableProps) {
         // setFlatRowData(tableData);
         // return tableData;
         if (data) {
-            return data().then((dataArray: any) => {
-                setFlatRowData(dataArray);
-            });
+            if (typeof data === 'function') {
+
+            } else if (typeof data === 'object') {
+                const tableData = data;
+                setFlatRowData(tableData);
+                return tableData;
+            } else {
+                return [];
+            }
+            // if (data) {
+            //     return data().then((dataArray: any) => {
+            //         setFlatRowData(dataArray);
+            //     });
+            // } else {
+            //     return [];
+            // }
         } else {
             return [];
         }
@@ -84,15 +101,37 @@ function DataTable(props: IDataTableProps) {
 
     // Column headers creation
     useMemo(() => {
+
+
         if (data) {
-            return data().then(async (dataArray: any) => {
-                const firstRow = (dataArray?.[0]);
-                const generatedColumns = await InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+            if (typeof data === 'function') {
+
+            } else if (typeof data === 'object') {
+                const firstRow = (data[0]);
+                const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
                 setColumns(generatedColumns);
-            });
+            } else {
+                return [];
+            }
+            // if (data) {
+            //     return data().then((dataArray: any) => {
+            //         setFlatRowData(dataArray);
+            //     });
+            // } else {
+            //     return [];
+            // }
         } else {
             return [];
         }
+        // if (data) {
+        //     return data().then(async (dataArray: any) => {
+        //         const firstRow = (dataArray?.[0]);
+        //         const generatedColumns = await InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        //         setColumns(generatedColumns);
+        //     });
+        // } else {
+        //     return [];
+        // }
     }, [data]);
 
     console.log({ flatData });

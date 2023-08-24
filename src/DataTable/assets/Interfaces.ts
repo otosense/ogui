@@ -80,7 +80,7 @@ interface IColumnConfigProps {
 }
 
 interface IDataTableProps {
-    data: () => any,
+    data: any[] | (() => any[]) | (() => Promise<any[]>),
     dataKey: string,
     columnConfig?: IColumnConfigProps[],
     rowExpandedDetails?: ({ row }: any) => JSX.Element | any,

@@ -118,6 +118,12 @@ interface INodes {
     };
 }
 
+interface IDaggerProps {
+    DagFuncList?: any[] | (() => any[]) | (() => Promise<any[]>),
+    onSave?: {},
+    onLoad?: {};
+}
+
 
 export type {
     ApiResponse,
@@ -134,5 +140,6 @@ export type {
     IEdges,
     IFuncNode,
     INodes,
-    IEachFuncNode
+    IEachFuncNode,
+    IDaggerProps
 };

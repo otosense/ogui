@@ -39,6 +39,8 @@ import { connectionValidation } from '../Components/Utilities/Validations/Connec
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
 import { apiMethod } from '../Components/API/ApiCalls';
 import { storeGrouping } from '../Components/Utilities/Mapping/storeGrouping';
+import { IDaggerProps } from '../Components/Utilities/Interfaces';
+import { isArray, isEmpty, isFunction } from 'lodash';
 
 // Each Node Width and Height Mentioned here
 const nodeWidth = 200;
@@ -53,7 +55,8 @@ const getLayoutedElements = onLayoutHandlers();
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 
 // Main component Starts here
-const Dagger = () => {
+const Dagger = (props: IDaggerProps) => {
+    const { onSave, onLoad, DagFuncList } = props;
     const reactFlowWrapper = useRef<any>(null); // Creating Reference for the DAG
     const [nodes, setNodes, onNodesChange] = useNodesState([]); // In-build function to handle Nodes
     const [edges, setEdges, onEdgesChange] = useEdgesState([]); // In-build function to handle Edges
@@ -64,9 +67,11 @@ const Dagger = () => {
     const [showSnackbar, setShowSnackbar] = useState(false); // Handle Snack Bar for error handlings
     const [flowNodes, setFlowNodes] = useState<any>([]); // Re-append the nodes to UI
 
+    const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState(''); // Error Message Handler
     const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const toggleSnackbar = () => {
         // Snackbar Toggle to shown in UI
         setShowSnackbar((prev) => !prev);
@@ -78,7 +83,7 @@ const Dagger = () => {
     };
 
     // Initiating API call 
-    const { data, status, error, isLoading, isFetching } = apiMethod(payload);
+    // const { data, status, error, isFetching } = apiMethod(payload);
 
     // useEffect(() => {
     //     fetchData();
@@ -91,12 +96,55 @@ const Dagger = () => {
 
     useEffect(() => {
         // Once data received from API Extract only the function List /  FuncNode List
-        if (data) {
-            // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
-            const list = storeGrouping(data);
-            setFuncList(list.funcs); // storing FuncList
+        // if (data) {
+        //     // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
+        //     const list = storeGrouping(data);
+        //     setFuncList(list.funcs); // storing FuncList
+        // }
+        setIsLoading(true);
+
+        if (isEmpty(DagFuncList)) {
+            setFuncList([]); // Return an empty array if DagFuncList is not provided
+            setIsError(true);
         }
-    }, [data]);
+
+        if (isFunction(DagFuncList)) {
+            setIsError(false);
+            // Check if data is a function
+            const result: any = DagFuncList();
+            if (isFunction(result?.then)) {
+                // Check if the result of the function is a promise
+                result.then((dataArray: any) => {
+                    const list = storeGrouping(dataArray);
+                    setFuncList(list.funcs); // storing FuncList
+                    setIsLoading(false);
+                });
+            } else {
+                const dataArray = result as any[]; // Assuming the result is an array
+                const list = storeGrouping(dataArray);
+                setFuncList(list.funcs); // storing FuncList
+                setIsLoading(false);
+            }
+        } else if (isArray(DagFuncList)) {
+            // Check if data is an array
+            const list = storeGrouping(DagFuncList);
+            setFuncList(list.funcs); // storing FuncList
+            setIsLoading(false);
+        } else {
+            setFuncList([]);
+            setIsLoading(false);
+            setIsError(true);
+        }
+
+
+
+        // if (!isEmpty(DagFuncList)) {
+        //     // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
+        //     const list = storeGrouping(DagFuncList);
+        //     setFuncList(list.funcs); // storing FuncList
+        //     setIsLoading(false);
+        // }
+    }, [DagFuncList]);
 
 
     useEffect(() => {
@@ -149,7 +197,7 @@ const Dagger = () => {
     }, [setNodes, setEdges, setUploadOver]);
 
     // Saving the Dag and Prevent saving is any validationError are there  refer function "ValidationError"
-    const onSave = useCallback((e: { preventDefault: () => void; }) => {
+    const saveHandler = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
@@ -251,8 +299,8 @@ const Dagger = () => {
 
     return (
         // Any error in API Component will not load show the actual error message
-        error ? (<Alert severity='error' className='errorMessage'>
-            There is an Error in API
+        isError ? (<Alert severity='error' className='errorMessage'>
+            There is an Error getting DagFuncList data
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
@@ -285,7 +333,7 @@ const Dagger = () => {
                             />
                             <Controls />
                             <Panel position="top-right">
-                                <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                                <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                             </Panel>
                         </ReactFlow>

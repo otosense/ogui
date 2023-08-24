@@ -9,32 +9,6 @@ type StyledTreeItemProps = {
     rootNode?: boolean;
 };
 
-// export const StyledTreeItem = styled(TreeItem)<StyledTreeItemProps>(({ rootNode }) => {
-//     const borderColor = "gray";
-
-//     return {
-//         position: "relative",
-//         "&:before": {
-//             pointerEvents: "none",
-//             content: '""',
-//             position: "absolute",
-//             width: 32,
-//             left: -16,
-//             top: 12,
-//             borderBottom:
-//                 // only display if the TreeItem is not root node
-//                 !rootNode ? `1px dashed ${borderColor}` : "none"
-//         },
-
-//         [`& .${treeItemClasses.group}`]: {
-//             marginLeft: 16,
-//             paddingLeft: 18,
-//             borderLeft: `1px dashed ${borderColor}`
-//         }
-//     };
-// });
-
-
 function TransitionComponent(props: TransitionProps) {
     const style = useSpring({
         from: {

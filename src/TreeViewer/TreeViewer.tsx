@@ -6,11 +6,12 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField/TextField";
 import { Alert } from "@mui/material";
 
-import SnackBar from "../../utilities/SnackBar";
-import LoadingOverlay from "../../utilities/Loader";
-import { StyledTreeItem } from "../components/StoreViewStyle";
-import { storeViewIProps, storeDataObject } from "../Utilities/Interfaces";
-import { deepMerge, handleCopy } from "../Utilities/UtilFunctions";
+import SnackBar from "../utilities/SnackBar";
+import LoadingOverlay from "../utilities/Loader";
+import { StyledTreeItem } from "./components/StoreViewStyle";
+import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
+import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
+import "./css/TreeViewer.css";
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -28,7 +29,7 @@ const useDebounce = (value: string, delay: number) => {
 	return debouncedValue;
 };
 
-const StoreView = (props: storeViewIProps) => {
+const TreeViewer = (props: storeViewIProps) => {
 	const {
 		getRootNodeData,
 		sentinel,
@@ -46,8 +47,8 @@ const StoreView = (props: storeViewIProps) => {
 		to_: Number(fetchSize),
 	});
 
-	const [loadedData, setLoadedData] = useState<{ data: storeDataObject; }>();
-	const [storeData, setStoreData] = useState<{ data: storeDataObject[]; }>({
+	const [loadedData, setLoadedData] = useState<{ data: any; }>();
+	const [storeData, setStoreData] = useState<{ data: any[]; }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -297,7 +298,7 @@ const StoreView = (props: storeViewIProps) => {
 	useEffect(() => {
 		let updatedStoreData = storeData.data.map((eachItem) =>
 			eachItem?.id === loadedData?.data.id
-				? deepMerge(eachItem, loadedData.data)
+				? deepMerge(eachItem, loadedData?.data)
 				: eachItem
 		);
 		setStoreData({ data: updatedStoreData });
@@ -349,9 +350,9 @@ const StoreView = (props: storeViewIProps) => {
 		</main>
 	);
 };
-StoreView.defaultProps = {
+TreeViewer.defaultProps = {
 	fetchSize: 100,
 	sentinel: "notloaded",
 };
 
-export default React.memo(StoreView);
+export default React.memo(TreeViewer);

@@ -139,7 +139,7 @@ const Charts = lazy(() => import('@otosense/ogui/src/DataVisualizer/App'));
 
 ### StoreViewer
 If you want to run the StoreViewer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
-```
+```bash
 <script type="module" src="/src/StoreViewer/main.tsx"></script>
 ```
 
@@ -152,3 +152,16 @@ If you want to run the StoreViewer. please go to the Index.html file. and uncomm
 ```bash
 const StoreView = lazy(() => import('@otosense/ogui/src/StoreViewer/App'));
 ```
+
+### Table JSON maker
+```
+interface IFunctionCallerProps {
+    schema: Object; // please refer to Schema File inside assets Folder. that how the schema structure is expected 
+    liveValidate: boolean;
+    func: (...args: any[]) => any | void;
+}
+```
+
+If you want to run the Table JSON maker. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
+```
+<script type="module" src="/src/JsonForm/src/main.tsx"></script>

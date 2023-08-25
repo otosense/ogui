@@ -1,5 +1,3 @@
-import { ColumnType } from "../../assets/Interfaces";
-
 interface IColumn {
     header: string;
     accessorKey: string;
@@ -9,6 +7,15 @@ interface IColumn {
     Cell?: ({ cell }: any) => JSX.Element;
     enableColumnFilter?: any;
 }
+
+interface ColumnType {
+    header: string;
+    accessorKey: string;
+    enableSorting?: boolean;
+    Cell?: any;
+    className?: string;
+};
+
 
 
 export function InfintieColumns(data: any[] = [], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
@@ -35,7 +42,6 @@ export function InfintieColumns(data: any[] = [], columnConfigurations: any = []
                 }
             }
         }
-        // console.log('afterColumnConfigurations', column);
         return column;
     });
 }

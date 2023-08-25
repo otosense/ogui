@@ -14,8 +14,8 @@ const dataVisualizerProps: IDataVisualizerProps = {
 };
 
 function AppTest() {
-	return <DataVisualizer {...dataVisualizerProps} />;
-	// return <SingleXaxisChart {...singleXaxisChartConfig} />;
+	// return <DataVisualizer {...dataVisualizerProps} />;
+	return <SingleXaxisChart {...singleXaxisChartConfig} />;
 }
 
 export default AppTest;

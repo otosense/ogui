@@ -1,4 +1,10 @@
-import { getAnnotData, getWfData, getWf2Data } from "./DataFunctions";
+import {
+	getAnnotData,
+	getWfData,
+	getWf2Data,
+	getSingleAxisData1,
+	getSingleAxisData2,
+} from "./DataFunctions";
 
 import {
 	ILineChartProps,
@@ -124,7 +130,9 @@ const singleXaxisChartConfig: ISingleXaxisProps = {
 			channel: "wf",
 			type: "line",
 			name: "waveform1",
-			getData: getWfData,
+			getData: getWfData, // or below getData
+			// getData: getSingleAxisData1, // when this getData functions using update respective yaxis min and max, ex: -2 to 50 based on chart data range
+			//getData:
 			yAxis: 0,
 			legend_name: "data1",
 		},
@@ -133,6 +141,7 @@ const singleXaxisChartConfig: ISingleXaxisProps = {
 			type: "line",
 			name: "waveform2",
 			getData: getWf2Data,
+			// getData: getSingleAxisData2,
 			yAxis: 1,
 			legend_name: "data2",
 		},
@@ -141,6 +150,7 @@ const singleXaxisChartConfig: ISingleXaxisProps = {
 			type: "line",
 			name: "waveform3",
 			getData: getWf2Data,
+			// getData: getSingleAxisData1,
 			yAxis: 2,
 			legend_name: "data3",
 		},

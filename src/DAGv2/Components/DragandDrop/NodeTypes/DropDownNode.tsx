@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { pythonIdentifierPattern } from '../../Utilities/globalFunction';
 import { listMapping } from '../../Utilities/Mapping/listMapping';
-import { apiMethod, getParams } from '../../API/ApiCalls';
+import { getParams } from '../../API/ApiCalls';
 import { isEmpty } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
 import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/Interfaces';
@@ -136,10 +136,6 @@ function Select(props: IParamsDropDown) {
     </div>
   );
 }
-
-// function caller(payload: { _attr_name: string; k: any[]; }) {
-//   return apiMethod(payload);
-// }
 
 function DropDownNode(props: IDropDownNode) {
   // which will receive all the properties from the Dagger Component 

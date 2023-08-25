@@ -70,6 +70,9 @@ interface ILoadProps {
     type?: string;
     onClose?: () => void;
     userData?: any[] | (() => any[]) | (() => Promise<any[]>);
+    onSave?: (...args: any[]) => any | void;
+    loadSavedDag?: (...args: any[]) => any | void;
+
 }
 
 interface IEdgeObject {
@@ -120,9 +123,11 @@ interface INodes {
 }
 
 interface IDaggerProps {
-    DagFuncList?: any[] | (() => any[]) | (() => Promise<any[]>),
-    onSave?: {},
-    onLoad?: any[] | (() => any[]) | (() => Promise<any[]>);
+    DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
+    LoadDagList: any[] | (() => any[]) | (() => Promise<any[]>);
+    onSave: (...args: any[]) => any | void;
+    onloadSavedDag: (...args: any[]) => any | void;
+    loadParamsList: (...args: any[]) => any | void;
 }
 
 

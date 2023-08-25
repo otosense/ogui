@@ -1,14 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../Utilities/Mapping/listMapping';
 import { loadDag } from '../API/API';
-import { loadMethod } from '../API/ApiCalls';
 import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
 import { storeGrouping } from '../Utilities/Mapping/storeGrouping';
-import { isArray, isEmpty, isFunction } from 'lodash';
+import { isArray, isEmpty, isFunction, isObject } from 'lodash';
 
 function Load(props: ILoadProps) {
     // Loading the User created already a Dag or by Entering in the input text area
-    const { onClose, userData } = props; // handle close event of the modal
+    const { onClose, userData, loadSavedDag } = props; // handle close event of the modal
     const [data, setData] = useState<string>(JSON.stringify(props.data, null, 2)); // get the dag Json which is Entered by the user
     const [showErrorMessage, setShowErrorMessage] = useState(false); // Handle error message and validation for valid JSON are allowed
     const [openEditor, setOpenEditor] = useState(false); // Text area where the user can enter their own JSON
@@ -21,14 +20,6 @@ function Load(props: ILoadProps) {
         setData(event.target.value);
     };
 
-    const payload = {
-        "_attr_name": "__iter__",
-    };
-
-    // Load the List of Available Dags API Methods
-    const response = loadMethod(payload, 'load');
-
-    console.log('userData', userData, isFunction(userData));
     useEffect(() => {
         // const list = storeGrouping(response.data); // Grouping the API
         // const result = listMapping(list.dags); // Extracting only the dag_Store
@@ -65,7 +56,7 @@ function Load(props: ILoadProps) {
         }
 
 
-    }, [response.data]);
+    }, [userData]);
 
 
     // useEffect(() => {
@@ -78,19 +69,45 @@ function Load(props: ILoadProps) {
     const handleDagSubmit = async (event: { preventDefault: () => void; }) => {
         // Creating the Payload which backend needs 
         event.preventDefault();
-        const payload: ApiPayloadWithK = {
-            "_attr_name": "__getitem__",
-            "k": selectDag
-        };
 
-        loadDag(payload).then(resp => {
-            props.onDataUploaded && props.onDataUploaded(resp);
-            setShowErrorMessage(false);
-            onClose && onClose();
-        }).catch(err => {
-            console.log('error', err.message);
-            setShowErrorMessage(true);
-        });
+        if (loadSavedDag) {
+            const val = loadSavedDag(selectDag); // Only call onSave if it's defined
+            console.log('val', val, typeof val);
+            // props.onDataUploaded && props.onDataUploaded(val);
+
+            if (isObject(val)) {
+                const result: any = val;
+                if (isFunction(result?.then)) {
+                    // Check if the result of the function is a promise
+                    result.then((dataArray: any) => {
+                        props.onDataUploaded && props.onDataUploaded(dataArray);
+                    });
+                } else {
+                    props.onDataUploaded && props.onDataUploaded(result);
+                }
+            }
+
+            // if (isFunction(val)) {
+            //     // Check if data is a function
+            //     const result: any = val();
+            //     console.log('checking val', isFunction(result?.then));
+            //     if (isFunction(result?.then)) {
+            //         // Check if the result of the function is a promise
+            //         result.then((dataArray: any) => {
+            //             props.onDataUploaded && props.onDataUploaded(dataArray);
+            //         });
+            //     } else {
+            //         const dataArray = result as any[]; // Assuming the result is an array
+            //         props.onDataUploaded && props.onDataUploaded(dataArray);
+            //     }
+            // } else if (isArray(val)) {
+            //     // Check if data is an array
+            //     props.onDataUploaded && props.onDataUploaded(val);
+            // } else {
+            //     setDagListResponse([]);
+            // }
+        }
+        onClose && onClose();
     };
 
     //  this will show the Dag in UI which the user enter in his textarea box

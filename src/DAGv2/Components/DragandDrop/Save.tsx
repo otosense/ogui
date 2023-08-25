@@ -1,13 +1,12 @@
 import React, { useState, memo, useEffect } from 'react';
 import CopyIcon from './../../assets/images/files.png';
-import * as API from '../API/API';
 import { pythonIdentifierPattern } from '../Utilities/globalFunction';
 import { ApiPayloadWithV, ILoadProps } from '../Utilities/Interfaces';
 
 function Save(props: ILoadProps) {
     // Saving the User created Dag will takes place here
     const data = JSON.stringify(props.data, null, 2); // get the dag Json from Dagger component
-    const { onClose } = props; // handle close event of the modal
+    const { onClose, onSave } = props; // handle close event of the modal
     const [copied, setCopied] = useState(false);  // handle Copy of Selected Dag
     const [dagName, setDagName] = useState(''); // Dag Title given by the user
     const [errorExist, setErrorExist] = useState(false); // Error Exists in saving Dag will handled here
@@ -31,16 +30,17 @@ function Save(props: ILoadProps) {
             dagName,
             ...props.data,
         };
-        const payload: ApiPayloadWithV = {
-            "_attr_name": '__setitem__',
-            k: dagName,
-            v: combinedObj
-        };
+
         onClose && onClose();
-        // Saving the Dag to Backend using API
-        API.saveDag(payload).then(x => {
-            // Response Handler
-        }).catch(err => console.log('error', err.message));
+
+        const savePayload = {
+            dagName: dagName,
+            combinedObj: combinedObj
+        };
+
+        if (onSave) {
+            onSave(savePayload); // Only call onSave if it's defined
+        }
     };
 
     return (

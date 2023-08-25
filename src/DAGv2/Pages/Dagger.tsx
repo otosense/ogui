@@ -37,7 +37,6 @@ import { ValidationError } from '../Components/Utilities/ErrorValidator';
 import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
 import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
-import { apiMethod } from '../Components/API/ApiCalls';
 import { storeGrouping } from '../Components/Utilities/Mapping/storeGrouping';
 import { IDaggerProps } from '../Components/Utilities/Interfaces';
 import { isArray, isEmpty, isFunction } from 'lodash';
@@ -56,7 +55,7 @@ const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') 
 
 // Main component Starts here
 const Dagger = (props: IDaggerProps) => {
-    const { onSave, onLoad, DagFuncList } = props;
+    const { onSave, LoadDagList, DagFuncList, onloadSavedDag, loadParamsList } = props;
     const reactFlowWrapper = useRef<any>(null); // Creating Reference for the DAG
     const [nodes, setNodes, onNodesChange] = useNodesState([]); // In-build function to handle Nodes
     const [edges, setEdges, onEdgesChange] = useEdgesState([]); // In-build function to handle Edges
@@ -76,23 +75,6 @@ const Dagger = (props: IDaggerProps) => {
         // Snackbar Toggle to shown in UI
         setShowSnackbar((prev) => !prev);
     };
-
-    // Paylaod for API
-    const payload = {
-        "_attr_name": "__iter__",
-    };
-
-    // Initiating API call 
-    // const { data, status, error, isFetching } = apiMethod(payload);
-
-    // useEffect(() => {
-    //     fetchData();
-    // }, []);
-    // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
-
-
-
-    // console.log({ data, status, error, isLoading, isFetching });
 
     useEffect(() => {
         // Once data received from API Extract only the function List /  FuncNode List
@@ -303,7 +285,7 @@ const Dagger = (props: IDaggerProps) => {
             There is an Error getting DagFuncList data
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
-                {isLoading && <LoadingOverlay />}
+                {/* {isLoading && <LoadingOverlay />} */}
                 {/* Actual Dag Structure Everything starts here */}
                 <ReactFlowProvider>
                     {/* Side Bar which contains list of node to Drag  */}
@@ -343,9 +325,9 @@ const Dagger = (props: IDaggerProps) => {
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={onLoad} />
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={LoadDagList} loadSavedDag={onloadSavedDag} />
                         ) : (
-                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} onSave={onSave} />
                         )}
                     </div>
                 )}

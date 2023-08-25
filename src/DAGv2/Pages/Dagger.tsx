@@ -142,7 +142,7 @@ const Dagger = (props: IDaggerProps) => {
         // textUpdater is "TextEditorNode" component which holds varNode functionality
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
         // custom is "DropDownNode" component which holds funcNode functionality
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} loadParamsList={loadParamsList} />,
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections

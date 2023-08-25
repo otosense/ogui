@@ -3,14 +3,14 @@ import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { pythonIdentifierPattern } from '../../Utilities/globalFunction';
 import { listMapping } from '../../Utilities/Mapping/listMapping';
 import { getParams } from '../../API/ApiCalls';
-import { isEmpty } from 'lodash';
+import { isEmpty, isFunction, isObject } from 'lodash';
 import Spinner from '../../Utilities/Spinner';
 import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/Interfaces';
 import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
 
 // funcNode Component main function starts at "DropDownNode" function below
 function Select(props: IParamsDropDown) {
-  const { value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue } = props;
+  const { value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue, loadParamsList } = props;
   // console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue });
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
@@ -22,25 +22,26 @@ function Select(props: IParamsDropDown) {
   const [response, setResponse] = useState<any>({ signature: { parameters: [] } });;
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  // Making API call when user Select the funcNode form the List 
-  const payload: ApiPayloadWithK = {
-    "_attr_name": '__getitem__',
-    "k": ['funcs', value]
-  };
-  // API Handling Methods
-  const mutation = getParams(payload, setResponse, setErrorMessage);
-
   useEffect(() => {
     // making API call once the value is set
     if (!isEmpty(value)) {
-      mutation.mutate(value);
-    }
-  }, [value]);
+      // mutation.mutate(value);
+      const output = loadParamsList(value);
 
-  // useEffect(() => {
-  //     fetchData();
-  // }, []);
-  // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
+      if (isObject(output)) {
+        const result: any = output;
+        if (isFunction(result?.then)) {
+          // Check if the result of the function is a promise
+          result.then((dataArray: any) => {
+            setResponse(dataArray);
+          });
+        } else {
+          setResponse(output);
+        }
+      }
+    }
+
+  }, [value]);
 
   useEffect(() => {
     // calling parameters list for selected functionNode 
@@ -117,7 +118,7 @@ function Select(props: IParamsDropDown) {
       {/* Preparation of Handle to connect */}
       {!isEmpty(errorMessage) ? <p>{errorMessage}</p> :
         (
-          paramsLists.length > 0 &&
+          paramsLists?.length > 0 &&
           <section className='handlers'>
             <div className='multiInput'>
               {paramsLists?.map((paramsList: string, i: number) => {
@@ -139,7 +140,7 @@ function Select(props: IParamsDropDown) {
 
 function DropDownNode(props: IDropDownNode) {
   // which will receive all the properties from the Dagger Component 
-  const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes } = props;
+  const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes, loadParamsList } = props;
   // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
   const [selectedValue, setSelectedValue] = useState<string>(); // Selected value from the DropDown
@@ -194,7 +195,9 @@ function DropDownNode(props: IDropDownNode) {
               selector={functionList}
               isConnectable={isConnectable}
               labels={data.label}
-              selectedValue={selectedValue} />
+              selectedValue={selectedValue}
+              loadParamsList={loadParamsList}
+            />
           </div>
 
         </section>

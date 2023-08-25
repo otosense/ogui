@@ -86,26 +86,6 @@ function Load(props: ILoadProps) {
                     props.onDataUploaded && props.onDataUploaded(result);
                 }
             }
-
-            // if (isFunction(val)) {
-            //     // Check if data is a function
-            //     const result: any = val();
-            //     console.log('checking val', isFunction(result?.then));
-            //     if (isFunction(result?.then)) {
-            //         // Check if the result of the function is a promise
-            //         result.then((dataArray: any) => {
-            //             props.onDataUploaded && props.onDataUploaded(dataArray);
-            //         });
-            //     } else {
-            //         const dataArray = result as any[]; // Assuming the result is an array
-            //         props.onDataUploaded && props.onDataUploaded(dataArray);
-            //     }
-            // } else if (isArray(val)) {
-            //     // Check if data is an array
-            //     props.onDataUploaded && props.onDataUploaded(val);
-            // } else {
-            //     setDagListResponse([]);
-            // }
         }
         onClose && onClose();
     };

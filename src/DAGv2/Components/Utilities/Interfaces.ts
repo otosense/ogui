@@ -34,6 +34,7 @@ interface IDropDownNode {
     isConnectable: boolean;
     errorMapping: [];
     flowNodes: [];
+    loadParamsList: (...args: any[]) => any | void;
 }
 
 interface IFlowNode {
@@ -53,6 +54,7 @@ interface IParamsDropDown {
     isConnectable: boolean;
     labels: string;
     selectedValue: string;
+    loadParamsList: (...args: any[]) => any | void;
 }
 
 interface ITextEditorNode {
@@ -125,9 +127,9 @@ interface INodes {
 interface IDaggerProps {
     DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
     LoadDagList: any[] | (() => any[]) | (() => Promise<any[]>);
-    onSave: (...args: any[]) => any | void;
-    onloadSavedDag: (...args: any[]) => any | void;
-    loadParamsList: (...args: any[]) => any | void;
+    onSave: (...args: any) => any | void;
+    onloadSavedDag: (...args: any) => any | void;
+    loadParamsList: (...args: any) => any | void;
 }
 
 

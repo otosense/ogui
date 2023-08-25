@@ -30,7 +30,7 @@ const XrangeChart = (props: IXrangeChartProps) => {
 		async function fetchDataAndSet() {
 			const { getData } = srcChannels;
 			const fetchedData = await getData();
-
+			setIsLoading(false);
 			const backendYCategories = fetchedData.yAxisCategories;
 			const backendSeriesData = fetchedData.seriesData;
 

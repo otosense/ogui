@@ -1,8 +1,3 @@
-interface IDataVisualizerProps {
-	gridSpec: string;
-	chartsConfig: any[];
-}
-
 interface ILineSeries {
 	channel: string;
 	name: string;
@@ -33,6 +28,11 @@ interface IXrangeChartProps {
 	yLabel: string;
 	miniMap: true;
 	srcChannels: IXrangeSeries;
+}
+
+interface IDataVisualizerProps {
+	gridSpec: string;
+	chartsConfig: any[];
 }
 
 export type { IDataVisualizerProps, ILineChartProps, IXrangeChartProps };

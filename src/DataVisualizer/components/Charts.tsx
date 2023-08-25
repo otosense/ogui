@@ -1,56 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import * as API from './API/API';
-import DataTypeTwo from './DataTypeTwo';
-import DataTypeFour from './DataTypeFour';
-import DataTypeThree from './DataTypeThree';
-import DataTypeOne from './DataTypeOne';
-import { IViewProps, IZoomRange } from './API/interfaces';
+import React, { useEffect, useState } from "react";
+import * as API from "./API/API";
+import DataTypeTwo from "./DataTypeTwo";
+import DataTypeFour from "./DataTypeFour";
+import DataTypeThree from "./DataTypeThree";
+import DataTypeOne from "./DataTypeOne";
+import { IViewProps, IZoomRange } from "./Utilities/interfaces";
 
 // Handling Global Store Zoom Properties to pass for other components
 export const ZoomContext = React.createContext<IZoomRange | null>(null);
 export default function Charts() {
-    const [viewConfigs, setViewConfigs] = useState([]);
-    const [zoomLevel, setZoomLevel] = useState<IZoomRange | null>(null);
+	const [viewConfigs, setViewConfigs] = useState([]);
+	const [zoomLevel, setZoomLevel] = useState<IZoomRange | null>(null);
 
-    const handleZoomChange = (min: number, max: number) => {
-        // Setting zoom level in Global Store
-        // setZoomLevel({ min, max });
-        setZoomLevel((prevZoomLevel: any) => {
-            return { ...prevZoomLevel, min, max };
-        });
-    };
-    useEffect(() => {
-        // when page Loaded calling ViewConfig API
-        fetchData();
-    }, []);
+	const handleZoomChange = (min: number, max: number) => {
+		// Setting zoom level in Global Store
+		// setZoomLevel({ min, max });
+		setZoomLevel((prevZoomLevel: any) => {
+			return { ...prevZoomLevel, min, max };
+		});
+	};
+	useEffect(() => {
+		// when page Loaded calling ViewConfig API
+		fetchData();
+	}, []);
 
-    const fetchData = async () => {
-        // ViewConfig API Called
-        const response = await API.viewConfig();
-        // Saved in Local Component state
-        setViewConfigs(response.data);
-    };
+	const fetchData = async () => {
+		// ViewConfig API Called
+		const response = await API.viewConfig();
+		// Saved in Local Component state
+		setViewConfigs(response.data);
+	};
 
+	// Configurations for Dev Users
+	const userConfigurationsTypeOne = {
+		minimap: true,
+		// combineZoom: false
+	};
+	const userConfigurationsTypeTwo = {
+		minimap: true,
+		// combineZoom: false
+	};
+	const userConfigurationsTypeThree = {
+		minimap: true,
+		// combineZoom: false
+	};
+	const userConfigurationsTypeFour = {
+		minimap: true,
+		// combineZoom: false
+	};
 
-    // Configurations for Dev Users
-    const userConfigurationsTypeOne = {
-        minimap: true,
-        // combineZoom: false
-    };
-    const userConfigurationsTypeTwo = {
-        minimap: true,
-        // combineZoom: false
-    };
-    const userConfigurationsTypeThree = {
-        minimap: true,
-        // combineZoom: false
-    };
-    const userConfigurationsTypeFour = {
-        minimap: true,
-        // combineZoom: false
-    };
-
-    /* 
+	/* 
     Note: Which Smart Components supports which DataType are mentioned below
 
     DataTypeOne => will have data Structure like ( wf, plc )below 
@@ -92,28 +91,55 @@ export default function Charts() {
     ```
    */
 
-    // Mapping of Chart to Smart Components based on data_type, for data_type, please refer above comments
+	// Mapping of Chart to Smart Components based on data_type, for data_type, please refer above comments
 
-    const chartChannel = () => {
-        return viewConfigs.map((viewConfig: IViewProps, index: number) => {
-            const { data_type } = viewConfig;
-            if (data_type === "volume") {
-                return <DataTypeTwo key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeTwo} />;
-            } else if (data_type === "annot") {
-                return <DataTypeFour key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeFour} />;
-            } else if (data_type === "wf") {
-                return <DataTypeOne key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeOne} />;
-            } else if (data_type === "mixed") {
-                return <DataTypeThree key={index} configs={viewConfig} onZoomChange={handleZoomChange} userConfig={userConfigurationsTypeThree} />;
-            }
-        });
-    };
+	const chartChannel = () => {
+		return viewConfigs.map((viewConfig: IViewProps, index: number) => {
+			const { data_type } = viewConfig;
+			if (data_type === "volume") {
+				return (
+					<DataTypeTwo
+						key={index}
+						configs={viewConfig}
+						onZoomChange={handleZoomChange}
+						userConfig={userConfigurationsTypeTwo}
+					/>
+				);
+			} else if (data_type === "annot") {
+				return (
+					<DataTypeFour
+						key={index}
+						configs={viewConfig}
+						onZoomChange={handleZoomChange}
+						userConfig={userConfigurationsTypeFour}
+					/>
+				);
+			} else if (data_type === "wf") {
+				return (
+					<DataTypeOne
+						key={index}
+						configs={viewConfig}
+						onZoomChange={handleZoomChange}
+						userConfig={userConfigurationsTypeOne}
+					/>
+				);
+			} else if (data_type === "mixed") {
+				return (
+					<DataTypeThree
+						key={index}
+						configs={viewConfig}
+						onZoomChange={handleZoomChange}
+						userConfig={userConfigurationsTypeThree}
+					/>
+				);
+			}
+		});
+	};
 
-
-    return (
-        // React way of handling Context
-        <ZoomContext.Provider value={zoomLevel}>
-            {chartChannel()}
-        </ZoomContext.Provider>
-    );
+	return (
+		// React way of handling Context
+		<ZoomContext.Provider value={zoomLevel}>
+			{chartChannel()}
+		</ZoomContext.Provider>
+	);
 }

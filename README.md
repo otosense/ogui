@@ -89,20 +89,32 @@ Goto the DataTable Folder in Terminal and Start the server
 const DataTable = lazy(() => import('@otosense/ogui/src/DataTable/App'));
 ```
 
-### DPP
+### DAG
+
+```
+interface IDaggerProps {
+    DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
+    LoadDagList: any[] | (() => any[]) | (() => Promise<any[]>);
+    onSave: (...args: any) => any | void;
+    onloadSavedDag: (...args: any) => any | void;
+    loadParamsList: (...args: any) => any | void;
+}
+
+```
+
 If you want to run the DPP. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ```
-<script type="module" src="/src/DPP/main.tsx"></script>
+<script type="module" src="/src/DAG/Testing/main.tsx"></script>
 ```
 
 ```bash
   yarn dev
 ```
 
-# To use this DPP in  other projects import like below
+# To use this DAG in  other projects import like below
 
 ```bash 
-const Dagger = lazy(() => import('@otosense/ogui/src/DAGv2/App'));
+const Dagger = lazy(() => import('@otosense/ogui/src/DAG/Testing/App'));
 ```
 
 ### DataVisualizer
@@ -150,7 +162,7 @@ If you want to run the StoreViewer. please go to the Index.html file. and uncomm
 # To use this StoreViewer in  other projects import like below
 
 ```bash
-const StoreView = lazy(() => import('@otosense/ogui/src/StoreViewer/App'));
+const StoreView = lazy(() => import('@otosense/ogui/src/StoreViewer/Testing/App'));
 ```
 
 ### Table JSON maker
@@ -164,4 +176,4 @@ interface IFunctionCallerProps {
 
 If you want to run the Table JSON maker. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ```
-<script type="module" src="/src/JsonForm/src/main.tsx"></script>
+<script type="module" src="/src/JsonForm/Testing/App"></script>

@@ -46,6 +46,36 @@ const LineChart = (props: ILineChartProps) => {
 		setSeriesOptions(allSeriesOptions);
 	}, [props]);
 
+	useEffect(() => {
+		// Use an async function inside the useEffect hook
+		async function fetchDataAndSet() {
+			let allSeriesOptions: any = [];
+			setIsLoading(true);
+
+			srcChannels.map(async (chartConfig: any, index: number) => {
+				const { getData } = chartConfig;
+				const chartData = await getData();
+
+				const xAxisCategories = chartData.xAxisCategories;
+				const seriesData = chartData.seriesData;
+
+				if (index == 0) {
+					setXCategory(xAxisCategories);
+				}
+				let oneSeriesOptions = {
+					name: chartConfig.name,
+					data: seriesData,
+				};
+				allSeriesOptions.push(oneSeriesOptions);
+			});
+
+			setIsLoading(false);
+			setSeriesOptions(allSeriesOptions);
+		}
+
+		fetchDataAndSet();
+	}, []);
+
 	const options = {
 		chart: {
 			type: String(chartType),

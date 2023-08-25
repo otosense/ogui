@@ -6,7 +6,7 @@ interface IDataVisualizerProps {
 interface ILineSeries {
 	channel: string;
 	name: string;
-	getData: any;
+	getData: () => Promise<any>;
 }
 
 interface ILineChartProps {
@@ -22,7 +22,7 @@ interface ILineChartProps {
 interface IXrangeSeries {
 	channel: string;
 	name: string;
-	getData: any;
+	getData: () => Promise<any>;
 }
 
 interface IXrangeChartProps {

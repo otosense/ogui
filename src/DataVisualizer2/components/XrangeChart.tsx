@@ -5,6 +5,8 @@ import xrange from "highcharts/modules/xrange";
 import HighchartsBoost from "highcharts/modules/boost";
 import HighchartsStock from "highcharts/modules/stock";
 import React from "react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { IXrangeChartProps } from "./interfaces";
 
 HighchartsStock(Highcharts);
@@ -15,6 +17,7 @@ const XrangeChart = (props: IXrangeChartProps) => {
 	const { chartTitle, chartType, xLabel, yLabel, miniMap, srcChannels } = props;
 
 	const chartRef = useRef<HighchartsReact.Props>(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const [yAxisCategory, setYAxisCategory] = useState<string[]>([]); // handling y-Axis for Data
 	const [seriesData, setSeriesData] = useState<any[]>([]); // handling X-Axis for plotting in Chart
 
@@ -23,15 +26,20 @@ const XrangeChart = (props: IXrangeChartProps) => {
 	};
 
 	useEffect(() => {
-		const { getData } = srcChannels;
+		// Use an async function inside the useEffect hook
+		async function fetchDataAndSet() {
+			const { getData } = srcChannels;
+			const fetchedData = await getData();
 
-		const backendData = getData();
-		const backendYCategories = backendData.yAxisCategories;
-		const backendSeriesData = backendData.seriesData;
+			const backendYCategories = fetchedData.yAxisCategories;
+			const backendSeriesData = fetchedData.seriesData;
 
-		setSeriesData(backendSeriesData);
-		setYAxisCategory(backendYCategories);
-	}, [props]);
+			setSeriesData(backendSeriesData);
+			setYAxisCategory(backendYCategories);
+		}
+
+		fetchDataAndSet();
+	}, []);
 
 	const Options = {
 		chart: {
@@ -131,18 +139,32 @@ const XrangeChart = (props: IXrangeChartProps) => {
 
 	return (
 		<div className="chart-bg-container">
-			<>
-				<HighchartsReact
-					highcharts={Highcharts}
-					ref={chartRef}
-					options={Options}
-					constructorType={"stockChart"} // use stockChart constructor
-					containerProps={{ style: { height: "100%", width: "100%" } }}
-				/>
-				<button onClick={handleLoadMore} className="load-more-button">
-					Load More
-				</button>
-			</>
+			{!isLoading ? (
+				<>
+					<HighchartsReact
+						highcharts={Highcharts}
+						ref={chartRef}
+						options={Options}
+						constructorType={"stockChart"}
+						containerProps={{ style: { height: "100%", width: "100%" } }}
+					/>
+					<button onClick={handleLoadMore} className="load-more-button">
+						Load More
+					</button>
+				</>
+			) : (
+				<Box
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "center",
+						height: "100%",
+						backgroundColor: "white",
+					}}
+				>
+					<CircularProgress />
+				</Box>
+			)}
 		</div>
 	);
 };

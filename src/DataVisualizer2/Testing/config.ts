@@ -1,12 +1,10 @@
-import {
-	getAnnotData,
-	getWfData,
-	getWf2Data,
-	getSingleAxisData1,
-	getSingleAxisData2,
-} from "./DataFunctions";
+import { getAnnotData, getWfData, getWf2Data } from "./DataFunctions";
 
-import { ILineChartProps, IXrangeChartProps } from "../components/interfaces";
+import {
+	ILineChartProps,
+	ISingleXaxisProps,
+	IXrangeChartProps,
+} from "../components/interfaces";
 
 let lineChartConfig: ILineChartProps = {
 	chartTitle: "WF chart",
@@ -45,15 +43,15 @@ let xrangeChartConfig: IXrangeChartProps = {
 
 const chartsConfig = [lineChartConfig, xrangeChartConfig];
 
-const singleXaxisChartConfig = {
-	chart_title: "SingleXaxis",
-	data_type: "test",
-	chart_type: "singlexaxis",
-	x_label: "Time",
-	y_label: "Value",
+const singleXaxisChartConfig: ISingleXaxisProps = {
+	chartTitle: "SingleXaxis",
+	dataType: "test",
+	chartType: "singlexaxis",
+	xLabel: "Time",
+	yLabel: "Value",
 	miniMap: true,
-	data_limit: 1000,
-	yAxis_conf: [
+	dataLimit: 1000,
+	yAxisConf: [
 		{
 			offset: 0,
 			opposite: false,
@@ -120,51 +118,13 @@ const singleXaxisChartConfig = {
 				enabled: true,
 			},
 		},
-		// {
-		//   offset: 0,
-		//   opposite: false,
-		//   min: 0,
-		//   max: 50,
-		//   tickInterval: 0.1,
-		//   labels: {
-		//     align: "right",
-		//     x: -3,
-		//   },
-		//   title: {
-		//     text: "y Axis 3",
-		//   },
-
-		//   lineWidth: 2,
-		//   //maxPadding: 0,
-		//   endOnTick: false,
-		//   gridLineWidth: 0,
-		// },
-		// {
-		//   offset: 0,
-		//   opposite: false,
-		//   min: 0,
-		//   max: 50,
-		//   tickInterval: 0.1,
-		//   labels: {
-		//     align: "right",
-		//     x: -3,
-		//   },
-		//   title: {
-		//     text: "y Axis 4",
-		//   },
-
-		//   lineWidth: 2,
-		//   //maxPadding: 0,
-		//   endOnTick: false,
-		//   gridLineWidth: 0,
-		// },
 	],
-	src_channels: [
+	srcChannels: [
 		{
 			channel: "wf",
 			type: "line",
 			name: "waveform1",
-			get_data: getWfData,
+			getData: getWfData,
 			yAxis: 0,
 			legend_name: "data1",
 		},
@@ -172,7 +132,7 @@ const singleXaxisChartConfig = {
 			channel: "wf",
 			type: "line",
 			name: "waveform2",
-			get_data: getWf2Data,
+			getData: getWf2Data,
 			yAxis: 1,
 			legend_name: "data2",
 		},
@@ -180,31 +140,10 @@ const singleXaxisChartConfig = {
 			channel: "wf",
 			type: "line",
 			name: "waveform3",
-			get_data: getWf2Data,
+			getData: getWf2Data,
 			yAxis: 2,
 			legend_name: "data3",
 		},
-		// {
-		//   channel: "wf",
-		//   type: "line",
-		//   name: "waveform1",
-		//   get_data: getSingleAxisData1,
-		//   yAxis: 2,
-		// },
-		// {
-		//   channel: "wf",
-		//   type: "line",
-		//   name: "waveform1",
-		//   get_data: getSingleAxisData1,
-		//   yAxis: 3,
-		// },
-		// {
-		//   channel: "wf",
-		//   type: "line",
-		//   name: "waveform1",
-		//   get_data: getSingleAxisData1,
-		//   yAxis: 4,
-		// },
 	],
 };
 

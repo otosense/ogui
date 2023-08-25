@@ -5,7 +5,7 @@
 .wrapper {
     width: 100% !important;
     margin: 0px;
-    background-color: rgb(3, 170, 58);
+    background-color: rgb(255, 255, 255);
     height: 100%;
     width: 100%;
     /* overflow: auto; */
@@ -38,4 +38,10 @@
     width: 100%;
     height: 95vw;
     /* border: 2px solid green; */
+}
+
+.single-xaxis-bg-container {
+    width: 100%;
+    height: 99%;
+    border: 1px solid black;
 }

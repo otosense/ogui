@@ -2,13 +2,13 @@ import wfJsonObject from "../Testing/Data/jsonformatter.json";
 import wfJsonObject2 from "../Testing/Data/jsonformatter2.json";
 import Data from "../Testing/Data/Annot.json";
 
-const getAnnotData = () => {
+async function getAnnotData(): Promise<any> {
 	console.log("data", Data.data[0].data);
 
-	let uniqueArray: string[] = [];
+	let uniqueArray: any[] = [];
 	let Yaxis: any = [];
 
-	let seriesData = [];
+	let seriesData: any = [];
 
 	let dataSamples = Data.data[0].data;
 	console.log("data", dataSamples);
@@ -25,17 +25,11 @@ const getAnnotData = () => {
 		};
 		seriesData.push(chartData);
 	});
-	// console.log("ua", uniqueArray);
-	// console.log("se", seriesData);
 	let formattedData = { yAxisCategories: uniqueArray, seriesData: seriesData };
 	return formattedData;
-};
+}
 
-const getWfData = () => {
-	//function which calls api and returns the data in expected format
-	//expected format : return xAxisCategories, seriesData
-	//xAxisCategories: [] of x values, seriesData: [1,2,3,4] of y values
-
+async function getWfData(): Promise<any> {
 	console.log("wf", wfJsonObject.data);
 
 	let channelData = wfJsonObject.data[0];
@@ -45,7 +39,7 @@ const getWfData = () => {
 			1 / (channelData?.sr / (1000 * 1000))
 		);
 		let sampleTime = channelData?.ts;
-		const sampleTimeArray = [];
+		const sampleTimeArray: any = [];
 
 		data.forEach((sampleValue: number, index: number) => {
 			if (index !== 0) {
@@ -62,16 +56,12 @@ const getWfData = () => {
 			xAxisCategories: sampleTimeArray,
 			seriesData: data,
 		};
-		console.log("chart", chartData);
+		// console.log("chart", chartData);
 		return chartData;
 	}
-};
+}
 
-const getWf2Data = () => {
-	//function which calls api and returns the data in expected format
-	//expected format : return xAxisCategories, seriesData
-	//xAxisCategories: [] of x values, seriesData: [1,2,3,4] of y values
-
+async function getWf2Data(): Promise<any> {
 	console.log("wf", wfJsonObject2.data);
 
 	let channelData = wfJsonObject2.data[0];
@@ -81,7 +71,7 @@ const getWf2Data = () => {
 			1 / (channelData?.sr / (1000 * 1000))
 		);
 		let sampleTime = channelData?.ts;
-		const sampleTimeArray = [];
+		const sampleTimeArray: any = [];
 
 		data.forEach((sampleValue: number, index: number) => {
 			if (index !== 0) {
@@ -100,7 +90,7 @@ const getWf2Data = () => {
 		console.log("chart2", chartData);
 		return chartData;
 	}
-};
+}
 
 const getSingleAxisData1 = () => {
 	let chartData = {

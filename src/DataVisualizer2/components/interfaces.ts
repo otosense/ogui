@@ -35,4 +35,21 @@ interface IDataVisualizerProps {
 	chartsConfig: any[];
 }
 
-export type { IDataVisualizerProps, ILineChartProps, IXrangeChartProps };
+interface ISingleXaxisProps {
+	chartTitle: string;
+	dataType: string;
+	chartType: string;
+	xLabel: string;
+	yLabel: string;
+	miniMap: boolean;
+	dataLimit: number;
+	yAxisConf: any[];
+	srcChannels: any[];
+}
+
+export type {
+	IDataVisualizerProps,
+	ILineChartProps,
+	IXrangeChartProps,
+	ISingleXaxisProps,
+};

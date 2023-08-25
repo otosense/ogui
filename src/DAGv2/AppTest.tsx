@@ -16,7 +16,8 @@ function AppTest() {
         // DagFuncList: loadDagFuncList,
         DagFuncList: sample,
         // onSave: {},
-        // onLoad: {}
+        onLoad: sample,
+        // onLoad: loadDagFuncList
     };
     return (
         <>

@@ -343,7 +343,7 @@ const Dagger = (props: IDaggerProps) => {
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={onLoad} />
                         ) : (
                             <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
                         )}

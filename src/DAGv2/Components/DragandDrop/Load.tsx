@@ -4,10 +4,11 @@ import { loadDag } from '../API/API';
 import { loadMethod } from '../API/ApiCalls';
 import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
 import { storeGrouping } from '../Utilities/Mapping/storeGrouping';
+import { isArray, isEmpty, isFunction } from 'lodash';
 
 function Load(props: ILoadProps) {
     // Loading the User created already a Dag or by Entering in the input text area
-    const { onClose } = props; // handle close event of the modal
+    const { onClose, userData } = props; // handle close event of the modal
     const [data, setData] = useState<string>(JSON.stringify(props.data, null, 2)); // get the dag Json which is Entered by the user
     const [showErrorMessage, setShowErrorMessage] = useState(false); // Handle error message and validation for valid JSON are allowed
     const [openEditor, setOpenEditor] = useState(false); // Text area where the user can enter their own JSON
@@ -27,11 +28,43 @@ function Load(props: ILoadProps) {
     // Load the List of Available Dags API Methods
     const response = loadMethod(payload, 'load');
 
-
+    console.log('userData', userData, isFunction(userData));
     useEffect(() => {
-        const list = storeGrouping(response.data); // Grouping the API
-        const result = listMapping(list.dags); // Extracting only the dag_Store
-        setDagListResponse(result); // saving the Result
+        // const list = storeGrouping(response.data); // Grouping the API
+        // const result = listMapping(list.dags); // Extracting only the dag_Store
+        // setDagListResponse(result); // saving the Result
+
+        if (isEmpty(userData)) {
+            setDagListResponse([]); // Return an empty array if userData is not provided
+        }
+
+        if (isFunction(userData)) {
+            // Check if data is a function
+            const result: any = userData();
+            console.log('checking userData', isFunction(result?.then));
+            if (isFunction(result?.then)) {
+                // Check if the result of the function is a promise
+                result.then((dataArray: any) => {
+                    const list = storeGrouping(dataArray);
+                    const output = listMapping(list.dags); // Extracting only the dag_Store
+                    setDagListResponse(output); // storing FuncList
+                });
+            } else {
+                const dataArray = result as any[]; // Assuming the result is an array
+                const list = storeGrouping(dataArray);
+                const output = listMapping(list.dags); // Extracting only the dag_Store
+                setDagListResponse(output); // saving the Result
+            }
+        } else if (isArray(userData)) {
+            // Check if data is an array
+            const list = storeGrouping(userData);
+            const output = listMapping(list.dags); // Extracting only the dag_Store
+            setDagListResponse(output); // saving the Result
+        } else {
+            setDagListResponse([]);
+        }
+
+
     }, [response.data]);
 
 

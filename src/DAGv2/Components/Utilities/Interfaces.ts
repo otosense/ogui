@@ -69,6 +69,7 @@ interface ILoadProps {
     onDataUploaded?: (data: any) => void;
     type?: string;
     onClose?: () => void;
+    userData?: any[] | (() => any[]) | (() => Promise<any[]>);
 }
 
 interface IEdgeObject {
@@ -121,7 +122,7 @@ interface INodes {
 interface IDaggerProps {
     DagFuncList?: any[] | (() => any[]) | (() => Promise<any[]>),
     onSave?: {},
-    onLoad?: {};
+    onLoad?: any[] | (() => any[]) | (() => Promise<any[]>);
 }
 
 

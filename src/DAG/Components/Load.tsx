@@ -1,8 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { listMapping } from '../Utilities/Mapping/listMapping';
-import { loadDag } from '../API/API';
-import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from '../Utilities/Interfaces';
-import { storeGrouping } from '../Utilities/Mapping/storeGrouping';
+import { listMapping } from '../utilities/Mapping/listMapping';
+import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from './Interfaces';
+import { storeGrouping } from '../utilities/Mapping/storeGrouping';
 import { isArray, isEmpty, isFunction, isObject } from 'lodash';
 
 function Load(props: ILoadProps) {

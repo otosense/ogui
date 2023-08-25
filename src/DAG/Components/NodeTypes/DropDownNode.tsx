@@ -1,12 +1,11 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
-import { pythonIdentifierPattern } from '../../Utilities/globalFunction';
-import { listMapping } from '../../Utilities/Mapping/listMapping';
-import { getParams } from '../../API/ApiCalls';
+import { pythonIdentifierPattern } from '../../utilities/globalFunction';
+import { listMapping } from '../../utilities/Mapping/listMapping';
 import { isEmpty, isFunction, isObject } from 'lodash';
-import Spinner from '../../Utilities/Spinner';
-import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../../Utilities/Interfaces';
-import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
+import Spinner from '../../utilities/Spinner';
+import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../Interfaces';
+import { onNameHandlers } from '../../utilities/Validations/TextValidation';
 
 // funcNode Component main function starts at "DropDownNode" function below
 function Select(props: IParamsDropDown) {

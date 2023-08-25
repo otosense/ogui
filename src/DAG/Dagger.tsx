@@ -21,24 +21,24 @@ import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 import dagre from 'dagre';
 
 
-import Sidebar from '../Components/DragandDrop/Sidebar';
-import LoadingOverlay from '../../utilities/Loader';
-import SnackBar from '../../utilities/SnackBar';
-import TextEditorNode from '../Components/DragandDrop/NodeTypes/TextEditorNode';
-import DropDownNode from '../Components/DragandDrop/NodeTypes/DropDownNode';
-import Save from '../Components/DragandDrop/Save';
-import Load from '../Components/DragandDrop/Load';
+import Sidebar from './Components/Sidebar';
+import LoadingOverlay from '../utilities/Loader';
+import SnackBar from '../utilities/SnackBar';
+import TextEditorNode from './Components/NodeTypes/TextEditorNode';
+import DropDownNode from './Components/NodeTypes/DropDownNode';
+import Save from './Components/Save';
+import Load from './Components/Load';
 
 
-import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJsonToFuncNodes';
-import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
-import { ValidationError } from '../Components/Utilities/ErrorValidator';
+import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNodes';
+import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson';
+import { ValidationError } from './utilities/ErrorValidator';
 
-import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
-import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
-import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
-import { storeGrouping } from '../Components/Utilities/Mapping/storeGrouping';
-import { IDaggerProps } from '../Components/Utilities/Interfaces';
+import { dagDirections, errorHandler } from './utilities/globalFunction';
+import { connectionValidation } from './utilities/Validations/ConnectionValidation';
+import { connectionHandlers } from './utilities/Validations/connectionHandlers';
+import { storeGrouping } from './utilities/Mapping/storeGrouping';
+import { IDaggerProps } from './Components/Interfaces';
 import { isArray, isEmpty, isFunction } from 'lodash';
 
 // Each Node Width and Height Mentioned here
@@ -285,7 +285,7 @@ const Dagger = (props: IDaggerProps) => {
             There is an Error getting DagFuncList data
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
-                {/* {isLoading && <LoadingOverlay />} */}
+                {isLoading && <LoadingOverlay />}
                 {/* Actual Dag Structure Everything starts here */}
                 <ReactFlowProvider>
                     {/* Side Bar which contains list of node to Drag  */}

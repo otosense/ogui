@@ -1,7 +1,7 @@
 import React, { useState, memo, useEffect } from 'react';
-import CopyIcon from './../../assets/images/files.png';
-import { pythonIdentifierPattern } from '../Utilities/globalFunction';
-import { ApiPayloadWithV, ILoadProps } from '../Utilities/Interfaces';
+import CopyIcon from './../assets/images/files.png';
+import { pythonIdentifierPattern } from '../utilities/globalFunction';
+import { ApiPayloadWithV, ILoadProps } from './Interfaces';
 
 function Save(props: ILoadProps) {
     // Saving the User created Dag will takes place here

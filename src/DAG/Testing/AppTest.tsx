@@ -1,7 +1,6 @@
 import React from 'react';
-import Dagger from '../DAGv2/Pages/Dagger';
-import { loadDagFuncList } from './assets/data';
-import { loadDag, saveDag } from './Components/API/API';
+import Dagger from '../Dagger';
+import { loadDagFuncList } from './data';
 
 function AppTest() {
 
@@ -54,7 +53,7 @@ function AppTest() {
     //     return loadDagFuncList;
     // };
 
-    const saver = (data: any) => {
+    const saver = async (data: any) => {
 
         const APIpayload = {
             "_attr_name": '__setitem__',
@@ -62,9 +61,28 @@ function AppTest() {
             v: data.combinedObj
         };
         // Saving the Dag to Backend using API
-        saveDag(APIpayload).then(x => {
-            // Response Handler
-        }).catch(err => console.log('error', err.message));
+        try {
+            const response = await fetch("http://20.219.8.178:8080/dag_store", {
+                method: "POST",
+                body: JSON.stringify({
+                    ...APIpayload
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const json = await response.json();
+            // console.log('json', json);
+            return json;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return []; // Return an empty array or handle the error appropriately
+        }
     };
 
     const onloadSavedDag = async (data: any) => {

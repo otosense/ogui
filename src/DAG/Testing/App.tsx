@@ -1,9 +1,9 @@
 import React from 'react';
-import './App.css';
+import './../css/Dag.css';
 import 'reactflow/dist/style.css';
 import AppTest from './AppTest';
 
-import Dagger from './Pages/Dagger';
+import Dagger from '../Dagger';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 function App() {

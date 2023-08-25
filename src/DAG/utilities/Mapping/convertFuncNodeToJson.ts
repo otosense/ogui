@@ -1,4 +1,4 @@
-import { IFuncNode, IEdges, IEdgeObject } from "../Interfaces";
+import { IFuncNode, IEdges, IEdgeObject } from "../../Components/Interfaces";
 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Nodes

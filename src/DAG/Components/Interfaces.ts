@@ -1,30 +1,3 @@
-interface ApiResponse {
-    signature: {
-        parameters: {
-            name: string;
-        }[];
-    };
-    // Add other properties if needed
-}
-
-interface ApiPayloadAttrName {
-    _attr_name: string;
-}
-
-// Define the interface for the API payload with "_attr_name" and "k" properties
-interface ApiPayloadWithK extends ApiPayloadAttrName {
-    k: string[] | string;
-}
-
-// Define the interface for the API payload with "_attr_name", "k", and "v" properties
-interface ApiPayloadWithV extends ApiPayloadWithK {
-    v: any;
-}
-
-interface ApiPayloadWithKWithName extends ApiPayloadAttrName {
-    k: string;
-}
-
 interface IDropDownNode {
     id: string;
     data: { ddType: string; label: string; initialEdge: string; selects: any; };
@@ -134,15 +107,10 @@ interface IDaggerProps {
 
 
 export type {
-    ApiResponse,
-    ApiPayloadAttrName,
-    ApiPayloadWithK,
-    ApiPayloadWithV,
     IDropDownNode,
     IFlowNode,
     IParamsDropDown,
     ITextEditorNode,
-    ApiPayloadWithKWithName,
     ILoadProps,
     IEdgeObject,
     IEdges,

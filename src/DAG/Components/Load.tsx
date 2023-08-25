@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { listMapping } from '../utilities/Mapping/listMapping';
-import { ApiPayloadWithK, ApiPayloadWithKWithName, ILoadProps } from './Interfaces';
+import { ILoadProps } from './Interfaces';
 import { storeGrouping } from '../utilities/Mapping/storeGrouping';
 import { isArray, isEmpty, isFunction, isObject } from 'lodash';
 

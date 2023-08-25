@@ -4,7 +4,7 @@ import { pythonIdentifierPattern } from '../../utilities/globalFunction';
 import { listMapping } from '../../utilities/Mapping/listMapping';
 import { isEmpty, isFunction, isObject } from 'lodash';
 import Spinner from '../../utilities/Spinner';
-import { ApiPayloadWithK, IDropDownNode, IFlowNode, IParamsDropDown } from '../Interfaces';
+import { IDropDownNode, IFlowNode, IParamsDropDown } from '../Interfaces';
 import { onNameHandlers } from '../../utilities/Validations/TextValidation';
 
 // funcNode Component main function starts at "DropDownNode" function below

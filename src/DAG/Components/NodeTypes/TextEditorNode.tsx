@@ -1,7 +1,7 @@
 import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
-import { ITextEditorNode } from '../../Utilities/Interfaces';
-import { onNameHandlers } from '../../Utilities/Validations/TextValidation';
+import { ITextEditorNode } from '../Interfaces';
+import { onNameHandlers } from '../../utilities/Validations/TextValidation';
 
 // varNode component 
 function TextEditorNode(props: ITextEditorNode) {

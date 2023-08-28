@@ -1,5 +1,5 @@
 import { Viewport } from "reactflow";
-import { IEachFuncNode, IEdges, INodes } from "../Interfaces";
+import { IEachFuncNode, IEdges, INodes } from "../../Components/Interfaces";
 
 export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewport?: Viewport; }) {
     const { edges, nodes } = jsonData;

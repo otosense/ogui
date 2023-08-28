@@ -21,24 +21,25 @@ import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 import dagre from 'dagre';
 
 
-import Sidebar from '../Components/DragandDrop/Sidebar';
-import LoadingOverlay from '../../utilities/Loader';
-import SnackBar from '../../utilities/SnackBar';
-import TextEditorNode from '../Components/DragandDrop/NodeTypes/TextEditorNode';
-import DropDownNode from '../Components/DragandDrop/NodeTypes/DropDownNode';
-import Save from '../Components/DragandDrop/Save';
-import Load from '../Components/DragandDrop/Load';
+import Sidebar from './Components/Sidebar';
+import LoadingOverlay from '../utilities/Loader';
+import SnackBar from '../utilities/SnackBar';
+import TextEditorNode from './Components/NodeTypes/TextEditorNode';
+import DropDownNode from './Components/NodeTypes/DropDownNode';
+import Save from './Components/Save';
+import Load from './Components/Load';
 
 
-import { convertJsonToFuncNodes } from '../Components/Utilities/Mapping/convertJsonToFuncNodes';
-import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from '../Components/Utilities/Mapping/convertFuncNodeToJson';
-import { ValidationError } from '../Components/Utilities/ErrorValidator';
+import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNodes';
+import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson';
+import { ValidationError } from './utilities/ErrorValidator';
 
-import { dagDirections, errorHandler } from '../Components/Utilities/globalFunction';
-import { connectionValidation } from '../Components/Utilities/Validations/ConnectionValidation';
-import { connectionHandlers } from '../Components/Utilities/Validations/connectionHandlers';
-import { apiMethod } from '../Components/API/ApiCalls';
-import { storeGrouping } from '../Components/Utilities/Mapping/storeGrouping';
+import { dagDirections, errorHandler } from './utilities/globalFunction';
+import { connectionValidation } from './utilities/Validations/ConnectionValidation';
+import { connectionHandlers } from './utilities/Validations/connectionHandlers';
+import { storeGrouping } from './utilities/Mapping/storeGrouping';
+import { IDaggerProps } from './Components/Interfaces';
+import { isArray, isEmpty, isFunction } from 'lodash';
 
 // Each Node Width and Height Mentioned here
 const nodeWidth = 200;
@@ -53,7 +54,8 @@ const getLayoutedElements = onLayoutHandlers();
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 
 // Main component Starts here
-const Dagger = () => {
+const Dagger = (props: IDaggerProps) => {
+    const { onSave, LoadDagList, DagFuncList, onloadSavedDag, loadParamsList } = props;
     const reactFlowWrapper = useRef<any>(null); // Creating Reference for the DAG
     const [nodes, setNodes, onNodesChange] = useNodesState([]); // In-build function to handle Nodes
     const [edges, setEdges, onEdgesChange] = useEdgesState([]); // In-build function to handle Edges
@@ -64,39 +66,67 @@ const Dagger = () => {
     const [showSnackbar, setShowSnackbar] = useState(false); // Handle Snack Bar for error handlings
     const [flowNodes, setFlowNodes] = useState<any>([]); // Re-append the nodes to UI
 
+    const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState(''); // Error Message Handler
     const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const toggleSnackbar = () => {
         // Snackbar Toggle to shown in UI
         setShowSnackbar((prev) => !prev);
     };
 
-    // Paylaod for API
-    const payload = {
-        "_attr_name": "__iter__",
-    };
-
-    // Initiating API call 
-    const { data, status, error, isLoading, isFetching } = apiMethod(payload);
-
-    // useEffect(() => {
-    //     fetchData();
-    // }, []);
-    // const fetchData = getFunctionList(setLoading, setFuncList, setIsError);
-
-
-
-    // console.log({ data, status, error, isLoading, isFetching });
-
     useEffect(() => {
         // Once data received from API Extract only the function List /  FuncNode List
-        if (data) {
-            // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
-            const list = storeGrouping(data);
-            setFuncList(list.funcs); // storing FuncList
+        // if (data) {
+        //     // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
+        //     const list = storeGrouping(data);
+        //     setFuncList(list.funcs); // storing FuncList
+        // }
+        setIsLoading(true);
+
+        if (isEmpty(DagFuncList)) {
+            setFuncList([]); // Return an empty array if DagFuncList is not provided
+            setIsError(true);
         }
-    }, [data]);
+
+        if (isFunction(DagFuncList)) {
+            setIsError(false);
+            // Check if data is a function
+            const result: any = DagFuncList();
+            if (isFunction(result?.then)) {
+                // Check if the result of the function is a promise
+                result.then((dataArray: any) => {
+                    const list = storeGrouping(dataArray);
+                    setFuncList(list.funcs); // storing FuncList
+                    setIsLoading(false);
+                });
+            } else {
+                const dataArray = result as any[]; // Assuming the result is an array
+                const list = storeGrouping(dataArray);
+                setFuncList(list.funcs); // storing FuncList
+                setIsLoading(false);
+            }
+        } else if (isArray(DagFuncList)) {
+            // Check if data is an array
+            const list = storeGrouping(DagFuncList);
+            setFuncList(list.funcs); // storing FuncList
+            setIsLoading(false);
+        } else {
+            setFuncList([]);
+            setIsLoading(false);
+            setIsError(true);
+        }
+
+
+
+        // if (!isEmpty(DagFuncList)) {
+        //     // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
+        //     const list = storeGrouping(DagFuncList);
+        //     setFuncList(list.funcs); // storing FuncList
+        //     setIsLoading(false);
+        // }
+    }, [DagFuncList]);
 
 
     useEffect(() => {
@@ -112,7 +142,7 @@ const Dagger = () => {
         // textUpdater is "TextEditorNode" component which holds varNode functionality
         textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
         // custom is "DropDownNode" component which holds funcNode functionality
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} />,
+        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} loadParamsList={loadParamsList} />,
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections
@@ -149,7 +179,7 @@ const Dagger = () => {
     }, [setNodes, setEdges, setUploadOver]);
 
     // Saving the Dag and Prevent saving is any validationError are there  refer function "ValidationError"
-    const onSave = useCallback((e: { preventDefault: () => void; }) => {
+    const saveHandler = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const flowKey = 'DAG-flow';
         if (reactFlowInstance) {
@@ -251,8 +281,8 @@ const Dagger = () => {
 
     return (
         // Any error in API Component will not load show the actual error message
-        error ? (<Alert severity='error' className='errorMessage'>
-            There is an Error in API
+        isError ? (<Alert severity='error' className='errorMessage'>
+            There is an Error getting DagFuncList data
         </Alert>) : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
@@ -285,7 +315,7 @@ const Dagger = () => {
                             />
                             <Controls />
                             <Panel position="top-right">
-                                <Button variant="contained" onClick={onSave} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                                <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                             </Panel>
                         </ReactFlow>
@@ -295,9 +325,9 @@ const Dagger = () => {
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={LoadDagList} loadSavedDag={onloadSavedDag} />
                         ) : (
-                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} />
+                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} onSave={onSave} />
                         )}
                     </div>
                 )}

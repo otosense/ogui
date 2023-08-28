@@ -4,7 +4,7 @@ interface storeDataObject {
 }
 
 interface storeViewIProps {
-	getChildNodeData: (keysArray: string[]) => Promise<any>;
+	getChildNodeData?: (keysArray: string[]) => Promise<any>;
 	sentinel?: string;
 	fetchSize?: number;
 	getRootNodeData: (passer: {

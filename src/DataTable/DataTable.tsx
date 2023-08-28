@@ -192,7 +192,7 @@ function DataTable(props: IDataTableProps) {
 
 
                         muiTableBodyRowProps={({ row }) => ({ // Row Selection Properties on click of Row
-                            onClick: row.getToggleSelectedHandler(),
+                            // onClick: row.getToggleSelectedHandler(), // Select row if anywhere in the row is clicked
                             sx: { cursor: 'pointer' },
                         })}
 

@@ -47,8 +47,8 @@ const TreeViewer = (props: storeViewIProps) => {
 		to_: Number(fetchSize),
 	});
 
-	const [loadedData, setLoadedData] = useState<{ data: any }>();
-	const [storeData, setStoreData] = useState<{ data: any[] }>({
+	const [loadedData, setLoadedData] = useState<{ data: any; }>();
+	const [storeData, setStoreData] = useState<{ data: any[]; }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -249,13 +249,15 @@ const TreeViewer = (props: storeViewIProps) => {
 	useEffect(() => {
 		// Use an async function inside the useEffect hook
 		async function fetchDataAndSet() {
-			const fetchedData = await getRootNodeData(passer);
+			// const fetchedData = await getRootNodeData(passer);
+			const fetchedData = getRootNodeData;
+			console.log('fetchedData', fetchedData);
 			setLoading(false);
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
-					const newData = fetchedData.data.filter(
-						(newItem: { id: any }) =>
-							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+					const newData = fetchedData.data?.['annotations']?.filter(
+						(newItem: { id: any; }) =>
+							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
 					);
 
 					return {
@@ -272,6 +274,7 @@ const TreeViewer = (props: storeViewIProps) => {
 	}, [getRootNodeData, passer]);
 
 	useEffect(() => {
+		console.log('storeData.data', storeData.data);
 		if (storeData) {
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
 			setSearchResults(filteredData);
@@ -318,7 +321,7 @@ const TreeViewer = (props: storeViewIProps) => {
 		<main className="mainArea">
 			{isLoading && <LoadingOverlay />}
 			<section className="topLayout">
-				<TextField
+				{/* <TextField
 					fullWidth
 					id="myInput"
 					label="Search Id"
@@ -328,7 +331,7 @@ const TreeViewer = (props: storeViewIProps) => {
 					onChange={handleSearchQueryChange}
 					required
 					size="small"
-				/>
+				/> */}
 			</section>
 			{error !== undefined && error && (
 				<Alert severity="error" className="errorMessage">

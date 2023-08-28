@@ -71,9 +71,7 @@ function DataTable(props: IDataTableProps) {
 
     // Preparing Table Data
     useMemo(() => {
-        console.log('nefore', data);
-        if (isEmpty(data)) {
-            console.log('data', data);
+        if ((!(data))) {
             setIsError(true);
             setErrorMessage('data is not provided');
             return []; // Return an empty array if data is not provided
@@ -246,7 +244,6 @@ function DataTable(props: IDataTableProps) {
 export default memo(DataTable);
 
 DataTable.defaultProps = {
-    data: [],
     columnConfig: [],
     dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
     enablePinning: true, // allow pinning the columns to left

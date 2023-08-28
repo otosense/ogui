@@ -1,30 +1,3 @@
-interface ApiResponse {
-    signature: {
-        parameters: {
-            name: string;
-        }[];
-    };
-    // Add other properties if needed
-}
-
-interface ApiPayloadAttrName {
-    _attr_name: string;
-}
-
-// Define the interface for the API payload with "_attr_name" and "k" properties
-interface ApiPayloadWithK extends ApiPayloadAttrName {
-    k: string[] | string;
-}
-
-// Define the interface for the API payload with "_attr_name", "k", and "v" properties
-interface ApiPayloadWithV extends ApiPayloadWithK {
-    v: any;
-}
-
-interface ApiPayloadWithKWithName extends ApiPayloadAttrName {
-    k: string;
-}
-
 interface IDropDownNode {
     id: string;
     data: { ddType: string; label: string; initialEdge: string; selects: any; };
@@ -34,6 +7,7 @@ interface IDropDownNode {
     isConnectable: boolean;
     errorMapping: [];
     flowNodes: [];
+    loadParamsList: (...args: any[]) => any | void;
 }
 
 interface IFlowNode {
@@ -53,6 +27,7 @@ interface IParamsDropDown {
     isConnectable: boolean;
     labels: string;
     selectedValue: string;
+    loadParamsList: (...args: any[]) => any | void;
 }
 
 interface ITextEditorNode {
@@ -69,6 +44,10 @@ interface ILoadProps {
     onDataUploaded?: (data: any) => void;
     type?: string;
     onClose?: () => void;
+    userData?: any[] | (() => any[]) | (() => Promise<any[]>);
+    onSave?: (...args: any[]) => any | void;
+    loadSavedDag?: (...args: any[]) => any | void;
+
 }
 
 interface IEdgeObject {
@@ -118,21 +97,25 @@ interface INodes {
     };
 }
 
+interface IDaggerProps {
+    DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
+    LoadDagList: any[] | (() => any[]) | (() => Promise<any[]>);
+    onSave: (...args: any) => any | void;
+    onloadSavedDag: (...args: any) => any | void;
+    loadParamsList: (...args: any) => any | void;
+}
+
 
 export type {
-    ApiResponse,
-    ApiPayloadAttrName,
-    ApiPayloadWithK,
-    ApiPayloadWithV,
     IDropDownNode,
     IFlowNode,
     IParamsDropDown,
     ITextEditorNode,
-    ApiPayloadWithKWithName,
     ILoadProps,
     IEdgeObject,
     IEdges,
     IFuncNode,
     INodes,
-    IEachFuncNode
+    IEachFuncNode,
+    IDaggerProps
 };

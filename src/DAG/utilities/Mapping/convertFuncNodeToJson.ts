@@ -1,4 +1,4 @@
-import { IFuncNode, IEdges, IEdgeObject } from "../Interfaces";
+import { IFuncNode, IEdges, IEdgeObject } from "../../Components/Interfaces";
 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Nodes
@@ -7,7 +7,7 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
     let initialNodes: { id: string; type: string; data: { label: string; }; }[] = [];
     let varNodeCollection: any[] = []; // Creating node collection
     let outNodeCollection: string[] = []; // Creating Edge collection
-    func_nodes.map((funcNode, index: number) => {
+    func_nodes?.map((funcNode, index: number) => {
         const funcObject = { // Converting it as function node will takes place here
             id: funcNode.name,
             type: 'custom',
@@ -48,7 +48,7 @@ export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }
     // converting the user give / selected from the Dag List node into UI understanding Edges
     const { func_nodes } = jsonData;
     let initialEdges: IEdges[] = [];
-    func_nodes.map((funcNode) => {
+    func_nodes?.map((funcNode) => {
         const edgeObject: IEdgeObject = { // Creating edges for nodes
             id: `${funcNode.out + "." + funcNode.name}_edge`,
             markerEnd: { type: 'arrowclosed' },

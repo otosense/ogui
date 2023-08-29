@@ -7,10 +7,7 @@ interface storeViewIProps {
 	getChildNodeData?: (keysArray: string[]) => Promise<any>;
 	sentinel?: string;
 	fetchSize?: number;
-	getRootNodeData: (passer: {
-		from_: number;
-		to_: number;
-	}) => Promise<any>;
+	getRootNodeData: any;
 	renderer?: JSX.Element | any;
 }
 

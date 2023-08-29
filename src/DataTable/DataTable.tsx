@@ -106,17 +106,18 @@ function DataTable(props: IDataTableProps) {
 
 
     // Column headers creation
-    useMemo(() => {
+    const memoizedColumns = useMemo(() => {
         const firstRow = flatRowData?.[0];
         const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
-        setColumns(generatedColumns);
+        // setColumns(generatedColumns);
+        return generatedColumns;
     }, [data, flatRowData]);
 
 
     const totalDBRowCount = flatRowData?.length;
     const totalFetched = flatRowData.length;
 
-    //scroll to top of table when sorting or filters change
+    // scroll to top of table when sorting or filters change
     useEffect(() => {
         //scroll to the top of the table when the sorting changes
         try {
@@ -132,9 +133,9 @@ function DataTable(props: IDataTableProps) {
             {errorMessage}
         </Alert>) :
             (<>
-                <section> {(!isEmpty(columns)) &&
+                <section className='dataTable-main'> {(!isEmpty(memoizedColumns)) &&
                     <MaterialReactTable
-                        columns={columns} // Columns For Table 
+                        columns={memoizedColumns} // Columns For Table 
                         data={flatRowData} // Data For Table 
                         enablePagination={enablePagination} // turn off pagination
                         enableRowNumbers={enableRowNumbers} // turn on row numbers # of rows
@@ -151,9 +152,15 @@ function DataTable(props: IDataTableProps) {
                         muiTableBodyProps={({ table }): any => {
                             ColumnStore(table, dataKey);
                         }}
+                        // muiTableProps={{
+                        //     sx: {
+                        //         tableLayout: 'fixed',
+                        //     },
+                        // }}
                         enableSorting={enableSorting}
 
                         enableColumnResizing={enableColumnResizing} // Column Resizing Property
+                        columnResizeMode="onEnd"
                         enableGlobalFilter={enableGlobalFilter}
                         enableColumnFilters={enableColumnFilters}
                         enableGlobalFilterModes={enableGlobalFilterModes} // Global Filter Mode Property like Fuzzy Filter etc. 
@@ -164,7 +171,7 @@ function DataTable(props: IDataTableProps) {
                             sx: { m: '0.5rem 0', width: '100%' },
                             variant: 'outlined',
                         }}
-
+                        layoutMode="grid"
                         enableRowSelection={enableRowSelection} // Enable row selection property
                         enableMultiRowSelection={enableMultiRowSelection}  // Enable Multi row selection property
 

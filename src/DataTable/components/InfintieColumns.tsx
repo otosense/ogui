@@ -1,4 +1,4 @@
-import React, { filter, isArray, isObject } from "lodash";
+import React, { filter, forEach, isArray, isObject } from "lodash";
 import TreeViewer from "../../TreeViewer/TreeViewer";
 
 interface IColumn {
@@ -9,6 +9,7 @@ interface IColumn {
     filterFn?: any;
     Cell?: ({ cell }: any) => JSX.Element;
     enableColumnFilter?: any;
+    size?: number;
 }
 
 interface ColumnType {
@@ -27,39 +28,32 @@ export function InfintieColumns(data: any[] = [], columnConfigurations: any = []
         let column: IColumn = {
             header: columnName,
             accessorKey: columnName,
+            size: 300,
             filterFn: defaultColumnFilter,
             Cell: ({ cell }: { cell: any; }) => {
-                if (isObject(cell.getValue()[0]) || isArray(cell.getValue()[0])) {
-                    console.log('cell.getValue()', cell.getValue(), typeof cell.getValue()[0]);
+                if (isObject(cell.getValue()?.[0]) || isArray(cell.getValue()?.[0])) {
                     // return <pre title={JSON.stringify(cell.getValue())}>{JSON.stringify(cell.getValue())}</pre>;
-                    // return <pre title={JSON.stringify(cell.getValue())}>{JSON.stringify(cell.getValue())}</pre>;
-                    // async function fetchData(passer: { from_: number; to_: number }): Promise<any> {
-                    //     return { status: "success", data: cell.getValue() };
-
-
-                    let d = {
-                        [columnName]: [
-                            ...cell.getValue(), { id: [columnName] }
-                        ]
-                    };
-                    console.log('dddddddddddddddddddd', d);
+                    if (isArray(cell.getValue())) {
+                        forEach(cell.getValue(), (x, i) => {
+                            x.id = x.name;
+                            // Or if you want to access the same array using cell.getValue()
+                            cell.getValue()[i].id = x.name;
+                        });
+                    }
                     let storeViewProps = {
-                        getRootNodeData: { status: "success", data: d },
+                        getRootNodeData: { status: "success", data: cell.getValue() },
                     };
 
                     return <TreeViewer {...storeViewProps} />;
                 } else {
                     return <span title={cell.getValue()}>{cell.getValue()}</span>;
-                    return <span title={cell.getValue()}>{cell.getValue()}</span>;
                 }
-                console.log('cell.getValue()', cell.getValue(), typeof cell.getValue());
             }
         };
         const matchingHeaderProps = filter(columnConfigurations, { header: columnName })[0];
         if (matchingHeaderProps) {
             column = { ...column, ...matchingHeaderProps };
         }
-
         return column;
     });
 }

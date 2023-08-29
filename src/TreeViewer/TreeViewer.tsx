@@ -253,8 +253,8 @@ const TreeViewer = (props: storeViewIProps) => {
 	useEffect(() => {
 		// Use an async function inside the useEffect hook
 		async function fetchDataAndSet() {
-			// const fetchedData = await getRootNodeData(passer);
-			const fetchedData: any = getRootNodeData;
+			const fetchedData = await getRootNodeData(passer);
+			// const fetchedData: any = getRootNodeData;
 			setLoading(false);
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {

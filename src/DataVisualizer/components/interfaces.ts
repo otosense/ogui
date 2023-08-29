@@ -1,7 +1,9 @@
 interface ILineSeries {
 	channel: string;
 	name: string;
-	getData: () => Promise<any>;
+	// getData: () => Promise<any>;
+	// getData: any[] | (() => any[]) | (() => Promise<any[]>),
+	getData: any,
 }
 
 interface ILineChartProps {
@@ -58,11 +60,14 @@ interface yAxisConfig {
 	};
 }
 
+type GetDataFunction = () => any | Promise<any>;
+
 interface singleXaxisSrcChannels {
 	channel: string;
 	type: string;
 	name: string;
-	getData: (() => {}) | (() => Promise<any>);
+	// getData: (() => {}) | (() => Promise<any>);
+	getData: Object | GetDataFunction;
 	yAxis: number;
 	legend_name: string;
 }

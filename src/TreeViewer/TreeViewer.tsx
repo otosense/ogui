@@ -12,6 +12,7 @@ import { StyledTreeItem } from "./components/StoreViewStyle";
 import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
 import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
 import "./css/TreeViewer.css";
+import { isEmpty } from "lodash";
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -67,15 +68,18 @@ const TreeViewer = (props: storeViewIProps) => {
 	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
 		try {
 			// console.log("clickedKeyParentStructure", clickedKeyParentStructure);
-			const childNodeLoadedData = await getChildNodeData(
-				clickedKeyParentStructure
-			);
-			if (childNodeLoadedData.status === "success") {
-				// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
-				let childData: storeDataObject =
-					childNodeLoadedData.data as storeDataObject;
-				setLoadedData({ data: childData });
+			if (!isEmpty(getChildNodeData)) {
+				const childNodeLoadedData = await getChildNodeData(
+					clickedKeyParentStructure
+				);
+				if (childNodeLoadedData.status === "success") {
+					// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
+					let childData: storeDataObject =
+						childNodeLoadedData.data as storeDataObject;
+					setLoadedData({ data: childData });
+				}
 			}
+
 		} catch (error) {
 			console.error("Error fetching child node data:", error);
 		}
@@ -250,12 +254,11 @@ const TreeViewer = (props: storeViewIProps) => {
 		// Use an async function inside the useEffect hook
 		async function fetchDataAndSet() {
 			// const fetchedData = await getRootNodeData(passer);
-			const fetchedData = getRootNodeData;
-			console.log('fetchedData', fetchedData);
+			const fetchedData: any = getRootNodeData;
 			setLoading(false);
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
-					const newData = fetchedData.data?.['annotations']?.filter(
+					const newData = fetchedData?.data?.filter(
 						(newItem: { id: any; }) =>
 							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
 					);
@@ -274,7 +277,6 @@ const TreeViewer = (props: storeViewIProps) => {
 	}, [getRootNodeData, passer]);
 
 	useEffect(() => {
-		console.log('storeData.data', storeData.data);
 		if (storeData) {
 			const filteredData = filterData(storeData.data, debouncedSearchQuery);
 			setSearchResults(filteredData);
@@ -319,9 +321,9 @@ const TreeViewer = (props: storeViewIProps) => {
 
 	return (
 		<main className="mainArea">
-			{isLoading && <LoadingOverlay />}
+			{/* {isLoading && <LoadingOverlay />} */}
 			<section className="topLayout">
-				{/* <TextField
+				<TextField
 					fullWidth
 					id="myInput"
 					label="Search Id"
@@ -331,7 +333,7 @@ const TreeViewer = (props: storeViewIProps) => {
 					onChange={handleSearchQueryChange}
 					required
 					size="small"
-				/> */}
+				/>
 			</section>
 			{error !== undefined && error && (
 				<Alert severity="error" className="errorMessage">
@@ -366,6 +368,7 @@ const TreeViewer = (props: storeViewIProps) => {
 TreeViewer.defaultProps = {
 	fetchSize: 100,
 	sentinel: "notloaded",
+	renderer: () => []
 };
 
 export default React.memo(TreeViewer);

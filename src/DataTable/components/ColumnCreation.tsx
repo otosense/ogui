@@ -20,7 +20,7 @@ interface ColumnType {
     className?: string;
 };
 
-export function InfintieColumns(data: any[] = [], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
+export function columnCreation(data: any[] = [], columnConfigurations: any = [], defaultColumnFilter: string, hideColumnsDefault: string[] = []): ColumnType[] {
     const columnKeys = Object.keys(data).filter(
         (key: string) => !hideColumnsDefault.includes(key)
     );

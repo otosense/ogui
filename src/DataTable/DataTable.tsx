@@ -17,8 +17,8 @@ import MaterialReactTable, {
 import { Alert, Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
-import { InfintieColumns } from './components/InfintieColumns';
-import ColumnStore from './components/ColumnStore';
+import { columnCreation } from './components/ColumnCreation';
+import ColumnVisibility from './components/ColumnVisibility';
 import { IDataTableProps } from './components/Interfaces';
 import { isEmpty } from 'lodash';
 import './css/DataTable.css';
@@ -108,7 +108,7 @@ function DataTable(props: IDataTableProps) {
     // Column headers creation
     const memoizedColumns = useMemo(() => {
         const firstRow = flatRowData?.[0];
-        const generatedColumns = InfintieColumns(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
+        const generatedColumns = columnCreation(firstRow, columnConfigurations, filterFn, hideColumnsDefault);
         // setColumns(generatedColumns);
         return generatedColumns;
     }, [data, flatRowData]);
@@ -150,7 +150,7 @@ function DataTable(props: IDataTableProps) {
                         // renderDetailPanel={({ row }) => (<InfiniteRowExpand row={row} />)} //Row Expand Component
 
                         muiTableBodyProps={({ table }): any => {
-                            ColumnStore(table, dataKey);
+                            ColumnVisibility(table, dataKey);
                         }}
                         // muiTableProps={{
                         //     sx: {

@@ -5,6 +5,7 @@ import HighchartsStock from "highcharts/modules/stock"; // import the Highcharts
 import React from "react";
 import { ISingleXaxisProps } from "./interfaces";
 import "../css/DataVisualizer.css";
+import { isFunction, isObject } from "lodash";
 HighchartsStock(Highcharts); // initialize the module
 
 const SingleXaxisChart = (props: ISingleXaxisProps) => {
@@ -86,9 +87,90 @@ const SingleXaxisChart = (props: ISingleXaxisProps) => {
 
 			srcChannels.map(async (chartSeriesData: any, index: number) => {
 				let { getData } = chartSeriesData;
+				let chartData: any;
+				console.log('typeof', typeof getData);
 
-				const chartData = await getData();
 
+				if (isFunction(getData)) {
+					const initial = getData();
+					console.log('typeof result', typeof initial);
+					if (isFunction(initial?.then)) {
+						initial.then((dataArray: any) => {
+							chartData = dataArray;
+						});
+
+					}
+					else if (isFunction(initial)) {
+						chartData = initial();
+					}
+					else if (isObject(initial)) {
+						chartData = initial;
+					}
+				} else if (isObject(getData)) {
+					chartData = getData;
+				} else {
+					chartData = {};
+				}
+
+				// if (isFunction(initial)) {
+				// 	const result = initial();
+
+				// 	if (isFunction(result?.then)) {
+				// 		result.then((dataArray: any) => {
+				// 			chartData = dataArray;
+				// 		});
+				// 	} else {
+				// 		chartData = result;
+				// 	}
+				// } else if (isFunction(initial?.then)) {
+				// 	initial.then((dataArray: any) => {
+				// 		chartData = dataArray;
+				// 	});
+				// } else if (isObject(initial)) {
+				// 	chartData = initial;
+				// } else {
+				// 	chartData = {};
+				// }
+
+
+
+				// if (isFunction(getData)) {
+				// 	const initial: any = getData();
+				// 	console.log('typeof initial', typeof initial);
+				// 	console.log('initial', initial);
+				// 	if (isFunction(initial)) {
+				// 		const result = initial();
+				// 		console.log('result', result);
+				// 		if (isFunction(result?.then)) {
+				// 			result.then((dataArray: any) => {
+				// 				chartData = dataArray;
+				// 			});
+				// 		} else {
+				// 			chartData = result;
+				// 		}
+				// 	} else if (isFunction(initial?.then)) {
+				// 		initial.then((dataArray: any) => {
+				// 			chartData = dataArray;
+				// 		});
+				// 	}
+
+				// 	else if (isObject(initial)) {
+				// 		console.log('object initial', initial);
+				// 		chartData = initial;
+				// 	} else {
+				// 		chartData = {};
+				// 	}
+
+				// } else if (isObject(getData)) {
+				// 	chartData = getData;
+				// } else {
+				// 	chartData = {};
+				// }
+
+
+				// const chartData = await getData();
+				// const chartData = getData();
+				// console.log('object', chartData());
 				const xAxisCategories = chartData.xAxisCategories;
 				const seriesData = chartData.seriesData;
 

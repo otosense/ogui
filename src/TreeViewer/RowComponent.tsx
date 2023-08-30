@@ -19,23 +19,8 @@ import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
 import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
 import "./css/TreeViewer.css";
 
-const RowComponent = forwardRef((props, ref) => {
-	const { node, style, onToggle } = props;
-
-	let sentinel = "notloaded";
-
-	const handleNodeToggle = useCallback(() => {
-		console.log("node toggled");
-		if (onToggle) {
-			onToggle();
-		}
-	}, [onToggle]);
-
-	// useEffect(() => {
-	// 	if (onToggle) {
-	// 		onToggle();
-	// 	}
-	// }, [onToggle]);
+const RowComponent = (props) => {
+	const { node, index, onToggle, sentinel, style } = props;
 
 	const renderNodeItemDetails = (
 		nodeItem: any,
@@ -137,7 +122,6 @@ const RowComponent = forwardRef((props, ref) => {
 								key={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								label={`${key}: ${value}`}
-								// onToggle={handleNodeToggle}
 							/>
 						);
 					}
@@ -148,26 +132,13 @@ const RowComponent = forwardRef((props, ref) => {
 
 	const renderTree = (nodes, i) => (
 		<section key={i} style={{ position: "relative" }} className="renderNodes">
-			<StyledTreeItem
-				key={nodes.id}
-				nodeId={nodes.id}
-				label={`${nodes.id}`}
-				// onToggle={handleNodeToggle}
-				onClick={handleNodeToggle}
-				// onNodeToggle={}
-			>
+			<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
 				{renderNodeItemDetails(nodes, nodes?.id, [nodes.id])}
 			</StyledTreeItem>
 		</section>
 	);
 
-	// ... your existing functions ...
-
-	return (
-		<div ref={ref} style={style}>
-			{node && renderTree(node, 0)}
-		</div>
-	);
-});
+	return <div style={style}>{node && renderTree(node, index)}</div>;
+};
 
 export default RowComponent;

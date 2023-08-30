@@ -106,7 +106,7 @@ function AppTest() {
 	return (
 		<>
 			{/* <TreeViewer {...storeViewProps} /> */}
-			<TV />
+			<TV {...storeViewProps} />
 		</>
 	);
 }

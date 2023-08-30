@@ -5,70 +5,27 @@ import InfiniteLoader from "react-window-infinite-loader";
 import RowComponent from "./RowComponent";
 import "./css/TreeViewer.css";
 
-const ListComponent = ({ items, moreItemsLoading, loadMore, hasNextPage }) => {
-	const defaultHeight = 40; // initial height of rows, adjust accordingly
+const ListComponent = (props: any) => {
+	const { items, moreItemsLoading, loadMore, hasNextPage, sentinel } = props;
+	const defaultHeight = 50;
 
 	const height = window.innerHeight - 50;
 	const width = window.innerWidth - 100;
 	const [rowHeights, setRowHeights] = useState(() =>
 		new Array(items.length).fill(defaultHeight)
 	);
-	const listRef = useRef(null);
 
 	const getItemSize = (index) => {
 		return rowHeights[index] || defaultHeight;
 	};
 
-	const handleTreeToggle = useCallback((index, newSize) => {
-		console.log("newsize", newSize);
-		console.log("in handleTreeToggle toogle of LC");
-		setRowHeights((prev) => {
-			const newHeights = [...prev];
-			newHeights[index] = newSize;
-			return newHeights;
-		});
-
-		console.log("rowHeights", rowHeights);
-
-		listRef.current.resetAfterIndex(index, true);
-	}, []);
-
 	const Row = ({ index, style }) => {
-		const treeRef = useRef(null);
-
-		// const handleToggle = () => {
-		// 	console.log("in handel toogle of LC");
-		// 	// if (treeRef.current) {
-		// 	// 	const newSize = treeRef.current?.getBoundingClientRect().height;
-		// 	// 	console.log("n", newSize);
-		// 	// 	handleTreeToggle(index, newSize);
-		// 	// }
-		// 	setTimeout(() => {
-		// 		if (treeRef.current) {
-		// 			const newSize = treeRef.current.getBoundingClientRect().height;
-		// 			console.log("n", newSize);
-		// 			handleTreeToggle(index, newSize);
-		// 		}
-		// 	}, 5);
-		// };
-
-		const handleToggle = () => {
-			setTimeout(() => {
-				if (treeRef.current) {
-					const newSize = treeRef.current.getBoundingClientRect().height;
-					console.log("new size in ht", newSize);
-					handleTreeToggle(index, newSize);
-				}
-			}, 0);
-		};
-
 		return (
 			<RowComponent
 				node={items[index]}
-				i={index}
+				index={index}
 				style={style}
-				ref={treeRef}
-				onToggle={handleToggle}
+				sentinel={sentinel}
 			/>
 		);
 	};
@@ -89,10 +46,6 @@ const ListComponent = ({ items, moreItemsLoading, loadMore, hasNextPage }) => {
 					itemSize={getItemSize}
 					className="list-container"
 					onItemsRendered={onItemsRendered}
-					ref={(list) => {
-						ref(list);
-						listRef.current = list;
-					}}
 					overscanCount={4}
 				>
 					{Row}

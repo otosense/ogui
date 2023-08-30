@@ -3,6 +3,7 @@ import TreeViewer from "../TreeViewer";
 import { storeDataObject, storeViewIProps } from "../Utilities/Interfaces";
 import SimpleLineChart from "./SimpleLineChart";
 import { annotationSample } from "./data";
+import TV from "../TV";
 
 async function fetchData(passer: { from_: number; to_: number }): Promise<any> {
 	// return { status: "success", data: annotationSample };
@@ -104,7 +105,8 @@ function AppTest() {
 	console.log("in app test");
 	return (
 		<>
-			<TreeViewer {...storeViewProps} />
+			{/* <TreeViewer {...storeViewProps} /> */}
+			<TV />
 		</>
 	);
 }

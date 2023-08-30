@@ -61,27 +61,54 @@ const TV = (props: any) => {
 		}
 	};
 
-	const loadMore = useCallback(async () => {
+	const loadMore = useCallback(() => {
+		console.log("load more called");
 		setMoreItemsLoading(true);
 		try {
-			console.log("passerRef", passerRef.current);
-			const newItems = await getRootNodeData(passerRef.current);
-			const mergedItems = [...items, ...newItems.data];
-			setItems(mergedItems);
-			if (searchQuery) {
-				const lowerCaseQuery = searchQuery.toLowerCase();
-				const matchedItems = mergedItems.filter((item) =>
-					item.id.toLowerCase().includes(lowerCaseQuery)
-				);
-				setFilteredItems(matchedItems);
+			const result = getRootNodeData(passerRef.current);
+
+			if (typeof result.then === "function") {
+				// Check if the result of the function is a promise
+				console.log("promise type");
+				return result.then((dataArray: any) => {
+					const mergedItems = [...items, ...dataArray];
+					setItems(mergedItems);
+					if (searchQuery) {
+						const lowerCaseQuery = searchQuery.toLowerCase();
+						const matchedItems = mergedItems.filter((item) =>
+							item.id.toLowerCase().includes(lowerCaseQuery)
+						);
+						setFilteredItems(matchedItems);
+					} else {
+						setFilteredItems(mergedItems);
+					}
+					setMoreItemsLoading(false);
+					setPasser((prevPasser) => ({
+						from_: prevPasser.to_,
+						to_: prevPasser.to_ + fetchSize,
+					}));
+				});
 			} else {
-				setFilteredItems(mergedItems);
+				console.log("generel data");
+				const dataArray = result as any[]; // Assuming the result is an array
+				const mergedItems = [...items, ...dataArray];
+				setItems(mergedItems);
+				if (searchQuery) {
+					const lowerCaseQuery = searchQuery.toLowerCase();
+					const matchedItems = mergedItems.filter((item) =>
+						item.id.toLowerCase().includes(lowerCaseQuery)
+					);
+					setFilteredItems(matchedItems);
+				} else {
+					setFilteredItems(mergedItems);
+				}
+				setMoreItemsLoading(false);
+				setPasser((prevPasser) => ({
+					from_: prevPasser.to_,
+					to_: prevPasser.to_ + fetchSize,
+				}));
+				// return dataArray; // Return the result of the function
 			}
-			setMoreItemsLoading(false);
-			setPasser((prevPasser) => ({
-				from_: prevPasser.to_,
-				to_: prevPasser.to_ + fetchSize,
-			}));
 		} catch (error: any) {
 			console.log("error");
 			setMoreItemsLoading(false);

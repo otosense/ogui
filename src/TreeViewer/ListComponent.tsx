@@ -14,7 +14,7 @@ const ListComponent = (props: any) => {
 		sentinel,
 		loadChildSentinelData,
 	} = props;
-	const defaultHeight = 50;
+	const defaultHeight = 100;
 
 	const height = window.innerHeight - 50;
 	const width = window.innerWidth - 100;
@@ -23,7 +23,7 @@ const ListComponent = (props: any) => {
 	);
 
 	const getItemSize = (index: number) => {
-		return rowHeights[index] || defaultHeight;
+		return defaultHeight;
 	};
 
 	const Row = ({ index, style }) => {
@@ -55,7 +55,7 @@ const ListComponent = (props: any) => {
 					className="list-container"
 					onItemsRendered={onItemsRendered}
 					ref={ref}
-					overscanCount={4}
+					overscanCount={3}
 				>
 					{Row}
 				</VariableSizeList>

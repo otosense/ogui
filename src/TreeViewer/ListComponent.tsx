@@ -46,6 +46,7 @@ const ListComponent = (props: any) => {
 					itemSize={getItemSize}
 					className="list-container"
 					onItemsRendered={onItemsRendered}
+					ref={ref}
 					overscanCount={4}
 				>
 					{Row}

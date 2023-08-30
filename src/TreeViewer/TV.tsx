@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import ListComponent from "./ListComponent";
-// import initialItems from "./mock.json";
 import { annotationSample } from "./Testing/data";
 import TreeView from "@mui/lab/TreeView";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -47,6 +46,21 @@ const TV = (props: any) => {
 		passerRef.current = passer; // Update the ref whenever passer changes
 	}, [passer]);
 
+	const loadChildSentinelData = async (clickedKeyParentStructure: string[]) => {
+		try {
+			// console.log("clickedKeyParentStructure", clickedKeyParentStructure);
+			const childNodeLoadedData = await getChildNodeData(
+				clickedKeyParentStructure
+			);
+			// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
+			let childData: storeDataObject =
+				childNodeLoadedData.data as storeDataObject;
+			setLoadedData({ data: childData });
+		} catch (error) {
+			console.error("Error fetching child node data:", error);
+		}
+	};
+
 	const loadMore = useCallback(async () => {
 		setMoreItemsLoading(true);
 		try {
@@ -76,22 +90,43 @@ const TV = (props: any) => {
 
 	useEffect(() => {
 		// This function fetches the data and updates the state
-		const fetchData = async () => {
-			try {
-				const newItems = await getRootNodeData(passer);
-				setItems(newItems.data);
-				setFilteredItems(newItems.data);
+		// const fetchData = async () => {
+		// 	try {
+		// 		const newItems = await getRootNodeData(passer);
+		// 		setItems(newItems.data);
+		// 		setFilteredItems(newItems.data);
+		// 		setPasser((prevPasser) => ({
+		// 			from_: prevPasser.to_,
+		// 			to_: prevPasser.to_ + fetchSize,
+		// 		}));
+		// 	} catch (error: any) {
+		// 		console.error("Error fetching initial data:", error);
+		// 	}
+		// };
+
+		const result: any = getRootNodeData(passer);
+		if (typeof result.then === "function") {
+			// Check if the result of the function is a promise
+			console.log("promise type");
+			return result.then((dataArray: any) => {
+				setItems(dataArray);
+				setFilteredItems(dataArray);
 				setPasser((prevPasser) => ({
 					from_: prevPasser.to_,
 					to_: prevPasser.to_ + fetchSize,
 				}));
-			} catch (error: any) {
-				console.error("Error fetching initial data:", error);
-			}
-		};
-
-		// Call the fetchData function
-		fetchData();
+			});
+		} else {
+			console.log("generel data");
+			const dataArray = result as any[]; // Assuming the result is an array
+			setItems(dataArray);
+			setFilteredItems(dataArray);
+			setPasser((prevPasser) => ({
+				from_: prevPasser.to_,
+				to_: prevPasser.to_ + fetchSize,
+			}));
+			// return dataArray; // Return the result of the function
+		}
 	}, []);
 
 	return (
@@ -123,6 +158,7 @@ const TV = (props: any) => {
 						loadMore={loadMore}
 						hasNextPage={hasNextPage}
 						sentinel={sentinel}
+						loadChildSentinelData={loadChildSentinelData}
 					/>
 				) : (
 					<Box mt={2}>

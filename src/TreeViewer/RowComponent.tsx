@@ -5,22 +5,20 @@ import React, {
 	forwardRef,
 	useCallback,
 } from "react";
-import TreeView from "@mui/lab/TreeView";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import TextField from "@mui/material/TextField/TextField";
-import { Alert } from "@mui/material";
 
-import SnackBar from "../utilities/SnackBar";
-import LoadingOverlay from "../utilities/Loader";
 import { StyledTreeItem } from "./components/StoreViewStyle";
 import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
 import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
 import "./css/TreeViewer.css";
 
 const RowComponent = (props) => {
-	const { node, index, onToggle, sentinel, style } = props;
+	const { node, index, sentinel, style, loadChildSentinelData } = props;
+
+	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
+		if (loadChildSentinelData) {
+			loadChildSentinelData(clickedKeyParentStructure);
+		}
+	};
 
 	const renderNodeItemDetails = (
 		nodeItem: any,

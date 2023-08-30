@@ -7,15 +7,10 @@ interface storeViewIProps {
 	getChildNodeData: (keysArray: string[]) => Promise<any>;
 	sentinel?: string;
 	fetchSize?: number;
-	getRootNodeData: (passer: {
-		from_: number;
-		to_: number;
-	}) => Promise<any>;
+	getRootNodeData:
+		| (() => any[])
+		| ((passer: { from_: number; to_: number }) => Promise<any[]>);
 	renderer?: JSX.Element | any;
 }
 
-export type {
-	storeViewIProps,
-	storeDataObject,
-
-};
+export type { storeViewIProps, storeDataObject };

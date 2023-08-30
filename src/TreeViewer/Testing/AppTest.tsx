@@ -5,29 +5,59 @@ import SimpleLineChart from "./SimpleLineChart";
 import { annotationSample } from "./data";
 import TV from "../TV";
 
-async function fetchData(passer: { from_: number; to_: number }): Promise<any> {
-	// return { status: "success", data: annotationSample };
-	const url = "http://20.219.8.178:8080/get_all_sessions";
-	try {
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(passer),
-		});
+// async function fetchData(passer: { from_: number; to_: number }): Promise<any> {
+// 	// return { status: "success", data: annotationSample };
+// 	const url = "http://20.219.8.178:8080/get_all_sessions";
+// 	try {
+// const response = await fetch(url, {
+// 	method: "POST",
+// 	headers: {
+// 		"Content-Type": "application/json",
+// 	},
+// 	body: JSON.stringify(passer),
+// });
 
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
+// 		if (!response.ok) {
+// 			throw new Error(`HTTP error! Status: ${response.status}`);
+// 		}
 
-		const data = await response.json();
-		console.log("data", data.data);
-		return { status: "success", data: data.data };
-	} catch (error: any) {
-		return { status: "error", error: error.toString() };
-	}
-}
+// 		const data = await response.json();
+// 		console.log("data", data.data);
+// 		return { status: "success", data: data.data };
+// 	} catch (error: any) {
+// 		return { status: "error", error: error.toString() };
+// 	}
+// }
+
+// const fetchData = async (passer: any) => {
+// 	// return loadTableData.data;
+
+// 	try {
+// 		const url = "http://20.219.8.178:8080/get_all_sessions";
+// 		const response = await fetch(url, {
+// 			method: "POST",
+// 			headers: {
+// 				"Content-Type": "application/json",
+// 			},
+// 			body: JSON.stringify(passer),
+// 		});
+
+// 		if (!response.ok) {
+// 			throw new Error("Network response was not ok");
+// 		}
+
+// 		const json = await response.json();
+// 		console.log("json", json);
+// 		return json.data;
+// 	} catch (error) {
+// 		console.error("Error fetching data:", error);
+// 		return []; // Return an empty array or handle the error appropriately
+// 	}
+// };
+
+const fetchData = () => {
+	return annotationSample;
+};
 
 const childNodeTestData: any = {
 	id: "1213",

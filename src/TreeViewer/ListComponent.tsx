@@ -6,7 +6,14 @@ import RowComponent from "./RowComponent";
 import "./css/TreeViewer.css";
 
 const ListComponent = (props: any) => {
-	const { items, moreItemsLoading, loadMore, hasNextPage, sentinel } = props;
+	const {
+		items,
+		moreItemsLoading,
+		loadMore,
+		hasNextPage,
+		sentinel,
+		loadChildSentinelData,
+	} = props;
 	const defaultHeight = 50;
 
 	const height = window.innerHeight - 50;
@@ -15,7 +22,7 @@ const ListComponent = (props: any) => {
 		new Array(items.length).fill(defaultHeight)
 	);
 
-	const getItemSize = (index) => {
+	const getItemSize = (index: number) => {
 		return rowHeights[index] || defaultHeight;
 	};
 
@@ -26,6 +33,7 @@ const ListComponent = (props: any) => {
 				index={index}
 				style={style}
 				sentinel={sentinel}
+				loadChildSentinelData={loadChildSentinelData}
 			/>
 		);
 	};

@@ -60,26 +60,25 @@ const TV = (props: any) => {
 	}, []);
 
 	return (
-		// <>
-		// 	<TreeView
-		// 		aria-label="Store View"
-		// 		defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
-		// 		defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
-		// 	>
-		// 		<ListComponent
-		// 			items={items}
-		// 			moreItemsLoading={moreItemsLoading}
-		// 			loadMore={loadMore}
-		// 			hasNextPage={hasNextPage}
-		// 		/>
-		// 	</TreeView>
-		// </>
-		<ListComponent
-			items={items}
-			moreItemsLoading={moreItemsLoading}
-			loadMore={loadMore}
-			hasNextPage={hasNextPage}
-		/>
+		<TreeView
+			aria-label="Store View"
+			defaultCollapseIcon={<ExpandMoreIcon style={{ color: "#0880ae" }} />}
+			defaultExpandIcon={<ChevronRightIcon style={{ color: "#0880ae" }} />}
+		>
+			<ListComponent
+				items={items}
+				moreItemsLoading={moreItemsLoading}
+				loadMore={loadMore}
+				hasNextPage={hasNextPage}
+			/>
+		</TreeView>
+
+		// <ListComponent
+		// 	items={items}
+		// 	moreItemsLoading={moreItemsLoading}
+		// 	loadMore={loadMore}
+		// 	hasNextPage={hasNextPage}
+		// />
 	);
 };
 

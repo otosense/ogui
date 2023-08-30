@@ -1,25 +1,79 @@
-import React from "react";
-import { FixedSizeList } from "react-window";
+import React, { useState, useRef, useCallback } from "react";
+import { VariableSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
 import RowComponent from "./RowComponent";
 import "./css/TreeViewer.css";
 
 const ListComponent = ({ items, moreItemsLoading, loadMore, hasNextPage }) => {
-	const height = window.innerHeight; // approximates 100vh
-	const width = window.innerWidth;
+	const defaultHeight = 40; // initial height of rows, adjust accordingly
 
-	const Row = ({ index, style }) => {
-		// console.log("index", items[index]);
-		// console.log("i am in row");
-		return <RowComponent node={items[index]} i={index} style={style} />;
+	const height = window.innerHeight - 50;
+	const width = window.innerWidth - 100;
+	const [rowHeights, setRowHeights] = useState(() =>
+		new Array(items.length).fill(defaultHeight)
+	);
+	const listRef = useRef(null);
+
+	const getItemSize = (index) => {
+		return rowHeights[index] || defaultHeight;
 	};
 
-	console.log("items", items);
+	const handleTreeToggle = useCallback((index, newSize) => {
+		console.log("newsize", newSize);
+		console.log("in handleTreeToggle toogle of LC");
+		setRowHeights((prev) => {
+			const newHeights = [...prev];
+			newHeights[index] = newSize;
+			return newHeights;
+		});
+
+		console.log("rowHeights", rowHeights);
+
+		listRef.current.resetAfterIndex(index, true);
+	}, []);
+
+	const Row = ({ index, style }) => {
+		const treeRef = useRef(null);
+
+		// const handleToggle = () => {
+		// 	console.log("in handel toogle of LC");
+		// 	// if (treeRef.current) {
+		// 	// 	const newSize = treeRef.current?.getBoundingClientRect().height;
+		// 	// 	console.log("n", newSize);
+		// 	// 	handleTreeToggle(index, newSize);
+		// 	// }
+		// 	setTimeout(() => {
+		// 		if (treeRef.current) {
+		// 			const newSize = treeRef.current.getBoundingClientRect().height;
+		// 			console.log("n", newSize);
+		// 			handleTreeToggle(index, newSize);
+		// 		}
+		// 	}, 5);
+		// };
+
+		const handleToggle = () => {
+			setTimeout(() => {
+				if (treeRef.current) {
+					const newSize = treeRef.current.getBoundingClientRect().height;
+					console.log("new size in ht", newSize);
+					handleTreeToggle(index, newSize);
+				}
+			}, 0);
+		};
+
+		return (
+			<RowComponent
+				node={items[index]}
+				i={index}
+				style={style}
+				ref={treeRef}
+				onToggle={handleToggle}
+			/>
+		);
+	};
 
 	const itemCount = hasNextPage ? items.length + 1 : items.length;
-
-	console.log("itemCount", itemCount);
 
 	return (
 		<InfiniteLoader
@@ -28,18 +82,21 @@ const ListComponent = ({ items, moreItemsLoading, loadMore, hasNextPage }) => {
 			loadMoreItems={loadMore}
 		>
 			{({ onItemsRendered, ref }) => (
-				<FixedSizeList
-					height={500}
-					width={500}
+				<VariableSizeList
+					height={height}
+					width={width}
 					itemCount={itemCount}
-					itemSize={50}
+					itemSize={getItemSize}
 					className="list-container"
 					onItemsRendered={onItemsRendered}
-					ref={ref}
+					ref={(list) => {
+						ref(list);
+						listRef.current = list;
+					}}
 					overscanCount={4}
 				>
 					{Row}
-				</FixedSizeList>
+				</VariableSizeList>
 			)}
 		</InfiniteLoader>
 	);

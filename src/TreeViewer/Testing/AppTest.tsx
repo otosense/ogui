@@ -3,7 +3,7 @@ import TreeViewer from "../TreeViewer";
 import { storeDataObject, IStoreViewProps } from "../Utilities/Interfaces";
 import SimpleLineChart from "./SimpleLineChart";
 import { annotationSample } from "./data";
-import TV from "../TV";
+import TV from "../TreeViewer";
 
 // const fetchData = async (passer: any) => {
 // 	try {
@@ -104,9 +104,8 @@ const MyStringComponent = (props: any) => {
 	return <img src="" alt={"props.v"} />;
 };
 
-const userRenderer = (key: any = "annotation", value: any) => {
-	if (key === "annotation") {
-		console.log("in userendeeer name");
+const userRenderer = (key: any = "name", value: any) => {
+	if (key === "name") {
 		return <MyNumberComponent v={value} k={key} />;
 	} else if (key === "") {
 		return <MyStringComponent v={value} k={key} />;
@@ -127,8 +126,7 @@ let storeViewProps: IStoreViewProps = {
 function AppTest() {
 	return (
 		<>
-			{/* <TreeViewer {...storeViewProps} /> */}
-			<TV {...storeViewProps} />
+			<TreeViewer {...storeViewProps} />
 		</>
 	);
 }

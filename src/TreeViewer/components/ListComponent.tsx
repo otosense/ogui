@@ -3,8 +3,8 @@ import { VariableSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
 import RowComponent from "./RowComponent";
-import { IRowProps, IListComponentProps } from "./Utilities/Interfaces";
-import "./css/TreeViewer.css";
+import { IRowProps, IListComponentProps } from "../Utilities/Interfaces";
+import "../css/TreeViewer.css";
 
 const ListComponent = (props: IListComponentProps) => {
 	const {

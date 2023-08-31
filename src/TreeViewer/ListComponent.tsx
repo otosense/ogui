@@ -3,9 +3,10 @@ import { VariableSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 
 import RowComponent from "./RowComponent";
+import { IRowProps, IListComponentProps } from "./Utilities/Interfaces";
 import "./css/TreeViewer.css";
 
-const ListComponent = (props: any) => {
+const ListComponent = (props: IListComponentProps) => {
 	const {
 		items,
 		moreItemsLoading,
@@ -13,20 +14,18 @@ const ListComponent = (props: any) => {
 		hasNextPage,
 		sentinel,
 		loadChildSentinelData,
+		renderer,
 	} = props;
-	const defaultHeight = 100;
+	const defaultHeight = 50;
 
-	const height = window.innerHeight - 50;
+	const height = window.innerHeight - 100;
 	const width = window.innerWidth - 100;
-	const [rowHeights, setRowHeights] = useState(() =>
-		new Array(items.length).fill(defaultHeight)
-	);
 
 	const getItemSize = (index: number) => {
 		return defaultHeight;
 	};
 
-	const Row = ({ index, style }) => {
+	const Row: React.FC<IRowProps> = ({ index, style }) => {
 		return (
 			<RowComponent
 				node={items[index]}
@@ -34,6 +33,7 @@ const ListComponent = (props: any) => {
 				style={style}
 				sentinel={sentinel}
 				loadChildSentinelData={loadChildSentinelData}
+				renderer={renderer}
 			/>
 		);
 	};

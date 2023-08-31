@@ -165,4 +165,5 @@ button.copy:focus {
 .list-container {
     border: 2px solid #bababa;
     border-radius: 10px;
+    /* padding-left: 1000px; */
 }

@@ -1,18 +1,11 @@
-import React, {
-	useEffect,
-	useState,
-	useRef,
-	forwardRef,
-	useCallback,
-} from "react";
-
+import React from "react";
 import { StyledTreeItem } from "./components/StoreViewStyle";
-import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
-import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
 import "./css/TreeViewer.css";
+import { IRowComponentProps } from "./Utilities/Interfaces";
 
-const RowComponent = (props) => {
-	const { node, index, sentinel, style, loadChildSentinelData } = props;
+const RowComponent = (props: IRowComponentProps) => {
+	const { node, index, sentinel, style, loadChildSentinelData, renderer } =
+		props;
 
 	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
 		if (loadChildSentinelData) {
@@ -51,7 +44,19 @@ const RowComponent = (props) => {
 									}}
 								/>
 							);
-						} else {
+						}
+						// if (renderer()) {
+						// 	return (
+						// 		<StyledTreeItem
+						// 			key={`${nodeItemId}-${key}`}
+						// 			nodeId={`${nodeItemId}-${key}`}
+						// 			label={String(key)}
+						// 		>
+						// 			{renderer()}
+						// 		</StyledTreeItem>
+						// 	);
+						// }
+						else {
 							if (Array.isArray(value)) {
 								return (
 									<StyledTreeItem
@@ -128,7 +133,7 @@ const RowComponent = (props) => {
 		);
 	};
 
-	const renderTree = (nodes, i) => (
+	const renderTree = (nodes: any, i: number) => (
 		<section key={i} style={{ position: "relative" }} className="renderNodes">
 			<StyledTreeItem key={nodes.id} nodeId={nodes.id} label={`${nodes.id}`}>
 				{renderNodeItemDetails(nodes, nodes?.id, [nodes.id])}

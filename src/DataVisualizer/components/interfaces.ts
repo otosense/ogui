@@ -1,9 +1,11 @@
+
+
+type GetDataFunction = () => any | Promise<any>;
+
 interface ILineSeries {
 	channel: string;
 	name: string;
-	// getData: () => Promise<any>;
-	// getData: any[] | (() => any[]) | (() => Promise<any[]>),
-	getData: any,
+	getData: Object | GetDataFunction;
 }
 
 interface ILineChartProps {
@@ -19,7 +21,7 @@ interface ILineChartProps {
 interface IXrangeSeries {
 	channel: string;
 	name: string;
-	getData: () => Promise<any>;
+	getData: Object | GetDataFunction;
 }
 
 interface IXrangeChartProps {
@@ -38,38 +40,36 @@ interface IDataVisualizerProps {
 }
 
 interface yAxisConfig {
-	offset: number;
-	opposite: boolean;
-	min: number;
-	max: number;
-	tickInterval: number;
-	labels: {
-		align: string;
-		x: number;
+	offset?: number;
+	opposite?: boolean;
+	min?: number;
+	max?: number;
+	tickInterval?: number;
+	labels?: {
+		align?: string;
+		x?: number;
 	};
-	title: {
-		text: string;
+	title?: {
+		text?: string;
 	};
 	plotBands?: [];
-	lineWidth: number;
-	maxPadding: number;
-	endOnTick: boolean;
-	gridLineWidth: number;
-	scrollbar: {
-		enabled: boolean;
+	lineWidth?: number;
+	maxPadding?: number;
+	endOnTick?: boolean;
+	gridLineWidth?: number;
+	scrollbar?: {
+		enabled?: boolean;
 	};
 }
 
-type GetDataFunction = () => any | Promise<any>;
 
 interface singleXaxisSrcChannels {
 	channel: string;
 	type: string;
 	name: string;
-	// getData: (() => {}) | (() => Promise<any>);
 	getData: Object | GetDataFunction;
 	yAxis: number;
-	legend_name: string;
+	legend_name?: string;
 }
 interface ISingleXaxisProps {
 	chartTitle: string;
@@ -77,7 +77,7 @@ interface ISingleXaxisProps {
 	chartType: string;
 	xLabel: string;
 	yLabel: string;
-	miniMap: boolean;
+	miniMap?: boolean;
 	dataLimit: number;
 	yAxisConf: yAxisConfig[];
 	srcChannels: singleXaxisSrcChannels[];

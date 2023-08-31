@@ -2,8 +2,8 @@ import wfJsonObject from "../Testing/Data/jsonformatter.json";
 import wfJsonObject2 from "../Testing/Data/jsonformatter2.json";
 import Data from "../Testing/Data/Annot.json";
 
-async function getAnnotData(): Promise<any> {
-	console.log("data", Data.data[0].data);
+function getAnnotData() {
+	// console.log("data", Data.data[0].data);
 
 	let uniqueArray: any[] = [];
 	let Yaxis: any = [];
@@ -11,7 +11,7 @@ async function getAnnotData(): Promise<any> {
 	let seriesData: any = [];
 
 	let dataSamples = Data.data[0].data;
-	console.log("data", dataSamples);
+	// console.log("data", dataSamples);
 
 	dataSamples.map((singleChannelData) => {
 		Yaxis.push(singleChannelData.tag);
@@ -29,7 +29,7 @@ async function getAnnotData(): Promise<any> {
 	return formattedData;
 }
 
-async function getWfData(): Promise<any> {
+function getWfData() {
 	console.log("wf", wfJsonObject.data);
 
 	let channelData = wfJsonObject.data[0];
@@ -57,12 +57,14 @@ async function getWfData(): Promise<any> {
 			seriesData: data,
 		};
 		// console.log("chart", chartData);
+		// console.table(chartData);
+		// document.write(JSON.stringify(chartData));
 		return chartData;
 	}
 }
 
-async function getWf2Data(): Promise<any> {
-	console.log("wf", wfJsonObject2.data);
+function getWf2Data() {
+	// console.log("wf", wfJsonObject2.data);
 
 	let channelData = wfJsonObject2.data[0];
 	const { data } = channelData;
@@ -87,7 +89,8 @@ async function getWf2Data(): Promise<any> {
 			xAxisCategories: sampleTimeArray,
 			seriesData: data,
 		};
-		console.log("chart2", chartData);
+		// console.log("chart2", chartData);
+		// document.write(JSON.stringify(chartData));
 		return chartData;
 	}
 }

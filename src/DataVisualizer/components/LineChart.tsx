@@ -7,6 +7,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { ILineChartProps } from "./interfaces";
 import "../css/DataVisualizer.css";
+import { isFunction, isObject } from "lodash";
+import Button from '@mui/material/Button';
+
 
 HighchartsStock(Highcharts);
 
@@ -54,7 +57,30 @@ const LineChart = (props: ILineChartProps) => {
 
 			srcChannels.map(async (chartConfig: any, index: number) => {
 				const { getData } = chartConfig;
-				const chartData = await getData();
+				// const chartData = await getData();
+				let chartData: any;
+				if (isFunction(getData)) {
+					const initial = getData();
+					if (initial instanceof Promise && initial instanceof Object) {
+						if (isFunction(initial?.then)) {
+							chartData = await initial.then(async (dataArray: any) => {
+								return dataArray();
+							});
+						} else {
+							chartData = initial;
+						}
+					} else if (initial instanceof Function) {
+						const result = initial();
+						chartData = result;
+					} else if (!(initial instanceof Promise) && initial instanceof Object) {
+						const result = initial;
+						chartData = result;
+					}
+				} else if (isObject(getData)) {
+					chartData = getData;
+				} else {
+					chartData = {};
+				}
 
 				const xAxisCategories = chartData.xAxisCategories;
 				const seriesData = chartData.seriesData;
@@ -147,7 +173,7 @@ const LineChart = (props: ILineChartProps) => {
 					): string | number {
 						// Format the label based on the x-axis value
 						const xValue: any = this.value || "";
-						return xCategory[xValue];
+						return xCategory?.[xValue];
 					},
 				},
 			},
@@ -173,9 +199,9 @@ const LineChart = (props: ILineChartProps) => {
 						constructorType={"stockChart"}
 						containerProps={{ style: { height: "100%", width: "100%" } }}
 					/>
-					<button onClick={handleLoadMore} className="load-more-button">
+					<Button onClick={handleLoadMore} className="load-more-button">
 						Load More
-					</button>
+					</Button>
 				</>
 			) : (
 				<Box

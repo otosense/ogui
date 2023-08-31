@@ -8,6 +8,8 @@ import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { IXrangeChartProps } from "./interfaces";
+import { isFunction, isObject } from "lodash";
+import Button from "@mui/material/Button";
 
 HighchartsStock(Highcharts);
 xrange(Highcharts);
@@ -29,10 +31,35 @@ const XrangeChart = (props: IXrangeChartProps) => {
 		// Use an async function inside the useEffect hook
 		async function fetchDataAndSet() {
 			const { getData } = srcChannels;
-			const fetchedData = await getData();
+			console.log('getAnnotData', getData);
+			// const fetchedData = await getData();
+			let chartData: any;
 			setIsLoading(false);
-			const backendYCategories = fetchedData.yAxisCategories;
-			const backendSeriesData = fetchedData.seriesData;
+			if (isFunction(getData)) {
+				const initial = getData();
+				if (initial instanceof Promise && initial instanceof Object) {
+					if (isFunction(initial?.then)) {
+						chartData = await initial.then(async (dataArray: any) => {
+							return dataArray();
+						});
+					} else {
+						chartData = initial;
+					}
+				} else if (initial instanceof Function) {
+					const result = initial();
+					chartData = result;
+				} else if (!(initial instanceof Promise) && initial instanceof Object) {
+					const result = initial;
+					chartData = result;
+				}
+			} else if (isObject(getData)) {
+				chartData = getData;
+			} else {
+				chartData = {};
+			}
+
+			const backendYCategories = chartData.yAxisCategories;
+			const backendSeriesData = chartData.seriesData;
 
 			setSeriesData(backendSeriesData);
 			setYAxisCategory(backendYCategories);
@@ -148,9 +175,9 @@ const XrangeChart = (props: IXrangeChartProps) => {
 						constructorType={"stockChart"}
 						containerProps={{ style: { height: "100%", width: "100%" } }}
 					/>
-					<button onClick={handleLoadMore} className="load-more-button">
+					<Button onClick={handleLoadMore} className="load-more-button">
 						Load More
-					</button>
+					</Button>
 				</>
 			) : (
 				<Box

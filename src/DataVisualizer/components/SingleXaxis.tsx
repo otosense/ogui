@@ -93,7 +93,6 @@ const SingleXaxisChart = (props: ISingleXaxisProps) => {
 					if (initial instanceof Promise && initial instanceof Object) {
 						if (isFunction(initial?.then)) {
 							chartData = await initial.then(async (dataArray: any) => {
-								console.log('dataArray', dataArray());
 								return dataArray();
 							});
 						} else {

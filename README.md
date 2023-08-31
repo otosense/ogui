@@ -118,6 +118,17 @@ const Dagger = lazy(() => import('@otosense/ogui/src/DAG/Testing/App'));
 ```
 
 ### DataVisualizer
+
+
+```
+interface IDataVisualizerProps {
+	gridSpec: string;
+	chartsConfig: any[];
+}
+```
+
+**_NOTE:_**  For interface settings. Please refer the interfaces file from  _src\DataVisualizer\components\interfaces.ts_ directory
+
 If you want to run the DataVisualizer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 
 If you want to run the DataVisualizer Backend. Please see the Backend Folder there do 

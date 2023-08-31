@@ -45,17 +45,17 @@ const RowComponent = (props: IRowComponentProps) => {
 								/>
 							);
 						}
-						// if (renderer()) {
-						// 	return (
-						// 		<StyledTreeItem
-						// 			key={`${nodeItemId}-${key}`}
-						// 			nodeId={`${nodeItemId}-${key}`}
-						// 			label={String(key)}
-						// 		>
-						// 			{renderer()}
-						// 		</StyledTreeItem>
-						// 	);
-						// }
+						if (renderer()) {
+							return (
+								<StyledTreeItem
+									key={`${nodeItemId}-${key}`}
+									nodeId={`${nodeItemId}-${key}`}
+									label={String(key)}
+								>
+									{renderer()}
+								</StyledTreeItem>
+							);
+						}
 						else {
 							if (Array.isArray(value)) {
 								return (

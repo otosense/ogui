@@ -155,7 +155,7 @@ Note We need to run Backend also, so please find the 'Backend' folder and open t
 # To use this Charts in  other projects import like below
 
 ```bash
-const Charts = lazy(() => import('@otosense/ogui/src/DataVisualizer/App'));
+const Charts = lazy(() => import('@otosense/ogui/src/DataVisualizer/Testing/App'));
 ```
 
 

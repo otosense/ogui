@@ -6,9 +6,9 @@ interface storeDataObject {
 interface storeViewBaseProps {
 	fetchSize?: number; // default fetch size 100
 	getRootNodeData:
-		| any[]
-		| (() => any[])
-		| ((passer: { from_: number; to_: number }) => Promise<storeDataObject[]>); // Prop to pass data for component
+	| any[]
+	| (() => any[])
+	| ((passer: { from_: number; to_: number; }) => Promise<storeDataObject[]>); // Prop to pass data for component
 	renderer?: JSX.Element | any;
 }
 
@@ -16,8 +16,8 @@ interface storeViewBaseProps {
 interface SentinelProps extends storeViewBaseProps {
 	sentinel: string;
 	getChildNodeData:
-		| ((keysArray: string[]) => storeDataObject)
-		| ((keysArray: string[]) => Promise<storeDataObject>);
+	| ((keysArray: string[]) => storeDataObject)
+	| ((keysArray: string[]) => Promise<storeDataObject>);
 }
 interface WithoutSentinelProps extends storeViewBaseProps {
 	sentinel?: never;

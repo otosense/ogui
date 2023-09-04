@@ -80,6 +80,7 @@ const TreeViewer = (props: IStoreViewProps) => {
 					}
 				}
 			}
+
 		} catch (error) {
 			console.error("Error fetching child node data:", error);
 		}
@@ -198,6 +199,8 @@ const TreeViewer = (props: IStoreViewProps) => {
 
 TreeViewer.defaultProps = {
 	fetchSize: 100,
+	sentinel: "notloaded",
+	renderer: () => []
 };
 
 export default TreeViewer;

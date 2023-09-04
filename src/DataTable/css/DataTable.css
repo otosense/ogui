@@ -191,3 +191,25 @@ p.lineInfo {
     text-align: left;
     flex-direction: column;
 }
+
+
+/* TreeViewer with DataTable css starts here */
+
+.dataTable-main button.copy+.MuiTreeItem-root {
+    border: 0 !important;
+    padding: 4px !important;
+}
+
+.dataTable-main section.topLayout,
+.dataTable-main button.copy,
+.dataTable-main #bottomObserver {
+    display: none !important;
+}
+
+.dataTable-main main.mainArea {
+    width: 100%;
+}
+
+.dataTable-main .Mui-expanded+div {
+    background: unset !important;
+}

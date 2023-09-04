@@ -1,7 +1,15 @@
 import React, { memo } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
-import { IFormData, IFunctionCallerProps } from '../assets/Interfaces';
+
+interface IFunctionCallerProps {
+    schema: Object; // please refer to Schema File in the Testing Folder. that how the schema structure is expected 
+    liveValidate: boolean;
+    func: (...args: any[]) => any | void;
+}
+
+interface IFormData { [key: string]: any; }
+
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { schema, liveValidate, func } = props;

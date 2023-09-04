@@ -1,18 +1,11 @@
-import React, { Suspense } from "react";
-import "./App.css";
-import StoreView from "./Pages/StoreView";
-import {
-	childDataFetchResult,
-	FetchResult,
-	storeDataObject,
-	storeViewIProps,
-} from "./Utilities/Interfaces";
-import { annotationSample } from "./assets/data";
+import React from "react";
+import TreeViewer from "../TreeViewer";
+import { storeDataObject, storeViewIProps } from "../Utilities/Interfaces";
+import SimpleLineChart from "./SimpleLineChart";
+import { annotationSample } from "./data";
 
-async function fetchData(passer: {
-	from_: number;
-	to_: number;
-}): Promise<FetchResult> {
+async function fetchData(passer: { from_: number; to_: number }): Promise<any> {
+	// return { status: "success", data: annotationSample };
 	const url = "http://20.219.8.178:8080/get_all_sessions";
 	try {
 		const response = await fetch(url, {
@@ -30,13 +23,12 @@ async function fetchData(passer: {
 		const data = await response.json();
 		console.log("data", data.data);
 		return { status: "success", data: data.data };
-		// return { status: "success", data: annotationSample };
 	} catch (error: any) {
 		return { status: "error", error: error.toString() };
 	}
 }
 
-const childNodeTestData: storeDataObject = {
+const childNodeTestData: any = {
 	id: "1213",
 	// bt: "testing code",
 	annotation: [
@@ -55,9 +47,7 @@ const childNodeTestData: storeDataObject = {
 	],
 };
 
-async function fetchChildData(
-	keysArray: string[]
-): Promise<childDataFetchResult> {
+async function fetchChildData(keysArray: string[]): Promise<any> {
 	try {
 		// let url = "";
 		// const response = await fetch(url, {
@@ -81,19 +71,42 @@ async function fetchChildData(
 	}
 }
 
+const MyNumberComponent = (props: any) => {
+	// return <i><b>{props.v}</b></i>;
+	// return <img src="" alt={props.v} />;
+	return <SimpleLineChart />;
+};
+
+const MyStringComponent = (props: any) => {
+	// return <strong>{props.v}</strong>;
+	return <img src="" alt={"props.v"} />;
+};
+
+const userRenderer = (key: any, value: any) => {
+	if (key === "annotation") {
+		return <MyNumberComponent v={value} k={key} />;
+	} else if (key === "") {
+		return <MyStringComponent v={value} k={key} />;
+	} else {
+		return null;
+	}
+};
+
 let storeViewProps: storeViewIProps = {
 	getRootNodeData: fetchData,
 	sentinel: "notloaded",
 	fetchSize: 100,
 	getChildNodeData: fetchChildData,
+	renderer: userRenderer,
 };
 
-function App() {
+function AppTest() {
+	console.log("in app test");
 	return (
 		<>
-			<StoreView {...storeViewProps} />
+			<TreeViewer {...storeViewProps} />
 		</>
 	);
 }
 
-export default App;
+export default AppTest;

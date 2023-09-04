@@ -6,11 +6,13 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import TextField from "@mui/material/TextField/TextField";
 import { Alert } from "@mui/material";
 
-import SnackBar from "../../utilities/SnackBar";
-import LoadingOverlay from "../../utilities/Loader";
-import { StyledTreeItem } from "../components/StoreViewStyle";
-import { storeViewIProps, storeDataObject } from "../Utilities/Interfaces";
-import { deepMerge, handleCopy } from "../Utilities/UtilFunctions";
+import SnackBar from "../utilities/SnackBar";
+import LoadingOverlay from "../utilities/Loader";
+import { StyledTreeItem } from "./components/StoreViewStyle";
+import { storeViewIProps, storeDataObject } from "./Utilities/Interfaces";
+import { deepMerge, handleCopy } from "./Utilities/UtilFunctions";
+import "./css/TreeViewer.css";
+import { isEmpty } from "lodash";
 
 const useDebounce = (value: string, delay: number) => {
 	const [debouncedValue, setDebouncedValue] = useState(value);
@@ -28,12 +30,13 @@ const useDebounce = (value: string, delay: number) => {
 	return debouncedValue;
 };
 
-const StoreView = (props: storeViewIProps) => {
+const TreeViewer = (props: storeViewIProps) => {
 	const {
 		getRootNodeData,
 		sentinel,
 		getChildNodeData,
 		fetchSize = 100,
+		renderer,
 	} = props;
 
 	const observer = useRef<IntersectionObserver | null>(null);
@@ -45,8 +48,8 @@ const StoreView = (props: storeViewIProps) => {
 		to_: Number(fetchSize),
 	});
 
-	const [loadedData, setLoadedData] = useState<{ data: storeDataObject }>();
-	const [storeData, setStoreData] = useState<{ data: storeDataObject[] }>({
+	const [loadedData, setLoadedData] = useState<{ data: any; }>();
+	const [storeData, setStoreData] = useState<{ data: any[]; }>({
 		data: [],
 	});
 	const [copied, setCopied] = useState(false);
@@ -65,15 +68,18 @@ const StoreView = (props: storeViewIProps) => {
 	const onClickOfNotLoaded = async (clickedKeyParentStructure: string[]) => {
 		try {
 			// console.log("clickedKeyParentStructure", clickedKeyParentStructure);
-			const childNodeLoadedData = await getChildNodeData(
-				clickedKeyParentStructure
-			);
-			if (childNodeLoadedData.status === "success") {
-				// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
-				let childData: storeDataObject =
-					childNodeLoadedData.data as storeDataObject;
-				setLoadedData({ data: childData });
+			if (!isEmpty(getChildNodeData)) {
+				const childNodeLoadedData = await getChildNodeData(
+					clickedKeyParentStructure
+				);
+				if (childNodeLoadedData.status === "success") {
+					// console.log("childNodeLoadedData.data", childNodeLoadedData.data);
+					let childData: storeDataObject =
+						childNodeLoadedData.data as storeDataObject;
+					setLoadedData({ data: childData });
+				}
 			}
+
 		} catch (error) {
 			console.error("Error fetching child node data:", error);
 		}
@@ -111,61 +117,83 @@ const StoreView = (props: storeViewIProps) => {
 								/>
 							);
 						}
-						if (Array.isArray(value)) {
-							return (
-								<StyledTreeItem
-									key={`${nodeItemId}-array-${key}`}
-									nodeId={`${nodeItemId}-array-${key}`}
-									label={String(key)}
-								>
-									{value.map((arrayItem, index) => {
-										if (arrayItem instanceof Object) {
-											return (
-												<StyledTreeItem
-													key={`${nodeItemId}--${index}`}
-													nodeId={`${nodeItemId}--${index}`}
-													label={String(index)}
-												>
-													{renderNodeItemDetails(arrayItem, nodeItemId, [
-														...parentKeys,
-														key,
-														index.toString(),
-													])}
-												</StyledTreeItem>
-											);
-										} else {
-											return (
-												<StyledTreeItem
-													key={`${nodeItemId}--${index}--${String(arrayItem)}`}
-													nodeId={`${nodeItemId}--${index}--${String(
-														arrayItem
-													)}`}
-													label={String(arrayItem)}
-												/>
-											);
-										}
-									})}
-								</StyledTreeItem>
-							);
-						}
-						if (value instanceof Object) {
+						if (renderer()) {
 							return (
 								<StyledTreeItem
 									key={`${nodeItemId}-${key}`}
 									nodeId={`${nodeItemId}-${key}`}
 									label={String(key)}
 								>
-									{renderNodeItemDetails(value, nodeItemId, [
-										...parentKeys,
-										key,
-									])}
+									{renderer()}
 								</StyledTreeItem>
 							);
+						} else {
+							if (Array.isArray(value)) {
+								return (
+									<StyledTreeItem
+										key={`${nodeItemId}-array-${key}`}
+										nodeId={`${nodeItemId}-array-${key}`}
+										label={String(key)}
+									>
+										{value.length > 0 ? (
+											value.map((arrayItem, index) => {
+												if (arrayItem instanceof Object) {
+													return (
+														<StyledTreeItem
+															key={`${nodeItemId}--${index}`}
+															nodeId={`${nodeItemId}--${index}`}
+															label={String(index)}
+														>
+															{renderNodeItemDetails(arrayItem, nodeItemId, [
+																...parentKeys,
+																key,
+																index.toString(),
+															])}
+														</StyledTreeItem>
+													);
+												} else {
+													return (
+														<StyledTreeItem
+															key={`${nodeItemId}--${index}--${String(
+																arrayItem
+															)}`}
+															nodeId={`${nodeItemId}--${index}--${String(
+																arrayItem
+															)}`}
+															label={String(arrayItem)}
+														/>
+													);
+												}
+											})
+										) : (
+											<StyledTreeItem
+												key={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
+												nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
+												label={"[]"}
+											/>
+										)}
+									</StyledTreeItem>
+								);
+							}
+							if (value instanceof Object) {
+								return (
+									<StyledTreeItem
+										key={`${nodeItemId}-${key}`}
+										nodeId={`${nodeItemId}-${key}`}
+										label={String(key)}
+									>
+										{renderNodeItemDetails(value, nodeItemId, [
+											...parentKeys,
+											key,
+										])}
+									</StyledTreeItem>
+								);
+							}
 						}
 					} else {
 						return (
 							<StyledTreeItem
-								key={`${nodeItemId}-${key}-${parentKeys}`}
+								key={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								nodeId={`${nodeItemId}-${key}-${parentKeys.join("-")}`}
 								label={`${key}: ${value}`}
 							/>
@@ -226,12 +254,13 @@ const StoreView = (props: storeViewIProps) => {
 		// Use an async function inside the useEffect hook
 		async function fetchDataAndSet() {
 			const fetchedData = await getRootNodeData(passer);
+			// const fetchedData: any = getRootNodeData;
 			setLoading(false);
 			if (fetchedData.status === "success") {
 				setStoreData((prevData: any) => {
-					const newData = fetchedData.data.filter(
-						(newItem: { id: any }) =>
-							!prevData.data.some((item: { id: any }) => item.id === newItem.id)
+					const newData = fetchedData?.data?.filter(
+						(newItem: { id: any; }) =>
+							!prevData.data.some((item: { id: any; }) => item.id === newItem.id)
 					);
 
 					return {
@@ -284,7 +313,7 @@ const StoreView = (props: storeViewIProps) => {
 	useEffect(() => {
 		let updatedStoreData = storeData.data.map((eachItem) =>
 			eachItem?.id === loadedData?.data.id
-				? deepMerge(eachItem, loadedData.data)
+				? deepMerge(eachItem, loadedData?.data)
 				: eachItem
 		);
 		setStoreData({ data: updatedStoreData });
@@ -292,7 +321,7 @@ const StoreView = (props: storeViewIProps) => {
 
 	return (
 		<main className="mainArea">
-			{isLoading && <LoadingOverlay />}
+			{/* {isLoading && <LoadingOverlay />} */}
 			<section className="topLayout">
 				<TextField
 					fullWidth
@@ -336,9 +365,10 @@ const StoreView = (props: storeViewIProps) => {
 		</main>
 	);
 };
-StoreView.defaultProps = {
+TreeViewer.defaultProps = {
 	fetchSize: 100,
 	sentinel: "notloaded",
+	renderer: () => []
 };
 
-export default React.memo(StoreView);
+export default React.memo(TreeViewer);

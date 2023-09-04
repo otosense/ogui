@@ -161,3 +161,9 @@ button.copy:focus {
     z-index: 999999;
     position: relative;
 }
+
+.list-container {
+    border: 2px solid #bababa;
+    border-radius: 10px;
+    /* padding-left: 1000px; */
+}

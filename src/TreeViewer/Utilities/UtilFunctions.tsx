@@ -11,6 +11,12 @@ const handleCopy = async (
 	}
 };
 
+function isObject(item: any): boolean {
+	return (
+		item && typeof item === "object" && !Array.isArray(item) && item !== null
+	);
+}
+
 function deepMerge(target: any, source: any): any {
 	const output = { ...target };
 
@@ -29,12 +35,6 @@ function deepMerge(target: any, source: any): any {
 	}
 
 	return output;
-}
-
-function isObject(item: any): boolean {
-	return (
-		item && typeof item === "object" && !Array.isArray(item) && item !== null
-	);
 }
 
 export { deepMerge, handleCopy };

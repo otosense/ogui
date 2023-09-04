@@ -55,6 +55,141 @@ const annotationSample = [
 		name: "1213name",
 		annotation: "notloaded",
 		sample: {
+			name: "notloaded",
+			bt: "1",
+			time: [
+				{ name: "notloaded", test: "sample test" },
+				{ name: "sample-name", test: "notloaded" },
+			],
+		},
+	},
+	{
+		id: "1415", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "161718", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "181920", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "2122", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "212223", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "212224", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "212225", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "212226", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
+			name: "sample name",
+			bt: "1",
+			time: [
+				{ name: "sample name", test: "sample test" },
+				{ name: "sample-name", test: "sample-test" },
+			],
+		},
+	},
+	{
+		id: "212227", // level 2
+		bt: "2432",
+		tt: 456,
+		name: "1213name",
+		annotation: "notloaded",
+		sample: {
 			name: "sample name",
 			bt: "1",
 			time: [

@@ -161,6 +161,33 @@ const Charts = lazy(() => import('@otosense/ogui/src/DataVisualizer/Testing/App'
 
 
 ### StoreViewer
+
+```
+type IStoreViewProps = SentinelProps | WithoutSentinelProps;
+
+interface storeViewBaseProps {
+	fetchSize?: number; // default fetch size 100
+	getRootNodeData:
+		| any[]
+		| (() => any[])
+		| ((passer: { from_: number; to_: number }) => Promise<storeDataObject[]>); // Prop to pass data for component
+	renderer?: JSX.Element | any;
+}
+
+//Below two Interfaces extending on storeViewBaseProps, to ensure if sentinel passed then should pass getChildNodeData.
+interface SentinelProps extends storeViewBaseProps {
+	sentinel: string;
+	getChildNodeData:
+		| ((keysArray: string[]) => storeDataObject)
+		| ((keysArray: string[]) => Promise<storeDataObject>);
+}
+interface WithoutSentinelProps extends storeViewBaseProps {
+	sentinel?: never;
+	getChildNodeData?: never;
+}
+
+
+```
 If you want to run the StoreViewer. please go to the Index.html file. and uncomment this or add this line if its not explicitly specified
 ```bash
 <script type="module" src="/src/StoreViewer/main.tsx"></script>

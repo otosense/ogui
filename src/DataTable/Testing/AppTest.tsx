@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Box, Typography } from '@mui/material';
-import { loadTableData } from './NewSample';
-// import { loadTableData } from './SampleData';
+// import { loadTableData } from './NewSample';
+import { loadTableData } from './SampleData';
 import DataTable from '../DataTable';
 import { IDataTableProps } from '../components/Interfaces';
 

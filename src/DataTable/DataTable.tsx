@@ -22,6 +22,10 @@ import ColumnVisibility from './components/ColumnVisibility';
 import { IDataTableProps } from './components/Interfaces';
 import { isEmpty } from 'lodash';
 import './css/DataTable.css';
+import "react-filter-box/lib/react-filter-box.css";
+import GlobalFilters from './components/CustomFilter';
+
+
 
 function DataTable(props: IDataTableProps) {
 
@@ -34,6 +38,7 @@ function DataTable(props: IDataTableProps) {
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string>();
+    const [dataCopy, setDataCopy] = useState<any>([]);
 
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
 
@@ -84,16 +89,19 @@ function DataTable(props: IDataTableProps) {
                 // Check if the result of the function is a promise
                 return result.then((dataArray: any) => {
                     setFlatRowData(dataArray);
+                    setDataCopy([...dataArray]);
                     return dataArray;
                 });
             } else {
                 const dataArray = result as any[]; // Assuming the result is an array
                 setFlatRowData(dataArray);
+                setDataCopy([...dataArray]);
                 return dataArray; // Return the result of the function
             }
         } else if (Array.isArray(data)) {
             // Check if data is an array
             setFlatRowData(data);
+            setDataCopy([...data]);
             return data; // Return the provided array
         } else {
             setIsError(true);
@@ -127,6 +135,11 @@ function DataTable(props: IDataTableProps) {
             console.error(error);
         }
     }, [sorting, columnFilters, globalFilter]);
+
+
+    const captureNewData = (xs: string | any[]) => {
+        setFlatRowData(xs.length > 0 ? xs : dataCopy);
+    };
 
     return (
         isError ? (<Alert severity='error' className='errorMessage'>
@@ -203,7 +216,16 @@ function DataTable(props: IDataTableProps) {
                             sx: { cursor: 'pointer' },
                         })}
 
-                        renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
+                        // renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
+                        renderTopToolbarCustomActions={({
+                            table
+                        }) => <Box className="setupGlobalSearch">
+                                {(CustomInfoButton())}
+                                <section className="global_search">
+                                    <p> Pattern Search :</p>
+                                    <GlobalFilters tableData={table.getFlatHeaders()} flatRowData={dataCopy} onNewData={captureNewData} />
+                                </section>
+                            </Box>}
 
                         state={{ // State of the table
                             columnFilters,
@@ -236,7 +258,28 @@ function DataTable(props: IDataTableProps) {
 
                         // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
                         // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
+                        // filterFns={{
+                        //     customFilterFn: (row, id, filterValue) => {
+                        //         return row.getValue(id) === filterValue;
+                        //     },
+                        // }}
+                        // localization={
+                        //     {
+                        //         filterCustomFilterFn: 'Custom Filter Fn',
+                        //     } as any
+                        // }
 
+                        // renderColumnFilterModeMenuItems={({ onSelectFilterMode }) => [
+                        //     <MenuItem key="0" onClick={() => onSelectFilterMode('contains')}>
+                        //         <div>Contains</div>
+                        //     </MenuItem>,
+                        //     <MenuItem
+                        //         key="1"
+                        //         onClick={() => onSelectFilterMode('customFilterFn')}
+                        //     >
+                        //         <div>Custom Filter Fn</div>
+                        //     </MenuItem>,
+                        // ]}
 
                         enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                         rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance

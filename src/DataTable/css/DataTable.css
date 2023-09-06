@@ -213,3 +213,24 @@ p.lineInfo {
 .dataTable-main .Mui-expanded+div {
     background: unset !important;
 }
+
+.CodeMirror-hints {
+    z-index: 999 !important;
+}
+
+.global_search {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.setupGlobalSearch {
+    display: flex;
+    align-items: center;
+
+}
+
+.main-container {
+    width: 300px;
+    padding-left: 10px;
+}

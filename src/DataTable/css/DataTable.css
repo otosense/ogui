@@ -234,3 +234,20 @@ p.lineInfo {
     width: 300px;
     padding-left: 10px;
 }
+
+.react-filter-box {
+    margin-bottom: 0 !important;
+    height: 1.4375em !important;
+    /* width: 100%; */
+    padding: 16.5px 14px !important;
+    font-size: 24px !important;
+    /* line-height: 2px !important; */
+}
+
+.react-filter-box.error {
+    border-color: red !important;
+}
+
+.CodeMirror-cursor {
+    height: 20px !important;
+}

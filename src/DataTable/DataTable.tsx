@@ -70,7 +70,8 @@ function DataTable(props: IDataTableProps) {
         enableRowVirtualization,
         globalFilterFn,
         filterFn,
-        hideColumnsDefault
+        hideColumnsDefault,
+        enablePatternSearch
     }: any = props;
 
 
@@ -221,10 +222,10 @@ function DataTable(props: IDataTableProps) {
                             table
                         }) => <Box className="setupGlobalSearch">
                                 {(CustomInfoButton())}
-                                <section className="global_search">
+                                {enablePatternSearch && (<section className="global_search">
                                     <p> Pattern Search :</p>
                                     <GlobalFilters tableData={table.getFlatHeaders()} flatRowData={dataCopy} onNewData={captureNewData} />
-                                </section>
+                                </section>)}
                             </Box>}
 
                         state={{ // State of the table
@@ -258,28 +259,6 @@ function DataTable(props: IDataTableProps) {
 
                         // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
                         // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
-                        // filterFns={{
-                        //     customFilterFn: (row, id, filterValue) => {
-                        //         return row.getValue(id) === filterValue;
-                        //     },
-                        // }}
-                        // localization={
-                        //     {
-                        //         filterCustomFilterFn: 'Custom Filter Fn',
-                        //     } as any
-                        // }
-
-                        // renderColumnFilterModeMenuItems={({ onSelectFilterMode }) => [
-                        //     <MenuItem key="0" onClick={() => onSelectFilterMode('contains')}>
-                        //         <div>Contains</div>
-                        //     </MenuItem>,
-                        //     <MenuItem
-                        //         key="1"
-                        //         onClick={() => onSelectFilterMode('customFilterFn')}
-                        //     >
-                        //         <div>Custom Filter Fn</div>
-                        //     </MenuItem>,
-                        // ]}
 
                         enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                         rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
@@ -317,6 +296,7 @@ DataTable.defaultProps = {
     enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: true, // Enable full screen toggle property
     enableRowVirtualization: true, // Enable row virtualization,
+    enablePatternSearch: true
 };
 
 function CustomInfoButton() {

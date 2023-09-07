@@ -222,6 +222,34 @@ p.lineInfo {
     width: 100%;
     display: flex;
     align-items: center;
+
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    /* transition: opacity 0.3s ease, height 0.3s ease; */
+}
+
+/* Define the state when it's visible */
+.global_search.visible {
+    opacity: 1;
+    height: auto;
+    /* transition: opacity 0.3s ease, height 0.3s ease; */
+    animation: fadeIn 2s;
+    /* Adjust the max-height value as needed */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .setupGlobalSearch {
@@ -237,12 +265,15 @@ p.lineInfo {
 
 .react-filter-box {
     margin-bottom: 0 !important;
-    height: 1.4375em !important;
-    /* width: 100%; */
-    padding: 16.5px 14px !important;
-    font-size: 16px !important;
-    /* line-height: 2px !important; */
+    font-size: 12px !important;
+    text-align: left !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
 }
+
+/* .react-filter-box::before {
+    content: '&#xe150;';
+} */
 
 .react-filter-box.error {
     border-color: red !important;
@@ -250,4 +281,5 @@ p.lineInfo {
 
 .CodeMirror-cursor {
     height: 20px !important;
+    text-align: left !important;
 }

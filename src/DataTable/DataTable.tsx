@@ -29,6 +29,7 @@ import { isEmpty } from 'lodash';
 import './css/DataTable.css';
 import "react-filter-box/lib/react-filter-box.css";
 import GlobalFilters from './components/CustomFilter';
+import SavedSearchIcon from '@mui/icons-material/SavedSearch';
 
 
 
@@ -44,6 +45,7 @@ function DataTable(props: IDataTableProps) {
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string>();
     const [dataCopy, setDataCopy] = useState<any>([]);
+    const [isEnablePatternSearch, setIsEnablePatternSearch] = useState(false);
 
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
 
@@ -147,6 +149,10 @@ function DataTable(props: IDataTableProps) {
         setFlatRowData(xs.length > 0 ? xs : dataCopy);
     };
 
+    const togglePatternSearchButton = () => {
+        setIsEnablePatternSearch(!isEnablePatternSearch);
+    };
+
     return (
         isError ? (<Alert severity='error' className='errorMessage'>
             {errorMessage}
@@ -233,8 +239,15 @@ function DataTable(props: IDataTableProps) {
                                 <MRT_ShowHideColumnsButton table={table} />
                                 {/* <MRT_ToggleDensePaddingButton table={table} /> */}
                                 <MRT_FullScreenToggleButton table={table} />
-                                {enablePatternSearch && (<section className="global_search">
-                                    <p> Pattern Search :</p>
+                                {/* {enablePatternSearch && <div onClick={tooglePatternSearchButton} className='PatternSearchButton'><SavedSearchIcon /> </div>
+                                } */}
+                                {enablePatternSearch &&
+                                    <Tooltip title='Show/Hide Pattern Based Search' placement="bottom" arrow>
+                                        <IconButton onClick={togglePatternSearchButton} className='PatternSearchButton'><SavedSearchIcon /> </IconButton>
+                                    </Tooltip>
+                                }
+                                {isEnablePatternSearch && (<section className={`global_search ${isEnablePatternSearch ? 'visible' : ''}`}
+                                >
                                     <GlobalFilters tableData={table.getFlatHeaders()} flatRowData={dataCopy} onNewData={captureNewData} />
                                 </section>)}
 

@@ -12,6 +12,11 @@ import MaterialReactTable, {
     type MRT_SortingState,
     type MRT_Virtualizer,
     MRT_Row,
+    MRT_ShowHideColumnsButton,
+    MRT_FullScreenToggleButton,
+    MRT_ToggleDensePaddingButton,
+    MRT_ToggleFiltersButton,
+    MRT_ToggleGlobalFilterButton,
 
 } from 'material-react-table';
 import { Alert, Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
@@ -217,15 +222,23 @@ function DataTable(props: IDataTableProps) {
                             sx: { cursor: 'pointer' },
                         })}
 
-                        // renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
-                        renderTopToolbarCustomActions={({
+                        renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
+                        renderToolbarInternalActions={({
                             table
                         }) => <Box className="setupGlobalSearch">
-                                {(CustomInfoButton())}
+                                {/* {(CustomInfoButton())} */}
+
+                                <MRT_ToggleGlobalFilterButton table={table} />
+                                <MRT_ToggleFiltersButton table={table} />
+                                <MRT_ShowHideColumnsButton table={table} />
+                                {/* <MRT_ToggleDensePaddingButton table={table} /> */}
+                                <MRT_FullScreenToggleButton table={table} />
                                 {enablePatternSearch && (<section className="global_search">
                                     <p> Pattern Search :</p>
                                     <GlobalFilters tableData={table.getFlatHeaders()} flatRowData={dataCopy} onNewData={captureNewData} />
                                 </section>)}
+
+
                             </Box>}
 
                         state={{ // State of the table

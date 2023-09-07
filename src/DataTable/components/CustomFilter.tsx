@@ -59,9 +59,18 @@ class GlobalFilters extends Component<GlobalFiltersProps, GlobalFiltersState> {
     constructor(props: GlobalFiltersProps) {
         super(props);
         let { tableData, flatRowData } = props;
-        const columnList = tableData;
-        this.options = columnList
-            .filter((item: { id: string; }) => item.id !== 'mrt-row-drag' && item.id !== 'mrt-row-expand' && item.id !== 'mrt-row-select' && item.id !== 'mrt-row-numbers')
+        const columnLists = tableData;
+        let disabledColumns: any[] = [];
+        columnLists.map((columnList: { columnDef: { enableColumnFilter: boolean; }; id: any; }) => {
+            if (columnList.columnDef.enableColumnFilter === false) {
+                disabledColumns.push(columnList.id);
+            }
+        });
+        // disabledColumns.push('mrt-row-expand', 'mrt-row-select', 'mrt-row-numbers', 'mrt-row-drag');
+        // console.log('disabledColumns', disabledColumns);
+        this.options = columnLists
+            // .filter((item: { id: string; }) => item.id !== 'mrt-row-drag' && item.id !== 'mrt-row-expand' && item.id !== 'mrt-row-select' && item.id !== 'mrt-row-numbers')
+            .filter((item: { id: any; }) => !disabledColumns.includes(item.id))
             .map((item: { id: any; }) => ({
                 columnField: String(item.id).toString(),
             }));

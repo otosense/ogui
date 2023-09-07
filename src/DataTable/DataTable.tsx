@@ -248,7 +248,7 @@ function DataTable(props: IDataTableProps) {
                                 }
                                 {isEnablePatternSearch && (<section className={`global_search ${isEnablePatternSearch ? 'visible' : ''}`}
                                 >
-                                    <GlobalFilters tableData={table.getFlatHeaders()} flatRowData={dataCopy} onNewData={captureNewData} />
+                                    <GlobalFilters tableData={table.getAllColumns()} flatRowData={dataCopy} onNewData={captureNewData} />
                                 </section>)}
 
 

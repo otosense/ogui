@@ -303,10 +303,16 @@ textarea.textAreaSize {
     margin-bottom: 3%;
 }
 
-p.jsonError {
+.jsonError {
     color: red;
     font-size: 12px;
     margin: 0;
+    text-align: left;
+}
+
+.jsonError.title {
+    text-align: center;
+    text-decoration: underline;
 }
 
 button.saveBtn {

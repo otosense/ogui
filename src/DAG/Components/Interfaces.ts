@@ -3,7 +3,7 @@ interface IDropDownNode {
     data: { ddType: string; label: string; initialEdge: string; selects: any; };
     type: string;
     sourcePosition: string;
-    funcLists: { value: string; label: string; }[];
+    funcLists: string[];
     isConnectable: boolean;
     errorMapping: [];
     flowNodes: [];
@@ -23,7 +23,7 @@ interface IParamsDropDown {
     nodeId: string;
     sourcePosition: string;
     data: any;
-    selector: any[];
+    selector?: any[];
     isConnectable: boolean;
     labels: string;
     selectedValue: string;

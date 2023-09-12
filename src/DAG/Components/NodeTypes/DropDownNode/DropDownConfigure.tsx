@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
-import { pythonIdentifierPattern } from '../../../utilities/globalFunction';
+import { customRemoveText, pythonIdentifierPattern } from '../../../utilities/globalFunction';
 import { isEmpty, isFunction, isObject, map, zipObject } from 'lodash';
 import { IParamsDropDown } from '../../Interfaces';
 import { onNameHandlers } from '../../../utilities/Validations/TextValidation';
@@ -68,8 +68,8 @@ const SelectConfigure = (props: IParamsDropDown) => {
                         name: node.id,
                         func_label: selectedValue,
                         func: selectedValue,
-                        out: `check_${index}`,
-                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param}`))
+                        out: `check_${index + customRemoveText}`,
+                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
                     };
                 }
                 setValueHolder(node);

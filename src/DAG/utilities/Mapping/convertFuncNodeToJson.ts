@@ -1,4 +1,6 @@
+import { includes } from "lodash";
 import { IFuncNode, IEdges, IEdgeObject } from "../../Components/Interfaces";
+import { customRemoveText } from "../globalFunction";
 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Nodes
@@ -31,7 +33,7 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
             id: varNode,
             type: 'textUpdater',
             data: {
-                label: varNode
+                label: includes(varNode, customRemoveText) ? "" : varNode
             },
             position: { x: randomPosition(), y: randomPosition() },
             // position: { x: 0, y: 0 },

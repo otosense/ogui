@@ -1,23 +1,17 @@
 import React, { useState, useRef, useCallback, useEffect, memo, useMemo } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
-    addEdge,
     useNodesState,
     useEdgesState,
     Controls,
     Panel,
     Background,
-    Connection,
-    Edge,
     ReactFlowInstance,
-    MarkerType,
     BackgroundVariant,
-    Node,
 } from 'reactflow';
 import { Button, Alert } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 import dagre from 'dagre';
 
 
@@ -34,7 +28,7 @@ import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNod
 import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson';
 import { ValidationError } from './utilities/ErrorValidator';
 
-import { dagDirections, errorHandler } from './utilities/globalFunction';
+import { dagDirections, errorHandler, getId } from './utilities/globalFunction';
 import { connectionValidation } from './utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from './utilities/Validations/connectionHandlers';
 import { storeGrouping } from './utilities/Mapping/storeGrouping';
@@ -49,9 +43,6 @@ const nodeHeight = 75;
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 const getLayoutedElements = onLayoutHandlers();
-
-// Generating Random ID for nodes
-const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 
 // Main component Starts here
 const Dagger = (props: IDaggerProps) => {
@@ -316,6 +307,9 @@ const Dagger = (props: IDaggerProps) => {
                             <Panel position="top-right">
                                 <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
                                 <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
+                            </Panel>
+                            <Panel position="top-left">
+                                <button onClick={() => onLayout('LR')}>HL</button>
                             </Panel>
                         </ReactFlow>
                     </div>

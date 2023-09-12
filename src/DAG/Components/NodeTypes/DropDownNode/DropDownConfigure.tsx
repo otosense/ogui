@@ -1,19 +1,21 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { pythonIdentifierPattern } from '../../../utilities/globalFunction';
-import { isEmpty, isFunction, isObject } from 'lodash';
+import { isEmpty, isFunction, isObject, map, zipObject } from 'lodash';
 import { IParamsDropDown } from '../../Interfaces';
 import { onNameHandlers } from '../../../utilities/Validations/TextValidation';
-import TextEditorNode from '../TextEditorNode';
+import { convertFuncNodeToJsonNode, convertFuncNodeToJsonEdge } from '../../../utilities/Mapping/convertFuncNodeToJson';
 const SelectConfigure = (props: IParamsDropDown) => {
     const { value, handleId, nodeId, sourcePosition, data, isConnectable, labels, selectedValue, loadParamsList } = props;
     // console.log({ value, handleId, nodeId, sourcePosition, data,  isConnectable, labels, selectedValue });
-    const { setNodes } = useReactFlow();
+    const { setNodes, setEdges } = useReactFlow();
     const store = useStoreApi();
     const [customValue, setCustomValue] = useState(value);
     const [valueText, setValueText] = useState(labels);
     const [validationMsg, setValidationMsg] = useState(false);
     const [paramsLists, setParamsLists] = useState<string[]>([]);
+
+    const [valueHolder, setValueHolder] = useState<any>({});
 
 
     const [response, setResponse] = useState<any>({ signature: { parameters: [] } });;
@@ -29,7 +31,7 @@ const SelectConfigure = (props: IParamsDropDown) => {
                 if (isFunction(result?.then)) {
                     // Check if the result of the function is a promise
                     result.then((dataArray: any) => {
-                        console.log('dataArray', dataArray);
+                        // console.log('dataArray', dataArray);
                         setResponse(dataArray);
                     });
                 } else {
@@ -43,7 +45,6 @@ const SelectConfigure = (props: IParamsDropDown) => {
     useEffect(() => {
         // calling parameters list for selected functionNode 
         const inputs = response?.signature?.parameters.map((parameter: { name: string; }) => parameter.name);
-        console.log('TextEditorNode');
         setParamsLists(inputs);
     }, [response]);
 
@@ -51,7 +52,7 @@ const SelectConfigure = (props: IParamsDropDown) => {
         const { nodeInternals } = store.getState();
         setCustomValue(selectedValue);
         setNodes(
-            Array.from(nodeInternals.values()).map((node) => {
+            Array.from(nodeInternals.values()).map((node: any, index) => {
                 if (node.id === nodeId) { // updating the each node based on user Selects
                     node.data = {
                         ...node.data,
@@ -61,13 +62,47 @@ const SelectConfigure = (props: IParamsDropDown) => {
                             // ...node.data.selects,
                             hasValue: paramsLists?.length,
                             [selectedValue]: selectedValue,
-                        },
+                        }
+                    };
+                    node.func_nodes = {
+                        name: node.id,
+                        func_label: selectedValue,
+                        func: selectedValue,
+                        out: `check_${index}`,
+                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param}`))
                     };
                 }
+                setValueHolder(node);
                 return node;
             })
         );
     }, [selectedValue, paramsLists]);
+
+    useEffect(() => {
+        if (valueHolder?.func_nodes) {
+            const { name, func_label, func, out, bind } = valueHolder?.func_nodes;
+            const conversionData = {
+                // id: valueHolder?.data?.func_nodes?.[0]?.id,
+                func_nodes: [{
+                    name,
+                    func_label,
+                    func,
+                    out,
+                    bind
+                }]
+            };
+
+            // console.log('conversionData', conversionData);
+            const funcToJsonNode: any = convertFuncNodeToJsonNode(conversionData);
+            const funcToJsonEdge: any = convertFuncNodeToJsonEdge(conversionData);
+            // console.log('funcToJsonEdge', funcToJsonEdge);
+            // console.log('funcToJsonNode', funcToJsonNode);
+            setNodes((nds) => nds.concat(funcToJsonNode));
+            setEdges((nds) => nds.concat(funcToJsonEdge));
+
+        }
+    }, [valueHolder]);
+
 
     // labelNameChange this function is to handle Custom function right now its not in working
     const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {

@@ -34,3 +34,5 @@ lerna-debug.log*
 # IDE
 .idea
 lib
+index.html
+src/DAG/Testing/AppTest.tsx

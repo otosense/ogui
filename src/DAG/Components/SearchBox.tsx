@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 function SearchBox({ data, handleValue }: { data: string[]; handleValue: any; }) {
-    console.log('data', data);
     const [searchTerm, setSearchTerm] = useState('');
     const [suggestions, setSuggestions] = useState(data);
 

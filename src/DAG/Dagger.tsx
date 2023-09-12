@@ -25,7 +25,7 @@ import Sidebar from './Components/Sidebar';
 import LoadingOverlay from '../utilities/Loader';
 import SnackBar from '../utilities/SnackBar';
 import TextEditorNode from './Components/NodeTypes/TextEditorNode';
-import DropDownNode from './Components/NodeTypes/DropDownNode';
+import DropDownNode from './Components/NodeTypes/DropDownNode/DropDownNode';
 import Save from './Components/Save';
 import Load from './Components/Load';
 

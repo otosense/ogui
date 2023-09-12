@@ -12,6 +12,11 @@ import MaterialReactTable, {
     type MRT_SortingState,
     type MRT_Virtualizer,
     MRT_Row,
+    MRT_ShowHideColumnsButton,
+    MRT_FullScreenToggleButton,
+    MRT_ToggleDensePaddingButton,
+    MRT_ToggleFiltersButton,
+    MRT_ToggleGlobalFilterButton,
 
 } from 'material-react-table';
 import { Alert, Box, IconButton, Tooltip, Typography, Zoom } from '@mui/material';
@@ -22,6 +27,11 @@ import ColumnVisibility from './components/ColumnVisibility';
 import { IDataTableProps } from './components/Interfaces';
 import { isEmpty } from 'lodash';
 import './css/DataTable.css';
+import "react-filter-box/lib/react-filter-box.css";
+import GlobalFilters from './components/CustomFilter';
+import SavedSearchIcon from '@mui/icons-material/SavedSearch';
+
+
 
 function DataTable(props: IDataTableProps) {
 
@@ -34,6 +44,8 @@ function DataTable(props: IDataTableProps) {
     const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
     const [isError, setIsError] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string>();
+    const [dataCopy, setDataCopy] = useState<any>([]);
+    const [isEnablePatternSearch, setIsEnablePatternSearch] = useState(false);
 
     const tableContainerRef = useRef<HTMLDivElement>(null); //we can get access to the underlying TableContainer element and react to its scroll events
 
@@ -65,7 +77,8 @@ function DataTable(props: IDataTableProps) {
         enableRowVirtualization,
         globalFilterFn,
         filterFn,
-        hideColumnsDefault
+        hideColumnsDefault,
+        enablePatternSearch
     }: any = props;
 
 
@@ -84,16 +97,19 @@ function DataTable(props: IDataTableProps) {
                 // Check if the result of the function is a promise
                 return result.then((dataArray: any) => {
                     setFlatRowData(dataArray);
+                    setDataCopy([...dataArray]);
                     return dataArray;
                 });
             } else {
                 const dataArray = result as any[]; // Assuming the result is an array
                 setFlatRowData(dataArray);
+                setDataCopy([...dataArray]);
                 return dataArray; // Return the result of the function
             }
         } else if (Array.isArray(data)) {
             // Check if data is an array
             setFlatRowData(data);
+            setDataCopy([...data]);
             return data; // Return the provided array
         } else {
             setIsError(true);
@@ -127,6 +143,15 @@ function DataTable(props: IDataTableProps) {
             console.error(error);
         }
     }, [sorting, columnFilters, globalFilter]);
+
+
+    const captureNewData = (xs: string | any[]) => {
+        setFlatRowData(xs.length > 0 ? xs : dataCopy);
+    };
+
+    const togglePatternSearchButton = () => {
+        setIsEnablePatternSearch(!isEnablePatternSearch);
+    };
 
     return (
         isError ? (<Alert severity='error' className='errorMessage'>
@@ -204,6 +229,30 @@ function DataTable(props: IDataTableProps) {
                         })}
 
                         renderTopToolbarCustomActions={() => (CustomInfoButton())} // Add custom Info button 
+                        renderToolbarInternalActions={({
+                            table
+                        }) => <Box className="setupGlobalSearch">
+                                {/* {(CustomInfoButton())} */}
+
+                                <MRT_ToggleGlobalFilterButton table={table} />
+                                <MRT_ToggleFiltersButton table={table} />
+                                <MRT_ShowHideColumnsButton table={table} />
+                                {/* <MRT_ToggleDensePaddingButton table={table} /> */}
+                                <MRT_FullScreenToggleButton table={table} />
+                                {/* {enablePatternSearch && <div onClick={tooglePatternSearchButton} className='PatternSearchButton'><SavedSearchIcon /> </div>
+                                } */}
+                                {enablePatternSearch &&
+                                    <Tooltip title='Show/Hide Pattern Based Search' placement="bottom" arrow>
+                                        <IconButton onClick={togglePatternSearchButton} className='PatternSearchButton'><SavedSearchIcon /> </IconButton>
+                                    </Tooltip>
+                                }
+                                {isEnablePatternSearch && (<section className={`global_search ${isEnablePatternSearch ? 'visible' : ''}`}
+                                >
+                                    <GlobalFilters tableData={table.getAllColumns()} flatRowData={dataCopy} onNewData={captureNewData} />
+                                </section>)}
+
+
+                            </Box>}
 
                         state={{ // State of the table
                             columnFilters,
@@ -236,7 +285,6 @@ function DataTable(props: IDataTableProps) {
 
                         // manualFiltering // For Server Side Filtering by passing params filters: [{"id":"id","value":"12"}]
                         // manualSorting // For Server Side Sorting by passing params sorting: [{"id":"lastName","desc":false}]
-
 
                         enableRowVirtualization={enableRowVirtualization} //optional, but recommended if it is likely going to be more than 100 rows
                         rowVirtualizerInstanceRef={rowVirtualizerInstanceRef} //get access to the virtualizer instance
@@ -274,6 +322,7 @@ DataTable.defaultProps = {
     enableDensityToggle: false, // Enable density toggle padding property
     enableFullScreenToggle: true, // Enable full screen toggle property
     enableRowVirtualization: true, // Enable row virtualization,
+    enablePatternSearch: true
 };
 
 function CustomInfoButton() {

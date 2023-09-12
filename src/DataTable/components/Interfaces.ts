@@ -34,6 +34,7 @@ interface IDataTableProps {
     enableFullScreenToggle?: boolean, // Enable full screen toggle property
     enableRowVirtualization?: boolean, // Enable row virtualization,
     hideColumnsDefault?: string[]; // Hide columns default
+    enablePatternSearch?: boolean;
 }
 
 export type {

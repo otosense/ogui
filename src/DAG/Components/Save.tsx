@@ -20,6 +20,9 @@ function Save(props: ILoadProps) {
         const inputValue = event.target.value; //  Dag Title given by the user
         if (pythonIdentifierPattern.test(inputValue)) {
             setDagName(inputValue);
+            setErrorExist(false);
+        } else {
+            setErrorExist(true);
         }
     };
 
@@ -27,22 +30,31 @@ function Save(props: ILoadProps) {
         // Creating the Payload which backend needs 
         event.preventDefault();
         const combinedObj = {
-            dagName,
+            name: dagName,
             ...props.data,
         };
 
         onClose && onClose();
 
         const savePayload = {
-            dagName: dagName,
+            name: dagName,
             combinedObj: combinedObj
         };
-
         if (onSave) {
             onSave(savePayload); // Only call onSave if it's defined
         }
     };
 
+    const ErrorMessageElement = (
+        <>
+            <p className='jsonError title'>Please check the Name and try again</p>
+            <ul className="jsonError">
+                <li>Start with a letter (a to z or A to Z) or an underscore (_).</li>
+                <li> After the first character, you can use letters, numbers, or underscores. </li>
+                <li> Avoid using special characters like !, @, #, $, etc.</li>
+            </ul>
+        </>
+    );
     return (
         <div className='ModalBox'>
             <form onSubmit={submitHandler} className='jsonData'>
@@ -61,7 +73,7 @@ function Save(props: ILoadProps) {
                     required
                     readOnly
                 />
-                {errorExist && <p className='jsonError'>The JSON upload failed. Please check the variable Names and try again</p>}
+                {errorExist && ErrorMessageElement}
                 <button type="submit" className='uploadSubmitButton btnSize'>Save</button>
                 <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
             </form>

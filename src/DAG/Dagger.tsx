@@ -146,7 +146,7 @@ const Dagger = (props: IDaggerProps) => {
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections
-    const onConnect = connectionHandlers(nodes, edges, setErrorMessage, toggleSnackbar, setEdges);
+    const onConnect = connectionHandlers(edges, setErrorMessage, toggleSnackbar, setEdges);
 
     // const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
 
@@ -244,7 +244,6 @@ const Dagger = (props: IDaggerProps) => {
                 position,
                 data: { label: '', initialEdge: dagDirections, }, // dagDirections will tell the Dag what layout to use LR or TB
             };
-            console.log('object created');
             if (type === 'custom') { /// Normal func node creation structure
                 newNode.data = {
                     label: '',

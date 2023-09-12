@@ -2,15 +2,16 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { pythonIdentifierPattern } from '../../utilities/globalFunction';
 import { listMapping } from '../../utilities/Mapping/listMapping';
-import { isEmpty, isFunction, isObject } from 'lodash';
+import { isEmpty, isFunction, isObject, map } from 'lodash';
 import Spinner from '../../utilities/Spinner';
 import { IDropDownNode, IFlowNode, IParamsDropDown } from '../Interfaces';
 import { onNameHandlers } from '../../utilities/Validations/TextValidation';
+import SearchBox from '../SearchBox';
 
 // funcNode Component main function starts at "DropDownNode" function below
 function Select(props: IParamsDropDown) {
-  const { value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue, loadParamsList } = props;
-  // console.log({ value, handleId, nodeId, sourcePosition, data, selector, isConnectable, labels, selectedValue });
+  const { value, handleId, nodeId, sourcePosition, data, isConnectable, labels, selectedValue, loadParamsList } = props;
+  // console.log({ value, handleId, nodeId, sourcePosition, data,  isConnectable, labels, selectedValue });
   const { setNodes } = useReactFlow();
   const store = useStoreApi();
   const [customValue, setCustomValue] = useState(value);
@@ -143,7 +144,7 @@ function DropDownNode(props: IDropDownNode) {
   // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
   const [selectedValue, setSelectedValue] = useState<string>(); // Selected value from the DropDown
-  const [functionList, setFunctionList] = useState(funcLists); // List of available funcNodes
+  // const [functionList, setFunctionList] = useState(funcLists); // List of available funcNodes
 
   // errorMapper => help us to find the empty nodes or node where parameter are still empty without connection
   function errorMapper(errorMapping: any[], id: string) {
@@ -160,25 +161,31 @@ function DropDownNode(props: IDropDownNode) {
 
 
 
-  useEffect(() => {
-    // Mapping the Data for UI elements, creating structures like 
-    // [  { value: 'add', label: 'add' },  { value: 'apply_fitted_model', label: 'apply_fitted_model' }]
-    const result: any = listMapping(functionList);
-    setFunctionList(result);
-  }, [functionList]);
+  // useEffect(() => {
+  //   // Mapping the Data for UI elements, creating structures like 
+  //   // [  { value: 'add', label: 'add' },  { value: 'apply_fitted_model', label: 'apply_fitted_model' }]
+  //   const result: any = listMapping(functionList);
+  //   setFunctionList(result);
+  // }, [functionList]);
 
+
+  const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
+    setSelectedValue(value);
+  };
   return (
     <>
       {/* When component load initially it will show the dropdown list Once selectedValue has proper value it will make an API call to get the list of params and which is plotted in "Handle" HTML Element */}
       {(selectedValue === "select function Node" || selectedValue === '' || selectedValue === undefined) ?
         <div className='addNode'>
           <h3 className='titleAddNode'>Add Nodes</h3>
-          <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
+          {/* <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
             {functionList?.map((funcList, index: number) => {
               // const functionName = funcList.label?.split('.').pop() || '';
               return <option key={index} value={funcList.value}>{funcList.label}</option>;
             })}
-          </select>
+          </select> */}
+
+          <SearchBox data={funcLists} handleValue={selectValueFromDropDown} />
         </div>
         :
 
@@ -191,7 +198,6 @@ function DropDownNode(props: IDropDownNode) {
               handleId={data.label}
               sourcePosition={sourcePosition}
               data={data}
-              selector={functionList}
               isConnectable={isConnectable}
               labels={data.label}
               selectedValue={selectedValue}

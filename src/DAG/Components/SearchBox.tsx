@@ -30,9 +30,9 @@ function SearchBox({ data, handleValue }: { data: string[]; handleValue: any; })
                 onChange={handleInputChange}
                 name="funcLists" id="funcLists" className="funcLists"
             />
-            {suggestions.length > 0 && (
+            {suggestions?.length > 0 && (
                 <div className="suggestion-list">
-                    {suggestions.map((suggestion, index) => (
+                    {suggestions?.map((suggestion, index) => (
                         <p key={index} onClick={() => handleSuggestionClick(suggestion)}>
                             {suggestion}
                         </p>

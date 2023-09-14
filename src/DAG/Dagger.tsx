@@ -68,14 +68,7 @@ const Dagger = (props: IDaggerProps) => {
     };
 
     useEffect(() => {
-        // Once data received from API Extract only the function List /  FuncNode List
-        // if (data) {
-        //     // storeGrouping which extract and maps the Data into "dag_store" / "funcstore" / "funcfactoriesstore" 
-        //     const list = storeGrouping(data);
-        //     setFuncList(list.funcs); // storing FuncList
-        // }
         setIsLoading(true);
-
         if (isEmpty(DagFuncList)) {
             setFuncList([]); // Return an empty array if DagFuncList is not provided
             setIsError(true);
@@ -88,8 +81,12 @@ const Dagger = (props: IDaggerProps) => {
             if (isFunction(result?.then)) {
                 // Check if the result of the function is a promise
                 result.then((dataArray: any) => {
-                    const list = storeGrouping(dataArray);
-                    setFuncList(list.funcs); // storing FuncList
+                    if (dataArray.length > 0) {
+                        const list = storeGrouping(dataArray);
+                        setFuncList(list.funcs); // storing FuncList
+                    } else {
+                        setIsError(true);
+                    }
                     setIsLoading(false);
                 });
             } else {
@@ -267,7 +264,6 @@ const Dagger = (props: IDaggerProps) => {
             data: {}
         });
     };
-
 
     return (
         // Any error in API Component will not load show the actual error message

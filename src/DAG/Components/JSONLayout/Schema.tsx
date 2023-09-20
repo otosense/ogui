@@ -263,7 +263,7 @@ function JsonEditor(props: {
 
             </div>
             {/* <Tooltip title="Submit JSON"> */}
-            <Button onClick={handleSubmitJson} disabled={error !== null}>{<UploadIcon />} Submit</Button>
+            <Button onClick={handleSubmitJson} disabled={error !== null} variant="contained">{<UploadIcon />} Submit</Button>
             {/* </Tooltip> */}
         </>
     );

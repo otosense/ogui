@@ -77,7 +77,7 @@ export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }
     func_nodes?.map((funcNode: { out: string; name: string; bind: ArrayLike<unknown> | { [s: string]: unknown; }; func_label: any; }) => {
         const edgeObject: IEdgeObject = { // Creating edges for nodes
             id: `${funcNode.out + "." + funcNode.name}_edge`,
-            markerEnd: { type: 'arrowclosed' },
+            // markerEnd: { type: 'arrowclosed' },
             source: funcNode.name,
             target: funcNode.out,
             targetHandle: funcNode.out,
@@ -91,7 +91,7 @@ export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }
         Object.values(funcNode.bind).map((varNode, index) => {
             const edgeObject: IEdgeObject = { // Creating edges for bind / input params Nodes for each funcNodes
                 id: `${funcNode.out + "." + funcNode.name}_edge`,
-                markerEnd: { type: 'arrowclosed' },
+                // markerEnd: { type: 'arrowclosed' },
                 source: varNode,
                 sourceHandle: funcNode.func_label,
                 target: funcNode.name,

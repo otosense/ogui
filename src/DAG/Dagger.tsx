@@ -160,8 +160,9 @@ const Dagger = (props: IDaggerProps) => {
 
             if (getFuncNode.length > 0) { // if Error is there show Snackbar
                 errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+                setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
+                return;
             }
-            setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
 
             let MappedJson = { // Mapping JSON
                 func_nodes: convertJsonToFuncNodes(flow)

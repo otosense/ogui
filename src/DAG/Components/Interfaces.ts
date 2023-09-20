@@ -52,7 +52,7 @@ interface ILoadProps {
 
 interface IEdgeObject {
     id: string;
-    markerEnd: {
+    markerEnd?: {
         type: string;
     };
     source: any;
@@ -65,7 +65,7 @@ interface IEdgeObject {
 
 interface IEdges {
     id: string;
-    markerEnd: { type: string; };
+    markerEnd?: { type: string; };
     source: string;
     sourceHandle: string;
     target: string;

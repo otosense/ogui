@@ -21,7 +21,7 @@ function AppTest() {
     };
 
     const sample = async () => {
-        return await loadDagFuncList;
+        // return await loadDagFuncList;
 
 
         try {
@@ -57,7 +57,7 @@ function AppTest() {
 
         const APIpayload = {
             "_attr_name": '__setitem__',
-            k: data.dagName,
+            k: data.name,
             v: data.combinedObj
         };
         // Saving the Dag to Backend using API

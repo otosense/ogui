@@ -44,7 +44,8 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
             id: varNode,
             type: 'textUpdater',
             data: {
-                label: includes(varNode, customRemoveText) ? "" : varNode
+                // label: includes(varNode, customRemoveText) ? "" : varNode
+                label: varNode
             },
             // position: { x: randomPosition(), y: randomPosition() },
             position: { x: 0, y: 0 },

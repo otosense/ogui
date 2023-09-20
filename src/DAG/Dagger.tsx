@@ -281,7 +281,7 @@ const Dagger = (props: IDaggerProps) => {
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
                 {/* Actual Dag Structure Everything starts here */}
-                <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={20} secondaryMinSize={20}>
+                <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={25} secondaryMinSize={20}>
                     <ReactFlowProvider>
                         {/* Side Bar which contains list of node to Drag  */}
                         <Sidebar />
@@ -311,8 +311,8 @@ const Dagger = (props: IDaggerProps) => {
                                 <Controls />
                                 <Panel position="top-right">
                                     <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
-                                    <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
-                                    <Button variant="contained" onClick={reflectJson} className='panelBtn' startIcon={<GetAppIcon />}>JSon</Button>
+                                    <Button variant="contained" onClick={uploadHandler} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
+                                    <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>JSon</Button>
                                 </Panel>
                                 <Panel position="top-left">
                                     <button onClick={() => onLayout('LR')}>HL</button>

@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography, Button } from '@mui/material';
+import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography, Button, AppBar, Toolbar, Badge, MenuItem } from '@mui/material';
 import React, { memo, useEffect, useState } from 'react';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import BuildCircleIcon from '@mui/icons-material/BuildCircle';
@@ -12,7 +12,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 function JsonEditor(props: {
     onDataUploaded: any; layout: (arg0: boolean) => void; data: any;
 }) {
-    const [jsonString, setJsonString] = useState<string>(JSON.stringify(props.data, null, 2));
+    const [jsonString, setJsonString] = useState<string>();
     const [error, setError] = useState<any>(null);
     const [schemaLayout, setSchemaLayout] = useState(false);
 
@@ -20,10 +20,48 @@ function JsonEditor(props: {
         setJsonString(JSON.stringify(props.data, null, 2));
     }, [props.data]);
 
+    // const validateJSON = (jsonString: string) => {
+    //     try {
+    //         JSON.parse(jsonString);
+    //         setError(null); // JSON is valid
+    //     } catch (error) {
+    //         if (error instanceof SyntaxError) {
+    //             // Parse error occurred, set the error message and line number
+    //             const positionMatch = /at position (\d+)/.exec(error.message);
+    //             const position = positionMatch ? parseInt(positionMatch[1]) : null;
+    //             if (position !== null) {
+    //                 const lines = jsonString.split('\n');
+    //                 let line = 1;
+    //                 let charCount = 0;
+    //                 for (let i = 0; i < lines.length; i++) {
+    //                     charCount += lines[i].length + 1; // +1 for the newline character
+    //                     if (position < charCount) {
+    //                         setError({ message: error.message, lineNumber: line });
+    //                         break;
+    //                     }
+    //                     line++;
+    //                 }
+    //             } else {
+    //                 setError({ message: error.message, lineNumber: null });
+    //             }
+    //         } else {
+    //             // This is not a parse error
+    //             setError({ message: 'Unknown error', lineNumber: null });
+    //         }
+    //     }
+    // };
+
+
     const validateJSON = (jsonString: string) => {
         try {
-            JSON.parse(jsonString);
-            setError(null); // JSON is valid
+            const parsedJson = JSON?.parse(jsonString);
+            // Check for empty string or empty values in the parsed JSON
+            const hasEmptyValues = checkForEmptyValues(parsedJson);
+            if (hasEmptyValues) {
+                setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+            } else {
+                setError(null); // JSON is valid
+            }
         } catch (error) {
             if (error instanceof SyntaxError) {
                 // Parse error occurred, set the error message and line number
@@ -51,6 +89,21 @@ function JsonEditor(props: {
         }
     };
 
+    const checkForEmptyValues = (jsonObj: any): boolean => {
+        for (const key in jsonObj) {
+            if (jsonObj.hasOwnProperty(key)) {
+                const value = jsonObj[key];
+                if (value === "" || value === null || value === undefined) {
+                    return true; // Found an empty string or empty value
+                }
+                if (typeof value === "object" && checkForEmptyValues(value)) {
+                    return true; // Recursively check nested objects
+                }
+            }
+        }
+        return false; // No empty strings or empty values found
+    };
+
     const handleJsonChange = (event: { target: { value: any; }; }) => {
         const newValue = event.target.value;
         setJsonString(newValue);
@@ -59,8 +112,34 @@ function JsonEditor(props: {
     };
 
     const handleSubmitJson = () => {
-        props.onDataUploaded && props.onDataUploaded(jsonString);
+
+        // try onChange or Blur
+        const parsedJson = JSON.parse(jsonString);
+        const hasEmptyValues = checkForEmptyValues(parsedJson);
+        if (hasEmptyValues) {
+            setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+        } else {
+            setError(null); // JSON is valid
+            props.onDataUploaded && props.onDataUploaded(jsonString);
+        }
     };
+
+    // useEffect(() => {
+    //     console.log('jsonString', jsonString);
+    //     if (jsonString) {
+    //         const parsedJson = JSON?.parse(jsonString);
+    //         const hasEmptyValues = checkForEmptyValues(parsedJson);
+    //         console.log('hasEmptyValues', hasEmptyValues);
+    //         if (hasEmptyValues) {
+    //             setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+    //         } else {
+    //             setError(null); // JSON is valid
+    //             props.onDataUploaded && props.onDataUploaded(jsonString);
+    //         }
+    //     }
+
+    // }, [error]);
+
 
     // const renderLineNumbers = () => {
     //     const lines = jsonString.split('\n');
@@ -111,18 +190,46 @@ function JsonEditor(props: {
 
     return (
         <>
+
+            <Box sx={{ flexGrow: 1 }}>
+                <AppBar position="static">
+                    <Toolbar style={{ justifyContent: 'center' }}>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            Schema Editor
+                        </Typography>
+                    </Toolbar>
+                    <Divider color="#fff" />
+                    <MenuItem style={{ justifyContent: 'center' }}>
+                        <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
+                            <IconButton onClick={orientationChange} color="inherit">{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Format JSON: add proper indentation and new lines">
+                            <IconButton onClick={handleFormatJson} color="inherit">{<FormatAlignCenterIcon />}</IconButton>
+                        </Tooltip>
+                        <Tooltip title="Automatically repair JSON">
+                            <IconButton onClick={handleAutoRepairJson} color="inherit">{<BuildCircleIcon />}</IconButton>
+                        </Tooltip>
+                        {/* <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+
+                            <AlignHorizontalLeftIcon />
+
+                        </IconButton> */}
+                    </MenuItem>
+                </AppBar>
+            </Box>
             <div className="json-editor">
                 {/* <Divider /> */}
                 {/* <div className="line-numbers">{renderLineNumbers()}</div> */}
 
-                <Box className='box-content-json'>
-                    {/* <span</span> */}
+                {/* <Box className='box-content-json'>
                     <Typography variant="h5" component="h2">
                         Schema Editor
                     </Typography>
                     <div>
                         <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
-                            <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}</IconButton>
+                            <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}
+                            </IconButton>
                         </Tooltip>
                         <Tooltip title="Format JSON: add proper indentation and new lines">
                             <IconButton onClick={handleFormatJson}>{<FormatAlignCenterIcon />}</IconButton>
@@ -133,7 +240,7 @@ function JsonEditor(props: {
 
                     </div>
 
-                </Box>
+                </Box> */}
                 <Divider />
                 {error && (
                     <Alert severity="error">
@@ -153,13 +260,12 @@ function JsonEditor(props: {
                         onChange={handleJsonChange}
                         placeholder="Enter JSON here..."
                     />
-
                 </div>
 
             </div>
-            <Tooltip title="Submit JSON">
-                <Button onClick={handleSubmitJson}>{<UploadIcon />} Submit</Button>
-            </Tooltip>
+            {/* <Tooltip title="Submit JSON"> */}
+            <Button onClick={handleSubmitJson} disabled={error !== null}>{<UploadIcon />} Submit</Button>
+            {/* </Tooltip> */}
         </>
     );
 }

@@ -9,7 +9,7 @@ import ReactFlow, {
     ReactFlowInstance,
     BackgroundVariant,
 } from 'reactflow';
-import { Button, Alert } from '@mui/material';
+import { Button, Alert, Modal } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
 
@@ -324,15 +324,22 @@ const Dagger = (props: IDaggerProps) => {
                     </ReactFlowProvider>
                     <JsonEditor layout={onChange} data={showSchema} onDataUploaded={handleUpload} />
                 </SplitterLayout>
-                {isModal?.open && (
-                    <div className='overlayPosition'>
-                        {isModal?.type === 'upload' ? (
-                            <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={LoadDagList} loadSavedDag={onloadSavedDag} />
-                        ) : (
-                            <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} onSave={onSave} />
-                        )}
-                    </div>
-                )}
+                <>
+                    <Modal
+                        open={isModal?.open}
+                        onClose={(_event: React.MouseEvent<HTMLButtonElement>, reason: string) => {
+                            closeModal();
+                        }}
+                    >
+                        <div className='overlayPosition'>
+                            {isModal?.type === 'upload' ? (
+                                <Load onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} userData={LoadDagList} loadSavedDag={onloadSavedDag} />
+                            ) : (
+                                <Save onClose={closeModal} type={isModal?.type} data={isModal?.data} onDataUploaded={handleUpload} onSave={onSave} />
+                            )}
+                        </div>
+                    </Modal>
+                </>
 
                 {showSnackbar && <SnackBar message={errorMessage} severity='error' />}
             </div>

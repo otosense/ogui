@@ -12,7 +12,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 function JsonEditor(props: {
     onDataUploaded: any; layout: (arg0: boolean) => void; data: any;
 }) {
-    const [jsonString, setJsonString] = useState<string>();
+    const [jsonString, setJsonString] = useState<any>();
     const [error, setError] = useState<any>(null);
     const [schemaLayout, setSchemaLayout] = useState(false);
 
@@ -254,7 +254,6 @@ function JsonEditor(props: {
                 <div className="textarea-wrapper">
                     <textarea
                         rows={25}
-                        cols={25}
                         className='json-area'
                         value={jsonString}
                         onChange={handleJsonChange}

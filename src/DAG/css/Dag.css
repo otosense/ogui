@@ -258,6 +258,7 @@ h4.nodeTitle.varNode {
     margin-bottom: 2%;
     display: block !important;
     text-align: center;
+    color: #000;
 }
 
 
@@ -361,11 +362,16 @@ button.panelBtn {
     position: relative;
 }
 
+.sampleText {
+    color: #000;
+}
+
 .dagNameSection {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 0 2%;
+    color: #000;
 }
 
 .clickHere {
@@ -379,6 +385,7 @@ button.panelBtn {
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
+    color: #000;
 }
 
 select#dagList {
@@ -649,6 +656,9 @@ input#funcLists {
     border-color: #ccc;
     font-size: 13px;
     line-height: 16px;
+    width: calc(100% - 10%);
+    color: black;
+
 }
 
 .textarea-wrapper {
@@ -657,6 +667,8 @@ input#funcLists {
     background-size: 100% 32px;
     background-position: left 10px;
     margin-top: 10px;
+    width: 95%;
+    text-align: left;
 }
 
 .json-editor {

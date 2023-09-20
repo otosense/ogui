@@ -129,7 +129,7 @@ function Load(props: ILoadProps) {
                         </select>
                     </div>
                     {showErrorMessage && <p className='jsonError'>The JSON upload failed. Please check the JSON and try again</p>}
-                    <button type="submit" className='uploadSubmitButton btnSize'>Load</button>
+                    <button type="submit" className='uploadSubmitButton btnSize' disabled={!selectDag}>Load</button>
                     <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
                 </form>
             }
@@ -144,6 +144,7 @@ function Load(props: ILoadProps) {
                     required
                 />
                 {errorExist && <p className='jsonError'>The JSON upload failed. Please check the JSON and try again</p>}
+
                 <button type="submit" className='uploadSubmitButton btnSize'>Load</button>
                 <button onClick={onClose} className='uploadCancelButton btnSize'>Close</button>
             </form>}

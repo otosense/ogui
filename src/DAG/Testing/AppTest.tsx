@@ -21,7 +21,7 @@ function AppTest() {
     };
 
     const sample = async () => {
-        // return await loadDagFuncList;
+        return await loadDagFuncList;
 
 
         try {

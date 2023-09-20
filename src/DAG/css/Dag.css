@@ -670,3 +670,7 @@ input#funcLists {
     justify-content: space-between;
     align-items: center
 }
+
+.splitter-layout .layout-pane {
+    display: flex !important
+}

@@ -4,12 +4,23 @@ import { customRemoveText } from "../globalFunction";
 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Nodes
-    const { func_nodes } = jsonData;
+    function parseJsonIfString(json: any) {
+        try {
+            const parsedJson = JSON.parse(json);
+            return parsedJson;
+        } catch (error) {
+            // JSON parsing failed, so it's not a stringified JSON.
+            // Return the original input as it's already a parsed JSON.
+            return json;
+        }
+    }
+    const parsedJson = parseJsonIfString(jsonData); // This will be a parsed JSON
+    const { func_nodes } = parsedJson;
     // expected node structure is mentioned below
     let initialNodes: { id: string; type: string; data: { label: string; }; }[] = [];
     let varNodeCollection: any[] = []; // Creating node collection
     let outNodeCollection: string[] = []; // Creating Edge collection
-    func_nodes?.map((funcNode, index: number) => {
+    func_nodes?.map((funcNode: { name: any; func_label: any; bind: ArrayLike<unknown> | { [s: string]: unknown; }; out: string; }, index: number) => {
         const funcObject = { // Converting it as function node will takes place here
             id: funcNode.name,
             type: 'custom',
@@ -48,9 +59,21 @@ export function randomPosition() {
 }
 export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Edges
-    const { func_nodes } = jsonData;
+    function parseJsonIfString(json: any) {
+        try {
+            const parsedJson = JSON.parse(json);
+            return parsedJson;
+        } catch (error) {
+            // JSON parsing failed, so it's not a stringified JSON.
+            // Return the original input as it's already a parsed JSON.
+            return json;
+        }
+    }
+    const parsedJson = parseJsonIfString(jsonData); // This will be a parsed JSON
+
+    const { func_nodes } = parsedJson;
     let initialEdges: IEdges[] = [];
-    func_nodes?.map((funcNode) => {
+    func_nodes?.map((funcNode: { out: string; name: string; bind: ArrayLike<unknown> | { [s: string]: unknown; }; func_label: any; }) => {
         const edgeObject: IEdgeObject = { // Creating edges for nodes
             id: `${funcNode.out + "." + funcNode.name}_edge`,
             markerEnd: { type: 'arrowclosed' },

@@ -34,6 +34,8 @@ import { connectionHandlers } from './utilities/Validations/connectionHandlers';
 import { storeGrouping } from './utilities/Mapping/storeGrouping';
 import { IDaggerProps } from './Components/Interfaces';
 import { isArray, isEmpty, isFunction } from 'lodash';
+import JsonEditor from './Components/JSONLayout/Schema';
+import SplitterLayout from 'react-splitter-layout';
 
 // Each Node Width and Height Mentioned here
 const nodeWidth = 200;
@@ -62,6 +64,9 @@ const Dagger = (props: IDaggerProps) => {
     const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const [showSchema, setShowSchema] = useState<any>();
+    const [orientation, setOrientation] = useState(false);
     const toggleSnackbar = () => {
         // Snackbar Toggle to shown in UI
         setShowSnackbar((prev) => !prev);
@@ -140,7 +145,7 @@ const Dagger = (props: IDaggerProps) => {
 
     // Reason for Auto Alignment of Nodes and Edges
     const onLayout = useCallback(
-        (direction: string | undefined) => {
+        (direction: string | undefined = 'LR') => {
             const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
                 nodes,
                 edges,
@@ -166,6 +171,25 @@ const Dagger = (props: IDaggerProps) => {
         setUploadOver(!uploadOver);
     }, [setNodes, setEdges, setUploadOver]);
 
+    const reflectJson = useCallback((e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        if (reactFlowInstance) {
+            const flow: any = reactFlowInstance.toObject();
+            setFlowNodes(flow.nodes);
+            // Handling Error if any of the nodes label are empty
+            const getFuncNode = ValidationError(flow);
+
+            if (getFuncNode.length > 0) { // if Error is there show Snackbar
+                errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+            }
+            setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
+
+            let MappedJson = { // Mapping JSON
+                func_nodes: convertJsonToFuncNodes(flow)
+            };
+            setShowSchema(MappedJson);
+        }
+    }, [reactFlowInstance]);
     // Saving the Dag and Prevent saving is any validationError are there  refer function "ValidationError"
     const saveHandler = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -188,6 +212,7 @@ const Dagger = (props: IDaggerProps) => {
                 type: 'download',
                 data: MappedJson
             });
+
             localStorage.setItem(flowKey, JSON.stringify(flow)); // backup saving the  Actual nodes in localStorage 
             localStorage.setItem('MappedJson', JSON.stringify(MappedJson)); // backup saving the converted for our JSON requirement nodes in localStorage
 
@@ -265,6 +290,10 @@ const Dagger = (props: IDaggerProps) => {
         });
     };
 
+    const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
+        setOrientation(viewPosition);
+    };
+
     return (
         // Any error in API Component will not load show the actual error message
         isError ? (<Alert severity='error' className='errorMessage'>
@@ -273,44 +302,48 @@ const Dagger = (props: IDaggerProps) => {
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
                 {/* Actual Dag Structure Everything starts here */}
-                <ReactFlowProvider>
-                    {/* Side Bar which contains list of node to Drag  */}
-                    <Sidebar />
-                    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                        <ReactFlow
-                            // nodes={nodes}
-                            nodes={dataWithUpdates}
-                            snapToGrid={true}
-                            snapGrid={[3, 3]}
-                            // edges={edges}
-                            edges={edgesWithUpdatedTypes}
-                            onNodesChange={onNodesChange}
-                            onEdgesChange={onEdgesChange}
-                            isValidConnection={isValidConnection}
-                            onConnect={onConnect}
-                            onInit={setReactFlowInstance}
-                            onDrop={onDrop}
-                            onDragOver={onDragOver}
-                            fitView
-                            nodeTypes={nodeTypes}
-                        >
-                            <Background
-                                variant={BackgroundVariant.Lines}
-                                color="#2a2b2d"
-                                style={{ backgroundColor: "#1E1F22" }}
-                            />
-                            <Controls />
-                            <Panel position="top-right">
-                                <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
-                                <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
-                            </Panel>
-                            <Panel position="top-left">
-                                <button onClick={() => onLayout('LR')}>HL</button>
-                            </Panel>
-                        </ReactFlow>
-                    </div>
+                <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={20} secondaryMinSize={20}>
+                    <ReactFlowProvider>
+                        {/* Side Bar which contains list of node to Drag  */}
+                        <Sidebar />
+                        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                            <ReactFlow
+                                // nodes={nodes}
+                                nodes={dataWithUpdates}
+                                snapToGrid={true}
+                                snapGrid={[3, 3]}
+                                // edges={edges}
+                                edges={edgesWithUpdatedTypes}
+                                onNodesChange={onNodesChange}
+                                onEdgesChange={onEdgesChange}
+                                isValidConnection={isValidConnection}
+                                onConnect={onConnect}
+                                onInit={setReactFlowInstance}
+                                onDrop={onDrop}
+                                onDragOver={onDragOver}
+                                fitView
+                                nodeTypes={nodeTypes}
+                            >
+                                <Background
+                                    variant={BackgroundVariant.Lines}
+                                    color="#2a2b2d"
+                                    style={{ backgroundColor: "#1E1F22" }}
+                                />
+                                <Controls />
+                                <Panel position="top-right">
+                                    <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                                    <Button variant="contained" onClick={uploadHandler} className='panelBtn' startIcon={<GetAppIcon />}>Load</Button>
+                                    <Button variant="contained" onClick={reflectJson} className='panelBtn' startIcon={<GetAppIcon />}>JSon</Button>
+                                </Panel>
+                                <Panel position="top-left">
+                                    <button onClick={() => onLayout('LR')}>HL</button>
+                                </Panel>
+                            </ReactFlow>
+                        </div>
 
-                </ReactFlowProvider>
+                    </ReactFlowProvider>
+                    <JsonEditor layout={onChange} data={showSchema} onDataUploaded={handleUpload} />
+                </SplitterLayout>
                 {isModal?.open && (
                     <div className='overlayPosition'>
                         {isModal?.type === 'upload' ? (

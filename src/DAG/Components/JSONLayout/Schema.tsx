@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import Divider from '@mui/material/Divider';
@@ -8,10 +8,17 @@ import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 
 
 
-function JsonEditor(props: { layout: (arg0: boolean) => void; }) {
-    const [jsonString, setJsonString] = useState('');
+function JsonEditor(props: {
+    onDataUploaded: any; layout: (arg0: boolean) => void; data: any;
+}) {
+    const [jsonString, setJsonString] = useState<string>(JSON.stringify(props.data, null, 2));
     const [error, setError] = useState<any>(null);
     const [schemaLayout, setSchemaLayout] = useState(false);
+
+    useEffect(() => {
+        setJsonString(JSON.stringify(props.data, null, 2));
+    }, [props.data]);
+
     const validateJSON = (jsonString: string) => {
         try {
             JSON.parse(jsonString);
@@ -47,6 +54,7 @@ function JsonEditor(props: { layout: (arg0: boolean) => void; }) {
         const newValue = event.target.value;
         setJsonString(newValue);
         validateJSON(newValue);
+        props.onDataUploaded && props.onDataUploaded(newValue);
     };
 
     // const renderLineNumbers = () => {
@@ -129,6 +137,7 @@ function JsonEditor(props: { layout: (arg0: boolean) => void; }) {
                 </Alert>
             )}
             <Divider />
+            {console.log('jsonString', jsonString)}
             <div className="textarea-wrapper">
                 <textarea
                     rows={25}

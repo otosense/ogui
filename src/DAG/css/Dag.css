@@ -671,6 +671,6 @@ input#funcLists {
     align-items: center
 }
 
-.splitter-layout .layout-pane {
+.splitter-layout .layout-pane.layout-pane-primary {
     display: flex !important
 }

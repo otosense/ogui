@@ -12,7 +12,6 @@ import ReactFlow, {
 import { Button, Alert } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import dagre from 'dagre';
 
 
 import Sidebar from './Components/Sidebar';
@@ -36,15 +35,8 @@ import { IDaggerProps } from './Components/Interfaces';
 import { isArray, isEmpty, isFunction } from 'lodash';
 import JsonEditor from './Components/JSONLayout/Schema';
 import SplitterLayout from 'react-splitter-layout';
+import { autoLayoutStructure } from './utilities/Layouts';
 
-// Each Node Width and Height Mentioned here
-const nodeWidth = 200;
-const nodeHeight = 75;
-
-// Layout / Structure are handled by this plugin
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-const getLayoutedElements = onLayoutHandlers();
 
 // Main component Starts here
 const Dagger = (props: IDaggerProps) => {
@@ -121,15 +113,13 @@ const Dagger = (props: IDaggerProps) => {
         // }
     }, [DagFuncList]);
 
-
     useEffect(() => {
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
-
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
-    }, [uploadOver]);
+    }, [uploadOver, showSchema]);
 
     const nodeTypes = useMemo(() => ({
         // textUpdater is "TextEditorNode" component which holds varNode functionality
@@ -141,21 +131,10 @@ const Dagger = (props: IDaggerProps) => {
     // Connection Handlers => Rules for the connections
     const onConnect = connectionHandlers(edges, setErrorMessage, toggleSnackbar, setEdges);
 
-    // const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
-
     // Reason for Auto Alignment of Nodes and Edges
-    const onLayout = useCallback(
-        (direction: string | undefined = 'LR') => {
-            const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-                nodes,
-                edges,
-                direction
-            );
-            setNodes([...layoutedNodes]);
-            setEdges([...layoutedEdges]);
-        },
-        [nodes, edges]
-    );
+    const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
+
+
 
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
     const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
@@ -169,7 +148,7 @@ const Dagger = (props: IDaggerProps) => {
         setNodes(funcToJsonNode);
         setEdges(funcToJsonEdge);
         setUploadOver(!uploadOver);
-    }, [setNodes, setEdges, setUploadOver]);
+    }, [setNodes, setEdges]);
 
     const reflectJson = useCallback((e: { preventDefault: () => void; }) => {
         e.preventDefault();
@@ -364,40 +343,6 @@ const Dagger = (props: IDaggerProps) => {
 
 export default memo(Dagger);
 
-
-function onLayoutHandlers() {
-    return (nodes: any[], edges: any[], direction = 'TB') => {
-        const isHorizontal = direction === 'TB';
-        dagreGraph.setGraph({ rankdir: direction });
-
-        nodes.forEach((node: { id: any; }) => {
-            dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-        });
-
-        edges.forEach((edge: { source: any; target: any; }) => {
-            dagreGraph.setEdge(edge.source, edge.target);
-        });
-
-        dagre.layout(dagreGraph);
-
-        nodes.forEach((node: { id: any; targetPosition: string; sourcePosition: string; position: { x: number; y: number; }; }) => {
-            const nodeWithPosition = dagreGraph.node(node.id);
-            node.targetPosition = isHorizontal ? 'left' : 'top';
-            node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-
-            // We are shifting the dagre node position (anchor=center center) to the top left
-            // so it matches the React Flow node anchor point (top left).
-            node.position = {
-                x: nodeWithPosition.x - nodeWidth / 2,
-                y: nodeWithPosition.y - nodeHeight / 2,
-            };
-
-            return node;
-        });
-
-        return { nodes, edges };
-    };
-}
 
 
 

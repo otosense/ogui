@@ -1,10 +1,11 @@
-import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Alert, AlertTitle, Box, IconButton, Tooltip, Typography, Button } from '@mui/material';
+import React, { memo, useEffect, useState } from 'react';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import Divider from '@mui/material/Divider';
 import AlignVerticalBottomIcon from '@mui/icons-material/AlignVerticalBottom';
 import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
+import UploadIcon from '@mui/icons-material/Upload';
 
 
 
@@ -54,7 +55,11 @@ function JsonEditor(props: {
         const newValue = event.target.value;
         setJsonString(newValue);
         validateJSON(newValue);
-        props.onDataUploaded && props.onDataUploaded(newValue);
+
+    };
+
+    const handleSubmitJson = () => {
+        props.onDataUploaded && props.onDataUploaded(jsonString);
     };
 
     // const renderLineNumbers = () => {
@@ -105,52 +110,58 @@ function JsonEditor(props: {
     };
 
     return (
-        <div className="json-editor">
-            {/* <Divider /> */}
-            {/* <div className="line-numbers">{renderLineNumbers()}</div> */}
+        <>
+            <div className="json-editor">
+                {/* <Divider /> */}
+                {/* <div className="line-numbers">{renderLineNumbers()}</div> */}
 
-            <Box className='box-content-json'>
-                {/* <span</span> */}
-                <Typography variant="h5" component="h2">
-                    Schema Editor
-                </Typography>
-                <div>
-                    <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
-                        <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}</IconButton>
-                    </Tooltip>
-                    <Tooltip title="Format JSON: add proper indentation and new lines">
-                        <IconButton onClick={handleFormatJson}>{<FormatAlignCenterIcon />}</IconButton>
-                    </Tooltip>
-                    <Tooltip title="Automatically repair JSON">
-                        <IconButton onClick={handleAutoRepairJson}>{<BuildCircleIcon />}</IconButton>
-                    </Tooltip>
+                <Box className='box-content-json'>
+                    {/* <span</span> */}
+                    <Typography variant="h5" component="h2">
+                        Schema Editor
+                    </Typography>
+                    <div>
+                        <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
+                            <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}</IconButton>
+                        </Tooltip>
+                        <Tooltip title="Format JSON: add proper indentation and new lines">
+                            <IconButton onClick={handleFormatJson}>{<FormatAlignCenterIcon />}</IconButton>
+                        </Tooltip>
+                        <Tooltip title="Automatically repair JSON">
+                            <IconButton onClick={handleAutoRepairJson}>{<BuildCircleIcon />}</IconButton>
+                        </Tooltip>
+
+                    </div>
+
+                </Box>
+                <Divider />
+                {error && (
+                    <Alert severity="error">
+                        <AlertTitle>{error.message}</AlertTitle>
+                        {error.lineNumber !== null && (
+                            <p>Error at line {error.lineNumber}</p>
+                        )}
+                    </Alert>
+                )}
+                <Divider />
+                <div className="textarea-wrapper">
+                    <textarea
+                        rows={25}
+                        cols={25}
+                        className='json-area'
+                        value={jsonString}
+                        onChange={handleJsonChange}
+                        placeholder="Enter JSON here..."
+                    />
+
                 </div>
 
-            </Box>
-            <Divider />
-            {error && (
-                <Alert severity="error">
-                    <AlertTitle>{error.message}</AlertTitle>
-                    {error.lineNumber !== null && (
-                        <p>Error at line {error.lineNumber}</p>
-                    )}
-                </Alert>
-            )}
-            <Divider />
-            {console.log('jsonString', jsonString)}
-            <div className="textarea-wrapper">
-                <textarea
-                    rows={25}
-                    cols={25}
-                    className='json-area'
-                    value={jsonString}
-                    onChange={handleJsonChange}
-                    placeholder="Enter JSON here..."
-                />
             </div>
-
-        </div>
+            <Tooltip title="Submit JSON">
+                <Button onClick={handleSubmitJson}>{<UploadIcon />} Submit</Button>
+            </Tooltip>
+        </>
     );
 }
 
-export default JsonEditor;
+export default memo(JsonEditor);

@@ -28,8 +28,8 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
                 label: funcNode.func_label,
                 selects: funcNode.func_label
             },
-            position: { x: randomPosition(), y: randomPosition() },
-            // position: { x: 0, y: 0 },
+            // position: { x: randomPosition(), y: randomPosition() },
+            position: { x: 0, y: 0 },
         };
         initialNodes.push(funcObject); // creating the Nodes
 
@@ -46,8 +46,8 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
             data: {
                 label: includes(varNode, customRemoveText) ? "" : varNode
             },
-            position: { x: randomPosition(), y: randomPosition() },
-            // position: { x: 0, y: 0 },
+            // position: { x: randomPosition(), y: randomPosition() },
+            position: { x: 0, y: 0 },
         };
         initialNodes.push(varObject);
     });

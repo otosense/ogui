@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import Divider from '@mui/material/Divider';
+import AlignVerticalBottomIcon from '@mui/icons-material/AlignVerticalBottom';
+import AlignHorizontalLeftIcon from '@mui/icons-material/AlignHorizontalLeft';
 
 
-function JsonEditor() {
+
+function JsonEditor(props: { layout: (arg0: boolean) => void; }) {
     const [jsonString, setJsonString] = useState('');
     const [error, setError] = useState<any>(null);
-
+    const [schemaLayout, setSchemaLayout] = useState(false);
     const validateJSON = (jsonString: string) => {
         try {
             JSON.parse(jsonString);
@@ -89,7 +92,8 @@ function JsonEditor() {
     };
 
     const orientationChange = () => {
-
+        setSchemaLayout(!schemaLayout);
+        props.layout(!schemaLayout);
     };
 
     return (
@@ -103,8 +107,8 @@ function JsonEditor() {
                     Schema Editor
                 </Typography>
                 <div>
-                    <Tooltip title="Format JSON: add proper indentation and new lines">
-                        <IconButton onClick={orientationChange}>{<FormatAlignCenterIcon />}</IconButton>
+                    <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
+                        <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}</IconButton>
                     </Tooltip>
                     <Tooltip title="Format JSON: add proper indentation and new lines">
                         <IconButton onClick={handleFormatJson}>{<FormatAlignCenterIcon />}</IconButton>

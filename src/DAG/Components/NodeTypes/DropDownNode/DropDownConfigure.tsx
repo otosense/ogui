@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Handle, useReactFlow, useStoreApi, Position } from 'reactflow';
 import { customRemoveText, pythonIdentifierPattern } from '../../../utilities/globalFunction';
-import { isEmpty, isFunction, isObject, map, zipObject } from 'lodash';
+import { forEach, groupBy, isEmpty, isFunction, isObject, map, range, zipObject } from 'lodash';
 import { IParamsDropDown } from '../../Interfaces';
 import { onNameHandlers } from '../../../utilities/Validations/TextValidation';
 import { convertFuncNodeToJsonNode, convertFuncNodeToJsonEdge } from '../../../utilities/Mapping/convertFuncNodeToJson';
@@ -50,6 +50,21 @@ const SelectConfigure = (props: IParamsDropDown) => {
 
     useEffect(() => {
         const { nodeInternals } = store.getState();
+        // Use lodash to group the array by 'data.label'
+        const grouped = groupBy(Array.from(nodeInternals.values()), 'data.label');
+
+        // Iterate over the grouped data and count occurrences
+        forEach(grouped, (group, label) => {
+            if (group[0].type === 'custom') {
+                group.forEach((item: any, index: number) => {
+                    // item.output = index === 0 ? label : `${label}_${index}`;
+                    const formattedIndex = index < 9 ? `0${index}` : index;
+                    item.output = index === 0 ? label : `${label}_${formattedIndex}`;
+                });
+            }
+        });
+
+        // console.log('inetrval', Array.from(nodeInternals.values()));
         setCustomValue(selectedValue);
         setNodes(
             Array.from(nodeInternals.values()).map((node: any, index) => {
@@ -68,9 +83,9 @@ const SelectConfigure = (props: IParamsDropDown) => {
                         name: node.id,
                         func_label: selectedValue,
                         func: selectedValue,
-                        out: selectedValue,
+                        out: node.output,
                         // bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
-                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${param}`))
+                        bind: zipObject(paramsLists, map(paramsLists, (param) => `${param}`))
                     };
                 }
                 setValueHolder(node);

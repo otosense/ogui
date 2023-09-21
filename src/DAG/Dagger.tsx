@@ -285,7 +285,7 @@ const Dagger = (props: IDaggerProps) => {
                 <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={25} secondaryMinSize={20}>
                     <ReactFlowProvider>
                         {/* Side Bar which contains list of node to Drag  */}
-                        <Sidebar />
+                        <Sidebar setNodes={setNodes} setEdges={setEdges} setShowSchema={setShowSchema} />
                         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
                             <ReactFlow
                                 // nodes={nodes}

@@ -105,6 +105,12 @@ interface IDaggerProps {
     loadParamsList: (...args: any) => any | void;
 }
 
+interface IDeleteAllEdgesNodes {
+    setEdges: any;
+    setNodes: any;
+    setShowSchema: any;
+}
+
 
 export type {
     IDropDownNode,
@@ -117,5 +123,6 @@ export type {
     IFuncNode,
     INodes,
     IEachFuncNode,
-    IDaggerProps
+    IDaggerProps,
+    IDeleteAllEdgesNodes
 };

@@ -68,8 +68,9 @@ const SelectConfigure = (props: IParamsDropDown) => {
                         name: node.id,
                         func_label: selectedValue,
                         func: selectedValue,
-                        out: `check_${index + customRemoveText}`,
-                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
+                        out: selectedValue,
+                        // bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
+                        bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${param}`))
                     };
                 }
                 setValueHolder(node);

@@ -1,6 +1,7 @@
 import { Viewport } from "reactflow";
 import { IEachFuncNode, IEdges, INodes } from "../../Components/Interfaces";
 
+// from Nodes and Edges to preparing the JSON for backend
 export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewport?: Viewport; }) {
     const { edges, nodes } = jsonData;
     // Preparing the List of funcNodes and varNodes
@@ -11,10 +12,11 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
         // Expected Structure for Backend
         let eachFuncNode: IEachFuncNode = {
             name: "",
+            id: "",
             func_label: "",
             out: "",
             func: "",
-            bind: undefined
+            bind: undefined,
         };
         eachFuncNode['name'] = node.id; // Adding Node id and name of the Mapping function
         eachFuncNode['func_label'] = node.data.label; // Adding Node label to func_label of the Mapping function
@@ -40,6 +42,11 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
                 varNodes.map((varNode: INodes) => {
                     if (varNode.id === (edge.target)) { // where node Id is the target of the edge then it will be considered as out node 
                         eachFuncNode['out'] = varNode.data.label;
+                        eachFuncNode['id'] = varNode.data.label;
+                        // eachFuncNode['name'] = varNode.data.label;
+                        // eachFuncNode['name'] = varNode.data.label + '_func_node';
+                        // eachFuncNode['name'] = varNode.data.label + '_';
+
                     }
                 });
             }

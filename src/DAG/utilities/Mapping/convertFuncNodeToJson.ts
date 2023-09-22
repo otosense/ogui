@@ -2,6 +2,7 @@ import { includes } from "lodash";
 import { IFuncNode, IEdges, IEdgeObject } from "../../Components/Interfaces";
 import { customRemoveText } from "../globalFunction";
 
+// from backend passing schema to Nodes and Edges creation 
 export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }) {
     // converting the user give / selected from the Dag List node into UI understanding Nodes
     function parseJsonIfString(json: any) {

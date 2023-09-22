@@ -32,7 +32,7 @@ import { connectionValidation } from './utilities/Validations/ConnectionValidati
 import { connectionHandlers } from './utilities/Validations/connectionHandlers';
 import { storeGrouping } from './utilities/Mapping/storeGrouping';
 import { IDaggerProps } from './Components/Interfaces';
-import { isArray, isEmpty, isFunction } from 'lodash';
+import { isArray, isEmpty, isFunction, uniqBy } from 'lodash';
 import JsonEditor from './Components/JSONLayout/Schema';
 import SplitterLayout from 'react-splitter-layout';
 import { autoLayoutStructure } from './utilities/Layouts';
@@ -204,18 +204,20 @@ const Dagger = (props: IDaggerProps) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
-
     // passing the updated Edges in the UI Dag
     const edgesWithUpdatedTypes = edges.map((edge: any) => {
-        if (edge.sourceHandle) {
-            // const edgeType = nodes.find((node) => node.type === 'custom')?.data.selects[edge.sourceHandle];
-            // edge.type = edgeType;
-            // edge.markerEnd = {
-            //     type: MarkerType.ArrowClosed,
-            // };
-        } edge.id = `${edge.source} + ${edge.target}`;
+        // if (edge.sourceHandle) {
+        // const edgeType = nodes.find((node) => node.type === 'custom')?.data.selects[edge.sourceHandle];
+        // edge.type = edgeType;
+        // edge.markerEnd = {
+        //     type: MarkerType.ArrowClosed,
+        // };
+        // } 
+        edge.id = `${edge.source} + ${edge.target}`;
         return edge;
     });
+
+    const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id');
 
     // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area
     const onDrop = useCallback(
@@ -293,7 +295,7 @@ const Dagger = (props: IDaggerProps) => {
                                 snapToGrid={true}
                                 snapGrid={[3, 3]}
                                 // edges={edges}
-                                edges={edgesWithUpdatedTypes}
+                                edges={uniqueEdges}
                                 onNodesChange={onNodesChange}
                                 onEdgesChange={onEdgesChange}
                                 isValidConnection={isValidConnection}

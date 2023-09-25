@@ -305,6 +305,7 @@ const Dagger = (props: IDaggerProps) => {
                                 onDragOver={onDragOver}
                                 fitView
                                 nodeTypes={nodeTypes}
+                                deleteKeyCode={['Backspace', 'Delete']}
                             >
                                 <Background
                                     variant={BackgroundVariant.Lines}

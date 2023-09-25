@@ -699,3 +699,20 @@ input#funcLists {
 .splitter-layout .layout-pane.layout-pane-primary {
     display: flex !important
 }
+
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:focus .react-flow__edge-path,
+.react-flow__edge:focus-visible .react-flow__edge-path {
+    stroke: white !important;
+    stroke-width: 2px !important;
+}
+
+.react-flow__node.selected .flexProps {
+    border: 2px solid #ffffff !important;
+}
+
+.react-flow__nodesselection-rect,
+.react-flow__selection {
+    /* background: inherit !important; */
+    border: inherit !important
+}

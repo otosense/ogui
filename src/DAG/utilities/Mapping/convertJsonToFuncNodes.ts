@@ -12,7 +12,6 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
         // Expected Structure for Backend
         let eachFuncNode: IEachFuncNode = {
             name: "",
-            id: "",
             func_label: "",
             out: "",
             func: "",
@@ -42,7 +41,7 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
                 varNodes.map((varNode: INodes) => {
                     if (varNode.id === (edge.target)) { // where node Id is the target of the edge then it will be considered as out node 
                         eachFuncNode['out'] = varNode.data.label;
-                        eachFuncNode['id'] = varNode.data.label;
+                        // eachFuncNode['id'] = varNode.data.label;
                         // eachFuncNode['name'] = varNode.data.label;
                         // eachFuncNode['name'] = varNode.data.label + '_func_node';
                         eachFuncNode['name'] = varNode.data.label + '_';

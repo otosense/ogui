@@ -87,8 +87,6 @@ interface IEachFuncNode {
     func: string;
     out: string;
     bind: any;
-    id?: string;
-
 }
 
 interface INodes {

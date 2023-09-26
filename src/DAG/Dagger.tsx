@@ -12,6 +12,7 @@ import ReactFlow, {
 import { Button, Alert, Modal } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import DataObjectIcon from '@mui/icons-material/DataObject';
 
 
 import Sidebar from './Components/Sidebar';
@@ -89,7 +90,6 @@ const Dagger = (props: IDaggerProps) => {
 
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
     const isValidConnection = useMemo(() => connectionValidation(nodes), [nodes]);
-
     // passing the updated nodes in the UI Dag
     // const dataWithUpdates = nodes;
 
@@ -232,10 +232,11 @@ const Dagger = (props: IDaggerProps) => {
                                     style={{ backgroundColor: "#1E1F22" }}
                                 />
                                 <Controls />
+                                {/* disabled={(nodes.length === 0 || errorMapping.length > 0)} */}
                                 <Panel position="top-right">
-                                    <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />}>Save</Button>
+                                    <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />} >Save</Button>
+                                    <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<DataObjectIcon />}>JSon</Button>
                                     <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
-                                    <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>JSon</Button>
                                 </Panel>
                                 <Panel position="top-left">
                                     <button onClick={() => onLayout('LR')}>HL</button>
@@ -278,7 +279,6 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
         let MappedJson = {
             func_nodes: convertJsonToFuncNodes(flow)
         };
-
         if (getFuncNode.length > 0) { // if Error is there show Snackbar
             showToast('Error: ' + 'There are Some Empty Nodes', 'error');
             setErrorMapping(getFuncNode); // Listed all the node which are having empty labels

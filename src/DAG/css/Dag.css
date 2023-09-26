@@ -338,6 +338,7 @@ button.panelBtn {
     width: 45%;
     text-align: center;
     font-size: 88%;
+    background-color: #1976d2 !important;
 
 }
 
@@ -357,11 +358,11 @@ button.panelBtn {
 }
 
 .copyBtn {
-    position: absolute;
+    position: absolute !important;
     right: 22px;
     top: 146px;
     width: 6%;
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 .jsonData {

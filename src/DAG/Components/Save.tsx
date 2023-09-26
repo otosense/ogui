@@ -2,6 +2,8 @@ import React, { useState, memo, useEffect } from 'react';
 import CopyIcon from './../assets/images/files.png';
 import { pythonIdentifierPattern } from '../utilities/globalFunction';
 import { ILoadProps } from './Interfaces';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { IconButton, Tooltip } from '@mui/material';
 
 function Save(props: ILoadProps) {
     // Saving the User created Dag will takes place here
@@ -12,7 +14,7 @@ function Save(props: ILoadProps) {
     const [errorExist, setErrorExist] = useState(false); // Error Exists in saving Dag will handled here
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(data); // in-build Js method to copy text from box
+        navigator?.clipboard?.writeText(data); // in-build Js method to copy text from box
         setCopied(true);
     };
 
@@ -63,7 +65,11 @@ function Save(props: ILoadProps) {
                     <label htmlFor="text">Name:</label>
                     <input id="text" name="text" className="dagNameBox" placeholder='Name of DAG' required onChange={dagNameHandler} value={dagName} />
                 </div>
-                {<img onClick={handleCopy} src={CopyIcon} alt='copyBtn' className='copyBtn' title={copied ? 'Copied!' : 'Copy'} />}
+                <Tooltip title={copied ? 'Copied!' : 'Copy'} >
+                    <IconButton onClick={handleCopy} className='copyBtn'>
+                        <ContentCopyIcon />
+                    </IconButton>
+                </Tooltip>
                 <textarea
                     name="data"
                     id="textarea"

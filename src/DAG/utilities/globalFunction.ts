@@ -3,19 +3,12 @@
 const pythonIdentifierPattern = /^$|^[a-zA-Z_][a-zA-Z0-9_]*$/;  // allowEmpty Spaces in Input
 const dagDirections = 'left';
 const customRemoveText = "_remove";
-function errorHandler(setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, errorString: string) {
-    setErrorMessage(errorString);
-    toggleSnackbar();
-    return false;
-}
-
 // Generating Random ID for nodes
 const getId = (type: string) => `${(type === 'input' || type === 'textUpdater') ? 'variable_' + Math.floor(Math.random() * 1000) : 'function_' + Math.floor(Math.random() * 1000)}`;
 
 export {
     pythonIdentifierPattern,
     dagDirections,
-    errorHandler,
     getId,
     customRemoveText
 };

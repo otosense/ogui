@@ -97,11 +97,21 @@ div.connector:hover {
 
 .dndflow .reactflow-wrapper {
     flex-grow: 1;
-    height: 99%;
+    height: 100%;
 }
 
 .dndflow .selectall {
     margin-top: 10px;
+}
+
+@media screen and (min-height: 600px) {
+    .reactflow-sideBar {
+        height: calc(100vh - 27vh) !important
+    }
+
+    .json-area {
+        height: calc(100vh - 45vh) !important
+    }
 }
 
 @media screen and (min-width: 768px) {
@@ -112,6 +122,10 @@ div.connector:hover {
     .dndflow aside {
         width: 12%;
         max-width: 250px;
+    }
+
+    .reactflow-sideBar {
+        height: calc(100vh - 27.7vh);
     }
 }
 
@@ -398,7 +412,8 @@ select#dagList {
     justify-content: space-between;
     flex-direction: column;
     align-items: center;
-    height: calc(100vh - 11.7vh);
+    /* height: calc(100vh - 11.7vh); */
+    height: calc(100% - 11%);
 }
 
 @media only screen and (max-width: 767px) {

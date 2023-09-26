@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { Edge, Connection, addEdge } from "reactflow";
-import { errorHandler } from "../globalFunction";
 import { some } from "lodash";
+import { showToast } from "../ReactToastMessage";
 
-function connectionHandlers(edges: Edge<any>[], setErrorMessage: React.Dispatch<React.SetStateAction<string>>, toggleSnackbar: () => void, setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>) {
+function connectionHandlers(edges: Edge<any>[], setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>) {
 
     const isIncomingIsEdgeExist = (target: string | null, targetHandle: string | null | undefined) => {
         return edges.some((edge) => edge.target === target && edge.targetHandle === targetHandle);
@@ -32,12 +32,12 @@ function connectionHandlers(edges: Edge<any>[], setErrorMessage: React.Dispatch<
         //  Check if the target node / function Node parameter already has an incoming edge
         if (isIncomingIsEdgeExist(target, targetHandle)) {
             // An incoming edge already exists, so prevent creating a new connection
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an incoming connection');
+            return showToast('Error: ' + 'Already having an incoming connection', 'error');
         }
 
         // if (isOutgoingIsEdgeExist(source, sourceHandle)) {
         //     // An outgoing edge already exists, so prevent creating a new connection
-        //     return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
+        // return showToast('Error: ' + 'Already having an outgoing connection', 'error');
         // }
 
         // No outgoing or incoming edge exists, create the new connection

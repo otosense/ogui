@@ -27,7 +27,7 @@ import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNod
 import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson';
 import { ValidationError } from './utilities/ErrorValidator';
 
-import { dagDirections, errorHandler, getId } from './utilities/globalFunction';
+import { dagDirections, getId } from './utilities/globalFunction';
 import { connectionValidation } from './utilities/Validations/ConnectionValidation';
 import { connectionHandlers } from './utilities/Validations/connectionHandlers';
 import { storeGrouping } from './utilities/Mapping/storeGrouping';
@@ -36,6 +36,7 @@ import { isArray, isEmpty, isFunction, uniqBy } from 'lodash';
 import JsonEditor from './Components/JSONLayout/Schema';
 import SplitterLayout from 'react-splitter-layout';
 import { autoLayoutStructure } from './utilities/Layouts';
+import Toast, { showToast } from './utilities/ReactToastMessage';
 
 
 // Main component Starts here
@@ -48,21 +49,15 @@ const Dagger = (props: IDaggerProps) => {
     const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} }); // Modal for Save and Load
     const [uploadOver, setUploadOver] = useState(false); // check Save completion status
     const [funcList, setFuncList] = useState<any>([]); // Store Function List / FuncNode List
-    const [showSnackbar, setShowSnackbar] = useState(false); // Handle Snack Bar for error handlings
     const [flowNodes, setFlowNodes] = useState<any>([]); // Re-append the nodes to UI
 
     const [isError, setIsError] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState(''); // Error Message Handler
     const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [showSchema, setShowSchema] = useState<any>();
     const [orientation, setOrientation] = useState(false);
-    const toggleSnackbar = () => {
-        // Snackbar Toggle to shown in UI
-        setShowSnackbar((prev) => !prev);
-    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -129,7 +124,7 @@ const Dagger = (props: IDaggerProps) => {
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections
-    const onConnect = connectionHandlers(edges, setErrorMessage, toggleSnackbar, setEdges);
+    const onConnect = connectionHandlers(edges, setEdges);
 
     // Reason for Auto Alignment of Nodes and Edges
     const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
@@ -137,7 +132,8 @@ const Dagger = (props: IDaggerProps) => {
 
 
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
-    const isValidConnection = connectionValidation(nodes, setErrorMessage, toggleSnackbar);
+    const isValidConnection = useMemo(() => connectionValidation(nodes), [nodes]);
+
     // passing the updated nodes in the UI Dag
     const dataWithUpdates = nodes.map((node: any) => node);
 
@@ -159,7 +155,7 @@ const Dagger = (props: IDaggerProps) => {
             const getFuncNode = ValidationError(flow);
 
             if (getFuncNode.length > 0) { // if Error is there show Snackbar
-                errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+                showToast('Error: ' + 'There are Some Empty Nodes', 'error');
                 setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
                 return;
             } else {
@@ -186,7 +182,7 @@ const Dagger = (props: IDaggerProps) => {
             };
 
             if (getFuncNode.length > 0) { // if Error is there show Snackbar
-                errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+                showToast('Error: ' + 'There are Some Empty Nodes', 'error');
                 setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
             } else {
                 setErrorMapping([]);
@@ -322,7 +318,7 @@ const Dagger = (props: IDaggerProps) => {
                                 </Panel>
                             </ReactFlow>
                         </div>
-
+                        <Toast />
                     </ReactFlowProvider>
                     <JsonEditor layout={onChange} data={showSchema} onDataUploaded={handleUpload} />
                 </SplitterLayout>
@@ -343,7 +339,6 @@ const Dagger = (props: IDaggerProps) => {
                     </Modal>
                 </>
 
-                {showSnackbar && <SnackBar message={errorMessage} severity='error' />}
             </div>
         )
     );

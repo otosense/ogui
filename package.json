@@ -73,6 +73,7 @@
     "@types/react-table": "^7.7.14",
     "@types/react-window": "^1.8.5",
     "axios": "^1.4.0",
+    "clipboard-copy": "^4.0.1",
     "cors": "^2.8.5",
     "dagre": "^0.8.5",
     "dagre-d3-react": "^0.2.4",

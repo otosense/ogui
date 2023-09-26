@@ -35,10 +35,10 @@ function connectionHandlers(edges: Edge<any>[], setErrorMessage: React.Dispatch<
             return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an incoming connection');
         }
 
-        if (isOutgoingIsEdgeExist(source, sourceHandle)) {
-            // An outgoing edge already exists, so prevent creating a new connection
-            return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
-        }
+        // if (isOutgoingIsEdgeExist(source, sourceHandle)) {
+        //     // An outgoing edge already exists, so prevent creating a new connection
+        //     return errorHandler(setErrorMessage, toggleSnackbar, 'Already having an outgoing connection');
+        // }
 
         // No outgoing or incoming edge exists, create the new connection
         setEdges((prevEdges: Edge<any>[]) => addEdge(newEdge, prevEdges));

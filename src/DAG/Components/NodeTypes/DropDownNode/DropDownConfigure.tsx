@@ -179,7 +179,9 @@ const SelectConfigure = (props: IParamsDropDown) => {
                         </div>
                         <div className='resultEdger'>
                             <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
+                            {/* <span className='handlerText'>{valueHolder?.func_nodes?.out}</span> */}
                             <span className='handlerText'>Output</span>
+
                         </div>
                     </section>
                 )

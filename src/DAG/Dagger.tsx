@@ -162,6 +162,8 @@ const Dagger = (props: IDaggerProps) => {
                 errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
                 setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
                 return;
+            } else {
+                setErrorMapping([]);
             }
 
             let MappedJson = { // Mapping JSON
@@ -185,8 +187,10 @@ const Dagger = (props: IDaggerProps) => {
 
             if (getFuncNode.length > 0) { // if Error is there show Snackbar
                 errorHandler(setErrorMessage, toggleSnackbar, 'There are Some Empty Nodes');
+                setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
+            } else {
+                setErrorMapping([]);
             }
-            setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
             setIsModal({
                 open: getFuncNode.length === 0, // if node error modal box will open
                 type: 'download',
@@ -206,17 +210,12 @@ const Dagger = (props: IDaggerProps) => {
     }, []);
     // passing the updated Edges in the UI Dag
     const edgesWithUpdatedTypes = edges.map((edge: any) => {
-        // if (edge.sourceHandle) {
-        // const edgeType = nodes.find((node) => node.type === 'custom')?.data.selects[edge.sourceHandle];
-        // edge.type = edgeType;
-        // edge.markerEnd = {
-        //     type: MarkerType.ArrowClosed,
-        // };
-        // } 
-        edge.id = `${edge.source} + ${edge.target}`;
+        const sourceNode = nodes.find((node: { id: string; }) => node.id === edge.source);
+        const targetNode = nodes.find((node: { id: string; }) => node.id === edge.target);
+        // edge.id = `${edge.source} + ${edge.target}`;
+        edge.id = `${edge.source} + ${edge.targetHandle} + ${(targetNode?.id)}`;
         return edge;
     });
-
     const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id');
 
     // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area

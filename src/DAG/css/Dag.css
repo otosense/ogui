@@ -701,3 +701,7 @@ input#funcLists {
     /* background: inherit !important; */
     border: inherit !important
 }
+
+.splitter-layout .layout-pane {
+    text-align: center !important;
+}

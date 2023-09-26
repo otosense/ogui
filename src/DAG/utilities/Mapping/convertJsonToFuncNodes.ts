@@ -23,7 +23,8 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
         let bindObject = {}; // Creating Input connections "bind" to the Mapping function
         edges.map((edge: IEdges) => {
             const edgerIds = (typeof edge.id === 'string' ? edge.id?.split("+") : '');
-            if ((edgerIds[0].trim() === (node.id) || (edgerIds[1].trim() === (node.id)) && edge.target === node.id)) {
+            const equalizer = node.id;
+            if ((edgerIds[0].trim() === (equalizer) || (edgerIds[1].trim() === (equalizer) || (edgerIds[2].trim() === (equalizer)) && edge.target === equalizer))) {
                 varNodes.map((varNode: INodes) => {
 
                     if (varNode.id === (edge.source)) { // where node Id is the source of the edge then it will be considered as input / bind node 
@@ -37,7 +38,7 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
                 });
             }
             eachFuncNode['bind'] = bindObject; // appending the created inputs to bind
-            if ((edgerIds[0].trim() === (node.id) || (edgerIds[1].trim() === (node.id)) && edge.source === node.id)) {
+            if ((edgerIds[0].trim() === (equalizer) || (edgerIds[1].trim() === (equalizer) || (edgerIds[2].trim() === (equalizer))) && edge.source === equalizer)) {
                 varNodes.map((varNode: INodes) => {
                     if (varNode.id === (edge.target)) { // where node Id is the target of the edge then it will be considered as out node 
                         eachFuncNode['out'] = varNode.data.label;

@@ -361,7 +361,7 @@ button.panelBtn {
     position: absolute !important;
     right: 22px;
     top: 146px;
-    width: 6%;
+    /* width: 6%; */
     cursor: pointer !important;
 }
 

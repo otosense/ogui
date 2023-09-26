@@ -1,6 +1,6 @@
 import React from 'react';
 import Dagger from '../Dagger';
-import { loadDagFuncList } from './data';
+// import { loadDagFuncList } from './data';
 
 function AppTest() {
 
@@ -21,7 +21,7 @@ function AppTest() {
     };
 
     const sample = async () => {
-        return await loadDagFuncList;
+        // return await loadDagFuncList;
 
 
         try {

@@ -4,6 +4,7 @@ import { pythonIdentifierPattern } from '../utilities/globalFunction';
 import { ILoadProps } from './Interfaces';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { IconButton, Tooltip } from '@mui/material';
+import clipboardCopy from 'clipboard-copy';
 
 function Save(props: ILoadProps) {
     // Saving the User created Dag will takes place here
@@ -13,9 +14,15 @@ function Save(props: ILoadProps) {
     const [dagName, setDagName] = useState(''); // Dag Title given by the user
     const [errorExist, setErrorExist] = useState(false); // Error Exists in saving Dag will handled here
 
-    const handleCopy = () => {
-        navigator?.clipboard?.writeText(data); // in-build Js method to copy text from box
-        setCopied(true);
+    const handleCopy = async () => {
+        try {
+            await clipboardCopy(data);
+            setCopied(true);
+        } catch (error) {
+            setCopied(false);
+        }
+        // navigator?.clipboard?.writeText(data); // in-build Js method to copy text from box
+        // setCopied(true);
     };
 
     const dagNameHandler = (event: { target: { value: string; }; }) => {

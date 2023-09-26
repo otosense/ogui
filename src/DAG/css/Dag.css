@@ -106,7 +106,7 @@ div.connector:hover {
 
 @media screen and (max-height: 600px) {
     div.reactflow-sideBar {
-        height: calc(100vh - 13vh) !important
+        height: calc(100vh - 21vh) !important
     }
 
     textarea.json-area {
@@ -365,8 +365,8 @@ button.panelBtn {
 
 .copyBtn {
     position: absolute !important;
-    right: 22px;
-    top: 146px;
+    right: 2%;
+    top: 27%;
     /* width: 6%; */
     cursor: pointer !important;
 }

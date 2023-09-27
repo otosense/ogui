@@ -19,7 +19,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import Sidebar from './Components/Sidebar';
 import LoadingOverlay from '../utilities/Loader';
-import SnackBar from '../utilities/SnackBar';
 import TextEditorNode from './Components/NodeTypes/TextEditorNode';
 import DropDownNode from './Components/NodeTypes/DropDownNode/DropDownNode';
 import Save from './Components/Save';
@@ -302,16 +301,20 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
     e.preventDefault();
     if (reactFlowInstance) {
         const flow: any = reactFlowInstance.toObject();
-        setFlowNodes(flow.nodes);
+        if (flow.nodes.length === 0) { // if Error is there show Toast Message
+            return showToast('Error: The DAG is empty', 'error');
+        } else {
+            setFlowNodes(flow.nodes);
+        }
 
         // Handling Error if any of the nodes label are empty
         const getFuncNode = ValidationError(flow);
         let MappedJson = {
             func_nodes: convertJsonToFuncNodes(flow)
         };
-        if (getFuncNode.length > 0) { // if Error is there show Snackbar
-            showToast('Error: ' + 'There are Some Empty Nodes', 'error');
+        if (getFuncNode.length > 0) { // if Error is there show Toast Message
             setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
+            return showToast('Error: ' + 'There are Some Empty Nodes', 'error');
         } else {
             setErrorMapping([]);
         }

@@ -44,7 +44,7 @@ function DropDownNode(props: IDropDownNode) {
     <>
       {/* When component load initially it will show the dropdown list Once selectedValue has proper value it will make an API call to get the list of params and which is plotted in "Handle" HTML Element */}
       {(selectedValue === "select function Node" || selectedValue === '' || selectedValue === undefined) ?
-        <div className='addNode'>
+        <div className='addNode nowheel'>
           <h3 className='titleAddNode'>Add Nodes</h3>
           {/* <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
             {functionList?.map((funcList, index: number) => {

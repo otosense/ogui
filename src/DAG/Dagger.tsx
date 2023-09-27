@@ -34,7 +34,7 @@ import { connectionValidation } from './utilities/Validations/ConnectionValidati
 import { connectionHandlers } from './utilities/Validations/connectionHandlers';
 import { storeGrouping } from './utilities/Mapping/storeGrouping';
 import { IDaggerProps } from './Components/Interfaces';
-import { isArray, isEmpty, isFunction, uniqBy } from 'lodash';
+import { get, isArray, isEmpty, isFunction, some, uniqBy } from 'lodash';
 import JsonEditor from './Components/JSONLayout/Schema';
 import SplitterLayout from 'react-splitter-layout';
 import { autoLayoutStructure } from './utilities/Layouts';
@@ -301,10 +301,28 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
     e.preventDefault();
     if (reactFlowInstance) {
         const flow: any = reactFlowInstance.toObject();
+        console.log('flow.nodes', flow.nodes);
         if (flow.nodes.length === 0) { // if Error is there show Toast Message
             return showToast('Error: The DAG is empty', 'error');
         } else {
             setFlowNodes(flow.nodes);
+        }
+        const hasValidNodes = flow.nodes.some((flowNode: { type: string; }) => {
+            if (flowNode.type === 'custom') {
+                const bind = get(flowNode, 'func_nodes.bind');
+                if (bind === undefined || !isEmpty(bind)) {
+                    return true;
+                } else {
+                    showToast('Error: The DAG is empty', 'error');
+                    return false;
+                }
+            }
+            return false;
+        });
+
+        // If any of the nodes bind is {} then show error and terminate the save modal logic / show JSON
+        if (!hasValidNodes) {
+            return;
         }
 
         // Handling Error if any of the nodes label are empty

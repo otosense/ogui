@@ -108,6 +108,7 @@ interface IDeleteAllEdgesNodes {
     setEdges: any;
     setNodes: any;
     setShowSchema: any;
+    handleClose: any;
 }
 
 

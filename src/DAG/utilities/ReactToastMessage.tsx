@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { ToastContainer, toast, ToastContent } from 'react-toastify';
+import { ToastContainer, toast, ToastContent, Bounce, Flip, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Toast() {
@@ -14,6 +14,7 @@ function Toast() {
             pauseOnFocusLoss
             draggable
             pauseOnHover
+            transition={Zoom}
         />
     );
 }

@@ -8,16 +8,17 @@ import ReactFlow, {
     Background,
     ReactFlowInstance,
     BackgroundVariant,
+    ControlButton,
 } from 'reactflow';
 import { Button, Alert, Modal } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import DataObjectIcon from '@mui/icons-material/DataObject';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 import Sidebar from './Components/Sidebar';
 import LoadingOverlay from '../utilities/Loader';
-import SnackBar from '../utilities/SnackBar';
 import TextEditorNode from './Components/NodeTypes/TextEditorNode';
 import DropDownNode from './Components/NodeTypes/DropDownNode/DropDownNode';
 import Save from './Components/Save';
@@ -38,6 +39,8 @@ import JsonEditor from './Components/JSONLayout/Schema';
 import SplitterLayout from 'react-splitter-layout';
 import { autoLayoutStructure } from './utilities/Layouts';
 import Toast, { showToast } from './utilities/ReactToastMessage';
+import CustomModal from './Components/Modal';
+import DeleteAll from './Components/NodeTypes/DeleteAll';
 
 
 // Main component Starts here
@@ -59,6 +62,7 @@ const Dagger = (props: IDaggerProps) => {
 
     const [showSchema, setShowSchema] = useState<any>();
     const [orientation, setOrientation] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -195,6 +199,14 @@ const Dagger = (props: IDaggerProps) => {
         }
     };
 
+    const handleOpenModal = () => {
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+
     return (
         // Any error in API Component will not load show the actual error message
         isError ? (<Alert severity='error' className='errorMessage'>
@@ -206,7 +218,7 @@ const Dagger = (props: IDaggerProps) => {
                 <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={25} secondaryMinSize={20}>
                     <ReactFlowProvider>
                         {/* Side Bar which contains list of node to Drag  */}
-                        <Sidebar setNodes={setNodes} setEdges={setEdges} setShowSchema={setShowSchema} />
+                        <Sidebar />
                         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
                             <ReactFlow
                                 nodes={nodes}
@@ -223,19 +235,30 @@ const Dagger = (props: IDaggerProps) => {
                                 onDrop={onDrop}
                                 onDragOver={onDragOver}
                                 fitView
+                                fitViewOptions={{ maxZoom: 1 }}
                                 nodeTypes={nodeTypes}
                                 deleteKeyCode={['Backspace', 'Delete']}
+
                             >
+                                <Controls>
+                                    <ControlButton title="Delete All Nodes and Edges" onClick={handleOpenModal} >
+                                        <DeleteIcon />
+                                    </ControlButton>
+                                    <ControlButton title="Convert to JSON" onClick={reflectJson} >
+                                        <DataObjectIcon />
+                                    </ControlButton>
+                                </Controls>
                                 <Background
                                     variant={BackgroundVariant.Lines}
                                     color="#2a2b2d"
                                     style={{ backgroundColor: "#1E1F22" }}
                                 />
-                                <Controls />
+
+
                                 {/* disabled={(nodes.length === 0 || errorMapping.length > 0)} */}
                                 <Panel position="top-right">
                                     <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />} >Save</Button>
-                                    <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<DataObjectIcon />}>JSon</Button>
+                                    {/* <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<DataObjectIcon />}>JSon</Button> */}
                                     <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                                 </Panel>
                                 <Panel position="top-left">
@@ -258,6 +281,12 @@ const Dagger = (props: IDaggerProps) => {
 
                     </Modal>
                 </>
+                <CustomModal
+                    open={openModal}
+                    handleClose={handleCloseModal}
+                    title="Clear Dag"
+                    content={<DeleteAll setNodes={setNodes} setEdges={setEdges} setShowSchema={setShowSchema} handleClose={handleCloseModal} />}
+                />
 
             </div>
         )
@@ -272,16 +301,20 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
     e.preventDefault();
     if (reactFlowInstance) {
         const flow: any = reactFlowInstance.toObject();
-        setFlowNodes(flow.nodes);
+        if (flow.nodes.length === 0) { // if Error is there show Toast Message
+            return showToast('Error: The DAG is empty', 'error');
+        } else {
+            setFlowNodes(flow.nodes);
+        }
 
         // Handling Error if any of the nodes label are empty
         const getFuncNode = ValidationError(flow);
         let MappedJson = {
             func_nodes: convertJsonToFuncNodes(flow)
         };
-        if (getFuncNode.length > 0) { // if Error is there show Snackbar
-            showToast('Error: ' + 'There are Some Empty Nodes', 'error');
+        if (getFuncNode.length > 0) { // if Error is there show Toast Message
             setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
+            return showToast('Error: ' + 'There are Some Empty Nodes', 'error');
         } else {
             setErrorMapping([]);
         }

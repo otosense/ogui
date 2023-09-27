@@ -1,9 +1,7 @@
 import React from 'react';
-import DeleteAll from './NodeTypes/DeleteAll';
 import { IDeleteAllEdgesNodes } from './Interfaces';
 
-export default (props: IDeleteAllEdgesNodes) => {
-  const { setEdges, setNodes, setShowSchema } = props;
+export default () => {
   // Which contains the varNode and funcNode box form the Left sideBar
   const onDragStart = (event: React.DragEvent<HTMLDivElement>, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -26,7 +24,6 @@ export default (props: IDeleteAllEdgesNodes) => {
           </div>
 
         </div>
-        <DeleteAll setNodes={setNodes} setEdges={setEdges} setShowSchema={setShowSchema} />
       </div>
 
     </aside>

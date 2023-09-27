@@ -242,10 +242,10 @@ const Dagger = (props: IDaggerProps) => {
                             >
                                 <Controls>
                                     <ControlButton title="Delete All Nodes and Edges" onClick={handleOpenModal} >
-                                        <DeleteIcon />
+                                        <DeleteIcon style={{ color: '#000' }} />
                                     </ControlButton>
                                     <ControlButton title="Convert to JSON" onClick={reflectJson} >
-                                        <DataObjectIcon />
+                                        <DataObjectIcon style={{ color: '#000' }} />
                                     </ControlButton>
                                 </Controls>
                                 <Background

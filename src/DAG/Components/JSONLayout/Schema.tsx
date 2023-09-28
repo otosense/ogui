@@ -15,6 +15,7 @@ function JsonEditor(props: {
     const [jsonString, setJsonString] = useState<any>();
     const [error, setError] = useState<any>(null);
     const [schemaLayout, setSchemaLayout] = useState(false);
+    const [jsonHasChanged, setJsonHasChanged] = useState(false);
 
     useEffect(() => {
         setJsonString(JSON.stringify(props.data, null, 2));
@@ -108,19 +109,21 @@ function JsonEditor(props: {
         const newValue = event.target.value;
         setJsonString(newValue);
         validateJSON(newValue);
-
+        setJsonHasChanged(newValue !== jsonString);
     };
 
     const handleSubmitJson = () => {
-
-        // try onChange or Blur
-        const parsedJson = JSON.parse(jsonString);
-        const hasEmptyValues = checkForEmptyValues(parsedJson);
-        if (hasEmptyValues) {
-            setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
-        } else {
-            setError(null); // JSON is valid
-            props.onDataUploaded && props.onDataUploaded(jsonString);
+        if (jsonHasChanged) {
+            // try onChange or Blur
+            const parsedJson = JSON.parse(jsonString);
+            const hasEmptyValues = checkForEmptyValues(parsedJson);
+            if (hasEmptyValues) {
+                setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+            } else {
+                setError(null); // JSON is valid
+                props.onDataUploaded && props.onDataUploaded(jsonString);
+            }
+            setJsonHasChanged(false);
         }
     };
 
@@ -251,7 +254,11 @@ function JsonEditor(props: {
                     </Alert>
                 )}
                 <Divider />
-                <div className="textarea-wrapper">
+                <div
+                    className="textarea-wrapper"
+                    onBlur={handleSubmitJson}
+                    onClick={handleSubmitJson}
+                >
                     <textarea
                         rows={25}
                         className='json-area'
@@ -263,7 +270,7 @@ function JsonEditor(props: {
 
             </div>
             {/* <Tooltip title="Submit JSON"> */}
-            <Button onClick={handleSubmitJson} disabled={error !== null} variant="contained">{<UploadIcon />} Submit</Button>
+            {/* <Button onClick={handleSubmitJson} disabled={error !== null} variant="contained">{<UploadIcon />} Submit</Button> */}
             {/* </Tooltip> */}
         </>
     );

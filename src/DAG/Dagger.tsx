@@ -13,7 +13,6 @@ import ReactFlow, {
 import { Button, Alert, Modal } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import DataObjectIcon from '@mui/icons-material/DataObject';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
@@ -245,14 +244,11 @@ const Dagger = (props: IDaggerProps) => {
                                 fitViewOptions={{ maxZoom: 1 }}
                                 nodeTypes={nodeTypes}
                                 deleteKeyCode={['Backspace', 'Delete']}
-
+                                onMouseLeave={reflectJson}
                             >
                                 <Controls>
                                     <ControlButton title="Delete All Nodes and Edges" onClick={handleOpenModal} >
                                         <DeleteIcon style={{ color: '#000' }} />
-                                    </ControlButton>
-                                    <ControlButton title="Convert to JSON" onClick={reflectJson} >
-                                        <DataObjectIcon style={{ color: '#000' }} />
                                     </ControlButton>
                                 </Controls>
                                 <Background

@@ -18,7 +18,7 @@ HighchartsBoost(Highcharts);
 const XrangeChart = (props: IXrangeChartProps) => {
 	const { chartTitle, chartType, xLabel, yLabel, miniMap, srcChannels } = props;
 
-	const chartRef = useRef<HighchartsReact.Props>(null);
+	const chartRef = useRef<any>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [yAxisCategory, setYAxisCategory] = useState<string[]>([]); // handling y-Axis for Data
 	const [seriesData, setSeriesData] = useState<any[]>([]); // handling X-Axis for plotting in Chart

@@ -19,7 +19,7 @@ const SingleXaxisChart = (props: ISingleXaxisProps) => {
 		miniMap,
 	} = props;
 
-	const chartRef = useRef<HighchartsReact.Props>(null);
+	const chartRef = useRef<any>(null);
 	const [xCategory, setXCategory] = useState<string[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [seriesOptions, setSeriesOptions] = useState([]);

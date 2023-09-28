@@ -7,7 +7,7 @@ interface IColumn {
     enableSorting?: boolean;
     className?: string;
     filterFn?: any;
-    Cell?: ({ cell }: any) => JSX.Element;
+    Cell?: ({ cell }: any) => JSX.Element | any;
     enableColumnFilter?: any;
     size?: number;
 }
@@ -44,7 +44,7 @@ export function columnCreation(data: any[] = [], columnConfigurations: any = [],
                         getRootNodeData: { status: "success", data: cell.getValue() },
                     };
 
-                    return <TreeViewer {...storeViewProps} />;
+                    // return <TreeViewer {...storeViewProps} />;
                 } else {
                     return <span title={cell.getValue()}>{cell.getValue()}</span>;
                 }

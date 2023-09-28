@@ -16,7 +16,7 @@ HighchartsStock(Highcharts);
 const LineChart = (props: ILineChartProps) => {
 	const { chartTitle, chartType, xLabel, yLabel, miniMap, srcChannels } = props;
 
-	const chartRef = useRef<HighchartsReact.Props>(null);
+	const chartRef = useRef<any>(null);
 	const [xCategory, setXCategory] = useState<string[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [seriesOptions, setSeriesOptions] = useState([]);

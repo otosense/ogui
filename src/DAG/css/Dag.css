@@ -274,7 +274,7 @@ div.connector:hover {
     }
 
     textarea.json-area {
-        height: calc(100vh - 35vh) !important
+        height: calc(100vh - 36vh) !important
     }
 }
 

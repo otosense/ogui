@@ -172,7 +172,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
     const toggleModal = (open = false, type = 'upload', data = {}) => {
-        setUploadOver(open);
+        // setUploadOver(open);
         setIsModal({
             open,
             type,

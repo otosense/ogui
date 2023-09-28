@@ -207,6 +207,13 @@ const Dagger = (props: IDaggerProps) => {
         setOpenModal(false);
     };
 
+
+    useEffect(() => {
+        if (reactFlowInstance && nodes.length) {
+            reactFlowInstance.fitView();
+        }
+    }, [reactFlowInstance, nodes]);
+
     return (
         // Any error in API Component will not load show the actual error message
         isError ? (<Alert severity='error' className='errorMessage'>

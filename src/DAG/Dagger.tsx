@@ -308,7 +308,6 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
     e.preventDefault();
     if (reactFlowInstance) {
         const flow: any = reactFlowInstance.toObject();
-        console.log('flow.nodes', flow.nodes);
         if (flow.nodes.length === 0) { // if Error is there show Toast Message
             return showToast('Error: The DAG is empty', 'error');
         } else {

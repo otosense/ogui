@@ -31,7 +31,7 @@ function Load(props: ILoadProps) {
         if (isFunction(userData)) {
             // Check if data is a function
             const result: any = userData();
-            console.log('checking userData', isFunction(result?.then));
+            // console.log('checking userData', isFunction(result?.then));
             if (isFunction(result?.then)) {
                 // Check if the result of the function is a promise
                 result.then((dataArray: any) => {
@@ -71,7 +71,7 @@ function Load(props: ILoadProps) {
 
         if (loadSavedDag) {
             const val = loadSavedDag(selectDag); // Only call onSave if it's defined
-            console.log('val', val, typeof val);
+            // console.log('val', val, typeof val);
             // props.onDataUploaded && props.onDataUploaded(val);
 
             if (isObject(val)) {

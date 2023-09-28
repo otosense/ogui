@@ -16,22 +16,27 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
         }
     }
     const parsedJson = parseJsonIfString(jsonData); // This will be a parsed JSON
-    const { func_nodes } = parsedJson;
+    const { func_nodes, position } = parsedJson;
     // expected node structure is mentioned below
     let initialNodes: { id: string; type: string; data: { label: string; }; }[] = [];
     let varNodeCollection: any[] = []; // Creating node collection
     let outNodeCollection: string[] = []; // Creating Edge collection
     func_nodes?.map((funcNode: { name: any; func_label: any; bind: ArrayLike<unknown> | { [s: string]: unknown; }; out: string; }, index: number) => {
-        const funcObject = { // Converting it as function node will takes place here
+        const funcObject: any = { // Converting it as function node will takes place here
             id: funcNode.name,
             type: 'custom',
             data: {
                 label: funcNode.func_label,
                 selects: funcNode.func_label
             },
-            position: { x: randomPosition(), y: randomPosition() },
             // position: { x: 0, y: 0 },
         };
+
+        if (position) {
+            funcObject['position'] = position;
+        } else {
+            funcObject['position'] = { x: 0, y: 0 };
+        }
         initialNodes.push(funcObject); // creating the Nodes
 
         Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
@@ -40,6 +45,7 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
         });
     });
     const varNodes = [...new Set([...new Set(varNodeCollection)].concat([...new Set(outNodeCollection)]))];
+    const varNodeLength = varNodes.length - 1;
     varNodes.map((varNode, index) => {
         const varObject = { // Converting it as varNode will takes place here
             id: varNode,
@@ -48,9 +54,15 @@ export function convertFuncNodeToJsonNode(jsonData: { func_nodes: IFuncNode[]; }
                 // label: includes(varNode, customRemoveText) ? "" : varNode
                 label: varNode
             },
-            position: { x: randomPosition(), y: randomPosition() },
-            // position: { x: 0, y: 0 },
+            position: { x: 0, y: 0 },
         };
+        if (position) {
+            if (index < varNodeLength) {
+                varObject['position'] = { x: position?.x - 300, y: position?.y + (100 * index + 1) };
+            } else {
+                varObject['position'] = { x: position?.x + 300, y: position?.y + 10 };
+            }
+        }
         initialNodes.push(varObject);
     });
     return initialNodes;

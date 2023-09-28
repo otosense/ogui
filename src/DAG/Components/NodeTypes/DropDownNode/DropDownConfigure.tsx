@@ -98,6 +98,7 @@ const SelectConfigure = (props: IParamsDropDown) => {
     useEffect(() => {
         if (valueHolder?.func_nodes) {
             const { name, func_label, func, out, bind } = valueHolder?.func_nodes;
+            const { position } = valueHolder;
             const conversionData = {
                 // id: valueHolder?.data?.func_nodes?.[0]?.id,
                 func_nodes: [{
@@ -106,7 +107,8 @@ const SelectConfigure = (props: IParamsDropDown) => {
                     func,
                     out,
                     bind
-                }]
+                }],
+                position
             };
 
             // console.log('conversionData', conversionData);

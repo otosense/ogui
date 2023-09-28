@@ -75,7 +75,7 @@ const Dagger = (props: IDaggerProps) => {
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
-    }, [uploadOver, showSchema]);
+    }, [uploadOver]);
 
     const nodeTypes = useMemo(() => ({
         // textUpdater is "TextEditorNode" component which holds varNode functionality

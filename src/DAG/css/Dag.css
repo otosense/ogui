@@ -870,3 +870,11 @@ input#funcLists {
 .splitter-layout .layout-pane {
     text-align: center !important;
 }
+
+div.noHandler {
+    /* display: none !important; */
+    opacity: 0;
+    height: 0 !important;
+    margin: 0;
+    pointer-events: none !important;
+}

@@ -170,24 +170,37 @@ const SelectConfigure = (props: IParamsDropDown) => {
             {/* Preparation of Handle to connect */}
             {!isEmpty(errorMessage) ? <p>{errorMessage}</p> :
                 (
-                    paramsLists?.length > 0 &&
+
                     <section className='handlers'>
-                        <div className='multiInput'>
-                            {paramsLists?.map((paramsList: string, i: number) => {
-                                return (<div className='resultEdger' key={i}>
-                                    <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={paramsList} className='connector' isConnectable={isConnectable} />
-                                    <span className='handlerText'>{paramsList}</span>
-                                </div>);
-                            })}
-                        </div>
+                        {paramsLists?.length > 0 ?
+                            (<div className='multiInput'>
+                                {paramsLists?.map((paramsList: string, i: number) => {
+                                    return (<div className='resultEdger' key={i}>
+                                        <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={paramsList} className='connector' isConnectable={isConnectable} />
+                                        <span className='handlerText'>{paramsList}</span>
+                                    </div>);
+                                })}
+                            </div>)
+                            :
+                            <div className='multiInput'>
+                                {/* {paramsLists?.map((paramsList: string, i: number) => { */}
+                                <div className='resultEdger'>
+                                    <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} id={''} className='connector noHandler' isConnectable={false} />
+                                    <span className='handlerText'></span>
+                                </div>
+                                {/* })} */}
+                            </div>
+                        }
                         <div className='resultEdger'>
                             <Handle type="source" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Bottom : Position.Right} id={handleId} className='connector' isConnectable={isConnectable} />
                             {/* <span className='handlerText'>{valueHolder?.func_nodes?.out}</span> */}
                             <span className='handlerText'>Output</span>
-
                         </div>
                     </section>
+
                 )
+
+
             }
         </div>
     );

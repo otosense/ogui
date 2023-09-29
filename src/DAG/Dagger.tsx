@@ -207,11 +207,11 @@ const Dagger = (props: IDaggerProps) => {
     };
 
 
-    useEffect(() => {
-        if (reactFlowInstance && nodes.length) {
-            reactFlowInstance.fitView();
-        }
-    }, [reactFlowInstance, nodes]);
+    // useEffect(() => {
+    //     if (reactFlowInstance && nodes.length) {
+    //         reactFlowInstance.fitView();
+    //     }
+    // }, [reactFlowInstance]);
 
     return (
         // Any error in API Component will not load show the actual error message
@@ -305,7 +305,7 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
     if (reactFlowInstance) {
         const flow: any = reactFlowInstance.toObject();
         if (flow.nodes.length === 0) { // if Error is there show Toast Message
-            return showToast('Error: The DAG is empty', 'error');
+            // return showToast('Error: The DAG is empty', 'error');
         } else {
             setFlowNodes(flow.nodes);
         }

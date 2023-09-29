@@ -57,12 +57,12 @@ function JsonEditor(props: {
         try {
             const parsedJson = JSON?.parse(jsonString);
             // Check for empty string or empty values in the parsed JSON
-            // const hasEmptyValues = checkForEmptyValues(parsedJson);
-            // if (hasEmptyValues) {
-            //     setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
-            // } else {
-            //     setError(null); // JSON is valid
-            // }
+            const hasEmptyValues = checkForEmptyValues(parsedJson);
+            if (hasEmptyValues) {
+                setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+            } else {
+                setError(null); // JSON is valid
+            }
         } catch (error) {
             if (error instanceof SyntaxError) {
                 // Parse error occurred, set the error message and line number
@@ -90,20 +90,20 @@ function JsonEditor(props: {
         }
     };
 
-    // const checkForEmptyValues = (jsonObj: any): boolean => {
-    //     for (const key in jsonObj) {
-    //         if (jsonObj.hasOwnProperty(key)) {
-    //             const value = jsonObj[key];
-    //             if (value === "" || value === null || value === undefined) {
-    //                 return true; // Found an empty string or empty value
-    //             }
-    //             if (typeof value === "object" && checkForEmptyValues(value)) {
-    //                 return true; // Recursively check nested objects
-    //             }
-    //         }
-    //     }
-    //     return false; // No empty strings or empty values found
-    // };
+    const checkForEmptyValues = (jsonObj: any): boolean => {
+        for (const key in jsonObj) {
+            if (jsonObj.hasOwnProperty(key)) {
+                const value = jsonObj[key];
+                if (value === "" || value === null || value === undefined) {
+                    return true; // Found an empty string or empty value
+                }
+                if (typeof value === "object" && checkForEmptyValues(value)) {
+                    return true; // Recursively check nested objects
+                }
+            }
+        }
+        return false; // No empty strings or empty values found
+    };
 
     const handleJsonChange = (event: { target: { value: any; }; }) => {
         const newValue = event.target.value;
@@ -115,14 +115,14 @@ function JsonEditor(props: {
     const handleSubmitJson = () => {
         if (jsonHasChanged) {
             // try onChange or Blur
-            // const parsedJson = JSON.parse(jsonString);
-            // const hasEmptyValues = checkForEmptyValues(parsedJson);
-            // if (hasEmptyValues) {
-            //     setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
-            // } else {
-            //     setError(null); // JSON is valid
-            props.onDataUploaded && props.onDataUploaded(jsonString);
-            // }
+            const parsedJson = JSON.parse(jsonString);
+            const hasEmptyValues = checkForEmptyValues(parsedJson);
+            if (hasEmptyValues) {
+                setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
+            } else {
+                setError(null); // JSON is valid
+                props.onDataUploaded && props.onDataUploaded(jsonString);
+            }
             setJsonHasChanged(false);
         }
     };

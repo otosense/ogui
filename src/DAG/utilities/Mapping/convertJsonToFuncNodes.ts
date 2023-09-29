@@ -17,7 +17,7 @@ export function convertJsonToFuncNodes(jsonData: { nodes: []; edges: []; viewpor
             func: "",
             bind: undefined,
         };
-        // eachFuncNode['name'] = node.id; // Adding Node id and name of the Mapping function
+        eachFuncNode['name'] = node.id; // Adding Node id and name of the Mapping function
         eachFuncNode['func_label'] = node.data.label; // Adding Node label to func_label of the Mapping function
         eachFuncNode['func'] = node.data.label; // Adding Node label to func_label of the Mapping function
         let bindObject = {}; // Creating Input connections "bind" to the Mapping function

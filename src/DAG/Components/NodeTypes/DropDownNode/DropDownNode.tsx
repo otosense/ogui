@@ -27,7 +27,7 @@ function DropDownNode(props: IDropDownNode) {
   const { id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes, loadParamsList } = props;
   // console.log({ id, data, type, sourcePosition, funcLists, isConnectable, errorMapping, flowNodes });
 
-  const [selectedValue, setSelectedValue] = useState<string>(); // Selected value from the DropDown
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(data?.label); // Selected value from the DropDown
   // const [functionList, setFunctionList] = useState(funcLists); // List of available funcNodes
   const [autogenVarNodes, setAutogenVarNodes] = usePersistentState('autogenVarNodes', true);
 

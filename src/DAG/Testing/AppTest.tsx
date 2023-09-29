@@ -1,5 +1,6 @@
 import React from 'react';
 import Dagger from '../Dagger';
+import { LRUCache } from '../utilities/lruCache';
 // import { loadDagFuncList } from './data';
 
 function AppTest() {
@@ -114,7 +115,14 @@ function AppTest() {
             return []; // Return an empty array or handle the error appropriately
         }
     };
+    const lruCacheParamsList = new LRUCache<string, any>(100);
+
     const loadParamsList = async (data: any) => {
+        const cached = lruCacheParamsList.get(data);
+        if (cached) {
+            return cached;
+        }
+
         // console.log('data', data);
         const payload = {
             "_attr_name": '__getitem__',
@@ -138,6 +146,7 @@ function AppTest() {
 
             const json = await response.json();
             // console.log('json', json);
+            lruCacheParamsList.set(data, json);
             return json;
         } catch (error) {
             console.error("Error fetching data:", error);

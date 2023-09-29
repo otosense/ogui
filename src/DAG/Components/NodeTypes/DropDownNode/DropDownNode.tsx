@@ -2,8 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { IDropDownNode, IFlowNode } from '../../Interfaces';
 import SearchBox from '../../SearchBox';
 import SelectConfigure from './DropDownConfigure';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 // funcNode Component main function starts at "DropDownNode" function below
 

@@ -2,9 +2,26 @@ import React, { memo, useEffect, useState } from 'react';
 import { IDropDownNode, IFlowNode } from '../../Interfaces';
 import SearchBox from '../../SearchBox';
 import SelectConfigure from './DropDownConfigure';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 // funcNode Component main function starts at "DropDownNode" function below
 
+
+function usePersistentState(key: string, defaultValue: any) {
+  // Initialize state with the saved value or the defaultValue
+  const [state, setState] = useState(() => {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? JSON.parse(storedValue) : defaultValue;
+  });
+
+  // Use useEffect to save the state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(state));
+  }, [key, state]);
+
+  return [state, setState];
+}
 
 function DropDownNode(props: IDropDownNode) {
   // which will receive all the properties from the Dagger Component 
@@ -13,6 +30,9 @@ function DropDownNode(props: IDropDownNode) {
 
   const [selectedValue, setSelectedValue] = useState<string>(); // Selected value from the DropDown
   // const [functionList, setFunctionList] = useState(funcLists); // List of available funcNodes
+  const [autogenVarNodes, setAutogenVarNodes] = usePersistentState('autogenVarNodes', true);
+
+  const toggleAutogenVarNodes = () => setAutogenVarNodes(!autogenVarNodes);
 
   // errorMapper => help us to find the empty nodes or node where parameter are still empty without connection
   function errorMapper(errorMapping: any[], id: string) {
@@ -46,6 +66,20 @@ function DropDownNode(props: IDropDownNode) {
       {(selectedValue === "select function Node" || selectedValue === '' || selectedValue === undefined) ?
         <div className='addNode nowheel'>
           <h3 className='titleAddNode'>Add Nodes</h3>
+          <FormControlLabel
+            className='autogenVarNodes'
+            control={
+              <Checkbox
+                className='autogenVarNodes-checkbox'
+                color="primary"
+                onClick={toggleAutogenVarNodes}
+                checked={autogenVarNodes}
+                style={{ color: 'white', marginLeft: '5px' }}
+              />
+            }
+            // style={{ margin: '0 1px 0 0' }}
+            label="Add Variable Nodes"
+          />
           {/* <select name="funcLists" id="funcLists" className="funcLists" value={selectedValue} onChange={(event: { target: { value: string; }; }) => setSelectedValue(event?.target?.value)}>
             {functionList?.map((funcList, index: number) => {
               // const functionName = funcList.label?.split('.').pop() || '';
@@ -70,6 +104,7 @@ function DropDownNode(props: IDropDownNode) {
               labels={data.label}
               selectedValue={selectedValue}
               loadParamsList={loadParamsList}
+              autogenVarNodes={autogenVarNodes}
             />
           </div>
 

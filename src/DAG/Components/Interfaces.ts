@@ -28,6 +28,7 @@ interface IParamsDropDown {
     labels: string;
     selectedValue: string;
     loadParamsList: (...args: any[]) => any | void;
+    autogenVarNodes: boolean;
 }
 
 interface ITextEditorNode {

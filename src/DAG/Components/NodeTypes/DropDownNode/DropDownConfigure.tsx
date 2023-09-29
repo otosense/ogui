@@ -6,7 +6,7 @@ import { IParamsDropDown } from '../../Interfaces';
 import { onNameHandlers } from '../../../utilities/Validations/TextValidation';
 import { convertFuncNodeToJsonNode, convertFuncNodeToJsonEdge } from '../../../utilities/Mapping/convertFuncNodeToJson';
 const SelectConfigure = (props: IParamsDropDown) => {
-    const { value, handleId, nodeId, sourcePosition, data, isConnectable, labels, selectedValue, loadParamsList } = props;
+    const { value, handleId, nodeId, sourcePosition, data, isConnectable, labels, selectedValue, autogenVarNodes, loadParamsList } = props;
     // console.log({ value, handleId, nodeId, sourcePosition, data,  isConnectable, labels, selectedValue });
     const { setNodes, setEdges } = useReactFlow();
     const store = useStoreApi();
@@ -86,7 +86,7 @@ const SelectConfigure = (props: IParamsDropDown) => {
                         out: node.output,
                         // bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
                         // bind: zipObject(paramsLists, map(paramsLists, (param) => `${param}`))
-                        bind: (index === 0) ? zipObject(paramsLists, map(paramsLists, (param) => `${param}`)) : {}
+                        bind: (autogenVarNodes) ? zipObject(paramsLists, map(paramsLists, (param) => `${param}`)) : {}
                     };
                 }
                 setValueHolder(node);

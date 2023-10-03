@@ -103,7 +103,10 @@ const Dagger = (props: IDaggerProps) => {
         setNodes(funcToJsonNode);
         setEdges(funcToJsonEdge);
         setUploadOver(!uploadOver);
-    }, [setNodes, setEdges]);
+        setTimeout(() => {
+            reactFlowInstance?.fitView();
+        }, 1000);
+    }, [setNodes, setEdges, reactFlowInstance]);
 
 
     // JSON creation on Right Side Panel (Schema Editor) and Save the Created JSON in Backend

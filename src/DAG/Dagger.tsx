@@ -113,7 +113,7 @@ const Dagger = (props: IDaggerProps) => {
     const reflectJsonAndSaveHandler = useCallback(
         (e: { preventDefault: () => void; }, action: 'reflect' | 'save') => {
             handleReflectAndSave(e, reactFlowInstance, setFlowNodes, setErrorMapping, action, setIsModal, setShowSchema);
-            reactFlowInstance?.fitView();
+            // reactFlowInstance?.fitView();
         },
         [reactFlowInstance]
     );

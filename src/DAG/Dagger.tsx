@@ -174,7 +174,7 @@ const Dagger = (props: IDaggerProps) => {
                 id: nodeTypeId,
                 type,
                 position,
-                data: { label: '', initialEdge: dagDirections, }, // dagDirections will tell the Dag what layout to use LR or TB
+                data: { label: '', initialEdge: dagDirections, color: '' }, // dagDirections will tell the Dag what layout to use LR or TB
             };
             if (type === 'custom') { /// Normal func node creation structure
                 newNode.data = {

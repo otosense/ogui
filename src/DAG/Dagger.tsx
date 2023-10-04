@@ -91,7 +91,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
 
-    // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
+    // isValidConnection => Stop connection until the validation is true
     const isValidConnection = useMemo(() => connectionValidation(nodes, edges), [nodes, edges]);
     // passing the updated nodes in the UI Dag
     // const dataWithUpdates = nodes;

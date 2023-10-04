@@ -1,6 +1,12 @@
 import { showToast } from "../ReactToastMessage";
 
 function connectionValidation(nodes: any[], edges: any[]) {
+    /*
+       Note: Connections Validation list
+       1. Same type of connections are not allowed ( varNode to varNode || funcNode to funcNode)
+       2. funcNode already has an incoming connection
+       3. funcNode already has an outgoing connection
+    */
     return (connection: any) => {
         // Prevent Edge connection from varNode to varNode and funcNode to funcNode
         const { source, target } = connection;
@@ -33,14 +39,8 @@ function connectionValidation(nodes: any[], edges: any[]) {
                 showToast('Error: ' + 'Source node already has an outgoing connection', 'error');
                 return false; // Return false to prevent the connection
             }
-
-            // // Check if the target node is the same as the source node
-            // if (target === sourceHandle) {
-            //     showToast('Error: ' + 'Cannot connect a node to itself', 'error');
-            //     return false; // Return false to prevent the connection
-            // }
         }
-        // Forbid children to ancestor connection
+        // Forbid children to ancestor connection (not working as expected)
         // if (sourceNode?.data?.label === targetNode?.data?.label) {
         // if (sourceNode?.data?.label === targetNode?.func_nodes?.out) {
         //     showToast('Error: ' + 'Forbid children to ancestor connection', 'error');

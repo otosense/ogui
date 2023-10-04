@@ -103,13 +103,17 @@ const Dagger = (props: IDaggerProps) => {
         setNodes(funcToJsonNode);
         setEdges(funcToJsonEdge);
         setUploadOver(!uploadOver);
-    }, [setNodes, setEdges]);
+        setTimeout(() => {
+            reactFlowInstance?.fitView();
+        }, 1000);
+    }, [setNodes, setEdges, reactFlowInstance]);
 
 
     // JSON creation on Right Side Panel (Schema Editor) and Save the Created JSON in Backend
     const reflectJsonAndSaveHandler = useCallback(
         (e: { preventDefault: () => void; }, action: 'reflect' | 'save') => {
             handleReflectAndSave(e, reactFlowInstance, setFlowNodes, setErrorMapping, action, setIsModal, setShowSchema);
+            // reactFlowInstance?.fitView();
         },
         [reactFlowInstance]
     );
@@ -129,6 +133,25 @@ const Dagger = (props: IDaggerProps) => {
         edge.id = `${edge.source} + ${edge.targetHandle} + ${(targetNode?.id)}`;
         return edge;
     });
+
+    useEffect(() => {
+        // remove the FuncNode dropping down if the ESCAPE key is pressed
+        const handleKeyDown = (event: { key: string; }) => {
+            if (event.key === 'Escape') {
+                setNodes((prevNodes) => prevNodes.filter((node) => {
+                    if (node.type === 'custom' && node.data.label === '') {
+                        return false; // Remove custom nodes with an empty label
+                    }
+                    return true; // Keep all other nodes
+                }));
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [setNodes]);
 
     // remove duplicate edges
     const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id');
@@ -190,7 +213,6 @@ const Dagger = (props: IDaggerProps) => {
             data: isModal?.data,
             onDataUploaded: handleUpload,
         };
-
         if (isModal?.type === 'upload') {
             return <Load {...commonProps} userData={LoadDagList} loadSavedDag={onloadSavedDag} />;
         } else {
@@ -273,17 +295,13 @@ const Dagger = (props: IDaggerProps) => {
                     </ReactFlowProvider>
                     <JsonEditor layout={onChange} data={showSchema} onDataUploaded={handleUpload} />
                 </SplitterLayout>
-                <>
-                    <Modal
-                        open={isModal?.open}
-                        onClose={(_event: React.MouseEvent<HTMLButtonElement>, reason: string) => {
-                            toggleModal(false);
-                        }}
-                    >
-                        <div className='overlayPosition'>{generateModalContent()}</div>
-
-                    </Modal>
-                </>
+                <Modal
+                    open={isModal?.open}
+                    onClose={(_event: React.MouseEvent<HTMLButtonElement>, reason: string) => {
+                        toggleModal(false);
+                    }}>
+                    <div className='overlayPosition'>{generateModalContent()}</div>
+                </Modal>
                 <CustomModal
                     open={openModal}
                     handleClose={handleCloseModal}

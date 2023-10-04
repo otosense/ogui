@@ -21,33 +21,52 @@ function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispat
             return false;
         }
 
+        // // Check if the target node already has an incoming connection
+        // const incomingConnections = edges.filter((edge) => edge.target === target);
+
+        // console.log('targetNode', targetNode);
+        // if (targetNode === 'custom') {
+        //     if (incomingConnections.length > 0) {
+        //         showToast('Error: ' + 'Target node already has an incoming connection', 'error');
+        //         return false; // Return false to prevent the connection
+        //     }
+        // }
+
+
+
         const incomingConnectionsToTarget = edges.filter((edge) => edge.target === target);
-        const outgoingConnectionsFromSource = edges.filter((edge) => edge.source === source);
 
         // Find the existing incoming connection with the same target handle
         const existingIncomingEdge = incomingConnectionsToTarget.find((edge) => edge.targetHandle === targetHandle);
 
         if (existingIncomingEdge) {
-            // Remove the existing incoming edge
-            const updatedEdges = edges.filter((edge) => edge !== existingIncomingEdge);
+            // Replace the existing incoming edge with the new connection
+            const updatedEdges = edges.map((edge) => {
+                if (edge === existingIncomingEdge) {
+                    return { ...connection, type: "smoothstep", animated: true };
 
-            // Add the new connection
-            setEdges((prevEdges: Edge<any>[]) => [...updatedEdges, { ...connection, type: "smoothstep", animated: true }]);
+                }
+                return edge;
+            });
+            setEdges(updatedEdges);
         } else {
             // No existing incoming edge with the same target handle, add the new connection
-            setEdges((prevEdges: Edge<any>[]) => [...prevEdges, { ...connection, type: "smoothstep", animated: true }]);
+            if (sourceType !== 'custom') {
+                setEdges((prevEdges: Edge<any>[]) => [...prevEdges, { ...connection, type: "smoothstep", animated: true }]);
+            }
+
         }
 
-        // Remove all existing outgoing connections from the same source
-        const updatedEdgesAfterSourceRemoval = edges.filter((edge) => edge.source !== source);
 
-        // Find and remove all existing incoming connections with the same target handle
-        const updatedEdgesAfterTargetRemoval = updatedEdgesAfterSourceRemoval.filter(
-            (edge) => !(edge.target === target && edge.targetHandle === targetHandle)
-        );
+        // Check if the source node is 'custom' and if the source node already has an outgoing connection
+        if (sourceType === 'custom') {
+            const outgoingConnectionsFromSource = edges.filter((edge) => edge.source === source);
+            if (outgoingConnectionsFromSource.length > 0) {
+                showToast('Error: ' + 'Source node already has an outgoing connection', 'error');
+                return false; // Return false to prevent the connection
+            }
+        }
 
-        // Add the new connection
-        setEdges((prevEdges: Edge<any>[]) => [...updatedEdgesAfterTargetRemoval, { ...connection, type: "smoothstep", animated: true }]);
 
         return true;
     };

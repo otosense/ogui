@@ -96,7 +96,7 @@ const SelectConfigure = (props: IParamsDropDown) => {
     }, [selectedValue, paramsLists]);
 
     useEffect(() => {
-        if (valueHolder?.func_nodes) {
+        if (valueHolder?.func_nodes && autogenVarNodes) {
             const { name, func_label, func, out, bind } = valueHolder?.func_nodes;
             const { position } = valueHolder;
             const conversionData = {

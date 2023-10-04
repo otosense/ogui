@@ -13,6 +13,8 @@ function TextEditorNode(props: ITextEditorNode) {
     const { setNodes } = useReactFlow(); // in-build function to update nodes
     const store = useStoreApi(); // in-build function for nodes which will be stored in store api
 
+    const [borderColor, setBorderColor] = useState<any>({});
+
     // When user enter the varNode label which is handled here
     const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {
         const { nodeInternals } = store.getState();
@@ -27,7 +29,7 @@ function TextEditorNode(props: ITextEditorNode) {
                     if (node.id === id) {
                         node.data = {
                             ...node.data,
-                            label: inputValue
+                            label: inputValue,
                         };
                     }
                     return node;
@@ -39,6 +41,41 @@ function TextEditorNode(props: ITextEditorNode) {
         }
 
     }, [props]);
+
+
+    useEffect(() => {
+        const { nodeInternals, edges } = store.getState();
+        // Create a map to keep track of source nodes
+        const sourceNodes: any = {};
+
+        // Iterate through the edges to identify source nodes
+        edges.forEach((edge) => {
+            sourceNodes[edge.source] = true;
+        });
+        const borderColors: any = {};
+        Array.from(nodeInternals.values()).map((node: any) => {
+            if (node.type !== 'custom') {
+                const isTargetNode = edges.some((edge) => edge.target === node.id);
+                const isSourceNode = sourceNodes[node.id];
+                // Set the border color based on the conditions
+                if (isTargetNode && isSourceNode) {
+                    borderColors[node.data.label] = 'outputIsInput'; // Node has a target handle and is not a source node
+                    node.data = {
+                        ...node.data,
+                        color: 'red'
+                    };
+                } else {
+                    borderColors[node.data.label] = 'onlyInput';
+                    node.data = {
+                        ...node.data,
+                        color: 'blue'
+                    };
+                }
+            }
+            return node;
+        });
+        setBorderColor(borderColors);
+    }, []);
 
     useEffect(() => {
         // Creating an Empty Node
@@ -52,13 +89,12 @@ function TextEditorNode(props: ITextEditorNode) {
         const errorNode = errorMapping.find((x: { id: string; }) => x.id === id);
         return errorNode ? 'bugNode' : '';
     }
-
     return (
         <div className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>
             {/* <h4 className={`nodeTitle ${type}`} title={valueText}>{valueText.length === 0 ? 'Node Title' : valueText}</h4> */}
             {/* <h4 className={`nodeTitle ${type}`}>{nodeType.title}</h4> */}
             <Handle type="target" position={data?.initialEdge === 'right' || sourcePosition === "right" ? Position.Top : Position.Left} isConnectable={isConnectable} className='connector' />
-            <div className={`flexProps ${type}`}>
+            <div className={`flexProps ${type} ${borderColor?.[valueText]}`}>
                 <div className="inputStyler">
                     {/* <label htmlFor="text">{nodeType.label}:</label> */}
                     <input id="text" name="text" onChange={labelNameChange} className="titleBox" placeholder={nodeType.placeHolder} value={valueText} />

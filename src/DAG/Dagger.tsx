@@ -287,7 +287,7 @@ const Dagger = (props: IDaggerProps) => {
                                     <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                                 </Panel>
                                 <Panel position="top-left">
-                                    {/* <button onClick={() => onLayout('LR')}>HL</button> */}
+                                    <button onClick={() => onLayout('LR')}>HL</button>
                                 </Panel>
                             </ReactFlow>
                         </div>

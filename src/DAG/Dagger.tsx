@@ -92,7 +92,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
-    const isValidConnection = useMemo(() => connectionValidation(nodes, edges), [nodes, edges]);
+    const isValidConnection = useMemo(() => connectionValidation(nodes, edges, setEdges), [nodes, edges, setEdges]);
     // passing the updated nodes in the UI Dag
     // const dataWithUpdates = nodes;
 
@@ -352,7 +352,7 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
         };
         if (getFuncNode.length > 0) { // if Error is there show Toast Message
             setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
-            return showToast('Error: ' + 'There are Some Empty Nodes', 'error');
+            return showToast('Error: ' + 'There are Some Empty Nodes or more inputs than expects', 'error');
         } else {
             setErrorMapping([]);
         }

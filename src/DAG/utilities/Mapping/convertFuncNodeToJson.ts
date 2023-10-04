@@ -117,7 +117,7 @@ export function convertFuncNodeToJsonEdge(jsonData: { func_nodes: IFuncNode[]; }
         });
 
     });
-    console.log('initialEdges', initialEdges);
+    // console.log('initialEdges', initialEdges);
     return initialEdges;
 };
 

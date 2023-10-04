@@ -92,7 +92,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
-    const isValidConnection = useMemo(() => connectionValidation(nodes), [nodes]);
+    const isValidConnection = useMemo(() => connectionValidation(nodes, edges), [nodes, edges]);
     // passing the updated nodes in the UI Dag
     // const dataWithUpdates = nodes;
 
@@ -315,11 +315,11 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
                 if (bind === undefined || !isEmpty(bind)) {
                     return true;
                 } else {
-                    showToast('Error: The DAG is empty', 'error');
-                    return false;
+                    // showToast('Error: The DAG is empty', 'error');
+                    // return false;
                 }
             }
-            return false;
+            return true;
         });
 
         // If any of the nodes bind is {} then show error and terminate the save modal logic / show JSON

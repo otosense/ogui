@@ -91,8 +91,8 @@ const Dagger = (props: IDaggerProps) => {
 
 
 
-    // isValidConnection => Stop connection until the validation is true
-    const isValidConnection = useMemo(() => connectionValidation(nodes, edges), [nodes, edges]);
+    // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
+    const isValidConnection = useMemo(() => connectionValidation(nodes, edges, setEdges), [nodes, edges, setEdges]);
     // passing the updated nodes in the UI Dag
     // const dataWithUpdates = nodes;
 
@@ -287,7 +287,7 @@ const Dagger = (props: IDaggerProps) => {
                                     <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                                 </Panel>
                                 <Panel position="top-left">
-                                    <button onClick={() => onLayout('LR')}>HL</button>
+                                    {/* <button onClick={() => onLayout('LR')}>HL</button> */}
                                 </Panel>
                             </ReactFlow>
                         </div>
@@ -352,7 +352,7 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
         };
         if (getFuncNode.length > 0) { // if Error is there show Toast Message
             setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
-            return showToast('Error: ' + 'There are Some Empty Nodes', 'error');
+            return showToast('Error: ' + 'There are Some Empty Nodes or more inputs than expects', 'error');
         } else {
             setErrorMapping([]);
         }

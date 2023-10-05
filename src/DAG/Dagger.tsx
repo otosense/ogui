@@ -85,7 +85,7 @@ const Dagger = (props: IDaggerProps) => {
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections
-    const onConnect = connectionHandlers(edges, setEdges);
+    const onConnect = connectionHandlers(nodes, edges, setEdges);
 
     // Reason for Auto Alignment of Nodes and Edges
     const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);

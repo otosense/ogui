@@ -846,6 +846,18 @@ input#funcLists {
     align-items: center
 }
 
+.flexProps.varNode.onlyInput {
+    border: 1px solid yellow !important;
+    /* background-color: orange; */
+}
+
+
+.flexProps.varNode.outputIsInput {
+    border: 1px solid #c2410c !important;
+    /* background-color: green; */
+    /* background-color: purple; */
+}
+
 .splitter-layout .layout-pane.layout-pane-primary {
     display: flex !important
 }
@@ -877,17 +889,4 @@ div.noHandler {
     height: 0 !important;
     margin: 0;
     pointer-events: none !important;
-}
-
-.flexProps.varNode.onlyInput {
-    border: 1px solid #c2410c !important;
-    /* background-color: orange; */
-}
-
-
-.flexProps.varNode.outputIsInput {
-    border: 2px solid rgb(22, 163, 74) !important;
-    border: 2px solid yellow !important;
-    /* background-color: green; */
-    /* background-color: purple; */
 }

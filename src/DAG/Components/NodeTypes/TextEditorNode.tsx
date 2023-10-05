@@ -58,19 +58,14 @@ function TextEditorNode(props: ITextEditorNode) {
                 const isTargetNode = edges.some((edge) => edge.target === node.id);
                 const isSourceNode = sourceNodes[node.id];
                 // Set the border color based on the conditions
-                if (isTargetNode && isSourceNode) {
-                    borderColors[node.data.label] = 'outputIsInput'; // Node has a target handle and is not a source node
-                    node.data = {
-                        ...node.data,
-                        color: 'red'
-                    };
-                } else {
-                    borderColors[node.data.label] = 'onlyInput';
-                    node.data = {
-                        ...node.data,
-                        color: 'blue'
-                    };
-                }
+
+                /* 
+                These conditions will work only for varNode
+                isSourceNode && isTargetNode => outputIsInput 
+                isSourceNode => onlyInput
+                isTargetNode => outputIsInput
+                */
+                borderColors[node.data.label] = isSourceNode ? (isTargetNode ? 'outputIsInput' : 'onlyInput') : 'outputIsInput';
             }
             return node;
         });

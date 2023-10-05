@@ -72,6 +72,7 @@ const Dagger = (props: IDaggerProps) => {
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
+            setIsLoading(false);
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
     }, [uploadOver]);
@@ -84,7 +85,7 @@ const Dagger = (props: IDaggerProps) => {
     }), [funcList, errorMapping, flowNodes]);
 
     // Connection Handlers => Rules for the connections
-    const onConnect = connectionHandlers(edges, setEdges);
+    const onConnect = connectionHandlers(nodes, edges, setEdges);
 
     // Reason for Auto Alignment of Nodes and Edges
     const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
@@ -98,11 +99,12 @@ const Dagger = (props: IDaggerProps) => {
 
     // convert FuncNode to JSON structure how the UI / Dag wants
     const handleUpload = useCallback((data: any) => {
+        setIsLoading(true);
         const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
         const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
         setNodes(funcToJsonNode);
         setEdges(funcToJsonEdge);
-        setUploadOver(!uploadOver);
+        setUploadOver(true);
         setTimeout(() => {
             reactFlowInstance?.fitView();
         }, 1000);
@@ -174,7 +176,7 @@ const Dagger = (props: IDaggerProps) => {
                 id: nodeTypeId,
                 type,
                 position,
-                data: { label: '', initialEdge: dagDirections, color: '' }, // dagDirections will tell the Dag what layout to use LR or TB
+                data: { label: '', initialEdge: dagDirections }, // dagDirections will tell the Dag what layout to use LR or TB
             };
             if (type === 'custom') { /// Normal func node creation structure
                 newNode.data = {
@@ -194,7 +196,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
     const toggleModal = (open = false, type = 'upload', data = {}) => {
-        // setUploadOver(open);
+        setUploadOver(open);
         setIsModal({
             open,
             type,

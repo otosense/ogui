@@ -28,7 +28,7 @@ const LoadingOverlay = () => {
             <Box sx={{ width: '100%' }} alignItems={'center'} style={{ textAlign: 'center' }}>
                 <CircularProgress color="primary" />
                 <Typography variant="h5" gutterBottom>
-                    Data is being Fetching
+                    Fetching data...
                 </Typography>
             </Box>
         </div>

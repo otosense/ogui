@@ -69,11 +69,10 @@ const Dagger = (props: IDaggerProps) => {
     }, [DagFuncList]);
 
     useEffect(() => {
-        console.log('im coming');
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
-            console.log('im inside');
+            setIsLoading(false);
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
     }, [uploadOver]);
@@ -100,6 +99,7 @@ const Dagger = (props: IDaggerProps) => {
 
     // convert FuncNode to JSON structure how the UI / Dag wants
     const handleUpload = useCallback((data: any) => {
+        setIsLoading(true);
         const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
         const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
         setNodes(funcToJsonNode);

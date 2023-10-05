@@ -69,9 +69,11 @@ const Dagger = (props: IDaggerProps) => {
     }, [DagFuncList]);
 
     useEffect(() => {
+        console.log('im coming');
         // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
         // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
+            console.log('im inside');
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
     }, [uploadOver]);
@@ -102,7 +104,7 @@ const Dagger = (props: IDaggerProps) => {
         const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
         setNodes(funcToJsonNode);
         setEdges(funcToJsonEdge);
-        setUploadOver(!uploadOver);
+        setUploadOver(true);
         setTimeout(() => {
             reactFlowInstance?.fitView();
         }, 1000);
@@ -194,7 +196,7 @@ const Dagger = (props: IDaggerProps) => {
 
 
     const toggleModal = (open = false, type = 'upload', data = {}) => {
-        // setUploadOver(open);
+        setUploadOver(open);
         setIsModal({
             open,
             type,

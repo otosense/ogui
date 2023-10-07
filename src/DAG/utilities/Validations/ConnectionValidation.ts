@@ -17,10 +17,6 @@ function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispat
         const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
         const targetNode = nodes.find((node: { id: string; }) => node.id === target);
 
-        console.log('nodes', nodes);
-        console.log('edges', edges);
-        console.log('connection', connection);
-
         if (!sourceNode || !targetNode) {
             showToast('Error: ' + 'Invalid connection', 'error');
             return false;

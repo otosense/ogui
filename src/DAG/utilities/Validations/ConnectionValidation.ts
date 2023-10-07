@@ -1,12 +1,25 @@
+import { Graph } from "../Graph";
 import { showToast } from "../ReactToastMessage";
 import { Edge } from "reactflow";
 
+
+function checkIfNewConnectionWillFormCycle(edges: any[], connection: any) {
+    const graph = new Graph();
+
+    edges.forEach((edge) => graph.addEdge(edge.source, edge.target));
+    return graph.willFormCycle(connection.source, connection.target);
+
+}
 
 function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispatch<React.SetStateAction<any[]>>) {
     return (connection: any) => {
         const { source, target, targetHandle, sourceHandle } = connection;
         const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
         const targetNode = nodes.find((node: { id: string; }) => node.id === target);
+
+        console.log('nodes', nodes);
+        console.log('edges', edges);
+        console.log('connection', connection);
 
         if (!sourceNode || !targetNode) {
             showToast('Error: ' + 'Invalid connection', 'error');
@@ -18,6 +31,12 @@ function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispat
 
         if (sourceType === targetType) {
             showToast('Error: ' + 'Same Connections not allowed', 'error');
+            return false;
+        }
+
+        // Check if the new connection will form a cycle
+        if (checkIfNewConnectionWillFormCycle(edges, connection)) {
+            showToast('Error: ' + 'Connection will form a cycle', 'error');
             return false;
         }
 

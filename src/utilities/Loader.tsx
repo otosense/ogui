@@ -26,9 +26,13 @@ const LoadingOverlay = () => {
         <div className={classes.loaderOverlay}>
 
             <Box sx={{ width: '100%' }} alignItems={'center'} style={{ textAlign: 'center' }}>
-                <CircularProgress color="primary" />
+                {/* <CircularProgress color="primary" /> */}
                 <Typography variant="h5" gutterBottom>
-                    Fetching data...
+                    Fetching data <div id="wave">
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                        <span className="dot"></span>
+                    </div>
                 </Typography>
             </Box>
         </div>

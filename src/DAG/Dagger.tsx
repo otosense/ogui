@@ -95,7 +95,7 @@ const Dagger = (props: IDaggerProps) => {
     // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
     const isValidConnection = useMemo(() => connectionValidation(nodes, edges, setEdges), [nodes, edges, setEdges]);
     // passing the updated nodes in the UI Dag
-    // const dataWithUpdates = nodes;
+
 
     // convert FuncNode to JSON structure how the UI / Dag wants
     const handleUpload = useCallback((data: any) => {
@@ -157,6 +157,8 @@ const Dagger = (props: IDaggerProps) => {
 
     // remove duplicate edges
     const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id');
+    const dataWithUpdates = uniqBy(nodes, 'id');
+    // const dataWithUpdates = nodes;
 
     // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area
     const onDrop = useCallback(
@@ -251,8 +253,8 @@ const Dagger = (props: IDaggerProps) => {
                         <Sidebar />
                         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
                             <ReactFlow
-                                nodes={nodes}
-                                // nodes={dataWithUpdates}
+                                // nodes={nodes}
+                                nodes={dataWithUpdates}
                                 snapToGrid={true}
                                 snapGrid={[25, 25]}
                                 // edges={edges}
@@ -288,9 +290,9 @@ const Dagger = (props: IDaggerProps) => {
                                     {/* <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<DataObjectIcon />}>JSon</Button> */}
                                     <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                                 </Panel>
-                                <Panel position="top-left">
+                                {/* <Panel position="top-left">
                                     <button onClick={() => onLayout('LR')}>HL</button>
-                                </Panel>
+                                </Panel> */}
                             </ReactFlow>
                         </div>
                         <Toast />

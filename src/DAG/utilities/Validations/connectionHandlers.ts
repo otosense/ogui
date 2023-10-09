@@ -6,7 +6,9 @@ import { showToast } from "../ReactToastMessage";
 function connectionHandlers(nodes: any[], edges: Edge<any>[], setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>) {
 
     const isIncomingIsEdgeExist = (target: string | null, targetHandle: string | null | undefined) => {
-        return edges.some((edge) => edge.target === target && edge.targetHandle === targetHandle);
+        return edges.some((edge) => {
+            return (edge.targetHandle || edge.target) === target;
+        });
     };
 
     const isOutgoingIsEdgeExist = (source: string | null, sourceHandle: string | null | undefined) => {
@@ -24,7 +26,6 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setEdges: React.Di
     return useCallback((params: Edge | Connection) => {
         // Connection Rules are handled here
         const { source, target, targetHandle, sourceHandle } = params;
-        console.log({ params });
         const newEdge = {
             ...params,
             type: 'smoothstep',
@@ -32,15 +33,23 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setEdges: React.Di
         };
         //  Check if the target node / function Node parameter already has an incoming edge
         if (isIncomingIsEdgeExist(target, targetHandle)) {
+
             // An incoming edge already exists, so prevent creating a new connection
             return showToast('Error: ' + 'Already having an incoming connection', 'error');
+        } else {
+            const targetNode = nodes.find((node: { id: string; }) => {
+                return node.id === target;
+            });
+            const income = edges.filter((edge) => edge.target === (target || targetHandle));
+            if (income.length >= targetNode?.data?.selects?.hasValue) {
+                return showToast('Error: ' + 'Already having an incoming connection', 'error');
+            }
         }
 
         // An outgoing edge already exists, so prevent creating a new connection
         const outgoingConnections = edges.filter((edge) => edge.source === source);
         if (outgoingConnections.length > 0) {
             const sourceNode = nodes.find((node: { id: string; }) => {
-                console.log({ node });
                 return node.id === source;
             });
             if (sourceNode.type === 'custom') {

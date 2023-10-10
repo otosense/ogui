@@ -934,3 +934,14 @@ div#wave .dot:nth-child(4) {
 }
 
 /* Loader CSS OVer  */
+
+@media screen and (max-width: 768px) {
+    div.splitter-layout .layout-pane.layout-pane-primary {
+        /* display: block !important; */
+    }
+
+    .reactflow-sideBar {
+        height: unset !important;
+        align-items: unset !important;
+    }
+}

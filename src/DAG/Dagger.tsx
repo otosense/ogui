@@ -74,8 +74,8 @@ const Dagger = (props: IDaggerProps) => {
         setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
             setIsLoading(false);
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
-        }, 500);
-    }, [uploadOver]);
+        }, 800);
+    }, [uploadOver, isLoading]);
 
     const nodeTypes = useMemo(() => ({
         // textUpdater is "TextEditorNode" component which holds varNode functionality
@@ -115,6 +115,7 @@ const Dagger = (props: IDaggerProps) => {
     const reflectJsonAndSaveHandler = useCallback(
         (e: { preventDefault: () => void; }, action: 'reflect' | 'save') => {
             handleReflectAndSave(e, reactFlowInstance, setFlowNodes, setErrorMapping, action, setIsModal, setShowSchema);
+            setIsLoading(false);
             // reactFlowInstance?.fitView();
         },
         [reactFlowInstance]
@@ -232,12 +233,28 @@ const Dagger = (props: IDaggerProps) => {
         setOpenModal(false);
     };
 
+    // change the left side Schema Editor view position
+    useEffect(() => {
+        // Function to handle window resize
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setOrientation(true);
+            } else {
+                setOrientation(false);
+            }
+        };
 
-    // useEffect(() => {
-    //     if (reactFlowInstance && nodes.length) {
-    //         reactFlowInstance.fitView();
-    //     }
-    // }, [reactFlowInstance]);
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial check for screen size when the component mounts
+        handleResize();
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         // Any error in API Component will not load show the actual error message

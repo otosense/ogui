@@ -75,7 +75,7 @@ const Dagger = (props: IDaggerProps) => {
             setIsLoading(false);
             onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
         }, 500);
-    }, [uploadOver]);
+    }, [uploadOver, setIsLoading, isLoading]);
 
     const nodeTypes = useMemo(() => ({
         // textUpdater is "TextEditorNode" component which holds varNode functionality

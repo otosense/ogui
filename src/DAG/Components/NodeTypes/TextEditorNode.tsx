@@ -2,6 +2,7 @@ import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Handle, useReactFlow, Position, useStoreApi } from 'reactflow';
 import { ITextEditorNode } from '../Interfaces';
 import { onNameHandlers } from '../../utilities/Validations/TextValidation';
+import { usePersistentState } from '../../utilities/persistentState';
 
 // varNode component 
 function TextEditorNode(props: ITextEditorNode) {
@@ -13,7 +14,7 @@ function TextEditorNode(props: ITextEditorNode) {
     const { setNodes } = useReactFlow(); // in-build function to update nodes
     const store = useStoreApi(); // in-build function for nodes which will be stored in store api
 
-    const [borderColor, setBorderColor] = useState<any>({});
+    const [borderColor, setBorderColor] = usePersistentState('borderColor', {});  // Persist to prevent color flicker on re-render
 
     // When user enter the varNode label which is handled here
     const labelNameChange = useCallback((evt: { target: { value: string; }; }) => {
@@ -53,7 +54,7 @@ function TextEditorNode(props: ITextEditorNode) {
             sourceNodes[edge.source] = true;
         });
         const borderColors: any = {};
-        Array.from(nodeInternals.values()).map((node: any) => {
+        Array.from(nodeInternals.values()).forEach((node: any) => {
             if (node.type !== 'custom') {
                 const isTargetNode = edges.some((edge) => edge.target === node.id);
                 const isSourceNode = sourceNodes[node.id];
@@ -67,7 +68,6 @@ function TextEditorNode(props: ITextEditorNode) {
                 */
                 borderColors[node.data.label] = isSourceNode ? (isTargetNode ? 'outputIsInput' : 'onlyInput') : 'outputIsInput';
             }
-            return node;
         });
         setBorderColor(borderColors);
     }, []);

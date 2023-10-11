@@ -3,24 +3,11 @@ import { IDropDownNode, IFlowNode } from '../../Interfaces';
 import SearchBox from '../../SearchBox';
 import SelectConfigure from './DropDownConfigure';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { usePersistentState } from '../../../utilities/persistentState';
 
 // funcNode Component main function starts at "DropDownNode" function below
 
 
-function usePersistentState(key: string, defaultValue: any) {
-  // Initialize state with the saved value or the defaultValue
-  const [state, setState] = useState(() => {
-    const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : defaultValue;
-  });
-
-  // Use useEffect to save the state to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(state));
-  }, [key, state]);
-
-  return [state, setState];
-}
 
 function DropDownNode(props: IDropDownNode) {
   // which will receive all the properties from the Dagger Component 

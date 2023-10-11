@@ -47,15 +47,15 @@ function connectionHandlers(nodes: any[], edges: Edge<any>[], setEdges: React.Di
         }
 
         // An outgoing edge already exists, so prevent creating a new connection
-        const outgoingConnections = edges.filter((edge) => edge.source === source);
-        if (outgoingConnections.length > 0) {
-            const sourceNode = nodes.find((node: { id: string; }) => {
-                return node.id === source;
-            });
-            if (sourceNode.type === 'custom') {
-                return showToast('Error: ' + 'Already has an outgoing connection', 'error');
-            }
-        }
+        // const outgoingConnections = edges.filter((edge) => edge.source === source);
+        // if (outgoingConnections.length > 0) {
+        //     const sourceNode = nodes.find((node: { id: string; }) => {
+        //         return node.id === source;
+        //     });
+        //     if (sourceNode.type === 'custom') {
+        //         return showToast('Error: ' + 'Already has an outgoing connection', 'error');
+        //     }
+        // }
         // if (isOutgoingIsEdgeExist(source, sourceHandle)) {
         //     // An outgoing edge already exists, so prevent creating a new connection
         //     return showToast('Error: ' + 'Already having an outgoing connection', 'error');

@@ -29,6 +29,8 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [isDisabled, setDisabled] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
     const [isLiveValidate, setLiveValidate] = useState(false);
+    const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(false);
+
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -65,46 +67,70 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         setLiveValidate(!isLiveValidate);
     };
 
+    const handleHtml5ValidateChange = () => {
+        setIsNoHtml5Validate(!isNoHtml5Validate);
+    };
+
     return (
         <main>
             {isError ? (<Alert severity='error' className='errorMessage'>
                 There is an Error getting DagFuncList data
             </Alert>) :
-                <>
-                    <h1>JSON Form Fiddle</h1>
-                    <SearchBox handleValue={selectValueFromDropDown} />
+                <main className='main-json-fiddle'>
+                    <h1 className='center'>JSON Form Fiddle</h1>
+                    <div className='inputs-fiddle'>
 
-                    <FormControl component="fieldset">
-                        <FormGroup aria-label="position" row>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isDisabled}
-                                        onChange={handleDisabledChange}
-                                    />
-                                }
-                                label="Disabled"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isReadOnly}
-                                        onChange={handleReadOnlyChange}
-                                    />
-                                }
-                                label="Read-Only"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={isLiveValidate}
-                                        onChange={handleLiveValidateChange}
-                                    />
-                                }
-                                label="Live Validate"
-                            />
-                        </FormGroup>
-                    </FormControl>
+                        <SearchBox handleValue={selectValueFromDropDown} />
+
+                        <FormControl component="fieldset">
+                            <FormGroup aria-label="position" row className='formHandler'>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isLiveValidate}
+                                            onChange={handleLiveValidateChange}
+                                        />
+                                    }
+                                    label="Live Validation"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isDisabled}
+                                            onChange={handleDisabledChange}
+                                        />
+                                    }
+                                    label="Disable Whole Form"
+                                />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isReadOnly}
+                                            onChange={handleReadOnlyChange}
+                                        />
+                                    }
+                                    label="Read-Only Whole Form"
+                                />
+
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={isNoHtml5Validate}
+                                            onChange={handleHtml5ValidateChange}
+                                        />
+                                    }
+                                    label="Disable HTML 5 validation"
+                                />
+                            </FormGroup>
+                        </FormControl>
+                        <section>
+
+                        </section>
+                        <section>
+
+                        </section>
+                    </div>
+
                     <section className='jsonFiddle'>
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
@@ -123,14 +149,14 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     liveValidate={isLiveValidate || liveValidate}
                                     onSubmit={onSubmit}
                                     validator={validator}
-                                    noHtml5Validate
+                                    noHtml5Validate={isNoHtml5Validate}
                                     disabled={isDisabled}
                                     readonly={isReadOnly}
                                 />
                             </div>
                         </SplitterLayout>
                     </section>
-                </>
+                </main>
             }
 
         </main>

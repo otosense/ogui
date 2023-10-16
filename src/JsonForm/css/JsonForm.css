@@ -29,6 +29,8 @@
 
 .autoComplete-Dropdown {
     width: 25%;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .json-area {
@@ -54,4 +56,23 @@
     margin-top: 10px;
     width: 95%;
     text-align: left;
+}
+
+.formHandler {
+    display: flex !important;
+    /* flex-direction: column !important; */
+    justify-content: space-between !important;
+}
+
+.inputs-fiddle {
+    /* display: flex; */
+    /* justify-content: center; */
+    /* justify-content: space-between; */
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1.center {
+    text-align: center;
+    margin: 1%;
 }

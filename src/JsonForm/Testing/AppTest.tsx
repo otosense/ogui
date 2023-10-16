@@ -23,7 +23,7 @@ function AppTest() {
                 title: 'b',
             },
         },
-
+        required: ['a', 'b']
     };
 
 

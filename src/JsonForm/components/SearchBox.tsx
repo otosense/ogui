@@ -43,7 +43,7 @@ function SearchBox(props: { handleValue: any; }) {
                     </Box>
                 )}
             />
-            <p>Selected Value: {selectedValue ? selectedValue.label : ''}</p>
+            {/* <p>Selected Value: {selectedValue ? selectedValue.label : ''}</p> */}
         </div>
     );
 }

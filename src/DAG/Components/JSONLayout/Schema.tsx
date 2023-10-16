@@ -21,38 +21,6 @@ function JsonEditor(props: {
         setJsonString(JSON.stringify(props.data, null, 2));
     }, [props.data]);
 
-    // const validateJSON = (jsonString: string) => {
-    //     try {
-    //         JSON.parse(jsonString);
-    //         setError(null); // JSON is valid
-    //     } catch (error) {
-    //         if (error instanceof SyntaxError) {
-    //             // Parse error occurred, set the error message and line number
-    //             const positionMatch = /at position (\d+)/.exec(error.message);
-    //             const position = positionMatch ? parseInt(positionMatch[1]) : null;
-    //             if (position !== null) {
-    //                 const lines = jsonString.split('\n');
-    //                 let line = 1;
-    //                 let charCount = 0;
-    //                 for (let i = 0; i < lines.length; i++) {
-    //                     charCount += lines[i].length + 1; // +1 for the newline character
-    //                     if (position < charCount) {
-    //                         setError({ message: error.message, lineNumber: line });
-    //                         break;
-    //                     }
-    //                     line++;
-    //                 }
-    //             } else {
-    //                 setError({ message: error.message, lineNumber: null });
-    //             }
-    //         } else {
-    //             // This is not a parse error
-    //             setError({ message: 'Unknown error', lineNumber: null });
-    //         }
-    //     }
-    // };
-
-
     const validateJSON = (jsonString: string) => {
         try {
             const parsedJson = JSON?.parse(jsonString);
@@ -128,33 +96,6 @@ function JsonEditor(props: {
             setJsonHasChanged(false);
         }
     };
-
-    // useEffect(() => {
-    //     console.log('jsonString', jsonString);
-    //     if (jsonString) {
-    //         const parsedJson = JSON?.parse(jsonString);
-    //         const hasEmptyValues = checkForEmptyValues(parsedJson);
-    //         console.log('hasEmptyValues', hasEmptyValues);
-    //         if (hasEmptyValues) {
-    //             setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
-    //         } else {
-    //             setError(null); // JSON is valid
-    //             props.onDataUploaded && props.onDataUploaded(jsonString);
-    //         }
-    //     }
-
-    // }, [error]);
-
-
-    // const renderLineNumbers = () => {
-    //     const lines = jsonString.split('\n');
-    //     return lines.map((line, index) => (
-    //         <div key={index} className="line-number">
-    //             {index + 1}
-    //         </div>
-    //     ));
-    // };
-
     const handleFormatJson = () => {
         try {
             const parsedJson = JSON.parse(jsonString);
@@ -214,37 +155,10 @@ function JsonEditor(props: {
                         <Tooltip title="Automatically repair JSON">
                             <IconButton onClick={handleAutoRepairJson} color="inherit">{<BuildCircleIcon />}</IconButton>
                         </Tooltip>
-                        {/* <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-
-                            <AlignHorizontalLeftIcon />
-
-                        </IconButton> */}
                     </MenuItem>
                 </AppBar>
             </Box>
             <div className="json-editor">
-                {/* <Divider /> */}
-                {/* <div className="line-numbers">{renderLineNumbers()}</div> */}
-
-                {/* <Box className='box-content-json'>
-                    <Typography variant="h5" component="h2">
-                        Schema Editor
-                    </Typography>
-                    <div>
-                        <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
-                            <IconButton onClick={orientationChange}>{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Format JSON: add proper indentation and new lines">
-                            <IconButton onClick={handleFormatJson}>{<FormatAlignCenterIcon />}</IconButton>
-                        </Tooltip>
-                        <Tooltip title="Automatically repair JSON">
-                            <IconButton onClick={handleAutoRepairJson}>{<BuildCircleIcon />}</IconButton>
-                        </Tooltip>
-
-                    </div>
-
-                </Box> */}
                 <Divider />
                 {error && (
                     <Alert severity="error">

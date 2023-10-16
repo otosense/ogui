@@ -26,8 +26,23 @@ function AppTest() {
         "required": ["a", "b"],
     };
 
+    const getSchema = async () => {
+        return await schema;
+    };
+
+    // const getSchema = () => {
+    //     return schema;
+    // };
+
+
+    const configuration = {
+        schema: getSchema(),
+        // schema: schema,
+        liveValidate: false,
+        func: sum
+    };
     return (
-        <FunctionCaller schema={schema} liveValidate={false} func={sum} />
+        <FunctionCaller {...configuration} />
     );
 }
 export default AppTest;

@@ -5,9 +5,10 @@ import validator from '@rjsf/validator-ajv8';
 import JsonEditor from './../DAG/Components/JSONLayout/Schema';
 import { isEmpty, isObject } from 'lodash';
 import { Alert } from '@mui/material';
-interface IFunctionCallerProps {
-    schema: Object; // please refer to Schema File in the Testing Folder. that how the schema structure is expected 
-    liveValidate: boolean;
+import { FormProps } from '@rjsf/core';
+import { RJSFSchema } from '@rjsf/utils';
+
+interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     func: (...args: any[]) => any | void;
 }
 
@@ -20,8 +21,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [collection, setCollection] = useState(schema);
     const [isError, setIsError] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
+    const [formData, setFormData] = useState({});
 
     const onSubmit = ({ formData }: IFormData) => {
+        setFormData(formData);
         return func(...Object.values(formData));
     };
 
@@ -46,7 +49,14 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
             </Alert>) :
                 <>
                     <h1>React JSON Schema Form Example</h1>
-                    <section className='checking'>
+                    <section className='jsonFiddle'>
+                        <div>
+                            <JsonEditor layout={onChange} data={funcList} onDataUploaded={handleUpload} />
+                        </div>
+                        <div>
+                            <JsonEditor layout={onChange} data={formData} onDataUploaded={handleUpload} />
+                            <JsonEditor layout={onChange} data={formData} onDataUploaded={handleUpload} />
+                        </div>
                         <Form
                             schema={funcList}
                             // uiSchema={uiSchema} // optional for handling custom things in UI
@@ -56,7 +66,8 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                             noHtml5Validate
                         />
 
-                        <JsonEditor layout={onChange} data={schema} onDataUploaded={handleUpload} />
+
+
                     </section>
                 </>
             }

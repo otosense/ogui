@@ -39,7 +39,8 @@ function AppTest() {
         schema: getSchema(),
         // schema: schema,
         liveValidate: false,
-        func: sum
+        func: sum,
+        validator: true,
     };
     return (
         <FunctionCaller {...configuration} />

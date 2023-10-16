@@ -1,15 +1,17 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
-// ./Components/JSONLayout/Schema
-import JsonEditor from './../DAG/Components/JSONLayout/Schema';
 import { isEmpty, isObject } from 'lodash';
 import { Alert } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
+import SchemaManager from './components/SchemaManager';
+import SplitterLayout from 'react-splitter-layout';
+import SearchBox from './components/SearchBox';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     func: (...args: any[]) => any | void;
+    schema: {} | (() => {}) | (() => Promise<{}>);
 }
 
 interface IFormData { [key: string]: any; }
@@ -22,6 +24,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [isError, setIsError] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
+    const [selectedValue, setSelectedValue] = useState<string | undefined>('');
 
     const onSubmit = ({ formData }: IFormData) => {
         setFormData(formData);
@@ -42,36 +45,49 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         dataGenerator(schema, setFuncList, setIsError);
     }, [schema]);
 
+    const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
+        console.log('From Main', value);
+        setSelectedValue(value);
+    };
+
     return (
-        <div>
+        <main>
             {isError ? (<Alert severity='error' className='errorMessage'>
                 There is an Error getting DagFuncList data
             </Alert>) :
                 <>
                     <h1>React JSON Schema Form Example</h1>
+
+
+                    {/* <SearchBox data={funcLists} handleValue={selectValueFromDropDown} /> */}
+                    <SearchBox handleValue={selectValueFromDropDown} />
                     <section className='jsonFiddle'>
-                        <div>
-                            <JsonEditor layout={onChange} data={funcList} onDataUploaded={handleUpload} />
-                        </div>
-                        <div>
-                            <JsonEditor layout={onChange} data={formData} onDataUploaded={handleUpload} />
-                            <JsonEditor layout={onChange} data={formData} onDataUploaded={handleUpload} />
-                        </div>
-                        <Form
-                            schema={funcList}
-                            // uiSchema={uiSchema} // optional for handling custom things in UI
-                            liveValidate={liveValidate}
-                            onSubmit={onSubmit}
-                            validator={validator}
-                            noHtml5Validate
-                        />
+                        <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
+                            <div className='fiddle-left-side'>
+                                <div className='schema-layout'>
+                                    <SchemaManager layout={onChange} data={funcList} onDataUploaded={handleUpload} title='Schema' />
+                                </div>
+                                <div className='UI-schema-layout-result'>
+                                    <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='UI Schema' />
+                                    <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='Result' />
+                                </div>
+                            </div>
+                            <div className='fiddle-right-side'>
+                                <Form
+                                    schema={funcList}
+                                    // uiSchema={uiSchema} // optional for handling custom things in UI
+                                    liveValidate={liveValidate}
+                                    onSubmit={onSubmit}
+                                    validator={validator}
+                                    noHtml5Validate
+                                />
+                            </div>
 
-
-
+                        </SplitterLayout>
                     </section>
                 </>
             }
-        </div>
+        </main>
     );
 };
 
@@ -80,6 +96,7 @@ FunctionCaller.defaultProps = {
     liveValidate: false,
     schema: {},
     func: (...args: any[]) => { },
+    validator: true
 };
 
 export default (FunctionCaller);

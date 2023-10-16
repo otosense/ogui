@@ -1,3 +1,9 @@
 .jsonFiddle {
     display: flex;
 }
+
+.splitter-layout {
+    width: 98% !important;
+    /* height: 98% !important; */
+    /* position: unset !important; */
+}

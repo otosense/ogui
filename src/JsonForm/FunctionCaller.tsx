@@ -29,7 +29,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [isDisabled, setDisabled] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
     const [isLiveValidate, setLiveValidate] = useState(false);
-    const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(false);
+    const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(true);
 
 
     const onSubmit = (props: IFormData) => {
@@ -123,21 +123,16 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                 />
                             </FormGroup>
                         </FormControl>
-                        <section>
 
-                        </section>
-                        <section>
-
-                        </section>
                     </div>
 
                     <section className='jsonFiddle'>
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
-                                <div className='schema-layout'>
+                                <div className='schema-layout layout-common'>
                                     <Editors data={schema} onDataUploaded={handleUpload} title='Schema' />
                                 </div>
-                                <div className='UI-schema-layout-result'>
+                                <div className='UI-schema-layout-result layout-common'>
                                     <Editors data={formData} title='UI Schema' />
                                     <Editors data={formData} title='Result' />
                                 </div>
@@ -152,6 +147,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     noHtml5Validate={isNoHtml5Validate}
                                     disabled={isDisabled}
                                     readonly={isReadOnly}
+                                    formData={formData}
                                 />
                             </div>
                         </SplitterLayout>

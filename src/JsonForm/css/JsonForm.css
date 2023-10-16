@@ -1,3 +1,40 @@
+/* Scroll Bar Style Starts here */
+/* width */
+/* For both x-axis and y-axis */
+::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
+    height: 5px;
+    /* Height of the scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track background color */
+}
+
+/* Handle for y-axis */
+::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    /* Handle background color for y-axis */
+}
+
+/* Handle for x-axis */
+::-webkit-scrollbar-thumb:horizontal {
+    background: #6b7280;
+    /* Handle background color for x-axis */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Handle background color on hover */
+}
+
+
+/* Scroll Bar Style Ends here */
+
 .jsonFiddle {
     display: flex;
 }
@@ -75,4 +112,13 @@
 h1.center {
     text-align: center;
     margin: 1%;
+}
+
+
+.layout-common {
+    margin-bottom: 1%;
+}
+
+.layout-common main {
+    border: 1px solid #ccc;
 }

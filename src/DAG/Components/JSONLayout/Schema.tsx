@@ -113,10 +113,12 @@ function JsonEditor(props: {
     };
 
     const handleSubmitJson = () => {
+        console.log('object');
         if (jsonHasChanged) {
             // try onChange or Blur
             const parsedJson = JSON.parse(jsonString);
             const hasEmptyValues = checkForEmptyValues(parsedJson);
+            console.log({ jsonString });
             if (hasEmptyValues) {
                 setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
             } else {
@@ -192,8 +194,7 @@ function JsonEditor(props: {
     };
 
     return (
-        <>
-
+        <main>
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar style={{ justifyContent: 'center' }}>
@@ -272,7 +273,7 @@ function JsonEditor(props: {
             {/* <Tooltip title="Submit JSON"> */}
             {/* <Button onClick={handleSubmitJson} disabled={error !== null} variant="contained">{<UploadIcon />} Submit</Button> */}
             {/* </Tooltip> */}
-        </>
+        </main>
     );
 }
 

@@ -20,7 +20,7 @@ interface IFormData { [key: string]: any; }
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { schema, liveValidate, func } = props;
     const [orientation, setOrientation] = useState(false);
-    const [collection, setCollection] = useState(schema);
+    const [collection, setCollection] = useState<any>(schema);
     const [isError, setIsError] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
@@ -36,8 +36,9 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     };
 
     const handleUpload = useCallback((data: any) => {
-        console.log('data', data);
-        setCollection(data);
+        console.log('data =>', data);
+        console.log('boolean', schema === data, schema, data);
+        setCollection(JSON.parse(data));
     }, []);
 
 
@@ -56,25 +57,24 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                 There is an Error getting DagFuncList data
             </Alert>) :
                 <>
-                    <h1>React JSON Schema Form Example</h1>
-
-
-                    {/* <SearchBox data={funcLists} handleValue={selectValueFromDropDown} /> */}
+                    <h1>JSON Form Fiddle</h1>
                     <SearchBox handleValue={selectValueFromDropDown} />
                     <section className='jsonFiddle'>
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout'>
-                                    <SchemaManager layout={onChange} data={funcList} onDataUploaded={handleUpload} title='Schema' />
+                                    <SchemaManager layout={onChange} data={schema} onDataUploaded={handleUpload} title='Schema' />
                                 </div>
                                 <div className='UI-schema-layout-result'>
                                     <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='UI Schema' />
                                     <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='Result' />
                                 </div>
                             </div>
+                            {console.log('collection', collection, typeof collection)}
                             <div className='fiddle-right-side'>
                                 <Form
-                                    schema={funcList}
+                                    // schema={collection}
+                                    schema={collection || schema}
                                     // uiSchema={uiSchema} // optional for handling custom things in UI
                                     liveValidate={liveValidate}
                                     onSubmit={onSubmit}
@@ -82,7 +82,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     noHtml5Validate
                                 />
                             </div>
-
                         </SplitterLayout>
                     </section>
                 </>

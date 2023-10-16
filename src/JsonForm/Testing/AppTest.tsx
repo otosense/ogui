@@ -9,7 +9,7 @@ function AppTest() {
         return output;
     };
 
-    const schema: RJSFSchema = {
+    const schema = {
         type: 'object',
         "title": "Sum",
         "description": "Sum",
@@ -23,16 +23,35 @@ function AppTest() {
                 title: 'b',
             },
         },
-        "required": ["a", "b"],
+
     };
 
-    const getSchema = async () => {
-        return await schema;
-    };
 
-    // const getSchema = () => {
-    //     return schema;
+
+    // const schema = {
+    //     "title": "A registration form",
+    //     "description": "A simple form example.",
+    //     "type": "object",
+    //     "required": [
+    //         "firstName",
+    //         "lastName"
+    //     ],
+    //     "properties": {
+    //         "firstName": {
+    //             "type": "string",
+    //             "title": "First name",
+    //             "default": "Chuck"
+    //         }
+    //     }
     // };
+
+    // const getSchema = async () => {
+    //     return await schema;
+    // };
+
+    const getSchema = () => {
+        return schema;
+    };
 
 
     const configuration = {

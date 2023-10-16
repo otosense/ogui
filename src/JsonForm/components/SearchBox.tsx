@@ -29,7 +29,7 @@ function SearchBox(props: { handleValue: any; }) {
     };
 
     return (
-        <div>
+        <div className='autoComplete-Dropdown'>
             <Autocomplete
                 id="form-list"
                 options={funcLists}

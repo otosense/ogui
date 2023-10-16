@@ -87,6 +87,7 @@ function SchemaManager(props: TSchemaManager) {
     };
 
     const handleSubmitJson = () => {
+        console.log('object submit');
         if (jsonHasChanged) {
             // try onChange or Blur
             const parsedJson = JSON.parse(jsonString);
@@ -140,7 +141,7 @@ function SchemaManager(props: TSchemaManager) {
     };
 
     return (
-        <>
+        <main>
 
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
@@ -148,20 +149,22 @@ function SchemaManager(props: TSchemaManager) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
+                        {title === 'Schema' && <MenuItem style={{ justifyContent: 'center' }}>
+                            {/* <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
+                                <IconButton onClick={orientationChange} color="inherit">{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}
+                                </IconButton>
+                            </Tooltip> */}
+                            <Tooltip title="Format JSON: add proper indentation and new lines">
+                                <IconButton onClick={handleFormatJson} color="inherit">{<FormatAlignCenterIcon />}</IconButton>
+                            </Tooltip>
+                            <Tooltip title="Automatically repair JSON">
+                                <IconButton onClick={handleAutoRepairJson} color="inherit">{<BuildCircleIcon />}</IconButton>
+                            </Tooltip>
+                        </MenuItem>}
+
                     </Toolbar>
                     <Divider color="#fff" />
-                    <MenuItem style={{ justifyContent: 'center' }}>
-                        <Tooltip title={schemaLayout ? "Horizontal layout" : "Vertical layout"}>
-                            <IconButton onClick={orientationChange} color="inherit">{schemaLayout ? <AlignVerticalBottomIcon /> : <AlignHorizontalLeftIcon />}
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Format JSON: add proper indentation and new lines">
-                            <IconButton onClick={handleFormatJson} color="inherit">{<FormatAlignCenterIcon />}</IconButton>
-                        </Tooltip>
-                        <Tooltip title="Automatically repair JSON">
-                            <IconButton onClick={handleAutoRepairJson} color="inherit">{<BuildCircleIcon />}</IconButton>
-                        </Tooltip>
-                    </MenuItem>
+
                 </AppBar>
             </Box>
             <div className="json-editor">
@@ -178,12 +181,14 @@ function SchemaManager(props: TSchemaManager) {
                 <Divider />
                 <div
                     className="textarea-wrapper"
+                    tabIndex={0}
                     onBlur={handleSubmitJson}
                     onClick={handleSubmitJson}
                 >
                     <textarea
                         rows={25}
                         className='json-area'
+                        style={{ width: '98%' }}
                         value={jsonString}
                         onChange={handleJsonChange}
                         placeholder="Enter JSON here..."
@@ -194,7 +199,7 @@ function SchemaManager(props: TSchemaManager) {
             {/* <Tooltip title="Submit JSON"> */}
             {/* <Button onClick={handleSubmitJson} disabled={error !== null} variant="contained">{<UploadIcon />} Submit</Button> */}
             {/* </Tooltip> */}
-        </>
+        </main>
     );
 }
 

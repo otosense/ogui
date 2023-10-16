@@ -2,12 +2,12 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { isEmpty, isObject } from 'lodash';
-import { Alert } from '@mui/material';
+import { Alert, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
-import SchemaManager from './components/SchemaManager';
 import SplitterLayout from 'react-splitter-layout';
 import SearchBox from './components/SearchBox';
+import Editors from './components/Editor';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     func: (...args: any[]) => any | void;
@@ -26,7 +26,12 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [formData, setFormData] = useState({});
     const [selectedValue, setSelectedValue] = useState<string | undefined>('');
 
-    const onSubmit = ({ formData }: IFormData) => {
+    const [isDisabled, setDisabled] = useState(false);
+    const [isReadOnly, setReadOnly] = useState(false);
+    const [isLiveValidate, setLiveValidate] = useState(false);
+
+    const onSubmit = (props: IFormData) => {
+        const { formData } = props;
         setFormData(formData);
         return func(...Object.values(formData));
     };
@@ -36,8 +41,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     };
 
     const handleUpload = useCallback((data: any) => {
-        console.log('data =>', data);
-        console.log('boolean', schema === data, schema, data);
         setCollection(JSON.parse(data));
     }, []);
 
@@ -47,8 +50,19 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     }, [schema]);
 
     const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
-        console.log('From Main', value);
         setSelectedValue(value);
+    };
+
+    const handleDisabledChange = () => {
+        setDisabled(!isDisabled);
+    };
+
+    const handleReadOnlyChange = () => {
+        setReadOnly(!isReadOnly);
+    };
+
+    const handleLiveValidateChange = () => {
+        setLiveValidate(!isLiveValidate);
     };
 
     return (
@@ -59,33 +73,66 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                 <>
                     <h1>JSON Form Fiddle</h1>
                     <SearchBox handleValue={selectValueFromDropDown} />
+
+                    <FormControl component="fieldset">
+                        <FormGroup aria-label="position" row>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isDisabled}
+                                        onChange={handleDisabledChange}
+                                    />
+                                }
+                                label="Disabled"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isReadOnly}
+                                        onChange={handleReadOnlyChange}
+                                    />
+                                }
+                                label="Read-Only"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={isLiveValidate}
+                                        onChange={handleLiveValidateChange}
+                                    />
+                                }
+                                label="Live Validate"
+                            />
+                        </FormGroup>
+                    </FormControl>
                     <section className='jsonFiddle'>
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout'>
-                                    <SchemaManager layout={onChange} data={schema} onDataUploaded={handleUpload} title='Schema' />
+                                    <Editors data={schema} onDataUploaded={handleUpload} title='Schema' />
                                 </div>
                                 <div className='UI-schema-layout-result'>
-                                    <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='UI Schema' />
-                                    <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='Result' />
+                                    <Editors data={formData} title='UI Schema' />
+                                    <Editors data={formData} title='Result' />
                                 </div>
                             </div>
-                            {console.log('collection', collection, typeof collection)}
                             <div className='fiddle-right-side'>
                                 <Form
-                                    // schema={collection}
-                                    schema={collection || schema}
+                                    schema={collection}
                                     // uiSchema={uiSchema} // optional for handling custom things in UI
-                                    liveValidate={liveValidate}
+                                    liveValidate={isLiveValidate || liveValidate}
                                     onSubmit={onSubmit}
                                     validator={validator}
                                     noHtml5Validate
+                                    disabled={isDisabled}
+                                    readonly={isReadOnly}
                                 />
                             </div>
                         </SplitterLayout>
                     </section>
                 </>
             }
+
         </main>
     );
 };
@@ -98,7 +145,7 @@ FunctionCaller.defaultProps = {
     validator: true
 };
 
-export default (FunctionCaller);
+export default memo(FunctionCaller);
 function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStateAction<{}>>, setIsError: React.Dispatch<React.SetStateAction<boolean>>) {
     if (isEmpty(schema)) {
         setFuncList({}); // Return an empty {} if schema is not provided
@@ -125,3 +172,7 @@ function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStat
     }
 }
 
+{/* <SchemaManager layout={onChange} data={schema} onDataUploaded={handleUpload} title='Schema' /> */ }
+{/* <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='UI Schema' /> */ }
+
+{/* <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='Result' /> */ }

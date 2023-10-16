@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { Box } from '@mui/material';
 
 const funcLists = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -36,6 +37,11 @@ function SearchBox(props: { handleValue: any; }) {
                 value={selectedValue}
                 onChange={selectValueFromDropDown}
                 renderInput={(params) => <TextField {...params} label="Form Types" />}
+                renderOption={(props, option) => (
+                    <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                        {option.label} ({option.year})
+                    </Box>
+                )}
             />
             <p>Selected Value: {selectedValue ? selectedValue.label : ''}</p>
         </div>

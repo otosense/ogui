@@ -22,19 +22,17 @@ interface IFormData { [key: string]: any; }
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { func, getStoreList, onLoadSchema } = props;
-    const [orientation, setOrientation] = useState(false);
+
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
-    const [selectedValue, setSelectedValue] = useState<string | undefined>('');
 
     const [isDisabled, setDisabled] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
     const [isLiveValidate, setLiveValidate] = useState(false);
     const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(true);
-
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -42,9 +40,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         return func(...Object.values(formData));
     };
 
-    const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
-        setOrientation(viewPosition);
-    };
+    // const [orientation, setOrientation] = useState(false);
+    // const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
+    //     setOrientation(viewPosition);
+    // };
 
     const handleUpload = useCallback((data: any) => {
         setCollection(JSON.parse(data));
@@ -59,10 +58,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
         // dataGenerator(schema, setFuncList, setIsError);
     }, [getStoreList]);
-
-    const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
-        setSelectedValue(value);
-    };
 
     const handleDisabledChange = () => {
         setDisabled(!isDisabled);
@@ -91,7 +86,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                     <h1 className='center'>JSON Form Fiddle</h1>
                     <div className='inputs-fiddle'>
 
-                        <SearchBox handleValue={selectValueFromDropDown} data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
+                        <SearchBox data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
 
                         {ExtraRules(isLiveValidate, handleLiveValidateChange, isDisabled, handleDisabledChange, isReadOnly, handleReadOnlyChange, isNoHtml5Validate, handleHtml5ValidateChange)}
 

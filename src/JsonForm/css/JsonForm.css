@@ -40,7 +40,7 @@
 }
 
 .splitter-layout {
-    width: 98% !important;
+    width: 95% !important;
     /* height: 98% !important; */
     /* position: unset !important; */
 }
@@ -121,4 +121,8 @@ h1.center {
 
 .layout-common main {
     border: 1px solid #ccc;
+}
+
+main.main-json-fiddle {
+    text-align: left;
 }

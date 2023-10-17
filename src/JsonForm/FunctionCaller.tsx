@@ -110,7 +110,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                 </div>
                             </div>
                             <div className='fiddle-right-side'>
-                                <Form
+                                {!isEmpty(collection) && <Form
                                     schema={collection}
                                     // uiSchema={uiSchema} // optional for handling custom things in UI
                                     liveValidate={isLiveValidate || liveValidate}
@@ -120,7 +120,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     disabled={isDisabled}
                                     readonly={isReadOnly}
                                     formData={formData}
-                                />
+                                />}
                             </div>
                         </SplitterLayout>
                     </section>

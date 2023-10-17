@@ -14,13 +14,14 @@ interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: any;
     func: (...args: any[]) => any | void;
     schema: {} | (() => {}) | (() => Promise<{}>);
+    onLoadSchema: {} | (() => {}) | (() => Promise<{}>);
 }
 
 interface IFormData { [key: string]: any; }
 
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
-    const { schema, liveValidate, func, getStoreList } = props;
+    const { schema, liveValidate, func, getStoreList, onLoadSchema } = props;
     const [orientation, setOrientation] = useState(false);
     const [collection, setCollection] = useState<any>(schema);
     const [isError, setIsError] = useState<boolean>(false);
@@ -48,6 +49,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const handleUpload = useCallback((data: any) => {
         setCollection(JSON.parse(data));
     }, []);
+
+    const schemaData = (data: string) => {
+        setCollection((data));
+    };
 
 
     useEffect(() => {
@@ -85,7 +90,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                     <h1 className='center'>JSON Form Fiddle</h1>
                     <div className='inputs-fiddle'>
 
-                        <SearchBox handleValue={selectValueFromDropDown} data={funcList} />
+                        <SearchBox handleValue={selectValueFromDropDown} data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
 
                         {ExtraRules(isLiveValidate, handleLiveValidateChange, isDisabled, handleDisabledChange, isReadOnly, handleReadOnlyChange, isNoHtml5Validate, handleHtml5ValidateChange)}
 
@@ -95,7 +100,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout layout-common'>
-                                    <Editors data={schema} onDataUploaded={handleUpload} title='Schema' />
+                                    <Editors data={collection} onDataUploaded={handleUpload} title='Schema' />
                                 </div>
                                 <div className='UI-schema-layout-result layout-common'>
                                     <Editors data={formData} title='UI Schema' />

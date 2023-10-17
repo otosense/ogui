@@ -3,14 +3,15 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/material';
 import { storeMapping } from '../utilities/Mapping/storeMapping';
+import { isObject, isFunction } from 'lodash';
 
 interface Option {
     label: string;
     value: string;
 }
 
-function SearchBox(props: { handleValue: any; data: any; }) {
-    const { handleValue, data } = props;
+function SearchBox(props: { handleValue: any; data: any; onLoadSchema: any; schemaData: any; }) {
+    const { handleValue, data, onLoadSchema, schemaData } = props;
     const [selectedValue, setSelectedValue] = useState<Option | null>(null);
     const [funcLists, setFuncLists] = useState<Option[]>([]);
 
@@ -25,37 +26,19 @@ function SearchBox(props: { handleValue: any; data: any; }) {
     ) => {
         setSelectedValue(newValue);
         handleValue(newValue);
-        getItems(newValue?.value);
-    };
-
-    const getItems = async (data: any) => {
-        console.log({ data });
-        const payload = {
-            "_attr_name": "__getitem__",
-            "key": data
-        };
-
-        try {
-            const response = await fetch("http://20.219.8.178:8080/form_spec_store", {
-                method: "POST",
-                body: JSON.stringify({
-                    ...payload
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
+        if (onLoadSchema) {
+            const val = onLoadSchema(newValue?.value);
+            if (isObject(val)) {
+                const result: any = val;
+                if (isFunction(result?.then)) {
+                    // Check if the result of the function is a promise
+                    result.then((dataArray: any) => {
+                        schemaData && schemaData(dataArray.rjsf.schema);
+                    });
+                } else {
+                    schemaData && schemaData(result.rjsf.schema);
                 }
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
             }
-
-            const json = await response.json();
-            // console.log('json', json);
-            return json;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return []; // Return an empty array or handle the error appropriately
         }
     };
 
@@ -65,12 +48,13 @@ function SearchBox(props: { handleValue: any; data: any; }) {
                 id="form-list"
                 options={funcLists}
                 getOptionLabel={(option) => option.label}
+                groupBy={(option) => option.label.split('.')[0]}
                 value={selectedValue}
                 onChange={selectValueFromDropDown}
                 renderInput={(params) => <TextField {...params} label="Form Types" />}
                 renderOption={(props, option) => (
                     <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                        {option.label}
+                        {option?.label?.split('.')[1]}
                     </Box>
                 )}
             />

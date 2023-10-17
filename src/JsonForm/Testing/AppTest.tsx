@@ -56,11 +56,10 @@ function AppTest() {
         }
     };
 
-    const getItems = async (data: any) => {
-        console.log({ data });
+    const getSchemaForForm = async (data: any) => {
         const payload = {
             "_attr_name": "__getitem__",
-            "k": data
+            "key": data
         };
 
         try {
@@ -117,6 +116,7 @@ function AppTest() {
 
     const configuration = {
         getStoreList: getFullFormSpecStore(),
+        onLoadSchema: getSchemaForForm,
         // schema: getItems('olab.objects.dpp.accuracy'),
         schema: schema,
         liveValidate: false,

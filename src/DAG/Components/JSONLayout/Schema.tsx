@@ -128,11 +128,9 @@ function JsonEditor(props: {
     };
 
     // useEffect(() => {
-    //     console.log('jsonString', jsonString);
     //     if (jsonString) {
     //         const parsedJson = JSON?.parse(jsonString);
     //         const hasEmptyValues = checkForEmptyValues(parsedJson);
-    //         console.log('hasEmptyValues', hasEmptyValues);
     //         if (hasEmptyValues) {
     //             setError({ message: 'JSON contains empty strings or empty values', lineNumber: null });
     //         } else {

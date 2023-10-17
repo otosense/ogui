@@ -1,0 +1,124 @@
+/* Scroll Bar Style Starts here */
+/* width */
+/* For both x-axis and y-axis */
+::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
+    height: 5px;
+    /* Height of the scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track background color */
+}
+
+/* Handle for y-axis */
+::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    /* Handle background color for y-axis */
+}
+
+/* Handle for x-axis */
+::-webkit-scrollbar-thumb:horizontal {
+    background: #6b7280;
+    /* Handle background color for x-axis */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Handle background color on hover */
+}
+
+
+/* Scroll Bar Style Ends here */
+
+.jsonFiddle {
+    display: flex;
+}
+
+.splitter-layout {
+    width: 98% !important;
+    /* height: 98% !important; */
+    /* position: unset !important; */
+}
+
+.UI-schema-layout-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 99%;
+}
+
+.UI-schema-layout-result main {
+    width: 49.6%;
+}
+
+.fiddle-right-side {
+    padding: 0 2%;
+}
+
+.fiddle-left-side {
+    padding: 0 1%;
+}
+
+.autoComplete-Dropdown {
+    width: 25%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.json-area {
+    background: url(http://i.imgur.com/2cOaJ.png);
+    background-attachment: local;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    padding-top: 10px;
+    border-color: #ccc;
+    font-size: 13px;
+    line-height: 16px;
+    width: calc(100% - 10%);
+    color: black;
+    /* height: calc(100vh - 26vh); */
+
+}
+
+.textarea-wrapper {
+    display: inline-block;
+    background-image: linear-gradient(#F1F1F1 50%, #F9F9F9 50%);
+    background-size: 100% 32px;
+    background-position: left 10px;
+    margin-top: 10px;
+    width: 95%;
+    text-align: left;
+}
+
+.formHandler {
+    display: flex !important;
+    /* flex-direction: column !important; */
+    justify-content: space-between !important;
+}
+
+.inputs-fiddle {
+    /* display: flex; */
+    /* justify-content: center; */
+    /* justify-content: space-between; */
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1.center {
+    text-align: center;
+    margin: 1%;
+}
+
+
+.layout-common {
+    margin-bottom: 1%;
+}
+
+.layout-common main {
+    border: 1px solid #ccc;
+}

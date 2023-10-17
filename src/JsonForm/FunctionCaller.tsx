@@ -12,17 +12,16 @@ import ExtraRules from './components/Rules';
 import LoadingOverlay from '../utilities/Loader';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
-    getStoreList: any;
-    func: (...args: any[]) => any | void;
-    schema: {} | (() => {}) | (() => Promise<{}>);
+    getStoreList: [] | (() => []) | (() => Promise<any[]>);
     onLoadSchema: {} | (() => {}) | (() => Promise<{}>);
+    func: (...args: any[]) => any | void;
 }
 
 interface IFormData { [key: string]: any; }
 
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
-    const { schema, liveValidate, func, getStoreList, onLoadSchema } = props;
+    const { func, getStoreList, onLoadSchema } = props;
     const [orientation, setOrientation] = useState(false);
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
@@ -59,7 +58,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     useEffect(() => {
         generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
         // dataGenerator(schema, setFuncList, setIsError);
-    }, [getStoreList, schema]);
+    }, [getStoreList]);
 
     const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
         setSelectedValue(value);
@@ -113,7 +112,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                 {!isEmpty(collection) && <Form
                                     schema={collection}
                                     // uiSchema={uiSchema} // optional for handling custom things in UI
-                                    liveValidate={isLiveValidate || liveValidate}
+                                    liveValidate={isLiveValidate}
                                     onSubmit={onSubmit}
                                     validator={validator}
                                     noHtml5Validate={isNoHtml5Validate}
@@ -133,10 +132,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 
 
 FunctionCaller.defaultProps = {
-    liveValidate: false,
-    schema: {},
     func: (...args: any[]) => { },
-    validator: true
 };
 
 export default memo(FunctionCaller);

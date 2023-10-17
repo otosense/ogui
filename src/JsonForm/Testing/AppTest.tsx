@@ -28,7 +28,7 @@ function AppTest() {
 
     const getFullFormSpecStore = async () => {
 
-        const APIpayload = {
+        const payload = {
             "_attr_name": '__iter__',
         };
         // Saving the Dag to Backend using API
@@ -36,7 +36,7 @@ function AppTest() {
             const response = await fetch("http://20.219.8.178:8080/form_spec_store", {
                 method: "POST",
                 body: JSON.stringify({
-                    ...APIpayload
+                    ...payload
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
@@ -109,19 +109,15 @@ function AppTest() {
     //     return await schema;
     // };
 
-    const getSchema = () => {
-        return schema;
-    };
+    // const getSchema = () => {
+    //     return schema;
+    // };
 
 
     const configuration = {
         getStoreList: getFullFormSpecStore(),
         onLoadSchema: getSchemaForForm,
-        // schema: getItems('olab.objects.dpp.accuracy'),
-        schema: schema,
-        liveValidate: false,
         func: sum,
-        validator: true,
     };
     return (
         <FunctionCaller {...configuration} />

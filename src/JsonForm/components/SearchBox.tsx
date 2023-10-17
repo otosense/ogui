@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { Box } from '@mui/material';
-
-const funcLists = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-];
+import { storeMapping } from '../utilities/Mapping/storeMapping';
 
 interface Option {
     label: string;
-    year: number;
+    value: string;
 }
 
-function SearchBox(props: { handleValue: any; }) {
-    const { handleValue } = props;
+function SearchBox(props: { handleValue: any; data: any; }) {
+    const { handleValue, data } = props;
     const [selectedValue, setSelectedValue] = useState<Option | null>(null);
+    const [funcLists, setFuncLists] = useState<Option[]>([]);
+
+    useEffect(() => {
+        const conversion = storeMapping(data);
+        setFuncLists(conversion);
+    }, [data]);
 
     const selectValueFromDropDown = (
         event: React.SyntheticEvent<Element, Event>,
@@ -26,6 +25,38 @@ function SearchBox(props: { handleValue: any; }) {
     ) => {
         setSelectedValue(newValue);
         handleValue(newValue);
+        getItems(newValue?.value);
+    };
+
+    const getItems = async (data: any) => {
+        console.log({ data });
+        const payload = {
+            "_attr_name": "__getitem__",
+            "key": data
+        };
+
+        try {
+            const response = await fetch("http://20.219.8.178:8080/form_spec_store", {
+                method: "POST",
+                body: JSON.stringify({
+                    ...payload
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const json = await response.json();
+            // console.log('json', json);
+            return json;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return []; // Return an empty array or handle the error appropriately
+        }
     };
 
     return (
@@ -39,11 +70,11 @@ function SearchBox(props: { handleValue: any; }) {
                 renderInput={(params) => <TextField {...params} label="Form Types" />}
                 renderOption={(props, option) => (
                     <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                        {option.label} ({option.year})
+                        {option.label}
                     </Box>
                 )}
             />
-            {/* <p>Selected Value: {selectedValue ? selectedValue.label : ''}</p> */}
+            <p>Selected Value: {selectedValue ? selectedValue.value : ''}</p>
         </div>
     );
 }

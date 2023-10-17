@@ -1,15 +1,17 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
-import { isEmpty, isObject } from 'lodash';
+import { isArray, isEmpty, isFunction, isObject } from 'lodash';
 import { Alert, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
 import SplitterLayout from 'react-splitter-layout';
 import SearchBox from './components/SearchBox';
 import Editors from './components/Editor';
+import ExtraRules from './components/Rules';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
+    getStoreList: any;
     func: (...args: any[]) => any | void;
     schema: {} | (() => {}) | (() => Promise<{}>);
 }
@@ -18,10 +20,11 @@ interface IFormData { [key: string]: any; }
 
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
-    const { schema, liveValidate, func } = props;
+    const { schema, liveValidate, func, getStoreList } = props;
     const [orientation, setOrientation] = useState(false);
     const [collection, setCollection] = useState<any>(schema);
     const [isError, setIsError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedValue, setSelectedValue] = useState<string | undefined>('');
@@ -48,8 +51,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 
 
     useEffect(() => {
-        dataGenerator(schema, setFuncList, setIsError);
-    }, [schema]);
+
+        generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
+        // dataGenerator(schema, setFuncList, setIsError);
+    }, [getStoreList, schema]);
 
     const selectValueFromDropDown = (value: React.SetStateAction<string | undefined>) => {
         setSelectedValue(value);
@@ -80,49 +85,9 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                     <h1 className='center'>JSON Form Fiddle</h1>
                     <div className='inputs-fiddle'>
 
-                        <SearchBox handleValue={selectValueFromDropDown} />
+                        <SearchBox handleValue={selectValueFromDropDown} data={funcList} />
 
-                        <FormControl component="fieldset">
-                            <FormGroup aria-label="position" row className='formHandler'>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isLiveValidate}
-                                            onChange={handleLiveValidateChange}
-                                        />
-                                    }
-                                    label="Live Validation"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isDisabled}
-                                            onChange={handleDisabledChange}
-                                        />
-                                    }
-                                    label="Disable Whole Form"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isReadOnly}
-                                            onChange={handleReadOnlyChange}
-                                        />
-                                    }
-                                    label="Read-Only Whole Form"
-                                />
-
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={isNoHtml5Validate}
-                                            onChange={handleHtml5ValidateChange}
-                                        />
-                                    }
-                                    label="Disable HTML 5 validation"
-                                />
-                            </FormGroup>
-                        </FormControl>
+                        {ExtraRules(isLiveValidate, handleLiveValidateChange, isDisabled, handleDisabledChange, isReadOnly, handleReadOnlyChange, isNoHtml5Validate, handleHtml5ValidateChange)}
 
                     </div>
 
@@ -168,6 +133,8 @@ FunctionCaller.defaultProps = {
 };
 
 export default memo(FunctionCaller);
+
+
 function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStateAction<{}>>, setIsError: React.Dispatch<React.SetStateAction<boolean>>) {
     if (isEmpty(schema)) {
         setFuncList({}); // Return an empty {} if schema is not provided
@@ -192,6 +159,70 @@ function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStat
             setFuncList(result);
         }
     }
+}
+
+
+
+function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
+    if (isEmpty(DagFuncList)) {
+        setFuncList([]); // Return an empty array if DagFuncList is not provided
+        setIsError(true);
+    }
+    console.log('asasa', typeof DagFuncList);
+
+    if (isObject(DagFuncList)) {
+        setIsError(false);
+        const result: any = DagFuncList;
+        if (isFunction(result?.then)) {
+            // Check if the result of the function is a promise
+            result.then((dataArray: any) => {
+                if (dataArray.length > 0) {
+                    console.log({ dataArray });
+                    setFuncList(dataArray);
+                    // const list = storeGrouping(dataArray);
+                    // setFuncList(list.funcs); // storing FuncList
+                } else {
+                    setIsError(true);
+                }
+                setIsLoading(false);
+            });
+        }
+        console.log({ result }, typeof result);
+    }
+
+    // return;
+    // if (isFunction(DagFuncList)) {
+    //     setIsError(false);
+    //     // Check if data is a function
+    //     const result: any = DagFuncList();
+    //     console.log({ result }, isFunction(result?.then));
+    //     if (isFunction(result?.then)) {
+    //         // Check if the result of the function is a promise
+    //         result.then((dataArray: any) => {
+    //             if (dataArray.length > 0) {
+    //                 const list = storeGrouping(dataArray);
+    //                 setFuncList(list.funcs); // storing FuncList
+    //             } else {
+    //                 setIsError(true);
+    //             }
+    //             setIsLoading(false);
+    //         });
+    //     } else {
+    //         const dataArray = result as any[]; // Assuming the result is an array
+    //         const list = storeGrouping(dataArray);
+    //         setFuncList(list.funcs); // storing FuncList
+    //         setIsLoading(false);
+    //     }
+    // } else if (isArray(DagFuncList)) {
+    //     // Check if data is an array
+    //     const list = storeGrouping(DagFuncList);
+    //     setFuncList(list.funcs); // storing FuncList
+    //     setIsLoading(false);
+    // } else {
+    //     setFuncList([]);
+    //     setIsLoading(false);
+    //     setIsError(true);
+    // }
 }
 
 {/* <SchemaManager layout={onChange} data={schema} onDataUploaded={handleUpload} title='Schema' /> */ }

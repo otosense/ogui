@@ -26,6 +26,67 @@ function AppTest() {
         required: ['a', 'b']
     };
 
+    const getFullFormSpecStore = async () => {
+
+        const APIpayload = {
+            "_attr_name": '__iter__',
+        };
+        // Saving the Dag to Backend using API
+        try {
+            const response = await fetch("http://20.219.8.178:8080/form_spec_store", {
+                method: "POST",
+                body: JSON.stringify({
+                    ...APIpayload
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const json = await response.json();
+            // console.log('json', json);
+            return json;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return []; // Return an empty array or handle the error appropriately
+        }
+    };
+
+    const getItems = async (data: any) => {
+        console.log({ data });
+        const payload = {
+            "_attr_name": "__getitem__",
+            "k": data
+        };
+
+        try {
+            const response = await fetch("http://20.219.8.178:8080/form_spec_store", {
+                method: "POST",
+                body: JSON.stringify({
+                    ...payload
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const json = await response.json();
+            // console.log('json', json);
+            return json;
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            return []; // Return an empty array or handle the error appropriately
+        }
+    };
+
 
 
     // const schema = {
@@ -55,12 +116,14 @@ function AppTest() {
 
 
     const configuration = {
-        schema: getSchema(),
-        // schema: schema,
+        getStoreList: getFullFormSpecStore(),
+        // schema: getItems('olab.objects.dpp.accuracy'),
+        schema: schema,
         liveValidate: false,
         func: sum,
         validator: true,
     };
+    console.log('asasasa', configuration.getStoreList);
     return (
         <FunctionCaller {...configuration} />
     );

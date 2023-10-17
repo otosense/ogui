@@ -15,6 +15,27 @@ type TSchemaManager = {
         value: string;
     };
 };
+const MONACO_OPTIONS = {
+    autoIndent: "full",
+    automaticLayout: true,
+    contextmenu: true,
+    fontFamily: "monospace",
+    fontSize: 13,
+    lineHeight: 24,
+    hideCursorInOverviewRuler: true,
+    matchBrackets: "always",
+    minimap: {
+        enabled: false,
+    },
+    readOnly: false,
+    scrollbar: {
+        horizontalSliderSize: 4,
+        verticalSliderSize: 4,
+    },
+    selectOnLineNumbers: true,
+    roundedSelection: false,
+    cursorStyle: 'line',
+};
 function Editors(props: TSchemaManager) {
     const { title, data, onDataUploaded, saveSchema, formType } = props;
     const [errors, setErrors] = useState<any[]>([]);
@@ -79,7 +100,7 @@ function Editors(props: TSchemaManager) {
             {<Editor
                 height='40vh'
                 language='json'
-                options={{ minimap: { enabled: false } }}
+                options={MONACO_OPTIONS}
                 value={value}
                 onValidate={handleEditorValidation}
                 onChange={handleEditorChange}

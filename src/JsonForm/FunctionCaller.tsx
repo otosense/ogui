@@ -2,14 +2,14 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { isArray, isEmpty, isFunction, isObject } from 'lodash';
-import { Alert } from '@mui/material';
+import { Alert, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
 import SplitterLayout from 'react-splitter-layout';
 import SearchBox from './components/SearchBox';
 import Editors from './components/Editor';
-import ExtraRules from './components/Rules';
 import LoadingOverlay from '../utilities/Loader';
+import FormOptions from './components/FormOptions';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: [] | (() => []) | (() => Promise<any[]>);
@@ -33,6 +33,8 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const [isReadOnly, setReadOnly] = useState(false);
     const [isLiveValidate, setLiveValidate] = useState(false);
     const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(true);
+    const [liveOmit, setLiveOmit] = useState(false);
+    const [omitExtraData, setOmitExtraData] = useState(false);
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -75,6 +77,18 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         setIsNoHtml5Validate(!isNoHtml5Validate);
     };
 
+    const handleOmitExtraDataChange = () => {
+        setOmitExtraData(!omitExtraData);
+    };
+
+
+    const handleLiveOmitChange = () => {
+        setLiveOmit(!liveOmit);
+    };
+
+
+
+
     if (isLoading) return <LoadingOverlay />;
 
     return (
@@ -88,8 +102,20 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 
                         <SearchBox data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
 
-                        {ExtraRules(isLiveValidate, handleLiveValidateChange, isDisabled, handleDisabledChange, isReadOnly, handleReadOnlyChange, isNoHtml5Validate, handleHtml5ValidateChange)}
-
+                        <FormOptions
+                            isLiveValidate={isLiveValidate}
+                            isDisabled={isDisabled}
+                            isReadOnly={isReadOnly}
+                            isNoHtml5Validate={isNoHtml5Validate}
+                            omitExtraData={omitExtraData}
+                            liveOmit={liveOmit}
+                            handleLiveValidateChange={handleLiveValidateChange}
+                            handleDisabledChange={handleDisabledChange}
+                            handleReadOnlyChange={handleReadOnlyChange}
+                            handleHtml5ValidateChange={handleHtml5ValidateChange}
+                            handleOmitExtraDataChange={handleOmitExtraDataChange}
+                            handleLiveOmitChange={handleLiveOmitChange}
+                        />
                     </div>
 
                     <section className='jsonFiddle'>
@@ -99,7 +125,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     <Editors data={collection} onDataUploaded={handleUpload} title='Schema' />
                                 </div>
                                 <div className='UI-schema-layout-result layout-common'>
-                                    <Editors data={formData} title='UI Schema' />
+                                    <Editors data={null} title='UI Schema' />
                                     <Editors data={formData} title='Result' />
                                 </div>
                             </div>
@@ -114,6 +140,9 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                     disabled={isDisabled}
                                     readonly={isReadOnly}
                                     formData={formData}
+                                    liveOmit={liveOmit}
+                                    omitExtraData={omitExtraData}
+                                    showErrorList='top'
                                 />}
                             </div>
                         </SplitterLayout>

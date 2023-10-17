@@ -11,7 +11,6 @@ type TSchemaManager = {
 };
 function Editors(props: TSchemaManager) {
     const { title, data, onDataUploaded } = props;
-    // console.log({ props });
     const [errors, setErrors] = useState<any[]>([]);
     const [jsonString, setJsonString] = useState<any>({});
 

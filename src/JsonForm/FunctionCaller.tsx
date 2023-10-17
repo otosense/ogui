@@ -1,14 +1,15 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { isArray, isEmpty, isFunction, isObject } from 'lodash';
-import { Alert, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
+import { Alert } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
 import SplitterLayout from 'react-splitter-layout';
 import SearchBox from './components/SearchBox';
 import Editors from './components/Editor';
 import ExtraRules from './components/Rules';
+import LoadingOverlay from '../utilities/Loader';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: any;
@@ -23,7 +24,7 @@ interface IFormData { [key: string]: any; }
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { schema, liveValidate, func, getStoreList, onLoadSchema } = props;
     const [orientation, setOrientation] = useState(false);
-    const [collection, setCollection] = useState<any>(schema);
+    const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
@@ -56,7 +57,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 
 
     useEffect(() => {
-
         generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
         // dataGenerator(schema, setFuncList, setIsError);
     }, [getStoreList, schema]);
@@ -80,6 +80,8 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const handleHtml5ValidateChange = () => {
         setIsNoHtml5Validate(!isNoHtml5Validate);
     };
+
+    if (isLoading) return <LoadingOverlay />;
 
     return (
         <main>
@@ -173,7 +175,6 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
         setFuncList([]); // Return an empty array if DagFuncList is not provided
         setIsError(true);
     }
-    console.log('asasa', typeof DagFuncList);
 
     if (isObject(DagFuncList)) {
         setIsError(false);
@@ -182,17 +183,16 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
             // Check if the result of the function is a promise
             result.then((dataArray: any) => {
                 if (dataArray.length > 0) {
-                    console.log({ dataArray });
                     setFuncList(dataArray);
-                    // const list = storeGrouping(dataArray);
-                    // setFuncList(list.funcs); // storing FuncList
                 } else {
                     setIsError(true);
+                    setFuncList([]);
                 }
                 setIsLoading(false);
             });
+        } else {
+            setFuncList(result);
         }
-        console.log({ result }, typeof result);
     }
 
     // return;
@@ -200,7 +200,6 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
     //     setIsError(false);
     //     // Check if data is a function
     //     const result: any = DagFuncList();
-    //     console.log({ result }, isFunction(result?.then));
     //     if (isFunction(result?.then)) {
     //         // Check if the result of the function is a promise
     //         result.then((dataArray: any) => {
@@ -229,8 +228,3 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
     //     setIsError(true);
     // }
 }
-
-{/* <SchemaManager layout={onChange} data={schema} onDataUploaded={handleUpload} title='Schema' /> */ }
-{/* <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='UI Schema' /> */ }
-
-{/* <SchemaManager layout={onChange} data={formData} onDataUploaded={handleUpload} title='Result' /> */ }

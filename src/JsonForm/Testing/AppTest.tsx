@@ -5,7 +5,7 @@ import FunctionCaller from '../FunctionCaller';
 function AppTest() {
     const sum = (a: number, b: number) => {
         const output = a + b;
-        console.log('object', output, typeof output);
+        // console.log('object', output, typeof output);
         return output;
     };
 
@@ -123,7 +123,6 @@ function AppTest() {
         func: sum,
         validator: true,
     };
-    console.log('asasasa', configuration.getStoreList);
     return (
         <FunctionCaller {...configuration} />
     );

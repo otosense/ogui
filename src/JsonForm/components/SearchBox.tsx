@@ -59,7 +59,7 @@ function SearchBox(props: { handleValue: any; data: any; onLoadSchema: any; sche
                     </Box>
                 )}
             />
-            <p>Selected Value: {selectedValue ? selectedValue.value : ''}</p>
+            {/* <p>Selected Value: {selectedValue ? selectedValue.value : ''}</p> */}
         </div>
     );
 }

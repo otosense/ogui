@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import { isArray, isEmpty, isFunction, isObject } from 'lodash';
-import { Alert, Checkbox, FormControl, FormControlLabel, FormGroup } from '@mui/material';
+import { Alert } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
 import SplitterLayout from 'react-splitter-layout';
@@ -14,15 +14,14 @@ import FormOptions from './components/FormOptions';
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: [] | (() => []) | (() => Promise<any[]>);
     onLoadSchema: {} | (() => {}) | (() => Promise<{}>);
-    func: (...args: any[]) => any | void;
     saveSchema: any;
 }
 
 interface IFormData { [key: string]: any; }
 
 
-const FunctionCaller = (props: IFunctionCallerProps) => {
-    const { func, getStoreList, onLoadSchema, saveSchema } = props;
+const SchemaFormFiddle = (props: IFunctionCallerProps) => {
+    const { getStoreList, onLoadSchema, saveSchema } = props;
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -38,7 +37,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         //     ...prevCollection,
         //     formData, // Append form data
         // }));
-        return func(...Object.values(formData));
     };
 
     // const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
@@ -56,7 +54,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 
     useEffect(() => {
         generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
-        // dataGenerator(schema, setFuncList, setIsError);
     }, [getStoreList]);
 
     const handleValue = (value: any) => {
@@ -68,11 +65,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     useEffect(() => {
         // Function to handle window resize
         const handleResize = () => {
-            if (window.innerWidth < 768) {
-                setOrientation(true);
-            } else {
-                setOrientation(false);
-            }
+            setOrientation(window.innerWidth < 768);
         };
 
         // Add event listener for window resize
@@ -127,43 +120,15 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
 };
 
 
-FunctionCaller.defaultProps = {
-    func: (...args: any[]) => { },
+SchemaFormFiddle.defaultProps = {
+    getStoreList: [],
+    onLoadSchema: {},
+    saveSchema: {}
 };
 
-export default memo(FunctionCaller);
-
-
-function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStateAction<{}>>, setIsError: React.Dispatch<React.SetStateAction<boolean>>) {
-    if (isEmpty(schema)) {
-        setFuncList({}); // Return an empty {} if schema is not provided
-        setIsError(true);
-    }
-    if (isObject(schema)) {
-        const result: any = schema;
-        setIsError(false);
-        if (isObject(result.then)) {
-            // Check if the result of the function is a promise
-            result.then((dataArray: any) => {
-                if (dataArray) {
-                    setFuncList(dataArray);
-                } else {
-                    setIsError(true);
-                }
-            });
-        } else {
-            if (Object.keys(result).length === 0) {
-                setIsError(true);
-            }
-            setFuncList(result);
-        }
-    }
-}
-
-
-
+export default memo(SchemaFormFiddle);
 function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
-    setIsLoading(true);
+    // setIsLoading(true);
     if (isEmpty(DagFuncList)) {
         setFuncList([]); // Return an empty array if DagFuncList is not provided
         setIsError(true);
@@ -188,37 +153,4 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
         }
         setIsLoading(false);
     }
-
-    // return;
-    // if (isFunction(DagFuncList)) {
-    //     setIsError(false);
-    //     // Check if data is a function
-    //     const result: any = DagFuncList();
-    //     if (isFunction(result?.then)) {
-    //         // Check if the result of the function is a promise
-    //         result.then((dataArray: any) => {
-    //             if (dataArray.length > 0) {
-    //                 const list = storeGrouping(dataArray);
-    //                 setFuncList(list.funcs); // storing FuncList
-    //             } else {
-    //                 setIsError(true);
-    //             }
-    //             setIsLoading(false);
-    //         });
-    //     } else {
-    //         const dataArray = result as any[]; // Assuming the result is an array
-    //         const list = storeGrouping(dataArray);
-    //         setFuncList(list.funcs); // storing FuncList
-    //         setIsLoading(false);
-    //     }
-    // } else if (isArray(DagFuncList)) {
-    //     // Check if data is an array
-    //     const list = storeGrouping(DagFuncList);
-    //     setFuncList(list.funcs); // storing FuncList
-    //     setIsLoading(false);
-    // } else {
-    //     setFuncList([]);
-    //     setIsLoading(false);
-    //     setIsError(true);
-    // }
 }

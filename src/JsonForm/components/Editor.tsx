@@ -38,7 +38,6 @@ const MONACO_OPTIONS = {
 };
 function Editors(props: TSchemaManager) {
     const { title, data, onDataUploaded, saveSchema, formType } = props;
-    console.log({ props });
     const [errors, setErrors] = useState<any[]>([]);
     const [jsonString, setJsonString] = useState<any>({});
     const [value, setValue] = useState((JSON.stringify(data, null, 2)));
@@ -59,8 +58,13 @@ function Editors(props: TSchemaManager) {
 
 
     const saveSchemas = () => {
+        console.log({ jsonString });
+        const val = {
+            rjsf: jsonString
+        };
+        console.log({ val });
         const finalPayload = {
-            value: jsonString,
+            value: val,
             key: formType?.value,
         };
         saveSchema(finalPayload);

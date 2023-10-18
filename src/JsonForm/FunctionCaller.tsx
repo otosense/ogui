@@ -34,6 +34,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
         setFormData(formData);
+        setCollection((prevCollection: any) => ({
+            ...prevCollection,
+            formData, // Append form data
+        }));
         return func(...Object.values(formData));
     };
 
@@ -43,13 +47,11 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     // };
 
     const handleUpload = useCallback((data: any) => {
-        console.log({ data });
         setCollection(JSON.parse(data));
     }, []);
 
-    const schemaData = (data: string) => {
-        console.log({ data });
-        setCollection((data));
+    const schemaData = (data: { rjsf: any; }) => {
+        setCollection((data?.rjsf));
     };
 
 
@@ -61,9 +63,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const handleValue = (value: any) => {
         setSelectedFormType(value);
     };
-
-
-
 
     if (isLoading) return <LoadingOverlay />;
 
@@ -84,31 +83,15 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                 <div className='schema-layout layout-common'>
                                     <Editors data={collection} onDataUploaded={handleUpload} title='Specifications' saveSchema={saveSchema} formType={selectedFormType} />
                                 </div>
-                                {/* <div className='UI-schema-layout-result layout-common'>
-                                    <Editors data={null} title='UI Schema' />
-                                    <Editors data={formData} title='Result' />
-                                </div> */}
                             </div>
                             <div className='fiddle-right-side'>
-                                {/* {!isEmpty(collection) && <Form
-                                    schema={collection}
-                                    // uiSchema={uiSchema} // optional for handling custom things in UI
-                                    liveValidate={false}
-                                    onSubmit={onSubmit}
-                                    validator={validator}
-                                    noHtml5Validate={true}
-                                    disabled={false}
-                                    readonly={false}
-                                    formData={formData}
-                                    liveOmit={false}
-                                    omitExtraData={false}
-                                    showErrorList='top'
-                                />} */}
-
-                                {/* {!isEmpty(collection)} && <Form
-                                    {...collection.rjsf}
-                                    validator={validator}
-                                /> */}
+                                {!isEmpty(collection) &&
+                                    <Form
+                                        validator={validator}
+                                        {...collection}
+                                        onSubmit={onSubmit}
+                                    />
+                                }
                             </div>
                         </SplitterLayout>
                     </section>

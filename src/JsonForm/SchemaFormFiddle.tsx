@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import Form from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
-import { isArray, isEmpty, isFunction, isObject } from 'lodash';
+import { isEmpty, isFunction, isObject } from 'lodash';
 import { Alert } from '@mui/material';
 import { FormProps } from '@rjsf/core';
 import { RJSFSchema } from '@rjsf/utils';
@@ -9,7 +9,7 @@ import SplitterLayout from 'react-splitter-layout';
 import SearchBox from './components/SearchBox';
 import Editors from './components/Editor';
 import LoadingOverlay from '../utilities/Loader';
-import FormOptions from './components/FormOptions';
+import { useOrientation } from '../utilities/withOrientationEffect';
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: [] | (() => []) | (() => Promise<any[]>);
@@ -28,7 +28,6 @@ const SchemaFormFiddle = (props: IFunctionCallerProps) => {
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedFormType, setSelectedFormType] = useState<any>({});
-    const [orientation, setOrientation] = useState(false);
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -38,10 +37,8 @@ const SchemaFormFiddle = (props: IFunctionCallerProps) => {
         //     formData, // Append form data
         // }));
     };
-
-    // const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
-    //     setOrientation(viewPosition);
-    // };
+    // handle orientation change
+    const orientation = useOrientation((orientation: boolean) => orientation);
 
     const handleUpload = useCallback((data: any) => {
         setCollection(JSON.parse(data));
@@ -59,26 +56,6 @@ const SchemaFormFiddle = (props: IFunctionCallerProps) => {
     const handleValue = (value: any) => {
         setSelectedFormType(value);
     };
-
-
-    // change the left side Schema Editor view position
-    useEffect(() => {
-        // Function to handle window resize
-        const handleResize = () => {
-            setOrientation(window.innerWidth < 768);
-        };
-
-        // Add event listener for window resize
-        window.addEventListener('resize', handleResize);
-
-        // Initial check for screen size when the component mounts
-        handleResize();
-
-        // Clean up the event listener when the component unmounts
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     if (isLoading) return <LoadingOverlay />;
 

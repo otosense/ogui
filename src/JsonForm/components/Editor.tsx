@@ -58,11 +58,9 @@ function Editors(props: TSchemaManager) {
 
 
     const saveSchemas = () => {
-        console.log({ jsonString });
         const val = {
             rjsf: jsonString
         };
-        console.log({ val });
         const finalPayload = {
             value: val,
             key: formType?.value,

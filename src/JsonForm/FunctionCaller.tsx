@@ -23,13 +23,13 @@ interface IFormData { [key: string]: any; }
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { func, getStoreList, onLoadSchema, saveSchema } = props;
-    console.log('object', props);
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedFormType, setSelectedFormType] = useState<any>({});
+    const [orientation, setOrientation] = useState(false);
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -41,7 +41,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         return func(...Object.values(formData));
     };
 
-    // const [orientation, setOrientation] = useState(false);
     // const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
     //     setOrientation(viewPosition);
     // };
@@ -64,6 +63,30 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         setSelectedFormType(value);
     };
 
+
+    // change the left side Schema Editor view position
+    useEffect(() => {
+        // Function to handle window resize
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setOrientation(true);
+            } else {
+                setOrientation(false);
+            }
+        };
+
+        // Add event listener for window resize
+        window.addEventListener('resize', handleResize);
+
+        // Initial check for screen size when the component mounts
+        handleResize();
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     if (isLoading) return <LoadingOverlay />;
 
     return (
@@ -78,7 +101,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                     </div>
 
                     <section className='jsonFiddle'>
-                        <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
+                        <SplitterLayout vertical={orientation} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout layout-common'>
                                     <Editors data={collection} onDataUploaded={handleUpload} title='Specifications' saveSchema={saveSchema} formType={selectedFormType} />
@@ -90,6 +113,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                                         validator={validator}
                                         {...collection}
                                         onSubmit={onSubmit}
+                                        formData={formData} // remove this to clear the value once the submit button is clicked
                                     />
                                 }
                             </div>

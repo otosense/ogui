@@ -197,6 +197,7 @@ function dataGenerator(schema: Object, setFuncList: React.Dispatch<React.SetStat
 
 
 function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
+    setIsLoading(true);
     if (isEmpty(DagFuncList)) {
         setFuncList([]); // Return an empty array if DagFuncList is not provided
         setIsError(true);
@@ -219,6 +220,7 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
         } else {
             setFuncList(result);
         }
+        setIsLoading(false);
     }
 
     // return;

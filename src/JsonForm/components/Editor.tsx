@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import Editor from '@monaco-editor/react';
-import { Alert, AppBar, Box, Divider, IconButton, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
+import Editor, { useMonaco } from '@monaco-editor/react';
+import { Alert, AppBar, Box, Divider, IconButton, Toolbar, Tooltip, Typography } from '@mui/material';
 import LoadingOverlay from '../../utilities/Loader';
 import SaveIcon from '@mui/icons-material/Save';
-import * as monaco from "monaco-editor";
+// import * as monaco from "monaco-editor";
 
 type TSchemaManager = {
     onDataUploaded?: any;
@@ -15,7 +15,7 @@ type TSchemaManager = {
         value: string;
     };
 };
-const MONACO_OPTIONS: monaco.editor.IEditorConstructionOptions = {
+const MONACO_OPTIONS: any = {
     autoIndent: "full",
     automaticLayout: true,
     contextmenu: true,
@@ -42,6 +42,8 @@ function Editors(props: TSchemaManager) {
     const [jsonString, setJsonString] = useState<any>({});
     const [value, setValue] = useState((JSON.stringify(data, null, 2)));
 
+
+    const monaco = useMonaco();
     useEffect(() => {
         setJsonString(data);
         setValue((JSON.stringify(data, null, 2)));
@@ -54,6 +56,12 @@ function Editors(props: TSchemaManager) {
     function handleEditorChange(value: any, event: any) {
         setJsonString(value);
         onDataUploaded && onDataUploaded(value);
+        // setting the cursor back to its normal state
+        setTimeout(() => {
+            monaco?.editor.getEditors().forEach((editor: any) => {
+                editor.setPosition({ lineNumber: event.changes[0]?.range.startLineNumber, column: event.changes[0]?.range.startColumn + 1 });
+            });
+        }, 10);
     }
 
 
@@ -108,6 +116,6 @@ function Editors(props: TSchemaManager) {
     );
 }
 
-export default (Editors);
+export default memo(Editors);
 
 

@@ -34,10 +34,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
         setFormData(formData);
-        setCollection((prevCollection: any) => ({
-            ...prevCollection,
-            formData, // Append form data
-        }));
+        // setCollection((prevCollection: any) => ({
+        //     ...prevCollection,
+        //     formData, // Append form data
+        // }));
         return func(...Object.values(formData));
     };
 

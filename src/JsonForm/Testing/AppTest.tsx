@@ -11,7 +11,7 @@ function AppTest() {
     };
     const getFullFormSpecStore = async () => {
 
-        return await store;
+        // return await store;
 
         const payload = {
             "_attr_name": '__iter__',
@@ -43,7 +43,7 @@ function AppTest() {
 
     const getSchemaForForm = async (data: any) => {
 
-        return await specifications;
+        // return await specifications;
         const payload = {
             "_attr_name": "__getitem__",
             "key": data

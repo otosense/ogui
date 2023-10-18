@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import Editor, { DiffEditor, useMonaco, loader } from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 import { Alert, AppBar, Box, Divider, IconButton, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
-import { isEmpty } from 'lodash';
 import LoadingOverlay from '../../utilities/Loader';
 import SaveIcon from '@mui/icons-material/Save';
+import * as monaco from "monaco-editor";
 
 type TSchemaManager = {
     onDataUploaded?: any;
@@ -15,7 +15,7 @@ type TSchemaManager = {
         value: string;
     };
 };
-const MONACO_OPTIONS = {
+const MONACO_OPTIONS: monaco.editor.IEditorConstructionOptions = {
     autoIndent: "full",
     automaticLayout: true,
     contextmenu: true,
@@ -58,13 +58,9 @@ function Editors(props: TSchemaManager) {
 
 
     const saveSchemas = () => {
-        console.log({ jsonString });
         const val = {
-            rjsf: {
-                schema: jsonString
-            }
+            rjsf: jsonString
         };
-        console.log({ val });
         const finalPayload = {
             value: val,
             key: formType?.value,
@@ -98,7 +94,7 @@ function Editors(props: TSchemaManager) {
             </Box>
             {ErrorHandlers(errors)}
             {<Editor
-                height='40vh'
+                height='92vh'
                 language='json'
                 options={MONACO_OPTIONS}
                 value={value}

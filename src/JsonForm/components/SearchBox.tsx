@@ -33,10 +33,11 @@ function SearchBox(props: { handleValue: any; data: any; onLoadSchema: any; sche
                 if (isFunction(result?.then)) {
                     // Check if the result of the function is a promise
                     result.then((dataArray: any) => {
-                        schemaData && schemaData(dataArray.rjsf.schema);
+                        // schemaData && schemaData(dataArray.rjsf.schema);
+                        schemaData && schemaData(dataArray);
                     });
                 } else {
-                    schemaData && schemaData(result.rjsf.schema);
+                    schemaData && schemaData(result);
                 }
             }
         }
@@ -58,7 +59,7 @@ function SearchBox(props: { handleValue: any; data: any; onLoadSchema: any; sche
                     </Box>
                 )}
             />
-            <p>Selected Value: {selectedValue ? selectedValue.value : ''}</p>
+            {/* <p>Selected Value: {selectedValue ? selectedValue.value : ''}</p> */}
         </div>
     );
 }

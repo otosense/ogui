@@ -41,8 +41,6 @@
 
 .splitter-layout {
     width: 95% !important;
-    /* height: 98% !important; */
-    /* position: unset !important; */
 }
 
 .UI-schema-layout-result {
@@ -60,14 +58,12 @@
     padding: 0 2%;
 }
 
-.fiddle-left-side {
+/* .fiddle-left-side {
     padding: 0 1%;
-}
+} */
 
 .autoComplete-Dropdown {
     width: 25%;
-    margin: 0 auto;
-    text-align: center;
 }
 
 .json-area {
@@ -101,18 +97,11 @@
     justify-content: space-between !important;
 }
 
+h1.center,
 .inputs-fiddle {
-    /* display: flex; */
-    /* justify-content: center; */
-    /* justify-content: space-between; */
-    margin: 0 auto;
-    text-align: center;
+    margin: 1% 0;
 }
 
-h1.center {
-    text-align: center;
-    margin: 1%;
-}
 
 
 .layout-common {
@@ -125,4 +114,12 @@ h1.center {
 
 main.main-json-fiddle {
     text-align: left;
+}
+
+
+@media screen and (max-width: 768px) {
+
+    .fiddle-right-side {
+        margin-top: 3%;
+    }
 }

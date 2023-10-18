@@ -1,6 +1,7 @@
 import React from 'react';
 import { RJSFSchema } from '@rjsf/utils';
-import FunctionCaller from '../FunctionCaller';
+import SchemaFormFiddle from '../SchemaFormFiddle';
+import { specifications, store } from './data';
 
 function AppTest() {
     const sum = (a: number, b: number) => {
@@ -8,25 +9,9 @@ function AppTest() {
         // console.log('object', output, typeof output);
         return output;
     };
-
-    const schema = {
-        type: 'object',
-        "title": "Sum",
-        "description": "Sum",
-        properties: {
-            a: {
-                type: 'number',
-                title: 'a',
-            },
-            b: {
-                type: 'number',
-                title: 'b',
-            },
-        },
-        required: ['a', 'b']
-    };
-
     const getFullFormSpecStore = async () => {
+
+        // return await store;
 
         const payload = {
             "_attr_name": '__iter__',
@@ -57,6 +42,8 @@ function AppTest() {
     };
 
     const getSchemaForForm = async (data: any) => {
+
+        // return await specifications;
         const payload = {
             "_attr_name": "__getitem__",
             "key": data
@@ -118,42 +105,13 @@ function AppTest() {
         }
     };
 
-
-
-    // const schema = {
-    //     "title": "A registration form",
-    //     "description": "A simple form example.",
-    //     "type": "object",
-    //     "required": [
-    //         "firstName",
-    //         "lastName"
-    //     ],
-    //     "properties": {
-    //         "firstName": {
-    //             "type": "string",
-    //             "title": "First name",
-    //             "default": "Chuck"
-    //         }
-    //     }
-    // };
-
-    // const getSchema = async () => {
-    //     return await schema;
-    // };
-
-    // const getSchema = () => {
-    //     return schema;
-    // };
-
-
     const configuration = {
         getStoreList: getFullFormSpecStore(),
         onLoadSchema: getSchemaForForm,
         saveSchema: saveSchema,
-        func: sum,
     };
     return (
-        <FunctionCaller {...configuration} />
+        <SchemaFormFiddle {...configuration} />
     );
 }
 export default AppTest;

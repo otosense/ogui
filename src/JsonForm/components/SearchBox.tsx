@@ -10,8 +10,8 @@ interface Option {
     value: string;
 }
 
-function SearchBox(props: { data: any; onLoadSchema: any; schemaData: any; }) {
-    const { data, onLoadSchema, schemaData } = props;
+function SearchBox(props: { handleValue: any; data: any; onLoadSchema: any; schemaData: any; }) {
+    const { handleValue, data, onLoadSchema, schemaData } = props;
     const [selectedValue, setSelectedValue] = useState<Option | null>(null);
     const [funcLists, setFuncLists] = useState<Option[]>([]);
 
@@ -25,6 +25,7 @@ function SearchBox(props: { data: any; onLoadSchema: any; schemaData: any; }) {
         newValue: Option | null
     ) => {
         setSelectedValue(newValue);
+        handleValue(newValue);
         if (onLoadSchema) {
             const val = onLoadSchema(newValue?.value);
             if (isObject(val)) {

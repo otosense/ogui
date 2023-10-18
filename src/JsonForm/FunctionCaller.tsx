@@ -15,19 +15,21 @@ interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
     getStoreList: [] | (() => []) | (() => Promise<any[]>);
     onLoadSchema: {} | (() => {}) | (() => Promise<{}>);
     func: (...args: any[]) => any | void;
+    saveSchema: any;
 }
 
 interface IFormData { [key: string]: any; }
 
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
-    const { func, getStoreList, onLoadSchema } = props;
+    const { func, getStoreList, onLoadSchema, saveSchema } = props;
 
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
+    const [selectedFormType, setSelectedFormType] = useState<any>({});
 
     const [isDisabled, setDisabled] = useState(false);
     const [isReadOnly, setReadOnly] = useState(false);
@@ -86,6 +88,10 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         setLiveOmit(!liveOmit);
     };
 
+    const handleValue = (value: any) => {
+        setSelectedFormType(value);
+    };
+
 
 
 
@@ -100,7 +106,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                     <h1 className='center'>JSON Form Fiddle</h1>
                     <div className='inputs-fiddle'>
 
-                        <SearchBox data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
+                        <SearchBox handleValue={handleValue} data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
 
                         <FormOptions
                             isLiveValidate={isLiveValidate}
@@ -122,7 +128,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout layout-common'>
-                                    <Editors data={collection} onDataUploaded={handleUpload} title='Schema' />
+                                    <Editors data={collection} onDataUploaded={handleUpload} title='Schema' saveSchema={saveSchema} formType={selectedFormType} />
                                 </div>
                                 <div className='UI-schema-layout-result layout-common'>
                                     <Editors data={null} title='UI Schema' />

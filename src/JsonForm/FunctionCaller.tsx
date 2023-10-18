@@ -69,7 +69,7 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     return (
         <main>
             {isError ? (<Alert severity='error' className='errorMessage'>
-                There is an Error getting FuncList data
+                There is an Error getting Store List data
             </Alert>) :
                 <main className='main-json-fiddle'>
                     <h1 className='center'>JSON Form Fiddle</h1>

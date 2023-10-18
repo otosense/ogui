@@ -23,20 +23,13 @@ interface IFormData { [key: string]: any; }
 
 const FunctionCaller = (props: IFunctionCallerProps) => {
     const { func, getStoreList, onLoadSchema, saveSchema } = props;
-
+    console.log('object', props);
     const [collection, setCollection] = useState<any>({});
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [funcList, setFuncList] = useState({});
     const [formData, setFormData] = useState({});
     const [selectedFormType, setSelectedFormType] = useState<any>({});
-
-    const [isDisabled, setDisabled] = useState(false);
-    const [isReadOnly, setReadOnly] = useState(false);
-    const [isLiveValidate, setLiveValidate] = useState(false);
-    const [isNoHtml5Validate, setIsNoHtml5Validate] = useState(true);
-    const [liveOmit, setLiveOmit] = useState(false);
-    const [omitExtraData, setOmitExtraData] = useState(false);
 
     const onSubmit = (props: IFormData) => {
         const { formData } = props;
@@ -50,10 +43,12 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     // };
 
     const handleUpload = useCallback((data: any) => {
+        console.log({ data });
         setCollection(JSON.parse(data));
     }, []);
 
     const schemaData = (data: string) => {
+        console.log({ data });
         setCollection((data));
     };
 
@@ -62,31 +57,6 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
         generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading);
         // dataGenerator(schema, setFuncList, setIsError);
     }, [getStoreList]);
-
-    const handleDisabledChange = () => {
-        setDisabled(!isDisabled);
-    };
-
-    const handleReadOnlyChange = () => {
-        setReadOnly(!isReadOnly);
-    };
-
-    const handleLiveValidateChange = () => {
-        setLiveValidate(!isLiveValidate);
-    };
-
-    const handleHtml5ValidateChange = () => {
-        setIsNoHtml5Validate(!isNoHtml5Validate);
-    };
-
-    const handleOmitExtraDataChange = () => {
-        setOmitExtraData(!omitExtraData);
-    };
-
-
-    const handleLiveOmitChange = () => {
-        setLiveOmit(!liveOmit);
-    };
 
     const handleValue = (value: any) => {
         setSelectedFormType(value);
@@ -100,56 +70,45 @@ const FunctionCaller = (props: IFunctionCallerProps) => {
     return (
         <main>
             {isError ? (<Alert severity='error' className='errorMessage'>
-                There is an Error getting DagFuncList data
+                There is an Error getting FuncList data
             </Alert>) :
                 <main className='main-json-fiddle'>
                     <h1 className='center'>JSON Form Fiddle</h1>
                     <div className='inputs-fiddle'>
-
                         <SearchBox handleValue={handleValue} data={funcList} onLoadSchema={onLoadSchema} schemaData={schemaData} />
-
-                        <FormOptions
-                            isLiveValidate={isLiveValidate}
-                            isDisabled={isDisabled}
-                            isReadOnly={isReadOnly}
-                            isNoHtml5Validate={isNoHtml5Validate}
-                            omitExtraData={omitExtraData}
-                            liveOmit={liveOmit}
-                            handleLiveValidateChange={handleLiveValidateChange}
-                            handleDisabledChange={handleDisabledChange}
-                            handleReadOnlyChange={handleReadOnlyChange}
-                            handleHtml5ValidateChange={handleHtml5ValidateChange}
-                            handleOmitExtraDataChange={handleOmitExtraDataChange}
-                            handleLiveOmitChange={handleLiveOmitChange}
-                        />
                     </div>
 
                     <section className='jsonFiddle'>
                         <SplitterLayout vertical={false} percentage={true} secondaryInitialSize={50} secondaryMinSize={50}>
                             <div className='fiddle-left-side'>
                                 <div className='schema-layout layout-common'>
-                                    <Editors data={collection} onDataUploaded={handleUpload} title='Schema' saveSchema={saveSchema} formType={selectedFormType} />
+                                    <Editors data={collection} onDataUploaded={handleUpload} title='Specifications' saveSchema={saveSchema} formType={selectedFormType} />
                                 </div>
-                                <div className='UI-schema-layout-result layout-common'>
+                                {/* <div className='UI-schema-layout-result layout-common'>
                                     <Editors data={null} title='UI Schema' />
                                     <Editors data={formData} title='Result' />
-                                </div>
+                                </div> */}
                             </div>
                             <div className='fiddle-right-side'>
-                                {!isEmpty(collection) && <Form
+                                {/* {!isEmpty(collection) && <Form
                                     schema={collection}
                                     // uiSchema={uiSchema} // optional for handling custom things in UI
-                                    liveValidate={isLiveValidate}
+                                    liveValidate={false}
                                     onSubmit={onSubmit}
                                     validator={validator}
-                                    noHtml5Validate={isNoHtml5Validate}
-                                    disabled={isDisabled}
-                                    readonly={isReadOnly}
+                                    noHtml5Validate={true}
+                                    disabled={false}
+                                    readonly={false}
                                     formData={formData}
-                                    liveOmit={liveOmit}
-                                    omitExtraData={omitExtraData}
+                                    liveOmit={false}
+                                    omitExtraData={false}
                                     showErrorList='top'
-                                />}
+                                />} */}
+
+                                {/* {!isEmpty(collection)} && <Form
+                                    {...collection.rjsf}
+                                    validator={validator}
+                                /> */}
                             </div>
                         </SplitterLayout>
                     </section>

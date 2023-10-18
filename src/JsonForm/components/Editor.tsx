@@ -38,6 +38,7 @@ const MONACO_OPTIONS = {
 };
 function Editors(props: TSchemaManager) {
     const { title, data, onDataUploaded, saveSchema, formType } = props;
+    console.log({ props });
     const [errors, setErrors] = useState<any[]>([]);
     const [jsonString, setJsonString] = useState<any>({});
     const [value, setValue] = useState((JSON.stringify(data, null, 2)));
@@ -58,15 +59,8 @@ function Editors(props: TSchemaManager) {
 
 
     const saveSchemas = () => {
-        console.log({ jsonString });
-        const val = {
-            rjsf: {
-                schema: jsonString
-            }
-        };
-        console.log({ val });
         const finalPayload = {
-            value: val,
+            value: jsonString,
             key: formType?.value,
         };
         saveSchema(finalPayload);
@@ -98,7 +92,7 @@ function Editors(props: TSchemaManager) {
             </Box>
             {ErrorHandlers(errors)}
             {<Editor
-                height='40vh'
+                height='92vh'
                 language='json'
                 options={MONACO_OPTIONS}
                 value={value}

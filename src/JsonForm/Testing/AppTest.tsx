@@ -1,6 +1,7 @@
 import React from 'react';
 import { RJSFSchema } from '@rjsf/utils';
 import FunctionCaller from '../FunctionCaller';
+import { specifications, store } from './data';
 
 function AppTest() {
     const sum = (a: number, b: number) => {
@@ -26,7 +27,10 @@ function AppTest() {
         required: ['a', 'b']
     };
 
+
     const getFullFormSpecStore = async () => {
+
+        return await store;
 
         const payload = {
             "_attr_name": '__iter__',
@@ -57,6 +61,8 @@ function AppTest() {
     };
 
     const getSchemaForForm = async (data: any) => {
+
+        return await specifications;
         const payload = {
             "_attr_name": "__getitem__",
             "key": data

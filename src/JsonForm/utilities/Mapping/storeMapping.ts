@@ -1,10 +1,15 @@
-import { map } from "lodash";
+import { map } from 'lodash'
 
-export const storeMapping = (data: any) => {
-    const transformedData = map(data, item => {
-        const value = item;
-        const label = item.split('.').slice(-2)[0] + '.' + item.split('.').slice(-1)[0]; // Extract the last part after the last dot
-        return { label, value };
-    });
-    return transformedData;
-};
+interface ITransformedData {
+  label: string
+  value: any
+}
+
+export const storeMapping = (data: any): ITransformedData[] => {
+  const transformedData = map(data, item => {
+    const value = item
+    const label = item // Extract the last part after the last dot
+    return { label, value }
+  })
+  return transformedData
+}

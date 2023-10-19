@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import Form from '@rjsf/mui';
-import { type FormProps } from '@rjsf/core';
-import { type RJSFSchema } from '@rjsf/utils';
-import validator from '@rjsf/validator-ajv8';
+import React, { useState } from 'react'
+import Form from '@rjsf/mui'
+import { type FormProps } from '@rjsf/core'
+import { type RJSFSchema } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
-    func: (...args: any[]) => any;
-    egress?: (...args: any[]) => any;
+  func: (...args: any[]) => any
+  egress?: (...args: any[]) => any
 }
 
-type IFormData = Record<string, any>;
+type IFormData = Record<string, any>
 
 const FunctionCaller = (props: IFunctionCallerProps): JSX.Element => {
-    const { func, ...formProps } = props;
-    const [show, setShow] = useState();
+  const { func, ...formProps } = props
+  const [show, setShow] = useState()
 
-    const onSubmit = ({ formData }: IFormData): any => {
-        const output = func(...Object.values(formData));
-        setShow((props.egress != null) ? props.egress(output) : output);
-    };
+  const onSubmit = ({ formData }: IFormData): void => {
+    const output = func(...Object.values(formData))
+    setShow((props.egress != null) ? props.egress(output) : output)
+  }
 
-    return (
+  return (
         <div>
             <h1>React JSON Schema Form Example</h1>
             <Form
@@ -31,15 +31,14 @@ const FunctionCaller = (props: IFunctionCallerProps): JSX.Element => {
             {/* this will show the output of the egress where the HTML is defined by the output function */}
             {show}
         </div>
-    );
-};
+  )
+}
 
 FunctionCaller.defaultProps = {
-    validator
-};
+  validator
+}
 
-export default (FunctionCaller);
-
+export default (FunctionCaller)
 
 /* AppTest.tsx for the egress module
 

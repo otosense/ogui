@@ -8,7 +8,6 @@ function checkIfNewConnectionWillFormCycle(edges: any[], connection: any) {
 
     edges.forEach((edge) => graph.addEdge(edge.source, edge.target));
     return graph.willFormCycle(connection.source, connection.target);
-
 }
 
 function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispatch<React.SetStateAction<any[]>>) {
@@ -36,17 +35,16 @@ function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispat
             return false;
         }
 
-        // // Check if the target node already has an incoming connection
-        // const incomingConnections = edges.filter((edge) => edge.target === target);
-        // // console.log({ incomingConnections });
-        // if (incomingConnections.length > 0) {
-        //     return edges.some((edge) => {
-        //         if (edge.target === target && edge.targetHandle === targetHandle) {
-        //             showToast('Error: ' + 'Target node already has an incoming connection', 'error');
-        //             return false;
-        //         }
-        //     });
-        // }
+        // Check if the target node already has an incoming connection
+        const incomingConnections = edges.filter((edge) => edge.target === target);
+        if (incomingConnections.length > 0) {
+            return edges.some((edge) => {
+                if (edge.target === target && edge.targetHandle === targetHandle) {
+                    showToast('Error: ' + 'Target node already has an incoming connection', 'error');
+                    return false;
+                }
+            });
+        }
 
         // const outgoingConnections = edges.filter((edge) => edge.source === source);
         // console.log({ outgoingConnections });

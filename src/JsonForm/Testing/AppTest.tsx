@@ -2,11 +2,10 @@ import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
 
 function AppTest (): JSX.Element {
-//   const sum = (a: number, b: number): number => {
-//     const output = a + b
-//     // console.log('object', output, typeof output);
-//     return output
-//   }
+  const sum = (a: string): string => {
+    const output = a
+    return output
+  }
   const getFullFormSpecStore = async (): Promise<any> => {
     // return await store;
 
@@ -100,10 +99,16 @@ function AppTest (): JSX.Element {
     }
   }
 
+  const egress = (output: any): any => {
+    return <h1>{output}</h1>
+  }
+
   const configuration = {
     getStoreList: getFullFormSpecStore(),
     onLoadSchema: getSchemaForForm,
-    saveSchema
+    saveSchema,
+    func: sum,
+    egress
   }
   return (
         <SchemaFormFiddle {...configuration} />

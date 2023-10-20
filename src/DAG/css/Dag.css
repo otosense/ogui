@@ -935,6 +935,29 @@ div#wave .dot:nth-child(4) {
 
 /* Loader CSS OVer  */
 
+
+.MuiListSubheader-root.MuiListSubheader-gutters.MuiListSubheader-sticky.MuiAutocomplete-groupLabel, .MuiAutocomplete-noOptions {
+    background: #1f2937;
+    color: #ccc !important;
+    /* border: 1px solid #6b7280 */
+}
+
+ul.MuiAutocomplete-listbox{
+    padding: 0 !important;
+}
+
+input#form-list , label#form-list-label{
+    color: #fff !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+    border-color: #fff !important;
+}
+
+.addNode button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.MuiAutocomplete-popupIndicator.MuiAutocomplete-popupIndicatorOpen {
+    color: #fff !important;
+}
+
 @media screen and (max-width: 768px) {
     div.splitter-layout {
         position: absolute !important;
@@ -951,3 +974,4 @@ div#wave .dot:nth-child(4) {
         align-items: unset !important;
     }
 }
+

@@ -4,6 +4,7 @@ import { LRUCache } from '../utilities/lruCache';
 // import { loadDagFuncList } from './data';
 
 function AppTest() {
+    const api_url = 'http://20.219.8.178:8888'
 
     const saveLoadedDag = {
         "id": "test_dag_sprint_review",
@@ -26,7 +27,7 @@ function AppTest() {
 
 
         try {
-            const response = await fetch("http://20.219.8.178:8080/dag_func_node_source_store", {
+            const response = await fetch(`${api_url}/dag_func_node_source_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     "_attr_name": "__iter__",
@@ -63,7 +64,7 @@ function AppTest() {
         };
         // Saving the Dag to Backend using API
         try {
-            const response = await fetch("http://20.219.8.178:8080/dag_store", {
+            const response = await fetch(`${api_url}/dag_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     ...APIpayload
@@ -93,7 +94,7 @@ function AppTest() {
         };
 
         try {
-            const response = await fetch("http://20.219.8.178:8080/dag_store", {
+            const response = await fetch(`${api_url}/dag_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     ...payload
@@ -130,7 +131,7 @@ function AppTest() {
         };
 
         try {
-            const response = await fetch("http://20.219.8.178:8080/dag_func_node_source_store", {
+            const response = await fetch(`${api_url}/dag_func_node_source_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     ...payload

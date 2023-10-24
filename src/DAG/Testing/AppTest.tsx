@@ -27,7 +27,7 @@ function AppTest() {
 
 
         try {
-            const response = await fetch(`${api_url}/dag_func_node_source_store`, {
+            const response = await fetch(`${api_url}/dag_component_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     "_attr_name": "__iter__",
@@ -131,7 +131,7 @@ function AppTest() {
         };
 
         try {
-            const response = await fetch(`${api_url}/dag_func_node_source_store`, {
+            const response = await fetch(`${api_url}/dag_component_store`, {
                 method: "POST",
                 body: JSON.stringify({
                     ...payload

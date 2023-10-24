@@ -1,7 +1,8 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
 
-function AppTest (): JSX.Element {
+function AppTest(): JSX.Element {
+  const api_url = 'http://20.219.8.178:8888'
   const sum = (a: string): string => {
     const output = a
     return output
@@ -14,7 +15,7 @@ function AppTest (): JSX.Element {
     }
     // Saving the Dag to Backend using API
     try {
-      const response = await fetch('http://20.219.8.178:8080/form_spec_store', {
+      const response = await fetch(`${api_url}/form_spec_store`, {
         method: 'POST',
         body: JSON.stringify({
           ...payload
@@ -45,7 +46,7 @@ function AppTest (): JSX.Element {
     }
 
     try {
-      const response = await fetch('http://20.219.8.178:8080/form_spec_store', {
+      const response = await fetch(`${api_url}/form_spec_store`, {
         method: 'POST',
         body: JSON.stringify({
           ...payload
@@ -76,7 +77,7 @@ function AppTest (): JSX.Element {
     }
     console.log({ payload })
     try {
-      const response = await fetch('http://20.219.8.178:8080/form_spec_store', {
+      const response = await fetch(`${api_url}/form_spec_store`, {
         method: 'POST',
         body: JSON.stringify({
           ...payload
@@ -111,7 +112,7 @@ function AppTest (): JSX.Element {
     egress
   }
   return (
-        <SchemaFormFiddle {...configuration} />
+    <SchemaFormFiddle {...configuration} />
   )
 }
 export default AppTest

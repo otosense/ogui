@@ -24,7 +24,7 @@ const MONACO_OPTIONS: any = {
   fontFamily: 'monospace',
   fontSize: 13,
   lineHeight: 18,
-  theme: 'vs-dark',
+  // theme: 'vs-dark',
   hideCursorInOverviewRuler: true,
   matchBrackets: 'always',
   minimap: {
@@ -113,9 +113,16 @@ function Editors (props: TSchemaManager): JSX.Element {
                             {title}
                         </Typography>
                         <Tooltip title="Save the Specification">
-                        <IconButton aria-label="SaveIcon" color="inherit" onClick={saveSchemas} disabled={errors.length > 0 || isEmpty(jsonString)}>
-                            <SaveIcon />
-                        </IconButton>
+                          <span>
+                            <IconButton
+                              aria-label="SaveIcon"
+                              color="inherit"
+                              onClick={saveSchemas}
+                              disabled={errors.length > 0 || isEmpty(jsonString)}
+                            >
+                              <SaveIcon />
+                            </IconButton>
+                          </span>
                         </Tooltip>
                     </Toolbar>
                 </AppBar>

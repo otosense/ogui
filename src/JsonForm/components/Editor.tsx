@@ -1,8 +1,9 @@
 import React, { memo, useEffect, useState } from 'react'
 import Editor, { useMonaco } from '@monaco-editor/react'
-import { Alert, AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material'
+import { Alert, AppBar, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
 import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
+import { isEmpty } from 'lodash'
 // import * as monaco from "monaco-editor";
 
 interface TSchemaManager {
@@ -16,12 +17,14 @@ interface TSchemaManager {
   }
 }
 const MONACO_OPTIONS: any = {
+  codeLens: true,
   autoIndent: 'full',
   automaticLayout: true,
   contextmenu: true,
   fontFamily: 'monospace',
   fontSize: 13,
-  lineHeight: 24,
+  lineHeight: 18,
+  theme: 'vs-dark',
   hideCursorInOverviewRuler: true,
   matchBrackets: 'always',
   minimap: {
@@ -29,12 +32,19 @@ const MONACO_OPTIONS: any = {
   },
   readOnly: false,
   scrollbar: {
-    horizontalSliderSize: 4,
-    verticalSliderSize: 4
+    horizontal: 'hidden',
+    vertical: 'hidden',
+    // scrollByPage: true,
+    horizontalSliderSize: 0,
+    verticalSliderSize: 0
   },
   selectOnLineNumbers: true,
   roundedSelection: false,
-  cursorStyle: 'line'
+  cursorStyle: 'line',
+  lineDecorationsWidth: 0,
+  lineNumbersMinChars: 0,
+  decorationsOverviewRuler: false,
+  overviewRulerLanes: 0
 }
 function Editors (props: TSchemaManager): JSX.Element {
   const { title, data, onDataUploaded, saveSchema, formType } = props
@@ -57,8 +67,18 @@ function Editors (props: TSchemaManager): JSX.Element {
     onDataUploaded?.(value)
     // setting the cursor back to its normal state
     setTimeout(() => {
-      monaco?.editor.getEditors().forEach((editor: any) => {
-        editor.setPosition({ lineNumber: event.changes[0]?.range.startLineNumber, column: +(event.changes[0]?.range.startColumn) + 1 })
+      monaco?.editor.getEditors().forEach((editor) => {
+        const range = event.changes[0]?.range
+        const isBackspaceOrDelete = event.changes[0]?.text === ''
+
+        const column = isBackspaceOrDelete
+          ? range.startColumn
+          : +range.startColumn + 1
+
+        editor.setPosition({
+          lineNumber: range.startLineNumber,
+          column
+        })
       })
     }, 10)
   }
@@ -92,15 +112,18 @@ function Editors (props: TSchemaManager): JSX.Element {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
-                        <IconButton aria-label="SaveIcon" color="inherit" onClick={saveSchemas}>
+                        <Tooltip title="Save the Specification">
+                        <IconButton aria-label="SaveIcon" color="inherit" onClick={saveSchemas} disabled={errors.length > 0 || isEmpty(jsonString)}>
                             <SaveIcon />
                         </IconButton>
+                        </Tooltip>
                     </Toolbar>
                 </AppBar>
             </Box>
             {ErrorHandlers(errors)}
             {<Editor
                 height='92vh'
+                width={'100%'}
                 language='json'
                 options={MONACO_OPTIONS}
                 value={value}

@@ -122,4 +122,8 @@ main.main-json-fiddle {
     .fiddle-right-side {
         margin-top: 3%;
     }
+
+    .autoComplete-Dropdown{
+        width: 100%;
+    }
 }

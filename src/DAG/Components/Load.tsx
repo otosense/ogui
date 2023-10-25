@@ -20,8 +20,9 @@ function Load(props: ILoadProps) {
     };
 
     useEffect(() => {
+        const dag_store_name = 'dag_store';
         // const list = storeGrouping(response.data); // Grouping the API
-        // const result = listMapping(list.dags); // Extracting only the dag_Store
+        // const result = listMapping(list[dag_store_name]); // Extracting only the dag_Store
         // setDagListResponse(result); // saving the Result
 
         if (isEmpty(userData)) {
@@ -36,19 +37,19 @@ function Load(props: ILoadProps) {
                 // Check if the result of the function is a promise
                 result.then((dataArray: any) => {
                     const list = storeGrouping(dataArray);
-                    const output = listMapping(list.dags); // Extracting only the dag_Store
+                    const output = listMapping(list[dag_store_name]); // Extracting only the dag_Store
                     setDagListResponse(output); // storing FuncList
                 });
             } else {
                 const dataArray = result as any[]; // Assuming the result is an array
                 const list = storeGrouping(dataArray);
-                const output = listMapping(list.dags); // Extracting only the dag_Store
+                const output = listMapping(list[dag_store_name]); // Extracting only the dag_Store
                 setDagListResponse(output); // saving the Result
             }
         } else if (isArray(userData)) {
             // Check if data is an array
             const list = storeGrouping(userData);
-            const output = listMapping(list.dags); // Extracting only the dag_Store
+            const output = listMapping(list[dag_store_name]); // Extracting only the dag_Store
             setDagListResponse(output); // saving the Result
         } else {
             setDagListResponse([]);

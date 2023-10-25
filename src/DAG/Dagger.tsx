@@ -395,6 +395,7 @@ function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInsta
 }
 
 function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
+    const func_store_name = 'func_store'
     if (isEmpty(DagFuncList)) {
         setFuncList([]); // Return an empty array if DagFuncList is not provided
         setIsError(true);
@@ -409,7 +410,7 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
             result.then((dataArray: any) => {
                 if (dataArray.length > 0) {
                     const list = storeGrouping(dataArray);
-                    setFuncList(list.funcs); // storing FuncList
+                    setFuncList(list[func_store_name]); // storing FuncList
                 } else {
                     setIsError(true);
                 }
@@ -418,13 +419,13 @@ function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise
         } else {
             const dataArray = result as any[]; // Assuming the result is an array
             const list = storeGrouping(dataArray);
-            setFuncList(list.funcs); // storing FuncList
+            setFuncList(list[func_store_name]); // storing FuncList
             setIsLoading(false);
         }
     } else if (isArray(DagFuncList)) {
         // Check if data is an array
         const list = storeGrouping(DagFuncList);
-        setFuncList(list.funcs); // storing FuncList
+        setFuncList(list[func_store_name]); // storing FuncList
         setIsLoading(false);
     } else {
         setFuncList([]);

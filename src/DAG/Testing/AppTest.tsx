@@ -4,30 +4,32 @@ import { LRUCache } from '../utilities/lruCache';
 // import { loadDagFuncList } from './data';
 
 function AppTest() {
-    const api_url = 'http://20.219.8.178:8888'
+    const api_url = 'http://20.219.8.178:8888';
+    const dag_component_store_api_url = `${api_url}/dag_component_store`;
+    const func_store_name = 'func_store';
 
-    const saveLoadedDag = {
-        "id": "test_dag_sprint_review",
-        "dagName": "test_dag_sprint_review",
-        "func_nodes": [
-            {
-                "name": "function_329",
-                "func_label": "mk_chunker_step",
-                "out": "test",
-                "func": "mk_chunker_step",
-                "bind": {
-                    "chk_size": "a"
-                }
-            }
-        ]
-    };
+    // const saveLoadedDag = {
+    //     "id": "test_dag_sprint_review",
+    //     "dagName": "test_dag_sprint_review",
+    //     "func_nodes": [
+    //         {
+    //             "name": "function_329",
+    //             "func_label": "mk_chunker_step",
+    //             "out": "test",
+    //             "func": "mk_chunker_step",
+    //             "bind": {
+    //                 "chk_size": "a"
+    //             }
+    //         }
+    //     ]
+    // };
 
     const sample = async () => {
         // return await loadDagFuncList;
 
 
         try {
-            const response = await fetch(`${api_url}/dag_component_store`, {
+            const response = await fetch(dag_component_store_api_url, {
                 method: "POST",
                 body: JSON.stringify({
                     "_attr_name": "__iter__",
@@ -127,11 +129,11 @@ function AppTest() {
         // console.log('data', data);
         const payload = {
             "_attr_name": '__getitem__',
-            "k": ['funcs', data]
+            "k": [func_store_name, data]
         };
 
         try {
-            const response = await fetch(`${api_url}/dag_component_store`, {
+            const response = await fetch(dag_component_store_api_url, {
                 method: "POST",
                 body: JSON.stringify({
                     ...payload

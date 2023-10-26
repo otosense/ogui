@@ -1,266 +1,260 @@
-import React, { useState, useRef, useCallback, useEffect, memo, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useEffect, memo, useMemo } from 'react'
 import ReactFlow, {
-    ReactFlowProvider,
-    useNodesState,
-    useEdgesState,
-    Controls,
-    Panel,
-    Background,
-    ReactFlowInstance,
-    BackgroundVariant,
-    ControlButton,
-} from 'reactflow';
-import { Button, Alert, Modal } from '@mui/material';
-import UploadIcon from '@mui/icons-material/Upload';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import DeleteIcon from '@mui/icons-material/Delete';
+  ReactFlowProvider,
+  useNodesState,
+  useEdgesState,
+  Controls,
+  Panel,
+  Background,
+  type ReactFlowInstance,
+  BackgroundVariant,
+  ControlButton
+} from 'reactflow'
+import { Button, Alert, Modal } from '@mui/material'
+import UploadIcon from '@mui/icons-material/Upload'
+import GetAppIcon from '@mui/icons-material/GetApp'
+import DeleteIcon from '@mui/icons-material/Delete'
 
+import Sidebar from './Components/Sidebar'
+import LoadingOverlay from '../utilities/Loader'
+import TextEditorNode from './Components/NodeTypes/TextEditorNode'
+import DropDownNode from './Components/NodeTypes/DropDownNode/DropDownNode'
+import Save from './Components/Save'
+import Load from './Components/Load'
 
-import Sidebar from './Components/Sidebar';
-import LoadingOverlay from '../utilities/Loader';
-import TextEditorNode from './Components/NodeTypes/TextEditorNode';
-import DropDownNode from './Components/NodeTypes/DropDownNode/DropDownNode';
-import Save from './Components/Save';
-import Load from './Components/Load';
+import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNodes'
+import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson'
+import { ValidationError } from './utilities/ErrorValidator'
 
-
-import { convertJsonToFuncNodes } from './utilities/Mapping/convertJsonToFuncNodes';
-import { convertFuncNodeToJsonEdge, convertFuncNodeToJsonNode } from './utilities/Mapping/convertFuncNodeToJson';
-import { ValidationError } from './utilities/ErrorValidator';
-
-import { dagDirections, getId } from './utilities/globalFunction';
-import { connectionValidation } from './utilities/Validations/ConnectionValidation';
-import { connectionHandlers } from './utilities/Validations/connectionHandlers';
-import { storeGrouping } from './utilities/Mapping/storeGrouping';
-import { IDaggerProps } from './Components/Interfaces';
-import { get, isArray, isEmpty, isFunction, some, uniqBy } from 'lodash';
-import JsonEditor from './Components/JSONLayout/Schema';
-import SplitterLayout from 'react-splitter-layout';
-import { autoLayoutStructure } from './utilities/Layouts';
-import Toast, { showToast } from './utilities/ReactToastMessage';
-import CustomModal from './Components/Modal';
-import DeleteAll from './Components/NodeTypes/DeleteAll';
-
+import { dagDirections, getId } from './utilities/globalFunction'
+import { connectionValidation } from './utilities/Validations/ConnectionValidation'
+import { connectionHandlers } from './utilities/Validations/connectionHandlers'
+import { storeGrouping } from './utilities/Mapping/storeGrouping'
+import { type IDaggerProps } from './Components/Interfaces'
+import { get, isArray, isEmpty, isFunction, uniqBy } from 'lodash'
+import JsonEditor from './Components/JSONLayout/Schema'
+import SplitterLayout from 'react-splitter-layout'
+import { autoLayoutStructure } from './utilities/Layouts'
+import Toast, { showToast } from './utilities/ReactToastMessage'
+import CustomModal from './Components/Modal'
+import DeleteAll from './Components/NodeTypes/DeleteAll'
 
 // Main component Starts here
-const Dagger = (props: IDaggerProps) => {
-    const { onSave, LoadDagList, DagFuncList, onloadSavedDag, loadParamsList } = props;
-    const reactFlowWrapper = useRef<any>(null); // Creating Reference for the DAG
-    const [nodes, setNodes, onNodesChange] = useNodesState([]); // In-build function to handle Nodes
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]); // In-build function to handle Edges
-    const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null); // Initial Load of Each Nodes takes place here
-    const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} }); // Modal for Save and Load
-    const [uploadOver, setUploadOver] = useState(false); // check Save completion status
-    const [funcList, setFuncList] = useState<any>([]); // Store Function List / FuncNode List
-    const [flowNodes, setFlowNodes] = useState<any>([]); // Re-append the nodes to UI
+const Dagger = (props: IDaggerProps): React.ReactElement => {
+  const { onSave, LoadDagList, DagFuncList, onloadSavedDag, loadParamsList } = props
+  const reactFlowWrapper = useRef<any>(null) // Creating Reference for the DAG
+  const [nodes, setNodes, onNodesChange] = useNodesState([]) // In-build function to handle Nodes
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]) // In-build function to handle Edges
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null) // Initial Load of Each Nodes takes place here
+  const [isModal, setIsModal] = useState({ open: false, type: 'upload', data: {} }) // Modal for Save and Load
+  const [uploadOver, setUploadOver] = useState(false) // check Save completion status
+  const [funcList, setFuncList] = useState<any>([]) // Store Function List / FuncNode List
+  const [flowNodes, setFlowNodes] = useState<any>([]) // Re-append the nodes to UI
 
-    const [isError, setIsError] = useState<boolean>(false);
-    const [errorMapping, setErrorMapping] = useState([]); // Error Mapping storage to tell which node is in Error
+  const [isError, setIsError] = useState<boolean>(false)
+  const [errorMapping, setErrorMapping] = useState([]) // Error Mapping storage to tell which node is in Error
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const [showSchema, setShowSchema] = useState<any>();
-    const [orientation, setOrientation] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
+  const [showSchema, setShowSchema] = useState<any>()
+  const [orientation, setOrientation] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
 
-    useEffect(() => {
-        setIsLoading(true);
-        generateInitialData(DagFuncList, setFuncList, setIsError, setIsLoading);
-    }, [DagFuncList]);
+  useEffect(() => {
+    setIsLoading(true)
+    generateInitialData(DagFuncList, setFuncList, setIsError, setIsLoading)
+  }, [DagFuncList])
 
-    useEffect(() => {
-        // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
-        // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
-        setTimeout(() => {// given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper 
-            setIsLoading(false);
-            onLayout('LR'); // Set vertical layout on component load Left to Right Layout;
-        }, 800);
-    }, [uploadOver, isLoading]);
+  useEffect(() => {
+    // onLayout('TB'); // Set vertical layout on component load Top to Bottom Layout
+    // onLayout('LR'); // Set vertical layout on component load Left to Right Layout
+    setTimeout(() => { // given Timeout because API will take sometime to load Dag Once timeout done it will call the onLayout function to arrange in proper
+      setIsLoading(false)
+      onLayout('LR') // Set vertical layout on component load Left to Right Layout;
+    }, 800)
+  }, [uploadOver, isLoading])
 
-    const nodeTypes = useMemo(() => ({
-        // textUpdater is "TextEditorNode" component which holds varNode functionality
-        textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
-        // custom is "DropDownNode" component which holds funcNode functionality
-        custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} loadParamsList={loadParamsList} />,
-    }), [funcList, errorMapping, flowNodes]);
+  const nodeTypes = useMemo(() => ({
+    // textUpdater is "TextEditorNode" component which holds varNode functionality
+    textUpdater: (props: any) => <TextEditorNode {...props} type='varNode' errorMapping={errorMapping} />,
+    // custom is "DropDownNode" component which holds funcNode functionality
+    custom: (props: any) => <DropDownNode {...props} type='funcNode' funcLists={funcList} errorMapping={errorMapping || []} flowNodes={flowNodes} loadParamsList={loadParamsList} />
+  }), [funcList, errorMapping, flowNodes])
 
-    // Connection Handlers => Rules for the connections
-    const onConnect = connectionHandlers(nodes, edges, setEdges);
+  // Connection Handlers => Rules for the connections
+  const onConnect = connectionHandlers(nodes, edges, setEdges)
 
-    // Reason for Auto Alignment of Nodes and Edges
-    const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges);
+  // Reason for Auto Alignment of Nodes and Edges
+  const onLayout = autoLayoutStructure(nodes, edges, setNodes, setEdges)
 
+  // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
+  const isValidConnection = useMemo(() => connectionValidation(nodes, edges, setEdges), [nodes, edges, setEdges])
+  // passing the updated nodes in the UI Dag
 
+  // convert FuncNode to JSON structure how the UI / Dag wants
+  const handleUpload = useCallback((data: any) => {
+    setIsLoading(true)
+    const funcToJsonNode: any = convertFuncNodeToJsonNode(data, true)
+    const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data)
+    setNodes(funcToJsonNode)
+    setEdges(funcToJsonEdge)
+    setUploadOver(true)
+    setTimeout(() => {
+      reactFlowInstance?.fitView()
+    }, 1000)
+  }, [setNodes, setEdges, reactFlowInstance])
 
-    // isValidConnection => Stop connection from Same node like var to var not allowed and func to func Not allowed
-    const isValidConnection = useMemo(() => connectionValidation(nodes, edges, setEdges), [nodes, edges, setEdges]);
-    // passing the updated nodes in the UI Dag
+  // JSON creation on Right Side Panel (Schema Editor) and Save the Created JSON in Backend
+  const reflectJsonAndSaveHandler = useCallback(
+    (e: { preventDefault: () => void }, action: 'reflect' | 'save') => {
+      handleReflectAndSave(e, reactFlowInstance, setFlowNodes, setErrorMapping, action, setIsModal, setShowSchema)
+      setIsLoading(false)
+      // reactFlowInstance?.fitView();
+    },
+    [reactFlowInstance]
+  )
+  const reflectJson = useCallback((e: { preventDefault: () => void }) => { reflectJsonAndSaveHandler(e, 'reflect') }, [reflectJsonAndSaveHandler])
+  const saveHandler = useCallback((e: { preventDefault: () => void }) => { reflectJsonAndSaveHandler(e, 'save') }, [reflectJsonAndSaveHandler])
 
+  // Handled Drag-in node from Left side panel to Dag Area
+  const onDragOver = useCallback((event: { preventDefault: () => void, dataTransfer: { dropEffect: string } }) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+  }, [])
+  // passing the updated Edges in the UI Dag
+  const edgesWithUpdatedTypes = edges.map((edge: any) => {
+    // const sourceNode = nodes.find((node: { id: string }) => node.id === edge.source)
+    const targetNode = nodes.find((node: { id: string }) => node.id === edge.target)
+    // edge.id = `${edge.source} + ${edge.target}`;
+    edge.id = `${edge.source} + ${edge.targetHandle} + ${(targetNode?.id)}`
+    return edge
+  })
 
-    // convert FuncNode to JSON structure how the UI / Dag wants
-    const handleUpload = useCallback((data: any) => {
-        setIsLoading(true);
-        const funcToJsonNode: any = convertFuncNodeToJsonNode(data);
-        const funcToJsonEdge: any = convertFuncNodeToJsonEdge(data);
-        setNodes(funcToJsonNode);
-        setEdges(funcToJsonEdge);
-        setUploadOver(true);
-        setTimeout(() => {
-            reactFlowInstance?.fitView();
-        }, 1000);
-    }, [setNodes, setEdges, reactFlowInstance]);
+  useEffect(() => {
+    // remove the FuncNode dropping down if the ESCAPE key is pressed
+    const handleKeyDown = (event: { key: string }): void => {
+      if (event.key === 'Escape') {
+        setNodes((prevNodes) => prevNodes.filter((node) => {
+          if (node.type === 'custom' && node.data.label === '') {
+            return false // Remove custom nodes with an empty label
+          }
+          return true // Keep all other nodes
+        }))
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
 
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [setNodes])
 
-    // JSON creation on Right Side Panel (Schema Editor) and Save the Created JSON in Backend
-    const reflectJsonAndSaveHandler = useCallback(
-        (e: { preventDefault: () => void; }, action: 'reflect' | 'save') => {
-            handleReflectAndSave(e, reactFlowInstance, setFlowNodes, setErrorMapping, action, setIsModal, setShowSchema);
-            setIsLoading(false);
-            // reactFlowInstance?.fitView();
-        },
-        [reactFlowInstance]
-    );
-    const reflectJson = useCallback((e: { preventDefault: () => void; }) => reflectJsonAndSaveHandler(e, 'reflect'), [reflectJsonAndSaveHandler]);
-    const saveHandler = useCallback((e: { preventDefault: () => void; }) => reflectJsonAndSaveHandler(e, 'save'), [reflectJsonAndSaveHandler]);
+  // remove duplicate edges
+  const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id')
+  const dataWithUpdates = uniqBy(nodes, 'id')
+  // const dataWithUpdates = nodes;
 
-    // Handled Drag-in node from Left side panel to Dag Area
-    const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-    }, []);
-    // passing the updated Edges in the UI Dag
-    const edgesWithUpdatedTypes = edges.map((edge: any) => {
-        const sourceNode = nodes.find((node: { id: string; }) => node.id === edge.source);
-        const targetNode = nodes.find((node: { id: string; }) => node.id === edge.target);
-        // edge.id = `${edge.source} + ${edge.target}`;
-        edge.id = `${edge.source} + ${edge.targetHandle} + ${(targetNode?.id)}`;
-        return edge;
-    });
-
-    useEffect(() => {
-        // remove the FuncNode dropping down if the ESCAPE key is pressed
-        const handleKeyDown = (event: { key: string; }) => {
-            if (event.key === 'Escape') {
-                setNodes((prevNodes) => prevNodes.filter((node) => {
-                    if (node.type === 'custom' && node.data.label === '') {
-                        return false; // Remove custom nodes with an empty label
-                    }
-                    return true; // Keep all other nodes
-                }));
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [setNodes]);
-
-    // remove duplicate edges
-    const uniqueEdges = uniqBy(edgesWithUpdatedTypes, 'id');
-    const dataWithUpdates = uniqBy(nodes, 'id');
-    // const dataWithUpdates = nodes;
-
-    // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area
-    const onDrop = useCallback(
-        (event: { preventDefault: () => void; dataTransfer: { getData: (arg0: string) => any; }; clientX: number; clientY: number; }) => {
-            event.preventDefault();
-            const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect();
-            const type = event.dataTransfer.getData('application/reactflow');
-            if (typeof type === 'undefined' || !type) {
-                return;
-            }
-            const position = reactFlowInstance?.project({ // Hanlde positon of Nodes
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
-            });
-            const nodeTypeId = getId(type); // generating unique id for each nodes
-            let newNode: any = { // Normal var node creation structure
-                id: nodeTypeId,
-                type,
-                position,
-                data: { label: '', initialEdge: dagDirections }, // dagDirections will tell the Dag what layout to use LR or TB
-            };
-            if (type === 'custom') { /// Normal func node creation structure
-                newNode.data = {
-                    label: '',
-                    ddType: '',
-                    initialEdge: dagDirections, // dagDirections will tell the Dag what layout to use LR or TB
-                    selects: {
-                        [nodeTypeId]: '',
-                        hasValue: 0
-                    },
-                };
-            }
-            setNodes((nds: any) => nds.concat(newNode));
-        },
-        [reactFlowInstance] // funcList
-    );
-
-
-    const toggleModal = (open = false, type = 'upload', data = {}) => {
-        setUploadOver(open);
-        setIsModal({
-            open,
-            type,
-            data,
-        });
-    };
-
-    const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)) => {
-        setOrientation(viewPosition);
-    };
-
-    const generateModalContent = () => {
-        const commonProps = {
-            onClose: () => toggleModal(false),
-            type: isModal?.type,
-            data: isModal?.data,
-            onDataUploaded: handleUpload,
-        };
-        if (isModal?.type === 'upload') {
-            return <Load {...commonProps} userData={LoadDagList} loadSavedDag={onloadSavedDag} />;
-        } else {
-            return <Save {...commonProps} onSave={onSave} />;
+  // Handled Drag-out node from Left side panel to Dag Area once user drags-out place the nodes in Dag Area
+  const onDrop = useCallback(
+    (event: { preventDefault: () => void, dataTransfer: { getData: (arg0: string) => any }, clientX: number, clientY: number }) => {
+      event.preventDefault()
+      const reactFlowBounds = reactFlowWrapper?.current?.getBoundingClientRect()
+      const type = event.dataTransfer.getData('application/reactflow')
+      if (typeof type === 'undefined' || !type) {
+        return
+      }
+      const position = reactFlowInstance?.project({ // Hanlde positon of Nodes
+        x: event.clientX - reactFlowBounds.left,
+        y: event.clientY - reactFlowBounds.top
+      })
+      const nodeTypeId = getId(type) // generating unique id for each nodes
+      const newNode: any = { // Normal var node creation structure
+        id: nodeTypeId,
+        type,
+        position,
+        data: { label: '', initialEdge: dagDirections } // dagDirections will tell the Dag what layout to use LR or TB
+      }
+      if (type === 'custom') { /// Normal func node creation structure
+        newNode.data = {
+          label: '',
+          ddType: '',
+          initialEdge: dagDirections, // dagDirections will tell the Dag what layout to use LR or TB
+          selects: {
+            [nodeTypeId]: '',
+            hasValue: 0
+          }
         }
-    };
+      }
+      setNodes((nds: any) => nds.concat(newNode))
+    },
+    [reactFlowInstance] // funcList
+  )
 
-    const handleOpenModal = () => {
-        setOpenModal(true);
-    };
+  const toggleModal = (open = false, type = 'upload', data = {}): void => {
+    setUploadOver(open)
+    setIsModal({
+      open,
+      type,
+      data
+    })
+  }
 
-    const handleCloseModal = () => {
-        setOpenModal(false);
-    };
+  const onChange = (viewPosition: boolean | ((prevState: boolean) => boolean)): void => {
+    setOrientation(viewPosition)
+  }
 
-    // change the left side Schema Editor view position
-    useEffect(() => {
-        // Function to handle window resize
-        const handleResize = () => {
-            if (window.innerWidth < 768) {
-                setOrientation(true);
-            } else {
-                setOrientation(false);
-            }
-        };
+  const generateModalContent = (): JSX.Element => {
+    const commonProps = {
+      onClose: () => { toggleModal(false) },
+      type: isModal?.type,
+      data: isModal?.data,
+      onDataUploaded: handleUpload
+    }
+    if (isModal?.type === 'upload') {
+      return <Load {...commonProps} userData={LoadDagList} loadSavedDag={onloadSavedDag} />
+    } else {
+      return <Save {...commonProps} onSave={onSave} />
+    }
+  }
 
-        // Add event listener for window resize
-        window.addEventListener('resize', handleResize);
+  const handleOpenModal = (): void => {
+    setOpenModal(true)
+  }
 
-        // Initial check for screen size when the component mounts
-        handleResize();
+  const handleCloseModal = (): void => {
+    setOpenModal(false)
+  }
 
-        // Clean up the event listener when the component unmounts
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
+  // change the left side Schema Editor view position
+  useEffect(() => {
+    // Function to handle window resize
+    const handleResize = (): void => {
+      if (window.innerWidth < 768) {
+        setOrientation(true)
+      } else {
+        setOrientation(false)
+      }
+    }
 
-    return (
-        // Any error in API Component will not load show the actual error message
-        isError ? (<Alert severity='error' className='errorMessage'>
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize)
+
+    // Initial check for screen size when the component mounts
+    handleResize()
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  return (
+  // Any error in API Component will not load show the actual error message
+    isError
+      ? (<Alert severity='error' className='errorMessage'>
             There is an Error getting DagFuncList data
-        </Alert>) : (
+        </Alert>)
+      : (
             <div className={`dndflow ${isModal?.open && 'overlayEffect'}`}>
                 {isLoading && <LoadingOverlay />}
                 {/* Actual Dag Structure Everything starts here */}
@@ -297,15 +291,14 @@ const Dagger = (props: IDaggerProps) => {
                                 <Background
                                     variant={BackgroundVariant.Lines}
                                     color="#2a2b2d"
-                                    style={{ backgroundColor: "#1E1F22" }}
+                                    style={{ backgroundColor: '#1E1F22' }}
                                 />
-
 
                                 {/* disabled={(nodes.length === 0 || errorMapping.length > 0)} */}
                                 <Panel position="top-right">
                                     <Button variant="contained" onClick={saveHandler} className='saveBtn panelBtn' startIcon={<UploadIcon />} >Save</Button>
                                     {/* <Button variant="contained" onClick={reflectJson} className='saveBtn panelBtn' startIcon={<DataObjectIcon />}>JSon</Button> */}
-                                    <Button variant="contained" onClick={() => toggleModal(true)} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
+                                    <Button variant="contained" onClick={() => { toggleModal(true) }} className='saveBtn panelBtn' startIcon={<GetAppIcon />}>Load</Button>
                                 </Panel>
                                 {/* <Panel position="top-left">
                                     <button onClick={() => onLayout('LR')}>HL</button>
@@ -319,7 +312,7 @@ const Dagger = (props: IDaggerProps) => {
                 <Modal
                     open={isModal?.open}
                     onClose={(_event: React.MouseEvent<HTMLButtonElement>, reason: string) => {
-                        toggleModal(false);
+                      toggleModal(false)
                     }}>
                     <div className='overlayPosition'>{generateModalContent()}</div>
                 </Modal>
@@ -332,104 +325,102 @@ const Dagger = (props: IDaggerProps) => {
 
             </div>
         )
-    );
-
-
-};
-
-export default memo(Dagger);
-
-function handleReflectAndSave(e: { preventDefault: () => void; }, reactFlowInstance: ReactFlowInstance | null, setFlowNodes: React.Dispatch<any>, setErrorMapping: React.Dispatch<React.SetStateAction<never[]>>, action: string, setIsModal: React.Dispatch<React.SetStateAction<{ open: boolean; type: string; data: {}; }>>, setShowSchema: React.Dispatch<any>) {
-    e.preventDefault();
-    if (reactFlowInstance) {
-        const flow: any = reactFlowInstance.toObject();
-        if (flow.nodes.length === 0) { // if Error is there show Toast Message
-            // return showToast('Error: The DAG is empty', 'error');
-        } else {
-            setFlowNodes(flow.nodes);
-        }
-        const hasValidNodes = flow.nodes.some((flowNode: { type: string; }) => {
-            if (flowNode.type === 'custom') {
-                const bind = get(flowNode, 'func_nodes.bind');
-                if (bind === undefined || !isEmpty(bind)) {
-                    return true;
-                } else {
-                    // showToast('Error: The DAG is empty', 'error');
-                    // return false;
-                }
-            }
-            return true;
-        });
-
-        // If any of the nodes bind is {} then show error and terminate the save modal logic / show JSON
-        if (!hasValidNodes) {
-            return;
-        }
-
-        // Handling Error if any of the nodes label are empty
-        const getFuncNode = ValidationError(flow);
-        let MappedJson = {
-            func_nodes: convertJsonToFuncNodes(flow)
-        };
-        if (getFuncNode.length > 0) { // if Error is there show Toast Message
-            setErrorMapping(getFuncNode); // Listed all the node which are having empty labels
-            return showToast('Error: ' + 'There are Some Empty Nodes or more inputs than expects', 'error');
-        } else {
-            setErrorMapping([]);
-        }
-
-        if (action === 'save') {
-            const flowKey = 'DAG-flow';
-            setIsModal({
-                open: getFuncNode.length === 0,
-                type: 'download',
-                data: MappedJson
-            });
-
-            localStorage.setItem(flowKey, JSON.stringify(flow)); // backup saving the Actual nodes in localStorage 
-            localStorage.setItem('MappedJson', JSON.stringify(MappedJson)); // backup saving the converted for our JSON requirement nodes in localStorage
-        } else if (action === 'reflect') {
-            setShowSchema(MappedJson);
-        }
-    }
+  )
 }
 
-function generateInitialData(DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>) {
-    const func_store_name = 'func_store'
-    if (isEmpty(DagFuncList)) {
-        setFuncList([]); // Return an empty array if DagFuncList is not provided
-        setIsError(true);
+export default memo(Dagger)
+
+function handleReflectAndSave (e: { preventDefault: () => void }, reactFlowInstance: ReactFlowInstance | null, setFlowNodes: React.Dispatch<any>, setErrorMapping: React.Dispatch<React.SetStateAction<never[]>>, action: string, setIsModal: React.Dispatch<React.SetStateAction<{ open: boolean, type: string, data: {} }>>, setShowSchema: React.Dispatch<any>): void {
+  e.preventDefault()
+  if (reactFlowInstance != null) {
+    const flow: any = reactFlowInstance.toObject()
+    if (flow.nodes.length === 0) { // if Error is there show Toast Message
+      // return showToast('Error: The DAG is empty', 'error');
+    } else {
+      setFlowNodes(flow.nodes)
+    }
+    const hasValidNodes = flow.nodes.some((flowNode: { type: string }) => {
+      if (flowNode.type === 'custom') {
+        const bind = get(flowNode, 'func_nodes.bind')
+        if (bind === undefined || !isEmpty(bind)) {
+          return true
+        } else {
+          // showToast('Error: The DAG is empty', 'error');
+          // return false;
+        }
+      }
+      return true
+    })
+
+    // If any of the nodes bind is {} then show error and terminate the save modal logic / show JSON
+    if (!hasValidNodes) {
+      return
     }
 
-    if (isFunction(DagFuncList)) {
-        setIsError(false);
-        // Check if data is a function
-        const result: any = DagFuncList();
-        if (isFunction(result?.then)) {
-            // Check if the result of the function is a promise
-            result.then((dataArray: any) => {
-                if (dataArray.length > 0) {
-                    const list = storeGrouping(dataArray);
-                    setFuncList(list[func_store_name]); // storing FuncList
-                } else {
-                    setIsError(true);
-                }
-                setIsLoading(false);
-            });
-        } else {
-            const dataArray = result as any[]; // Assuming the result is an array
-            const list = storeGrouping(dataArray);
-            setFuncList(list[func_store_name]); // storing FuncList
-            setIsLoading(false);
-        }
-    } else if (isArray(DagFuncList)) {
-        // Check if data is an array
-        const list = storeGrouping(DagFuncList);
-        setFuncList(list[func_store_name]); // storing FuncList
-        setIsLoading(false);
-    } else {
-        setFuncList([]);
-        setIsLoading(false);
-        setIsError(true);
+    // Handling Error if any of the nodes label are empty
+    const getFuncNode = ValidationError(flow)
+    const MappedJson = {
+      func_nodes: convertJsonToFuncNodes(flow)
     }
+    if (getFuncNode.length > 0) { // if Error is there show Toast Message
+      setErrorMapping(getFuncNode) // Listed all the node which are having empty labels
+      showToast('Error: ' + 'There are Some Empty Nodes or more inputs than expects', 'error'); return
+    } else {
+      setErrorMapping([])
+    }
+
+    if (action === 'save') {
+      const flowKey = 'DAG-flow'
+      setIsModal({
+        open: getFuncNode.length === 0,
+        type: 'download',
+        data: MappedJson
+      })
+
+      localStorage.setItem(flowKey, JSON.stringify(flow)) // backup saving the Actual nodes in localStorage
+      localStorage.setItem('MappedJson', JSON.stringify(MappedJson)) // backup saving the converted for our JSON requirement nodes in localStorage
+    } else if (action === 'reflect') {
+      setShowSchema(MappedJson)
+    }
+  }
+}
+
+function generateInitialData (DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>): void {
+  const func_store_name = 'func_store'
+  if (isEmpty(DagFuncList)) {
+    setFuncList([]) // Return an empty array if DagFuncList is not provided
+    setIsError(true)
+  }
+
+  if (isFunction(DagFuncList)) {
+    setIsError(false)
+    // Check if data is a function
+    const result: any = DagFuncList()
+    if (isFunction(result?.then)) {
+      // Check if the result of the function is a promise
+      result.then((dataArray: any) => {
+        if (dataArray.length > 0) {
+          const list = storeGrouping(dataArray)
+          setFuncList(list[func_store_name]) // storing FuncList
+        } else {
+          setIsError(true)
+        }
+        setIsLoading(false)
+      })
+    } else {
+      const dataArray = result as any[] // Assuming the result is an array
+      const list = storeGrouping(dataArray)
+      setFuncList(list[func_store_name]) // storing FuncList
+      setIsLoading(false)
+    }
+  } else if (isArray(DagFuncList)) {
+    // Check if data is an array
+    const list = storeGrouping(DagFuncList)
+    setFuncList(list[func_store_name]) // storing FuncList
+    setIsLoading(false)
+  } else {
+    setFuncList([])
+    setIsLoading(false)
+    setIsError(true)
+  }
 }

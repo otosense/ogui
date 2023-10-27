@@ -4,6 +4,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import Divider from '@mui/material/Divider'
 import CloseIcon from '@mui/icons-material/Close'
 import LoadingOverlay from '../../utilities/Loader'
+import { showToast } from '../../utilities/ReactToastMessage'
 
 function ResetAll (props: any): JSX.Element {
   const { handleClose, resetSchema, formType, newJsonSpecValue } = props
@@ -11,8 +12,11 @@ function ResetAll (props: any): JSX.Element {
   const deleteHandler = async (): any => {
     setIsLoading(true)
     handleClose()
-    const val = await resetSchema(formType.label)
-    newJsonSpecValue(val)
+    const data = await resetSchema(formType.label)
+    if (data === null) {
+      showToast('Success: ' + 'Reset Successfully Done', 'success')
+      newJsonSpecValue(data)
+    }
     setIsLoading(false)
   }
   return (

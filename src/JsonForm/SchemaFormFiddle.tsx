@@ -16,7 +16,7 @@ import ReactToastMessage from '../utilities/ReactToastMessage'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
-  onLoadSchema: any
+  onLoadSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   resetSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   saveSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   func?: (...args: any[]) => any
@@ -133,16 +133,15 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
           </section>
         </main>
           )}
-
-                <CustomModal
-                    open={openModal}
-                    handleClose={handleCloseModal}
-                    title="Reset the Specification Panel"
-                    content={<ResetAll handleClose={handleCloseModal} resetSchema={resetSchema}
-                    formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
-                  }
-                />
-                <ReactToastMessage />
+        <CustomModal
+            open={openModal}
+            handleClose={handleCloseModal}
+            title="Reset the Specification Panel"
+            content={<ResetAll handleClose={handleCloseModal} resetSchema={resetSchema}
+            formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
+          }
+        />
+        <ReactToastMessage />
     </main>
   )
 }

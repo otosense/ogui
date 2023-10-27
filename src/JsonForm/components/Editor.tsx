@@ -130,14 +130,6 @@ function Editors (props: TSchemaManager): JSX.Element {
 
                         <Tooltip title="Save the Specification">
                           <span>
-                            {/* <IconButton
-                              aria-label="SaveIcon"
-                              color="inherit"
-                              onClick={saveSchemas}
-                              disabled={errors.length > 0 || isEmpty(jsonString)}
-                            >
-                              <SaveIcon />
-                            </IconButton> */}
                             <Button onClick={saveSchemas} disabled={errors.length > 0 || isEmpty(jsonString)} color="success" aria-label="Save" variant="contained" startIcon={<SaveIcon />}>
                            Save
                             </Button>

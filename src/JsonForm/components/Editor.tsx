@@ -5,9 +5,6 @@ import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
 import { isEmpty } from 'lodash'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
-import CustomModal from './Modal'
-import ResetAll from './ResetSpec'
-// import * as monaco from "monaco-editor";
 
 interface TSchemaManager {
   onDataUploaded?: any
@@ -18,6 +15,7 @@ interface TSchemaManager {
     label: string
     value: string
   }
+  handleOpenModal?: any
 }
 const MONACO_OPTIONS: any = {
   codeLens: true,
@@ -54,11 +52,10 @@ const MONACO_OPTIONS: any = {
   alwaysConsumeMouseWheel: false
 }
 function Editors (props: TSchemaManager): JSX.Element {
-  const { title, data, onDataUploaded, saveSchema, formType } = props
+  const { title, data, onDataUploaded, saveSchema, formType, handleOpenModal } = props
   const [errors, setErrors] = useState<any[]>([])
   const [jsonString, setJsonString] = useState<any>({})
   const [value, setValue] = useState((JSON.stringify(data, null, 2)))
-  const [openModal, setOpenModal] = useState(false)
 
   const monaco = useMonaco()
   useEffect(() => {
@@ -113,13 +110,9 @@ function Editors (props: TSchemaManager): JSX.Element {
     return null
   }
 
-  const handleOpenModal = (): void => {
-    setOpenModal(true)
-  }
-
-  const handleCloseModal = (): void => {
-    setOpenModal(false)
-  }
+  // const handleCloseModal = (): void => {
+  //   setOpenModal(false)
+  // }
 
   return (
         <main>
@@ -147,7 +140,7 @@ function Editors (props: TSchemaManager): JSX.Element {
                         </Tooltip>
                         <Tooltip title="Reset Specification">
                         <span>
-                              <Button onClick={handleOpenModal} disabled={errors.length > 0 || isEmpty(jsonString)} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
+                              <Button onClick={() => handleOpenModal()} disabled={errors.length > 0 || isEmpty(jsonString)} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
                               Reset
                             </Button>
                             </span>
@@ -168,13 +161,6 @@ function Editors (props: TSchemaManager): JSX.Element {
                 loading={<LoadingOverlay />}
             />
             }
-
-                <CustomModal
-                    open={openModal}
-                    handleClose={handleCloseModal}
-                    title="Reset the Specification Panel"
-                    content={<ResetAll handleClose={handleCloseModal} />}
-                />
         </main>
 
   )

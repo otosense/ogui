@@ -5,9 +5,11 @@ import Divider from '@mui/material/Divider'
 import CloseIcon from '@mui/icons-material/Close'
 
 function ResetAll (props: any): JSX.Element {
-  const { handleClose } = props
-  const deleteHandler = (): void => {
+  const { handleClose, resetSchema, formType, newJsonSpecValue } = props
+  const deleteHandler = async (): Promise<void> => {
     handleClose()
+    const val = await resetSchema(formType.label)
+    newJsonSpecValue(val)
   }
   return (
         <>

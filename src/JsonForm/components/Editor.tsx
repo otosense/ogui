@@ -1,9 +1,12 @@
 import React, { memo, useEffect, useState } from 'react'
 import Editor, { useMonaco } from '@monaco-editor/react'
-import { Alert, AppBar, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
+import { Alert, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material'
 import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
 import { isEmpty } from 'lodash'
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import CustomModal from './Modal'
+import ResetAll from './ResetSpec'
 // import * as monaco from "monaco-editor";
 
 interface TSchemaManager {
@@ -32,11 +35,14 @@ const MONACO_OPTIONS: any = {
   },
   readOnly: false,
   scrollbar: {
-    horizontal: 'hidden',
+    handleMouseWheel: true,
+    alwaysConsumeMouseWheel: false,
+
+    horizontal: 'auto',
     vertical: 'hidden',
-    // scrollByPage: true,
-    horizontalSliderSize: 0,
-    verticalSliderSize: 0
+    scrollByPage: true
+    // horizontalSliderSize: 0,
+    // verticalSliderSize: 0
   },
   selectOnLineNumbers: true,
   roundedSelection: false,
@@ -44,13 +50,15 @@ const MONACO_OPTIONS: any = {
   lineDecorationsWidth: 0,
   lineNumbersMinChars: 0,
   decorationsOverviewRuler: false,
-  overviewRulerLanes: 0
+  overviewRulerLanes: 0,
+  alwaysConsumeMouseWheel: false
 }
 function Editors (props: TSchemaManager): JSX.Element {
   const { title, data, onDataUploaded, saveSchema, formType } = props
   const [errors, setErrors] = useState<any[]>([])
   const [jsonString, setJsonString] = useState<any>({})
   const [value, setValue] = useState((JSON.stringify(data, null, 2)))
+  const [openModal, setOpenModal] = useState(false)
 
   const monaco = useMonaco()
   useEffect(() => {
@@ -104,6 +112,15 @@ function Editors (props: TSchemaManager): JSX.Element {
     }
     return null
   }
+
+  const handleOpenModal = (): void => {
+    setOpenModal(true)
+  }
+
+  const handleCloseModal = (): void => {
+    setOpenModal(false)
+  }
+
   return (
         <main>
             <Box sx={{ flexGrow: 1 }}>
@@ -114,16 +131,28 @@ function Editors (props: TSchemaManager): JSX.Element {
                         </Typography>
                         <Tooltip title="Save the Specification">
                           <span>
-                            <IconButton
+                            {/* <IconButton
                               aria-label="SaveIcon"
                               color="inherit"
                               onClick={saveSchemas}
                               disabled={errors.length > 0 || isEmpty(jsonString)}
                             >
                               <SaveIcon />
-                            </IconButton>
+                            </IconButton> */}
+                            <Button onClick={saveSchemas} disabled={errors.length > 0 || isEmpty(jsonString)} color="success" aria-label="Save" variant="contained" startIcon={<SaveIcon />}>
+                           Save
+                            </Button>
+
                           </span>
                         </Tooltip>
+                        <Tooltip title="Reset Specification">
+                        <span>
+                              <Button onClick={handleOpenModal} disabled={errors.length > 0 || isEmpty(jsonString)} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
+                              Reset
+                            </Button>
+                            </span>
+                        </Tooltip>
+
                     </Toolbar>
                 </AppBar>
             </Box>
@@ -139,6 +168,13 @@ function Editors (props: TSchemaManager): JSX.Element {
                 loading={<LoadingOverlay />}
             />
             }
+
+                <CustomModal
+                    open={openModal}
+                    handleClose={handleCloseModal}
+                    title="Reset the Specification Panel"
+                    content={<ResetAll handleClose={handleCloseModal} />}
+                />
         </main>
 
   )

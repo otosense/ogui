@@ -33,6 +33,12 @@
 
                         main {
                             border: 1px solid #ccc;
+                            .toolbar-action {
+                                display: flex;
+                                justify-content: space-between;
+                                width: 28%;
+                                align-items: center;
+                            }
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
 import { isEmpty } from 'lodash'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import { showToast } from '../../utilities/ReactToastMessage'
 
 interface TSchemaManager {
   onDataUploaded?: any
@@ -88,7 +89,7 @@ function Editors (props: TSchemaManager): JSX.Element {
     }, 10)
   }
 
-  const saveSchemas = (): void => {
+  const saveSchemas = async (): Promise<void> => {
     const val = {
       rjsf: jsonString
     }
@@ -96,7 +97,10 @@ function Editors (props: TSchemaManager): JSX.Element {
       value: val,
       key: formType?.value
     }
-    saveSchema(finalPayload)
+    const data = await saveSchema(finalPayload)
+    if (data === null) {
+      showToast('Success: ' + 'Saved Successfully', 'success')
+    }
   }
 
   function ErrorHandlers (errors: any[]): JSX.Element[] | null {
@@ -122,6 +126,8 @@ function Editors (props: TSchemaManager): JSX.Element {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
+                        <div className='toolbar-action'>
+
                         <Tooltip title="Save the Specification">
                           <span>
                             {/* <IconButton
@@ -140,12 +146,12 @@ function Editors (props: TSchemaManager): JSX.Element {
                         </Tooltip>
                         <Tooltip title="Reset Specification">
                         <span>
-                              <Button onClick={() => handleOpenModal()} disabled={errors.length > 0 || isEmpty(jsonString)} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
+                              <Button onClick={() => handleOpenModal()} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
                               Reset
                             </Button>
                             </span>
                         </Tooltip>
-
+                        </div>
                     </Toolbar>
                 </AppBar>
             </Box>

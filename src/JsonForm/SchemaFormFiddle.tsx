@@ -12,10 +12,11 @@ import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
+import ReactToastMessage from '../utilities/ReactToastMessage'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
-  onLoadSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
+  onLoadSchema: any
   resetSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   saveSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   func?: (...args: any[]) => any
@@ -72,8 +73,11 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
     setOpenModal(true)
   }
 
-  const newJsonSpecValue = (val: any): void => {
-    setCollection(val)
+  const newJsonSpecValue = async (val: any): Promise<void> => {
+    setIsLoading(true)
+    const data = await onLoadSchema(selectedFormType?.label)
+    setCollection(data?.rjsf)
+    setIsLoading(false)
   }
 
   return (
@@ -138,6 +142,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
                     formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
                   }
                 />
+                <ReactToastMessage />
     </main>
   )
 }

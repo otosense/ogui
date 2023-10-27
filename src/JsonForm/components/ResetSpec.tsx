@@ -9,16 +9,24 @@ import { showToast } from '../../utilities/ReactToastMessage'
 function ResetAll (props: any): JSX.Element {
   const { handleClose, resetSchema, formType, newJsonSpecValue } = props
   const [isLoading, setIsLoading] = useState(false)
-  const deleteHandler = async (): any => {
-    setIsLoading(true)
-    handleClose()
-    const data = await resetSchema(formType.label)
-    if (data === null) {
-      showToast('Success: ' + 'Reset Successfully Done', 'success')
-      newJsonSpecValue(data)
+  const deleteHandler = async (): Promise<void> => {
+    try {
+      setIsLoading(true)
+      handleClose()
+      const data = await resetSchema(formType.label)
+      if (data === null) {
+        showToast('Success: Reset Successfully Done', 'success')
+        newJsonSpecValue(data)
+      }
+    } catch (error) {
+      // Handle the Promise rejection (error) here
+      console.error('An error occurred while deleting:', error)
+      showToast('Error: Failed to reset', 'error')
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }
+
   return (
         <>
         {isLoading && <LoadingOverlay />}

@@ -89,17 +89,22 @@ function Editors (props: TSchemaManager): JSX.Element {
     }, 10)
   }
 
-  const saveSchemas = async (): Promise<void> => {
-    const val = {
-      rjsf: jsonString
-    }
-    const finalPayload = {
-      value: val,
-      key: formType?.value
-    }
-    const data = await saveSchema(finalPayload)
-    if (data === null) {
-      showToast('Success: ' + 'Saved Successfully', 'success')
+  async function saveSchemas (): Promise<void> {
+    try {
+      const val = {
+        rjsf: jsonString
+      }
+      const finalPayload = {
+        value: val,
+        key: formType?.value
+      }
+      const data = await saveSchema(finalPayload)
+      if (data === null) {
+        showToast('Success: Saved Successfully', 'success')
+      }
+    } catch (error) {
+      console.error('An error occurred while saving:', error)
+      showToast('Error: Failed to save', 'error')
     }
   }
 

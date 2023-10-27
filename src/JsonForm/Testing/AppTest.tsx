@@ -1,7 +1,7 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
 
-function AppTest(): JSX.Element {
+function AppTest (): JSX.Element {
   const api_url = 'http://20.219.8.178:8888'
   const sum = (a: string): string => {
     const output = a

@@ -29,7 +29,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
   const { getStoreList, onLoadSchema, saveSchema, func, egress } = props
   const [collection, setCollection] = useState<any>({})
   const [isError, setIsError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [funcList, setFuncList] = useState<string[]>([])
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
@@ -60,7 +60,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
     setSelectedFormType(value)
   }
 
-  if (isLoading) return <LoadingOverlay />
+  console.log({ isLoading })
 
   return (
     <main>
@@ -70,6 +70,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
         </Alert>)
         : (
         <main className="main-json-fiddle">
+           {isLoading && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox
@@ -153,6 +154,6 @@ function generateInitialData (
     } else {
       setFuncList(result)
     }
-    setIsLoading(false)
+    // setIsLoading(false)
   }
 }

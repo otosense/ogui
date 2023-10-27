@@ -10,10 +10,14 @@ import SearchBox from './components/SearchBox'
 import Editors from './components/Editor'
 import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
+import CustomModal from './components/Modal'
+import ResetAll from './components/ResetSpec'
+import ReactToastMessage from '../utilities/ReactToastMessage'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
   onLoadSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
+  resetSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   saveSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   func?: (...args: any[]) => any
   egress?: (...args: any[]) => any
@@ -26,14 +30,15 @@ interface Option {
 }
 
 const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
-  const { getStoreList, onLoadSchema, saveSchema, func, egress } = props
+  const { getStoreList, onLoadSchema, saveSchema, func, egress, resetSchema } = props
   const [collection, setCollection] = useState<any>({})
   const [isError, setIsError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [funcList, setFuncList] = useState<string[]>([])
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
+  const [openModal, setOpenModal] = useState(false)
 
   const onSubmit = (props: IFormData): void => {
     const { formData } = props
@@ -60,7 +65,20 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
     setSelectedFormType(value)
   }
 
-  if (isLoading) return <LoadingOverlay />
+  const handleCloseModal = (): void => {
+    setOpenModal(false)
+  }
+
+  const handleOpenModal = (): void => {
+    setOpenModal(true)
+  }
+
+  const newJsonSpecValue = async (val: any): Promise<void> => {
+    setIsLoading(true)
+    const data = await onLoadSchema(selectedFormType?.label)
+    setCollection(data?.rjsf)
+    setIsLoading(false)
+  }
 
   return (
     <main>
@@ -70,6 +88,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
         </Alert>)
         : (
         <main className="main-json-fiddle">
+           {isLoading && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox
@@ -95,6 +114,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
                     title="Specifications"
                     saveSchema={saveSchema}
                     formType={selectedFormType}
+                    handleOpenModal={handleOpenModal}
                   />
                 </div>
               </div>
@@ -113,6 +133,15 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
           </section>
         </main>
           )}
+        <CustomModal
+            open={openModal}
+            handleClose={handleCloseModal}
+            title="Reset the Specification Panel"
+            content={<ResetAll handleClose={handleCloseModal} resetSchema={resetSchema}
+            formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
+          }
+        />
+        <ReactToastMessage />
     </main>
   )
 }
@@ -153,6 +182,6 @@ function generateInitialData (
     } else {
       setFuncList(result)
     }
-    setIsLoading(false)
+    // setIsLoading(false)
   }
 }

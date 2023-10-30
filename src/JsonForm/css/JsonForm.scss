@@ -146,3 +146,15 @@
         font-family: "Roboto","Helvetica","Arial",sans-serif
     }
     }
+
+    .MuiAutocomplete-popper{
+        ul#form-list-listbox{
+            padding: 0 !important;
+            background-color: #fff !important;
+            .MuiListSubheader-root.MuiListSubheader-gutters.MuiListSubheader-sticky.MuiAutocomplete-groupLabel, .MuiAutocomplete-noOptions {
+                background: #fff;
+                color: #ccc !important;
+            }
+        }
+    
+    }

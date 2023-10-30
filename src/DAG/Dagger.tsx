@@ -360,18 +360,14 @@ function handleReflectAndSave (e: { preventDefault: () => void }, reactFlowInsta
 
     // Handling Error if any of the nodes label are empty
     const getFuncNode = ValidationError(flow)
-    console.log({ getFuncNode })
-
     const extractedNodes = convertJsonToFuncNodes(flow)
     const isNotHavingOutput = extractedNodes.some((extractedNode: { out: string }) => extractedNode.out === '')
-    console.log({ isNotHavingOutput })
     if (isNotHavingOutput === true) {
       showToast('Error: ' + 'Output is not defined for some FuncNodes', 'error'); return
     }
     const MappedJson = {
       func_nodes: convertJsonToFuncNodes(flow)
     }
-    console.log({ MappedJson })
     if (getFuncNode.length > 0) { // if Error is there show Toast Message
       setErrorMapping(getFuncNode) // Listed all the node which are having empty labels
       showToast('Error: ' + 'There are Some Empty Nodes or more inputs than expects', 'error'); return

@@ -334,11 +334,11 @@
 					background-size: 100% 32px;
 					background-position: left 10px;
 					margin-top: 10px;
-					width: 95%;
+					width: 100%;
 					text-align: left;
 
 					.json-area {
-						background: url(http://i.imgur.com/2cOaJ.png);
+                        background: url('./../assets/images/numbers.png');
 						background-attachment: local;
 						background-repeat: no-repeat;
 						padding-left: 35px;
@@ -346,7 +346,7 @@
 						border-color: #ccc;
 						font-size: 13px;
 						line-height: 16px;
-						width: calc(100% - 10%);
+						width: 100%;
 						color: black;
 						height: calc(100vh - 26vh);
 					}
@@ -372,6 +372,24 @@
 		}
 
 	}
+
+    @media screen and (max-width: 768px) {
+        
+			
+		.splitter-layout {
+			 .layout-pane.layout-pane-primary { 
+                display: block !important;
+                aside{
+                    width: 100%;
+                    display: unset !important;
+                    .reactflow-sideBar {
+                        height: unset !important;
+                        align-items: unset !important;
+                    }
+                }
+            }
+        }
+    }
 }
 
 .overlayPosition {
@@ -546,3 +564,4 @@
     }
 
 }
+

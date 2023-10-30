@@ -298,7 +298,10 @@
                                                     color: #fff !important;
                                                 }
                                             }
-                                            .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.MuiAutocomplete-popupIndicator.MuiAutocomplete-popupIndicatorOpen {
+                                           .MuiOutlinedInput-notchedOutline {
+                                                border-color: #fff !important;
+                                            }
+                                            .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.MuiAutocomplete-popupIndicator {
                                                 color: #fff !important;
                                             }
                                         }

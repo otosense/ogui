@@ -195,7 +195,7 @@ function DataTable (props: IDataTableProps): JSX.Element {
 
                         muiTableContainerProps={{
                           ref: tableContainerRef, // get access to the table container element
-                          sx: { maxHeight: '450px' } // give the table a max height
+                          sx: { maxHeight: 'calc(100vh - 24vh)' } // give the table a max height
                         }}
 
                         onColumnFiltersChange={setColumnFilters}

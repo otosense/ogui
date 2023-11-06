@@ -1,7 +1,7 @@
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useState } from 'react'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
-import { isEmpty, isFunction, isObject } from 'lodash'
+import { isEmpty } from 'lodash'
 import { Alert } from '@mui/material'
 import { type FormProps } from '@rjsf/core'
 import { type RJSFSchema } from '@rjsf/utils'
@@ -13,6 +13,7 @@ import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
 import ReactToastMessage from '../utilities/ReactToastMessage'
+import { withInitialData } from './utilities/withInitialData'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
@@ -29,12 +30,14 @@ interface Option {
   value: string
 }
 
-const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
-  const { getStoreList, onLoadSchema, saveSchema, func, egress, resetSchema } = props
+const SchemaFormFiddle = (props: IFunctionCallerProps & {
+  funcList: string[]
+  isError: boolean
+  isLoading: boolean
+}): JSX.Element => {
+  const { funcList, isError, isLoading } = props
+  const { onLoadSchema, saveSchema, func, egress, resetSchema } = props
   const [collection, setCollection] = useState<any>({})
-  const [isError, setIsError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [funcList, setFuncList] = useState<string[]>([])
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
@@ -57,9 +60,9 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
     setCollection(data?.rjsf)
   }
 
-  useEffect(() => {
-    generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading)
-  }, [getStoreList])
+  // useEffect(() => {
+  // generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading)
+  // }, [getStoreList])
 
   const handleValue = (value: any): void => {
     setSelectedFormType(value)
@@ -74,10 +77,8 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
   }
 
   const newJsonSpecValue = async (val: any): Promise<void> => {
-    setIsLoading(true)
     const data = await onLoadSchema(selectedFormType?.label)
     setCollection(data?.rjsf)
-    setIsLoading(false)
   }
 
   return (
@@ -152,36 +153,4 @@ SchemaFormFiddle.defaultProps = {
   saveSchema: {}
 }
 
-export default memo(SchemaFormFiddle)
-function generateInitialData (
-  DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
-  setFuncList: React.Dispatch<any>,
-  setIsError: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-): void {
-  // setIsLoading(true);
-  if (isEmpty(DagFuncList)) {
-    setFuncList([]) // Return an empty array if DagFuncList is not provided
-    setIsError(true)
-  }
-
-  if (isObject(DagFuncList)) {
-    setIsError(false)
-    const result: any = DagFuncList
-    if (isFunction(result?.then)) {
-      // Check if the result of the function is a promise
-      result.then((dataArray: any) => {
-        if (dataArray.length > 0) {
-          setFuncList(dataArray)
-        } else {
-          setIsError(true)
-          setFuncList([])
-        }
-        setIsLoading(false)
-      })
-    } else {
-      setFuncList(result)
-    }
-    // setIsLoading(false)
-  }
-}
+export default memo(withInitialData(SchemaFormFiddle))

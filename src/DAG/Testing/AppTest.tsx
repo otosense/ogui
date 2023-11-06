@@ -1,174 +1,118 @@
-import React from 'react';
-import Dagger from '../Dagger';
-import { LRUCache } from '../utilities/lruCache';
+import React from 'react'
+import Dagger from '../Dagger'
+import { LRUCache } from '../utilities/lruCache'
 // import { loadDagFuncList } from './data';
 
-function AppTest() {
-    const api_url = 'http://20.219.8.178:8888';
-    const dag_component_store_api_url = `${api_url}/dag_component_store`;
-    const func_store_name = 'func_store';
+const EndPointURL = 'http://20.219.8.178:8888'
+const StoreURL = `${EndPointURL}/dag_component_info_store `
+const saveDagURL = `${EndPointURL}/dag_spec_store`
+const storeFuncKey = 'funcs'
+async function fetchData (payload: any, url: string): Promise<any> {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ ...payload }),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
 
-    // const saveLoadedDag = {
-    //     "id": "test_dag_sprint_review",
-    //     "dagName": "test_dag_sprint_review",
-    //     "func_nodes": [
-    //         {
-    //             "name": "function_329",
-    //             "func_label": "mk_chunker_step",
-    //             "out": "test",
-    //             "func": "mk_chunker_step",
-    //             "bind": {
-    //                 "chk_size": "a"
-    //             }
-    //         }
-    //     ]
-    // };
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
 
-    const sample = async () => {
-        // return await loadDagFuncList;
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    return []
+  }
+}
+function AppTest (): JSX.Element {
+  const sample = async (): Promise<any> => {
+    // return await loadDagFuncList;
 
+    const payload = {
+      _attr_name: '__iter__'
+    }
+    // Saving the Dag to Backend using API
+    const response = await fetchData(payload, StoreURL)
+    return response
+  }
 
-        try {
-            const response = await fetch(dag_component_store_api_url, {
-                method: "POST",
-                body: JSON.stringify({
-                    "_attr_name": "__iter__",
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
+  // const sample = () => {
+  //     return loadDagFuncList;
+  // };
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+  const saver = async (data: any) => {
+    const payload = {
+      _attr_name: '__setitem__',
+      k: data.name,
+      v: data.combinedObj
+    }
+    // Saving the Dag to Backend using API
+    const response = await fetchData(payload, saveDagURL)
+    return response
+  }
 
-            const json = await response.json();
-            // console.log('json', json);
-            return json;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return []; // Return an empty array or handle the error appropriately
+  const onloadSavedDag = async (data: any): Promise<any> => {
+    const payload = {
+      _attr_name: '__getitem__',
+      k: data
+    }
+    const response = await fetchData(payload, saveDagURL)
+    return response
+  }
+  const lruCacheParamsList = new LRUCache<string, any>(100)
+
+  const loadParamsList = async (data: any): Promise<any> => {
+    const cached = lruCacheParamsList.get(data)
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (cached) {
+      return cached
+    }
+
+    // console.log('data', data);
+    const payload = {
+      _attr_name: '__getitem__',
+      k: [storeFuncKey, data]
+    }
+
+    try {
+      const response = await fetch(StoreURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          ...payload
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8'
         }
+      })
 
-    };
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
 
-    // const sample = () => {
-    //     return loadDagFuncList;
-    // };
+      const json = await response.json()
+      // console.log('json', json);
+      lruCacheParamsList.set(data, json)
+      return json
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      return [] // Return an empty array or handle the error appropriately
+    }
+  }
 
-    const saver = async (data: any) => {
-
-        const APIpayload = {
-            "_attr_name": '__setitem__',
-            k: data.name,
-            v: data.combinedObj
-        };
-        // Saving the Dag to Backend using API
-        try {
-            const response = await fetch(`${api_url}/dag_store`, {
-                method: "POST",
-                body: JSON.stringify({
-                    ...APIpayload
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const json = await response.json();
-            // console.log('json', json);
-            return json;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return []; // Return an empty array or handle the error appropriately
-        }
-    };
-
-    const onloadSavedDag = async (data: any) => {
-        const payload = {
-            "_attr_name": "__getitem__",
-            "k": data
-        };
-
-        try {
-            const response = await fetch(`${api_url}/dag_store`, {
-                method: "POST",
-                body: JSON.stringify({
-                    ...payload
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const json = await response.json();
-            // console.log('json', json);
-            return json;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return []; // Return an empty array or handle the error appropriately
-        }
-    };
-    const lruCacheParamsList = new LRUCache<string, any>(100);
-
-    const loadParamsList = async (data: any) => {
-        const cached = lruCacheParamsList.get(data);
-        if (cached) {
-            return cached;
-        }
-
-        // console.log('data', data);
-        const payload = {
-            "_attr_name": '__getitem__',
-            "k": [func_store_name, data]
-        };
-
-        try {
-            const response = await fetch(dag_component_store_api_url, {
-                method: "POST",
-                body: JSON.stringify({
-                    ...payload
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const json = await response.json();
-            // console.log('json', json);
-            lruCacheParamsList.set(data, json);
-            return json;
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            return []; // Return an empty array or handle the error appropriately
-        }
-    };
-
-    const configuration = {
-        DagFuncList: sample,
-        LoadDagList: sample,
-        onSave: saver,
-        onloadSavedDag: onloadSavedDag,
-        loadParamsList: loadParamsList
-    };
-    return (
+  const configuration = {
+    DagFuncList: sample,
+    LoadDagList: sample,
+    onSave: saver,
+    onloadSavedDag,
+    loadParamsList
+  }
+  return (
         <>
             <Dagger {...configuration} />
         </>
-    );
+  )
 }
 
-export default AppTest;
+export default AppTest

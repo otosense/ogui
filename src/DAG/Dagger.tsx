@@ -392,7 +392,7 @@ function handleReflectAndSave (e: { preventDefault: () => void }, reactFlowInsta
 }
 
 function generateInitialData (DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>): void {
-  const func_store_name = 'func_store'
+  const func_store_name = 'funcs'
   if (isEmpty(DagFuncList)) {
     setFuncList([]) // Return an empty array if DagFuncList is not provided
     setIsError(true)

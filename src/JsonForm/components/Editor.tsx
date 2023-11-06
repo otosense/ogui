@@ -86,7 +86,7 @@ function Editors (props: TSchemaManager): JSX.Element {
           column
         })
       })
-    }, 10)
+    }, 50)
   }
 
   async function saveSchemas (): Promise<void> {

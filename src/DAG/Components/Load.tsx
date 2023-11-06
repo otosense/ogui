@@ -3,6 +3,7 @@ import { listMapping } from '../utilities/Mapping/listMapping'
 import { type ILoadProps } from './Interfaces'
 import { storeGrouping } from '../utilities/Mapping/storeGrouping'
 import { isArray, isEmpty, isFunction, isObject } from 'lodash'
+import { storeDagKey } from '../Testing/config'
 
 function Load (props: ILoadProps): JSX.Element {
   // Loading the User created already a Dag or by Entering in the input text area
@@ -19,9 +20,8 @@ function Load (props: ILoadProps): JSX.Element {
   }
 
   useEffect(() => {
-    const dagStoreName = 'dags'
     // const list = storeGrouping(response.data); // Grouping the API
-    // const result = listMapping(list[dagStoreName]); // Extracting only the dag_Store
+    // const result = listMapping(list[storeDagKey]); // Extracting only the dag_Store
     // setDagListResponse(result); // saving the Result
 
     if (isEmpty(userData)) {
@@ -36,19 +36,19 @@ function Load (props: ILoadProps): JSX.Element {
         // Check if the result of the function is a promise
         result.then((dataArray: any) => {
           const list = storeGrouping(dataArray)
-          const output = listMapping(list[dagStoreName]) // Extracting only the dag_Store
+          const output = listMapping(list[storeDagKey]) // Extracting only the dag_Store
           setDagListResponse(output) // storing FuncList
         })
       } else {
         const dataArray = result as any[] // Assuming the result is an array
         const list = storeGrouping(dataArray)
-        const output = listMapping(list[dagStoreName]) // Extracting only the dag_Store
+        const output = listMapping(list[storeDagKey]) // Extracting only the dag_Store
         setDagListResponse(output) // saving the Result
       }
     } else if (isArray(userData)) {
       // Check if data is an array
       const list = storeGrouping(userData)
-      const output = listMapping(list[dagStoreName]) // Extracting only the dag_Store
+      const output = listMapping(list[storeDagKey]) // Extracting only the dag_Store
       setDagListResponse(output) // saving the Result
     } else {
       setDagListResponse([])

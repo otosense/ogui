@@ -38,6 +38,7 @@ import { autoLayoutStructure } from './utilities/Layouts'
 import Toast, { showToast } from './utilities/ReactToastMessage'
 import CustomModal from './Components/Modal'
 import DeleteAll from './Components/NodeTypes/DeleteAll'
+import { storeFuncKey } from './Testing/config'
 
 // Main component Starts here
 const Dagger = (props: IDaggerProps): React.ReactElement => {
@@ -392,7 +393,6 @@ function handleReflectAndSave (e: { preventDefault: () => void }, reactFlowInsta
 }
 
 function generateInitialData (DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>), setFuncList: React.Dispatch<any>, setIsError: React.Dispatch<React.SetStateAction<boolean>>, setIsLoading: React.Dispatch<React.SetStateAction<boolean>>): void {
-  const func_store_name = 'funcs'
   if (isEmpty(DagFuncList)) {
     setFuncList([]) // Return an empty array if DagFuncList is not provided
     setIsError(true)
@@ -407,7 +407,7 @@ function generateInitialData (DagFuncList: any[] | (() => any[]) | (() => Promis
       result.then((dataArray: any) => {
         if (dataArray.length > 0) {
           const list = storeGrouping(dataArray)
-          setFuncList(list[func_store_name]) // storing FuncList
+          setFuncList(list[storeFuncKey]) // storing FuncList
         } else {
           setIsError(true)
         }
@@ -416,13 +416,13 @@ function generateInitialData (DagFuncList: any[] | (() => any[]) | (() => Promis
     } else {
       const dataArray = result as any[] // Assuming the result is an array
       const list = storeGrouping(dataArray)
-      setFuncList(list[func_store_name]) // storing FuncList
+      setFuncList(list[storeFuncKey]) // storing FuncList
       setIsLoading(false)
     }
   } else if (isArray(DagFuncList)) {
     // Check if data is an array
     const list = storeGrouping(DagFuncList)
-    setFuncList(list[func_store_name]) // storing FuncList
+    setFuncList(list[storeFuncKey]) // storing FuncList
     setIsLoading(false)
   } else {
     setFuncList([])

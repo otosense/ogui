@@ -1,39 +1,38 @@
-import React, { memo } from 'react';
-import { Box, Typography } from '@mui/material';
-// import { loadTableData } from './NewSample';
-import { loadTableData } from './SampleData';
-import DataTable from '../DataTable';
-import { IDataTableProps } from '../components/Interfaces';
+import React, { memo } from 'react'
+import { loadTableData } from './SampleData'
+import DataTable from '../DataTable'
+import { type IDataTableProps } from '../components/Interfaces'
+import { fetchURL } from './configs'
 
-function AppTest() {
+async function fetchData (payload: any): Promise<any> {
+  try {
+    const response = await fetch(fetchURL, {
+      method: 'POST',
+      body: JSON.stringify({ ...payload }),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
 
-  const sampleFunction = async () => {
-    return loadTableData.data;
-
-    try {
-      const response = await fetch("http://20.219.8.178:8080/get_all_sessions?", {
-        method: "POST",
-        body: JSON.stringify({
-          from_: 0,
-          to_: 100
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const json = await response.json();
-      console.log('json', json);
-      return json.data;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return []; // Return an empty array or handle the error appropriately
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
     }
-  };
+
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    return []
+  }
+}
+function AppTest (): JSX.Element {
+  const sampleFunction = async (): Promise<any> => {
+    // return loadTableData.data
+    const payload = {
+      from_: 0,
+      to_: 100
+    }
+    const response = await fetchData(payload)
+    return response.data
+  }
 
   const configuration: IDataTableProps = {
     data: sampleFunction,
@@ -45,16 +44,16 @@ function AppTest() {
         enableColumnFilter: false,
         enableSorting: false,
         filterFn: 'contains',
-        Cell: ({ cell }: { cell: any; }) => <img src={cell.getValue()} width={30} />
+        Cell: ({ cell }: { cell: any }) => <img src={cell.getValue()} width={30} />
       },
       {
         header: 'eyeColor',
         enableColumnFilter: false,
         enableSorting: false,
-        Cell: ({ cell }: { cell: any; }) => (
+        Cell: ({ cell }: { cell: any }) => (
           <p
             style={{
-              backgroundColor: cell.getValue(),
+              backgroundColor: cell.getValue()
             }}
             className='colorBox'
           >
@@ -62,15 +61,14 @@ function AppTest() {
           </p>)
       }
 
-
     ],
     rowExpandedDetails: ({ row }: any) => {
-      const { channel, annotations } = row.original;
+      const { channel, annotations } = row.original
       return <>
         <p>{channel}</p>;
         <pre>{JSON.stringify(annotations)}</pre>
-      </>;
-    },
+      </>
+    }
     // enablePinning: false, // allow pinning the columns to left
     // enableRowSelection: true, // enable Row Single Selection
     // enableMultiRowSelection: true, // enable Row Multi Selection
@@ -94,18 +92,12 @@ function AppTest() {
     // enableRowVirtualization: true, // Enable row virtualization,
     // hideColumnsDefault: ["picture", "about"] // hide the columns default
     // hideColumnsDefault: ["annotations", "channels"] // hide the columns default
-  };
-
-
-  /*******************************/
-  // Note: if you're Getting issue like "Objects are not valid as a React child (found: object with keys {name, bt, tt, source})", means you're rendering objects inside the table, so add it hideColumnsDefault, or even if you want to see the details use rowExpandedDetails to add additional details.
-  /*******************************/
+  }
   return (
     <>
       <DataTable {...configuration} />
     </>
-  );
+  )
 }
 
-export default memo(AppTest);
-
+export default memo(AppTest)

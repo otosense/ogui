@@ -1,8 +1,7 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
+import { fetchURL } from './configs'
 
-const EndPointURL = 'http://20.219.8.178:8888'
-const fetchURL = `${EndPointURL}/form_spec_store`
 async function fetchData (payload: any): Promise<any> {
   try {
     const response = await fetch(fetchURL, {

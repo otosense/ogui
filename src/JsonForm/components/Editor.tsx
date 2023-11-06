@@ -154,7 +154,7 @@ function Editors (props: TSchemaManager): JSX.Element {
             </Box>
             {ErrorHandlers(errors)}
             {<Editor
-                height='92vh'
+                height='62vh'
                 width={'100%'}
                 language='json'
                 options={MONACO_OPTIONS}

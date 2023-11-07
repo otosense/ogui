@@ -1,7 +1,7 @@
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useState } from 'react'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
-import { isEmpty, isFunction, isObject } from 'lodash'
+import { isEmpty } from 'lodash'
 import { Alert } from '@mui/material'
 import { type FormProps } from '@rjsf/core'
 import { type RJSFSchema } from '@rjsf/utils'
@@ -10,10 +10,15 @@ import SearchBox from './components/SearchBox'
 import Editors from './components/Editor'
 import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
+import CustomModal from './components/Modal'
+import ResetAll from './components/ResetSpec'
+import ReactToastMessage from '../utilities/ReactToastMessage'
+import { withInitialData } from './utilities/withInitialData'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
   onLoadSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
+  resetSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   saveSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   func?: (...args: any[]) => any
   egress?: (...args: any[]) => any
@@ -25,15 +30,18 @@ interface Option {
   value: string
 }
 
-const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
-  const { getStoreList, onLoadSchema, saveSchema, func, egress } = props
+const SchemaFormFiddle = (props: IFunctionCallerProps & {
+  funcList: string[]
+  isError: boolean
+  isLoading: boolean
+}): JSX.Element => {
+  const { funcList, isError, isLoading } = props
+  const { onLoadSchema, saveSchema, func, egress, resetSchema } = props
   const [collection, setCollection] = useState<any>({})
-  const [isError, setIsError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [funcList, setFuncList] = useState<string[]>([])
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
+  const [openModal, setOpenModal] = useState(false)
 
   const onSubmit = (props: IFormData): void => {
     const { formData } = props
@@ -52,15 +60,26 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
     setCollection(data?.rjsf)
   }
 
-  useEffect(() => {
-    generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading)
-  }, [getStoreList])
+  // useEffect(() => {
+  // generateInitialData(getStoreList, setFuncList, setIsError, setIsLoading)
+  // }, [getStoreList])
 
   const handleValue = (value: any): void => {
     setSelectedFormType(value)
   }
 
-  if (isLoading) return <LoadingOverlay />
+  const handleCloseModal = (): void => {
+    setOpenModal(false)
+  }
+
+  const handleOpenModal = (): void => {
+    setOpenModal(true)
+  }
+
+  const newJsonSpecValue = async (val: any): Promise<void> => {
+    const data = await onLoadSchema(selectedFormType?.label)
+    setCollection(data?.rjsf)
+  }
 
   return (
     <main>
@@ -70,6 +89,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
         </Alert>)
         : (
         <main className="main-json-fiddle">
+           {isLoading && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox
@@ -95,6 +115,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
                     title="Specifications"
                     saveSchema={saveSchema}
                     formType={selectedFormType}
+                    handleOpenModal={handleOpenModal}
                   />
                 </div>
               </div>
@@ -113,6 +134,15 @@ const SchemaFormFiddle = (props: IFunctionCallerProps): JSX.Element => {
           </section>
         </main>
           )}
+        <CustomModal
+            open={openModal}
+            handleClose={handleCloseModal}
+            title="Reset the Specification Panel"
+            content={<ResetAll handleClose={handleCloseModal} resetSchema={resetSchema}
+            formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
+          }
+        />
+        <ReactToastMessage />
     </main>
   )
 }
@@ -123,36 +153,4 @@ SchemaFormFiddle.defaultProps = {
   saveSchema: {}
 }
 
-export default memo(SchemaFormFiddle)
-function generateInitialData (
-  DagFuncList: any[] | (() => any[]) | (() => Promise<any[]>),
-  setFuncList: React.Dispatch<any>,
-  setIsError: React.Dispatch<React.SetStateAction<boolean>>,
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-): void {
-  // setIsLoading(true);
-  if (isEmpty(DagFuncList)) {
-    setFuncList([]) // Return an empty array if DagFuncList is not provided
-    setIsError(true)
-  }
-
-  if (isObject(DagFuncList)) {
-    setIsError(false)
-    const result: any = DagFuncList
-    if (isFunction(result?.then)) {
-      // Check if the result of the function is a promise
-      result.then((dataArray: any) => {
-        if (dataArray.length > 0) {
-          setFuncList(dataArray)
-        } else {
-          setIsError(true)
-          setFuncList([])
-        }
-        setIsLoading(false)
-      })
-    } else {
-      setFuncList(result)
-    }
-    setIsLoading(false)
-  }
-}
+export default memo(withInitialData(SchemaFormFiddle))

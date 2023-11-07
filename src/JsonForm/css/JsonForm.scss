@@ -1,0 +1,161 @@
+.main-json-fiddle {
+    text-align: left;
+
+    .center {
+        margin: 1% 0;
+    }
+
+    .inputs-fiddle {
+        margin: 1% 0;
+    }
+
+    .autoComplete-Dropdown {
+        width: 25%;
+
+        input#form-list {
+            color: unset;
+        }
+    }
+
+
+    .jsonFiddle {
+        display: flex;
+
+        .splitter-layout {
+            width: 95% !important;
+            height: 70% !important;
+
+            .layout-pane {
+                display: block !important;
+
+                .fiddle-left-side {
+                    .layout-common {
+                        margin-bottom: 1%;
+
+                        main {
+                            // border: 1px solid #ccc;
+                            .toolbar-action {
+                                display: flex;
+                                justify-content: space-between;
+                                width: 24%;
+                                align-items: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        .fiddle-right-side {
+            padding: 0 2%;
+        }
+    }
+
+   
+
+    //   .MuiListSubheader-root.MuiListSubheader-gutters.MuiListSubheader-sticky.MuiAutocomplete-groupLabel,
+    // .MuiAutocomplete-noOptions {
+    //     background: #fff;
+    //     // color: inherit !important
+    //         /* border: 1px solid #6b7280 */
+    // }
+
+    // ul.MuiAutocomplete-listbox {
+    //     padding: inherit;
+    // }
+
+
+    // input#form-list {
+    //     color: inherit !important;
+    // }
+
+    // label#form-list-label {
+    //     color: inherit !important;
+    // }
+
+    // .MuiOutlinedInput-notchedOutline {
+    //     border-color: inherit !important;
+    // }
+
+    // button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.MuiAutocomplete-popupIndicator.MuiAutocomplete-popupIndicatorOpen {
+    //     color: inherit !important;
+    // }
+
+    @media screen and (max-width: 768px) {
+        .jsonFiddle {
+            .fiddle-right-side {
+                margin-top: 3%;
+            }
+        }
+
+        .autoComplete-Dropdown {
+            width: 100%;
+        }
+    }
+}
+
+/* Scroll Bar Style Starts here */
+/* width */
+/* For both x-axis and y-axis */
+::-webkit-scrollbar {
+    width: 5px;
+    /* Width of the scrollbar */
+    height: 5px;
+    /* Height of the scrollbar */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track background color */
+}
+
+/* Handle for y-axis */
+::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    /* Handle background color for y-axis */
+}
+
+/* Handle for x-axis */
+::-webkit-scrollbar-thumb:horizontal {
+    background: #6b7280;
+    /* Handle background color for x-axis */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Handle background color on hover */
+}
+
+
+
+/* Scroll Bar Style Ends here */
+
+// ModalBox Scss 
+.MuiModal-root{
+    .ModalTitle {
+        margin: 0;
+        font-weight: unset;
+        line-height: 3;
+        border-bottom: 1px solid rgb(229, 231, 235);
+        margin-bottom: 2%;
+        display: block !important;
+        text-align: center;
+        color: #000;
+        font-family: "Roboto","Helvetica","Arial",sans-serif
+    }
+    }
+
+    .MuiAutocomplete-popper{
+        ul#form-list-listbox{
+            padding: 0 !important;
+            background-color: #fff !important;
+            .MuiListSubheader-root.MuiListSubheader-gutters.MuiListSubheader-sticky.MuiAutocomplete-groupLabel, .MuiAutocomplete-noOptions {
+                background: #fff;
+                color: #ccc !important;
+            }
+        }
+    
+    }

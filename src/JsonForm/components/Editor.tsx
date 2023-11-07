@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useState } from 'react'
 import Editor, { useMonaco } from '@monaco-editor/react'
-import { Alert, AppBar, Box, IconButton, Toolbar, Tooltip, Typography } from '@mui/material'
+import { Alert, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material'
 import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
 import { isEmpty } from 'lodash'
-// import * as monaco from "monaco-editor";
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import { showToast } from '../../utilities/ReactToastMessage'
 
 interface TSchemaManager {
   onDataUploaded?: any
@@ -15,6 +16,7 @@ interface TSchemaManager {
     label: string
     value: string
   }
+  handleOpenModal?: any
 }
 const MONACO_OPTIONS: any = {
   codeLens: true,
@@ -32,11 +34,14 @@ const MONACO_OPTIONS: any = {
   },
   readOnly: false,
   scrollbar: {
-    horizontal: 'hidden',
+    handleMouseWheel: true,
+    alwaysConsumeMouseWheel: false,
+
+    horizontal: 'auto',
     vertical: 'hidden',
-    // scrollByPage: true,
-    horizontalSliderSize: 0,
-    verticalSliderSize: 0
+    scrollByPage: true
+    // horizontalSliderSize: 0,
+    // verticalSliderSize: 0
   },
   selectOnLineNumbers: true,
   roundedSelection: false,
@@ -44,10 +49,11 @@ const MONACO_OPTIONS: any = {
   lineDecorationsWidth: 0,
   lineNumbersMinChars: 0,
   decorationsOverviewRuler: false,
-  overviewRulerLanes: 0
+  overviewRulerLanes: 0,
+  alwaysConsumeMouseWheel: false
 }
 function Editors (props: TSchemaManager): JSX.Element {
-  const { title, data, onDataUploaded, saveSchema, formType } = props
+  const { title, data, onDataUploaded, saveSchema, formType, handleOpenModal } = props
   const [errors, setErrors] = useState<any[]>([])
   const [jsonString, setJsonString] = useState<any>({})
   const [value, setValue] = useState((JSON.stringify(data, null, 2)))
@@ -80,18 +86,26 @@ function Editors (props: TSchemaManager): JSX.Element {
           column
         })
       })
-    }, 10)
+    }, 50)
   }
 
-  const saveSchemas = (): void => {
-    const val = {
-      rjsf: jsonString
+  async function saveSchemas (): Promise<void> {
+    try {
+      const val = {
+        rjsf: jsonString
+      }
+      const finalPayload = {
+        value: val,
+        key: formType?.value
+      }
+      const data = await saveSchema(finalPayload)
+      if (data === null) {
+        showToast('Success: Saved Successfully', 'success')
+      }
+    } catch (error) {
+      console.error('An error occurred while saving:', error)
+      showToast('Error: Failed to save', 'error')
     }
-    const finalPayload = {
-      value: val,
-      key: formType?.value
-    }
-    saveSchema(finalPayload)
   }
 
   function ErrorHandlers (errors: any[]): JSX.Element[] | null {
@@ -104,6 +118,11 @@ function Editors (props: TSchemaManager): JSX.Element {
     }
     return null
   }
+
+  // const handleCloseModal = (): void => {
+  //   setOpenModal(false)
+  // }
+
   return (
         <main>
             <Box sx={{ flexGrow: 1 }}>
@@ -112,24 +131,30 @@ function Editors (props: TSchemaManager): JSX.Element {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
+                        <div className='toolbar-action'>
+
                         <Tooltip title="Save the Specification">
                           <span>
-                            <IconButton
-                              aria-label="SaveIcon"
-                              color="inherit"
-                              onClick={saveSchemas}
-                              disabled={errors.length > 0 || isEmpty(jsonString)}
-                            >
-                              <SaveIcon />
-                            </IconButton>
+                            <Button onClick={saveSchemas} disabled={errors.length > 0 || isEmpty(jsonString)} color="success" aria-label="Save" variant="contained" startIcon={<SaveIcon />}>
+                           Save
+                            </Button>
+
                           </span>
                         </Tooltip>
+                        <Tooltip title="Reset Specification">
+                        <span>
+                              <Button onClick={() => handleOpenModal()} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
+                              Reset
+                            </Button>
+                            </span>
+                        </Tooltip>
+                        </div>
                     </Toolbar>
                 </AppBar>
             </Box>
             {ErrorHandlers(errors)}
             {<Editor
-                height='92vh'
+                height='62vh'
                 width={'100%'}
                 language='json'
                 options={MONACO_OPTIONS}

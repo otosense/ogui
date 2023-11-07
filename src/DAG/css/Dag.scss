@@ -1,0 +1,587 @@
+
+.dndflow {
+	flex-direction: column;
+	display: flex;
+	flex-grow: 1;
+	height: 100%;
+
+	.splitter-layout {
+		width: 98% !important;
+		height: 98% !important;
+		position: unset !important;
+
+		.layout-pane {
+			text-align: center !important;
+
+			&.layout-pane-primary {
+				display: flex !important;
+			}
+
+			aside {
+				padding: 15px 10px;
+				font-size: 75%;
+				text-align: center;
+				width: 12%;
+				max-width: 250px;
+
+				.description {
+					margin-bottom: 10px;
+					text-align: center;
+				}
+
+				.reactflow-sideBar {
+					display: flex;
+					justify-content: space-between;
+					flex-direction: column;
+					align-items: center;
+					height: calc(100vh - 22vh) !important;
+
+					.dndnode {
+						padding: 8px;
+						border: 3px solid #1a192b;
+						border-radius: 2px;
+						margin-bottom: 10px;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						cursor: grab;
+
+						&.input {
+							border-color: #c2410c;
+						}
+
+						&.function {
+							border-color: #0891b2;
+						}
+					}
+				}
+			}
+
+			.reactflow-wrapper {
+				flex-grow: 1;
+				height: 100%;
+
+				.react-flow__panel.react-flow__attribution.bottom.right {
+					display: none;
+				}
+
+				.react-flow__panel.top.right {
+					margin: 1% 0;
+					width: 30%;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+
+					.panelBtn {
+						width: 45%;
+						text-align: center;
+						font-size: 88%;
+						background-color: #1976d2 !important;
+
+						&.saveBtn {
+							margin-right: 10px;
+						}
+					}
+				}
+
+				.react-flow__renderer {
+					.react-flow__pane {
+						.react-flow__viewport {
+							.react-flow__edges {
+
+								.react-flow__edge.selected .react-flow__edge-path,
+								.react-flow__edge:focus .react-flow__edge-path,
+								.react-flow__edge:focus-visible .react-flow__edge-path {
+									stroke: white !important;
+									stroke-width: 2px !important;
+								}
+							}
+
+							.react-flow__nodes {
+								.react-flow__node {
+									.text-updater-node {
+										overflow: hidden;
+										width: 200px;
+										border-radius: 3px;
+
+										.flexProps {
+											display: flex;
+											justify-content: space-between;
+											align-items: center;
+											padding: 0 8%;
+											font-size: 12px;
+											background: #1f2937;
+											color: #fff;
+											flex-direction: column;
+
+											&.varNode {
+												border: 1px solid #c2410c;
+											}
+
+											&.funcNode {
+												border: 1px solid #0891b2;
+
+												.custom-node__select {
+													width: 100%;
+													text-align: center;
+
+													.selectedFuncNode {
+														margin: 0 auto;
+														width: 100%;
+														text-align: center;
+														white-space: nowrap;
+														overflow: hidden;
+														text-overflow: ellipsis;
+													}
+
+													.handlers {
+														display: flex;
+														justify-content: space-between;
+														align-items: center;
+
+														/* position: relative; */
+														.multiInput {
+															.resultEdger {
+																display: flex;
+																justify-content: space-between;
+																align-items: center;
+
+																.react-flow__handle-left {
+																	top: auto !important;
+																	transform: unset !important
+																}
+
+																.react-flow__handle-right {
+																	top: auto !important;
+																	transform: unset !important
+																}
+
+																.handlerText {
+																	margin: 2px 0px;
+																	font-size: 9px;
+																}
+
+																.react-flow__handle.connectionindicator {
+																	width: 0 !important;
+																	height: 0 !important;
+																	border-top: 6px solid transparent !important;
+																	border-left: 12px solid #fff !important;
+																	border-bottom: 6px solid transparent !important;
+																	border-radius: unset !important;
+																	min-width: unset !important;
+																	min-height: unset !important;
+																	border: unset;
+																}
+
+																.noHandler {
+																	/* display: none !important; */
+																	opacity: 0;
+																	height: 0 !important;
+																	margin: 0;
+																	pointer-events: none !important;
+																}
+															}
+														}
+
+														.resultEdger {
+															display: flex;
+															justify-content: space-between;
+															align-items: center;
+
+															.react-flow__handle-right {
+																top: auto !important;
+																transform: unset !important
+															}
+
+															.react-flow__handle.connectionindicator {
+																width: 0 !important;
+																height: 0 !important;
+																border-top: 6px solid transparent !important;
+																border-left: 12px solid #fff !important;
+																border-bottom: 6px solid transparent !important;
+																border-radius: unset !important;
+																min-width: unset !important;
+																min-height: unset !important;
+																border: unset;
+															}
+
+															.handlerText {
+																margin: 2px 0px;
+																font-size: 9px;
+															}
+														}
+													}
+												}
+											}
+
+											&.varNode {
+												&.onlyInput {
+													border: 1px solid yellow !important;
+												}
+
+												&.outputIsInput {
+													border: 1px solid #c2410c !important;
+												}
+											}
+
+											&.varNode .inputStyler {
+												display: flex;
+												justify-content: space-between;
+												align-items: center;
+												font-size: 12px;
+												background: #1f2937;
+												color: #fff;
+
+												.titleBox {
+													border: 0;
+													margin: 6% 0;
+													width: 100%;
+													color: #fff;
+													background: #1f2937;
+												}
+											}
+
+											.invalidMsg {
+												font-size: 12px;
+												color: red;
+											}
+										}
+
+										.connector {
+											&:hover {
+												transform: scale(1.4) !important;
+											}
+
+											background: transparent !important;
+										}
+
+
+										&.varNode {
+											.react-flow__handle.connectionindicator {
+												width: 0 !important;
+												height: 0 !important;
+												border-top: 6px solid transparent !important;
+												border-left: 12px solid #fff !important;
+												border-bottom: 6px solid transparent !important;
+												border-radius: unset !important;
+												min-width: unset !important;
+												min-height: unset !important;
+												border: unset;
+											}
+
+											.react-flow__handle-left {
+												top: 40% !important;
+												left: -4px;
+												transform: unset !important;
+											}
+
+											.varNode .react-flow__handle-right {
+												top: 40% !important;
+												transform: unset !important;
+												right: -4px;
+											}
+										}
+
+									}
+
+
+                                    .addNode{
+                                        border: 1px solid #6b7280;
+                                        color: #fff;
+                                        overflow: hidden;
+                                        width: 200px;
+                                        border-radius: 3px;
+                                        margin: 0 auto;
+                                        background: #1f2937;
+                                        .titleAddNode {
+                                            background: #6b7280;
+                                            margin: 0;
+                                        }
+                                        .autoComplete-Dropdown{
+                                            #funcLists-list-label {
+                                                color: #fff !important;
+                                            }
+                                            .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-fullWidth.MuiInputBase-formControl.MuiInputBase-adornedEnd.MuiAutocomplete-inputRoot{
+                                                input#funcLists-list{
+                                                    color: #fff !important;
+                                                }
+                                            }
+                                           .MuiOutlinedInput-notchedOutline {
+                                                border-color: #fff !important;
+                                            }
+                                            .MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium.MuiAutocomplete-popupIndicator {
+                                                color: #fff !important;
+                                            }
+                                        }
+                                    }
+
+									&.selected {
+										.text-updater-node {
+											.flexProps.varNode {
+												border: 2px solid #ffffff !important;
+											}
+
+											.flexProps.funcNode {
+												border: 2px solid #ffffff !important;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			.json-editor {
+				padding: 2%;
+
+				.textarea-wrapper {
+					display: inline-block;
+					background-image: linear-gradient(#F1F1F1 50%, #F9F9F9 50%);
+					background-size: 100% 32px;
+					background-position: left 10px;
+					margin-top: 10px;
+					width: 100%;
+					text-align: left;
+
+					.json-area {
+                        background: url(https://i.imgur.com/2cOaJ.png);
+						background-attachment: local;
+						background-repeat: no-repeat;
+						padding-left: 35px;
+						padding-top: 10px;
+						border-color: #ccc;
+						font-size: 13px;
+						line-height: 16px;
+						width: 100%;
+						color: black;
+						height: calc(100vh - 26vh);
+					}
+				}
+			}
+		}
+	}
+
+
+	@media screen and (min-width: 768px) {
+		flex-direction: row;
+
+		.splitter-layout {
+			.layout-pane {
+				.json-editor {
+					.textarea-wrapper {
+						.json-area {
+							height: calc(100vh - 36vh) !important;
+						}
+					}
+				}
+			}
+		}
+
+	}
+
+    @media screen and (max-width: 768px) {
+        
+			
+		.splitter-layout {
+			 .layout-pane.layout-pane-primary { 
+                display: block !important;
+                aside{
+                    width: 100%;
+                    display: unset !important;
+                    .reactflow-sideBar {
+                        height: unset !important;
+                        align-items: unset !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.overlayPosition {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%;
+	height: 100%;
+	/* background: #ccc;
+    opacity: 0.9; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 99999;
+
+	.ModalBox {
+		background: #fff;
+		/* padding: 1%; */
+		width: 40%;
+		border-radius: 1%;
+		border: 1px solid #ccc;
+		text-align: center;
+
+		.ModalTitle {
+			margin: 0;
+			line-height: 3;
+			border-bottom: 1px solid rgb(229, 231, 235);
+			margin-bottom: 2%;
+			display: block !important;
+			text-align: center;
+			color: #000;
+		}
+
+		.sampleText {
+			color: #000;
+
+			.clickHere {
+				color: #0891b2;
+				font-size: 21px;
+				cursor: pointer;
+			}
+		}
+
+		form {
+			.dagList {
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				flex-direction: column;
+				color: #000;
+
+				#dagList {
+					padding: 2%;
+					width: 60%;
+					border: 1px solid #cdcdcd;
+					margin: 2%;
+					background: #fff;
+					color: #000;
+				}
+			}
+
+			.btnSize {
+				width: 25%;
+				margin-bottom: 3%;
+				cursor: pointer;
+
+				&.uploadSubmitButton {
+					background: #2dd4bf;
+					color: #fff;
+					margin: 10px;
+				}
+
+				&.uploadCancelButton {
+					background-color: #f9f9f9;
+					border: 1px solid #cdcdcd;
+					background: #fff;
+					color: #000;
+				}
+			}
+		}
+
+		.jsonData {
+			position: relative;
+
+			.ModalTitle {
+				margin: 0;
+				line-height: 3;
+				border-bottom: 1px solid rgb(229, 231, 235);
+				margin-bottom: 2%;
+				display: block !important;
+				text-align: center;
+				color: #000;
+			}
+
+			.dagNameSection {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin: 0 2%;
+				color: #000;
+
+				.dagNameBox {
+					border: 1px solid #cdcdcd;
+					margin: 2% 0;
+					width: 80%;
+					padding: 3%;
+					border-radius: 5px;
+					background: #fff;
+					color: #000;
+				}
+			}
+
+			.copyBtn {
+				position: absolute !important;
+				right: 2%;
+				top: 27%;
+				/* width: 6%; */
+				cursor: pointer !important;
+			}
+
+			.textAreaSize {
+				width: 95%;
+				height: 350px;
+				border: 1px solid #cdcdcd;
+				background: #fff;
+				color: #000;
+			}
+
+			.jsonError {
+				color: red;
+				font-size: 12px;
+				margin: 0;
+				text-align: left;
+
+				&.title {
+					text-align: center;
+					text-decoration: underline;
+				}
+			}
+
+			.btnSize {
+				width: 25%;
+				margin-bottom: 3%;
+
+				&.uploadSubmitButton {
+					background: #2dd4bf;
+					color: #fff;
+					margin: 10px;
+				}
+
+				&.uploadCancelButton {
+					background-color: #f9f9f9;
+					border: 1px solid #cdcdcd;
+					background: #fff;
+					color: #000;
+				}
+			}
+
+		}
+	}
+}
+
+
+.MuiAutocomplete-popper{
+    ul#funcLists-list-listbox{
+        padding: 0 !important;
+        background-color: rgb(31, 41, 55) !important;
+        .MuiListSubheader-root.MuiListSubheader-gutters.MuiListSubheader-sticky.MuiAutocomplete-groupLabel, .MuiAutocomplete-noOptions {
+            background: #1f2937;
+            color: #ccc !important;
+        }
+    }
+
+}
+
+button {
+	border-radius: 8px;
+	border: 1px solid transparent;
+	padding: 0.6em 1.2em;
+	font-size: 1em;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: #1a1a1a;
+	cursor: pointer;
+	transition: border-color 0.25s;
+  }

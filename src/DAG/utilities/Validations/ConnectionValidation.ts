@@ -1,50 +1,53 @@
 import { Graph } from "../Graph";
 import { showToast } from "../ReactToastMessage";
-import { Edge } from "reactflow";
 
 
-function checkIfNewConnectionWillFormCycle(edges: any[], connection: any) {
+function invalidConnection(nodes: any[], edges: any[], connection: any) {
+    const sourceNode = nodes.find((node: { id: string; }) => node.id === connection.source);
+    const targetNode = nodes.find((node: { id: string; }) => node.id === connection.target);
+    return (!sourceNode || !targetNode);
+}
+
+function sameTypeConnection(nodes: any[], edges: any[], connection: any) {
+    const sourceNode = nodes.find((node: { id: string; }) => node.id === connection.source);
+    const targetNode = nodes.find((node: { id: string; }) => node.id === connection.target);
+    return (sourceNode.type === targetNode.type)
+}
+
+function connectionWillFormCycle(nodes: any[], edges: any[], connection: any) {
     const graph = new Graph();
 
     edges.forEach((edge) => graph.addEdge(edge.source, edge.target));
     return graph.willFormCycle(connection.source, connection.target);
 }
 
+function alreadyHasIncomingConnection(nodes: any[], edges: any[], connection: any) {
+    const incomingConnections = edges.filter((edge) => edge.target === connection.target);
+    if (incomingConnections.length > 0) {
+        return edges.some((edge) => {
+            return (edge.target === connection.target && edge.targetHandle === connection.targetHandle);
+        });
+    }
+    return false;
+}
+
+// Show error message if any of the following checks return true
+const errorChecklist = [
+    { check: invalidConnection, message: 'Invalid connection' },
+    { check: sameTypeConnection, message: 'Same Connections not allowed' },
+    { check: connectionWillFormCycle, message: 'Connection will form a cycle' },
+    { check: alreadyHasIncomingConnection, message: 'Target node already has an incoming connection' }
+]
+
 function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispatch<React.SetStateAction<any[]>>) {
     return (connection: any) => {
-        const { source, target, targetHandle, sourceHandle } = connection;
-        const sourceNode = nodes.find((node: { id: string; }) => node.id === source);
-        const targetNode = nodes.find((node: { id: string; }) => node.id === target);
-
-        if (!sourceNode || !targetNode) {
-            showToast('Error: ' + 'Invalid connection', 'error');
+        return !errorChecklist.some((error) => {
+            if (error.check(nodes, edges, connection)) {
+                showToast('Error: ' + error.message, 'error');
+                return true;
+            }
             return false;
-        }
-
-        const sourceType = sourceNode.type;
-        const targetType = targetNode.type;
-
-        if (sourceType === targetType) {
-            showToast('Error: ' + 'Same Connections not allowed', 'error');
-            return false;
-        }
-
-        // Check if the new connection will form a cycle
-        if (checkIfNewConnectionWillFormCycle(edges, connection)) {
-            showToast('Error: ' + 'Connection will form a cycle', 'error');
-            return false;
-        }
-
-        // Check if the target node already has an incoming connection
-        const incomingConnections = edges.filter((edge) => edge.target === target);
-        if (incomingConnections.length > 0) {
-            return edges.some((edge) => {
-                if (edge.target === target && edge.targetHandle === targetHandle) {
-                    showToast('Error: ' + 'Target node already has an incoming connection', 'error');
-                    return false;
-                }
-            });
-        }
+        });
 
         // const outgoingConnections = edges.filter((edge) => edge.source === source);
         // console.log({ outgoingConnections });
@@ -65,10 +68,6 @@ function connectionValidation(nodes: any[], edges: any[], setEdges: React.Dispat
         //         return false; // Return false to prevent the connection
         //     }
         // }
-
-
-
-        return true;
     };
 }
 

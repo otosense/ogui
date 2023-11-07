@@ -24,7 +24,6 @@ function DropDownNode (props: IDropDownNode): JSX.Element {
   // errorMapper => help us to find the empty nodes or node where parameter are still empty without connection
   function errorMapper (errorMapping: any[], id: string): string {
     const errorNode = errorMapping.find((x: IFlowNode) => x.id === id)
-    console.log({ errorNode })
     return isObject(errorNode) ? 'BugFuncNode' : ''
   }
 

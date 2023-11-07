@@ -1,41 +1,39 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
+import { fetchURL } from './configs'
 
-function AppTest(): JSX.Element {
-  const api_url = 'http://20.219.8.178:8888'
+async function fetchData (payload: any): Promise<any> {
+  try {
+    const response = await fetch(fetchURL, {
+      method: 'POST',
+      body: JSON.stringify({ ...payload }),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+
+    const json = await response.json()
+    return json
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    return []
+  }
+}
+function AppTest (): JSX.Element {
   const sum = (a: string): string => {
     const output = a
     return output
   }
   const getFullFormSpecStore = async (): Promise<any> => {
     // return await store;
-
     const payload = {
       _attr_name: '__iter__'
     }
     // Saving the Dag to Backend using API
-    try {
-      const response = await fetch(`${api_url}/form_spec_store`, {
-        method: 'POST',
-        body: JSON.stringify({
-          ...payload
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8'
-        }
-      })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const json = await response.json()
-      // console.log('json', json);
-      return json
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      return [] // Return an empty array or handle the error appropriately
-    }
+    const response = await fetchData(payload)
+    return response
   }
 
   const getSchemaForForm = async (data: any): Promise<any> => {
@@ -44,29 +42,8 @@ function AppTest(): JSX.Element {
       _attr_name: '__getitem__',
       key: data
     }
-
-    try {
-      const response = await fetch(`${api_url}/form_spec_store`, {
-        method: 'POST',
-        body: JSON.stringify({
-          ...payload
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8'
-        }
-      })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const json = await response.json()
-      // console.log('json', json);
-      return json
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      return [] // Return an empty array or handle the error appropriately
-    }
+    const response = await fetchData(payload)
+    return response
   }
 
   const saveSchema = async (data: any): Promise<any> => {
@@ -75,29 +52,19 @@ function AppTest(): JSX.Element {
       key: data.key,
       value: data.value
     }
-    console.log({ payload })
-    try {
-      const response = await fetch(`${api_url}/form_spec_store`, {
-        method: 'POST',
-        body: JSON.stringify({
-          ...payload
-        }),
-        headers: {
-          'Content-type': 'application/json; charset=UTF-8'
-        }
-      })
+    const response = await fetchData(payload)
+    return response
+  }
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const json = await response.json()
-      // console.log('json', json);
-      return json
-    } catch (error) {
-      console.error('Error fetching data:', error)
-      return [] // Return an empty array or handle the error appropriately
+  const resetSchema = async (data: any): Promise<any> => {
+    // return await specifications;
+    const payload = {
+      _attr_name: '__delitem__',
+      key: data
     }
+
+    const response = await fetchData(payload)
+    return response
   }
 
   const egress = (output: any): any => {
@@ -109,7 +76,8 @@ function AppTest(): JSX.Element {
     onLoadSchema: getSchemaForForm,
     saveSchema,
     func: sum,
-    egress
+    egress,
+    resetSchema
   }
   return (
     <SchemaFormFiddle {...configuration} />

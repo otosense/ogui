@@ -1,0 +1,121 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+  &:hover {
+    color: #535bf2;
+  }
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+.dataTable-main {
+  table {
+    scroll-behavior: smooth;
+  }
+
+  .setupGlobalSearch {
+    display: flex;
+    align-items: center;
+    .global_search {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      &.visible {
+        opacity: 1;
+        height: auto;
+        /* transition: opacity 0.3s ease, height 0.3s ease; */
+        animation: fadeIn 2s;
+        /* Adjust the max-height value as needed */
+      }
+
+      .main-container {
+        width: 300px;
+        padding-left: 10px;
+
+        .react-filter-box {
+          margin-bottom: 0 !important;
+          font-size: 12px !important;
+          text-align: left !important;
+          border: 0 !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important;
+
+          &.error {
+            border-color: red !important;
+          }
+
+          .CodeMirror-cursor {
+            height: 20px !important;
+            text-align: left !important;
+          }
+        }
+      }
+    }
+  }
+
+  .Mui-TableHeadCell-Content-Labels {
+    text-transform: capitalize;
+  }
+
+  p.colorBox {
+    width: 25px;
+    text-align: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    height: 25px;
+  }
+
+  button.copy + .MuiTreeItem-root {
+    border: 0 !important;
+    padding: 4px !important;
+  }
+  section.topLayout {
+    display: none !important;
+  }
+  button.copy {
+    display: none !important;
+  }
+  #bottomObserver {
+    display: none !important;
+  }
+  main.mainArea {
+    width: 100%;
+  }
+  .Mui-expanded + div {
+    background: unset !important;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.CodeMirror-hints {
+  z-index: 999 !important;
+}

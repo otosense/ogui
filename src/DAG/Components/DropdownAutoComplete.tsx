@@ -37,7 +37,7 @@ function DropdownAutoComplete (props: ISearchBox): JSX.Element {
   return (
         <div className='autoComplete-Dropdown'>
             <Autocomplete
-                id="form-list"
+                id="funcLists-list"
                 options={funcLists}
                 getOptionLabel={(option) => option.label}
                 // groupBy={(option) => option.label.split('.').splice(0, 3).join('.')}

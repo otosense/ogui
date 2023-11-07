@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from 'react'
 import { type IDropDownNode, type IFlowNode } from '../../Interfaces'
-import SearchBox from '../../SearchBox'
 import SelectConfigure from './DropDownConfigure'
 import { Checkbox, FormControlLabel } from '@mui/material'
 import { usePersistentState } from '../../../utilities/persistentState'
@@ -71,7 +70,6 @@ function DropDownNode (props: IDropDownNode): JSX.Element {
             })}
           </select> */}
 
-          {/* <SearchBox data={funcLists} handleValue={selectValueFromDropDown} /> */}
           <DropdownAutoComplete data={funcLists} handleValue={selectValueFromDropDown} />
         </div>
         : <section className={`text-updater-node ${type} ${errorMapper(errorMapping, id)}`}>

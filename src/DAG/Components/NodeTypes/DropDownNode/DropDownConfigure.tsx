@@ -52,18 +52,15 @@ const SelectConfigure = (props: IParamsDropDown) => {
   useEffect(() => {
     const { nodeInternals } = store.getState()
     console.log('Array.from(nodeInternals.values())', Array.from(nodeInternals.values()))
-    // Use lodash to group the array by 'data.label'
     const grouped = groupBy(Array.from(nodeInternals.values()), 'data.label')
-    console.log('grouped', grouped)
     // Iterate over the grouped data and count occurrences
     forEach(grouped, (group, label) => {
       if (group[0].type === 'custom') {
         group.forEach((item: any, index: number) => {
-          console.log({ item })
-          //   item.output = funcName
-          item.output = index === 0 ? funcName : `${funcName}_${index}`
-        //   const formattedIndex = index < 9 ? `0${index}` : index
-        //   item.output = index === 0 ? funcName : `${funcName}_${formattedIndex}`
+        //   item.output = index === 0 ? label : `${label}_${index}`
+          const formattedIndex = index < 9 ? `0${index}` : index
+          item.output = index === 0 ? label : `${label}_${formattedIndex}`
+          item.newOutput = index === 0 ? funcName : `${funcName}_${+formattedIndex + 1}`
         })
       }
     })
@@ -85,9 +82,9 @@ const SelectConfigure = (props: IParamsDropDown) => {
           }
           node.func_nodes = {
             name: node.id,
-            func_label: funcName,
+            func_label: node.newOutput,
             func: selectedValue,
-            out: funcName,
+            out: node.newOutput,
             // bind: zipObject(paramsLists, map(paramsLists, (param, index) => `${node.id + param + customRemoveText}`))
             // bind: zipObject(paramsLists, map(paramsLists, (param) => `${param}`))
             bind: (autogenVarNodes) ? zipObject(paramsLists, map(paramsLists, (param) => `${param}`)) : {}

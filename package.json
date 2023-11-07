@@ -95,7 +95,6 @@
     "react-filter-box": "^3.4.3",
     "react-flow": "^1.0.3",
     "react-flow-renderer": "^10.3.17",
-    "react-hook-form": "^7.47.0",
     "react-hooks-global-state": "^2.1.0",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.14.1",

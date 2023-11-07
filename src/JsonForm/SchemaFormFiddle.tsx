@@ -14,7 +14,6 @@ import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
 import ReactToastMessage from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
-import AuthenticationPage from './Testing/Authentication'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
@@ -43,7 +42,6 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
   const [openModal, setOpenModal] = useState(false)
-  const [openAuthModal, setOpenAuthModal] = useState(true)
 
   const onSubmit = (props: IFormData): void => {
     const { formData } = props
@@ -81,11 +79,6 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   const newJsonSpecValue = async (val: any): Promise<void> => {
     const data = await onLoadSchema(selectedFormType?.label)
     setCollection(data?.rjsf)
-  }
-
-  const loginAuthentication = (data: any): void => {
-    console.log('object', data)
-    setOpenAuthModal(false)
   }
 
   return (
@@ -149,13 +142,6 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
             formType={selectedFormType} newJsonSpecValue={newJsonSpecValue}/>
           }
         />
-
-        {!isLoading && <CustomModal
-            open={openAuthModal}
-            handleClose={handleCloseModal}
-            title="Authentication"
-            content={<AuthenticationPage FormData={loginAuthentication} />}
-        /> }
         <ReactToastMessage />
     </main>
   )

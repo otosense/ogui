@@ -27,17 +27,26 @@ import { isEmpty } from 'lodash'
 import 'react-filter-box/lib/react-filter-box.css'
 import GlobalFilters from './components/CustomFilter'
 import SavedSearchIcon from '@mui/icons-material/SavedSearch'
+import { withInitialData } from './components/withInitialData'
+import LoadingOverlay from '../utilities/Loader'
 
-function DataTable (props: IDataTableProps): JSX.Element {
+function DataTable (props: IDataTableProps & {
+  flatRow: string[]
+  dataCopy: string[]
+  isError: boolean
+  isLoading: boolean
+  errorMessage: string
+}): JSX.Element {
+  const { flatRow, dataCopy, isError, isLoading, errorMessage } = props
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState<string>()
   const [sorting, setSorting] = useState<MRT_SortingState>([])
-  const [flatRowData, setFlatRowData] = useState<any>([])
+  const [flatRowData, setFlatRowData] = useState<any>(flatRow)
   // optionally, you can manage the row selection state yourself
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({})
-  const [isError, setIsError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string>()
-  const [dataCopy, setDataCopy] = useState<any>([])
+  // const [isError, setIsError] = useState(false)
+  // const [errorMessage, setErrorMessage] = useState<string>()
+  // const [dataCopy, setDataCopy] = useState<any>([])
   const [isEnablePatternSearch, setIsEnablePatternSearch] = useState(false)
 
   const tableContainerRef = useRef<HTMLDivElement>(null) // we can get access to the underlying TableContainer element and react to its scroll events
@@ -75,40 +84,9 @@ function DataTable (props: IDataTableProps): JSX.Element {
   }: any = props
 
   // Preparing Table Data
-  useMemo(() => {
-    if ((!(data))) {
-      setIsError(true)
-      setErrorMessage('data is not provided')
-      return [] // Return an empty array if data is not provided
-    }
-
-    if (typeof data === 'function') {
-      // Check if data is a function
-      const result: any = data()
-      if (typeof result.then === 'function') {
-        // Check if the result of the function is a promise
-        return result.then((dataArray: any) => {
-          setFlatRowData(dataArray)
-          setDataCopy([...dataArray])
-          return dataArray
-        })
-      } else {
-        const dataArray = result as any[] // Assuming the result is an array
-        setFlatRowData(dataArray)
-        setDataCopy([...dataArray])
-        return dataArray // Return the result of the function
-      }
-    } else if (Array.isArray(data)) {
-      // Check if data is an array
-      setFlatRowData(data)
-      setDataCopy([...data])
-      return data // Return the provided array
-    } else {
-      setIsError(true)
-      setErrorMessage('unknown data type found,')
-      return [] // Return an empty array for unknown data types
-    }
-  }, [data])
+  useEffect(() => {
+    setFlatRowData(flatRow)
+  }, [flatRow])
 
   // Column headers creation
   const memoizedColumns = useMemo(() => {
@@ -146,6 +124,7 @@ function DataTable (props: IDataTableProps): JSX.Element {
             {errorMessage}
         </Alert>)
       : (<>
+        {isLoading && <LoadingOverlay />}
                 <section className='dataTable-main'> {(!isEmpty(memoizedColumns)) &&
                     <MaterialReactTable
                         columns={memoizedColumns} // Columns For Table
@@ -281,7 +260,8 @@ function DataTable (props: IDataTableProps): JSX.Element {
   )
 }
 
-export default memo(DataTable)
+// export default memo(DataTable)
+export default memo(withInitialData(DataTable))
 
 DataTable.defaultProps = {
   columnConfig: [],

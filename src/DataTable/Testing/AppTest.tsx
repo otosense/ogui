@@ -35,8 +35,8 @@ function AppTest (): JSX.Element {
   }
 
   const configuration: IDataTableProps = {
-    data: sampleFunction,
-    // data: loadTableData.data,
+    // data: sampleFunction,
+    data: loadTableData.data,
     dataKey: 'data', // dataKey is Mandatory to identify the table like an name for the table
     columnConfig: [
       {

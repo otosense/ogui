@@ -12,10 +12,10 @@ function App (): JSX.Element {
   }
   return (
 
-    <Router>
+    <>
       <AuthenticationPage FormData={onSubmit} />
       <AppTest />
-    </Router>
+    </>
 
   )
 }

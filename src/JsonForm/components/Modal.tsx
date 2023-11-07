@@ -20,13 +20,13 @@ const CustomModal = (props: ICustomModal): JSX.Element => {
                   width: 400
                 }}
             >
-                <Paper elevation={3} sx={{ padding: 1, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ padding: 2, textAlign: 'center' }}>
                 <Typography variant="h5" className="ModalTitle">
                         {title}
                     </Typography>
-                    <Typography variant="body2" gutterBottom>
+                    {/* <Typography variant="body2" gutterBottom> */}
                         {content}
-                    </Typography>
+                    {/* </Typography> */}
                 </Paper>
             </Box>
         </Modal>

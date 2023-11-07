@@ -1,7 +1,7 @@
 import React from 'react'
 import Dagger from '../Dagger'
 import { LRUCache } from '../utilities/lruCache'
-import { StoreURL, saveDagURL, storeFuncKey } from './config'
+import { dagCompInfoStoreURL, dagSpecURL, saveDagURL, storeFuncKey } from './config'
 // import { loadDagFuncList } from './data';
 
 async function fetchData (payload: any, url: string): Promise<any> {
@@ -31,7 +31,7 @@ function AppTest (): JSX.Element {
       _attr_name: '__iter__'
     }
     // Saving the Dag to Backend using API
-    const response = await fetchData(payload, StoreURL)
+    const response = await fetchData(payload, dagCompInfoStoreURL)
     return response
   }
 
@@ -41,9 +41,7 @@ function AppTest (): JSX.Element {
 
   const saver = async (data: any) => {
     const payload = {
-      _attr_name: '__setitem__',
-      k: data.name,
-      v: data.combinedObj
+      dag_spec: data.combinedObj
     }
     // Saving the Dag to Backend using API
     const response = await fetchData(payload, saveDagURL)
@@ -55,7 +53,7 @@ function AppTest (): JSX.Element {
       _attr_name: '__getitem__',
       k: data
     }
-    const response = await fetchData(payload, saveDagURL)
+    const response = await fetchData(payload, dagSpecURL)
     return response
   }
   const lruCacheParamsList = new LRUCache<string, any>(100)
@@ -74,7 +72,7 @@ function AppTest (): JSX.Element {
     }
 
     try {
-      const response = await fetch(StoreURL, {
+      const response = await fetch(dagCompInfoStoreURL, {
         method: 'POST',
         body: JSON.stringify({
           ...payload

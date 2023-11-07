@@ -23,12 +23,16 @@ export function convertFuncNodeToJsonNode (jsonData: { func_nodes: IFuncNode[] }
   const initialNodes: Array<{ id: string, type: string, data: { label: string } }> = []
   const varNodeCollection: any[] = [] // Creating node collection
   const outNodeCollection: string[] = [] // Creating Edge collection
-  func_nodes?.map((funcNode: { name: any, func_label: any, bind: ArrayLike<unknown> | Record<string, unknown>, out: string }, index: number) => {
+  func_nodes?.map((funcNode: {
+    func: any; name: any, func_label: any, bind: ArrayLike<unknown> | Record<string, unknown>, out: string
+  }, index: number) => {
     const funcObject: any = { // Converting it as function node will takes place here
       id: funcNode.name,
       type: 'custom',
       data: {
-        label: funcNode.func_label,
+        // label: funcNode.func_label,
+        label: funcNode.func,
+        // selects: funcNode.func_label
         selects: funcNode.func_label
       }
       // position: { x: 0, y: 0 },
@@ -54,8 +58,6 @@ export function convertFuncNodeToJsonNode (jsonData: { func_nodes: IFuncNode[] }
     }
   })
 
-  console.log({ count, varNodeCollection })
-  console.log({ count, outNodeCollection })
   const varNodes = [...new Set([...new Set(varNodeCollection)].concat([...new Set(outNodeCollection)]))]
   const varNodeLength = varNodes.length - 1
   varNodes.map((varNode, index) => {
@@ -117,7 +119,8 @@ export function convertFuncNodeToJsonEdge (jsonData: { func_nodes: IFuncNode[] }
         id: `${funcNode.out + '.' + funcNode.name}_edge`,
         // markerEnd: { type: 'arrowclosed' },
         source: varNode,
-        sourceHandle: funcNode.func_label,
+        // sourceHandle: funcNode.func_label,
+        sourceHandle: funcNode.func,
         target: funcNode.name,
         targetHandle: Object.keys(funcNode.bind)[index],
         type: 'smoothstep',

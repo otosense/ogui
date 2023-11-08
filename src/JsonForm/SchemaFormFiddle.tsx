@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { isEmpty } from 'lodash'
@@ -12,8 +12,9 @@ import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
-import ReactToastMessage from '../utilities/ReactToastMessage'
+import ReactToastMessage, { showToast } from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
+import { arraySplitter } from './utilities/Mapping/storeMapping'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
@@ -36,18 +37,36 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   isLoading: boolean
 }): JSX.Element => {
   const { funcList, isError, isLoading } = props
-  const { onLoadSchema, saveSchema, func, egress, resetSchema } = props
+  const { onLoadSchema, saveSchema, func, egress, resetSchema, callDagSchema } = props
   const [collection, setCollection] = useState<any>({})
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
   const [openModal, setOpenModal] = useState(false)
+  const [funcStoreList, setFuncStoreList] = useState(funcList)
 
-  const onSubmit = (props: IFormData): void => {
+  useEffect(() => {
+    const combinedCheck = funcList.flatMap((subarray: any) => subarray?.join('.'))
+    setFuncStoreList(combinedCheck)
+    // setFuncStoreList(funcList.map(func => func[1]))
+  }, [funcList])
+
+  const onSubmit = async (props: IFormData): Promise<void> => {
     const { formData } = props
     setFormData(formData)
     const output = func?.(...Object.values(formData))
     setShow((egress != null) ? egress(output) : output)
+    const outputArray = arraySplitter(selectedFormType?.value)
+    const finalPay = {
+      ...formData,
+      _key: outputArray[0]
+    }
+    const response = await callDagSchema(finalPay)
+    console.log('response', response)
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (response) {
+      showToast('Success: Saved Successfully', 'success')
+    }
   }
   // handle orientation change
   const orientation = useOrientation((orientation: boolean) => orientation)
@@ -77,7 +96,8 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   }
 
   const newJsonSpecValue = async (val: any): Promise<void> => {
-    const data = await onLoadSchema(selectedFormType?.label)
+    const outputArray = arraySplitter(selectedFormType?.value)
+    const data = await onLoadSchema(outputArray[0])
     setCollection(data?.rjsf)
   }
 
@@ -94,7 +114,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
           <div className="inputs-fiddle">
             <SearchBox
               handleValue={handleValue}
-              data={funcList}
+              data={funcStoreList}
               onLoadSchema={onLoadSchema}
               schemaData={schemaData}
             />

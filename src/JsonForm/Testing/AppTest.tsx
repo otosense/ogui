@@ -1,10 +1,11 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
-import { fetchURL } from './configs'
+import { DagComponents, FormSpecStore } from './configs'
+import { specifications, store } from './data'
 
-async function fetchData (payload: any): Promise<any> {
+async function fetchData (payload: any, url: string): Promise<any> {
   try {
-    const response = await fetch(fetchURL, {
+    const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify({ ...payload }),
       headers: { 'Content-type': 'application/json; charset=UTF-8' }
@@ -27,22 +28,22 @@ function AppTest (): JSX.Element {
     return output
   }
   const getFullFormSpecStore = async (): Promise<any> => {
-    // return await store;
+    // return store
     const payload = {
       _attr_name: '__iter__'
     }
     // Saving the Dag to Backend using API
-    const response = await fetchData(payload)
+    const response = await fetchData(payload, FormSpecStore)
     return response
   }
 
   const getSchemaForForm = async (data: any): Promise<any> => {
-    // return await specifications;
+    // return specifications
     const payload = {
       _attr_name: '__getitem__',
       key: data
     }
-    const response = await fetchData(payload)
+    const response = await fetchData(payload, FormSpecStore)
     return response
   }
 
@@ -52,7 +53,7 @@ function AppTest (): JSX.Element {
       key: data.key,
       value: data.value
     }
-    const response = await fetchData(payload)
+    const response = await fetchData(payload, FormSpecStore)
     return response
   }
 
@@ -63,7 +64,12 @@ function AppTest (): JSX.Element {
       key: data
     }
 
-    const response = await fetchData(payload)
+    const response = await fetchData(payload, FormSpecStore)
+    return response
+  }
+
+  const callDagSchema = async (data: any): Promise<any> => {
+    const response = await fetchData(data, DagComponents)
     return response
   }
 
@@ -77,7 +83,8 @@ function AppTest (): JSX.Element {
     saveSchema,
     func: sum,
     egress,
-    resetSchema
+    resetSchema,
+    callDagSchema
   }
   return (
     <SchemaFormFiddle {...configuration} />

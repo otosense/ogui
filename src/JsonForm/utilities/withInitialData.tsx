@@ -21,7 +21,8 @@ export function withInitialData (WrappedComponent: React.ComponentType<any>) {
           // Check if the result of the function is a promise
           result.then((dataArray: any) => {
             if (dataArray.length > 0) {
-              setFuncList(dataArray.map((item: any) => item[1]))
+              // setFuncList(dataArray.map((item: any) => item[1]))
+              setFuncList(dataArray)
             } else {
               setIsError(true)
               setFuncList([])
@@ -29,7 +30,8 @@ export function withInitialData (WrappedComponent: React.ComponentType<any>) {
             setIsLoading(false)
           })
         } else {
-          setFuncList(result.map((item: any) => item[1]))
+          // setFuncList(result.map((item: any) => item[1]))
+          setFuncList(result)
         }
         // setIsLoading(false)
       }

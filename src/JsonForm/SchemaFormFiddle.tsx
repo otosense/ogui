@@ -21,7 +21,7 @@ interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   onLoadSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   resetSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   saveSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
-  func?: (...args: any[]) => any
+  callDagSchema: Record<string, unknown> | (() => Record<string, unknown>) | (() => Promise<Record<string, unknown>>)
   egress?: (...args: any[]) => any
 }
 
@@ -37,13 +37,14 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   isLoading: boolean
 }): JSX.Element => {
   const { funcList, isError, isLoading } = props
-  const { onLoadSchema, saveSchema, func, egress, resetSchema, callDagSchema } = props
+  const { onLoadSchema, saveSchema, egress, resetSchema, callDagSchema } = props
   const [collection, setCollection] = useState<any>({})
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
   const [show, setShow] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [funcStoreList, setFuncStoreList] = useState(funcList)
+  const [isCallingComponent, setIsCallingComponent] = useState<boolean>(false)
 
   useEffect(() => {
     const combinedCheck = funcList.flatMap((subarray: any) => subarray?.join('.'))
@@ -52,21 +53,28 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   }, [funcList])
 
   const onSubmit = async (props: IFormData): Promise<void> => {
+    setIsCallingComponent(true)
     const { formData } = props
     setFormData(formData)
-    const output = func?.(...Object.values(formData))
-    setShow((egress != null) ? egress(output) : output)
     const outputArray = arraySplitter(selectedFormType?.value)
     const finalPay = {
       ...formData,
       _key: outputArray[0]
     }
-    const response = await callDagSchema(finalPay)
-    console.log('response', response)
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (response) {
-      showToast('Success: Saved Successfully', 'success')
+    try {
+      let output = await callDagSchema(finalPay)
+      output = (egress != null) ? egress(output) : output
+      setShow(output)
+      setIsCallingComponent(false)
+    } catch (error) {
+      const errEl: any = (
+        <Alert severity="error" className="errorMessage">
+            {error.message}
+        </Alert>
+      )
+      setShow(errEl)
     }
+    setIsCallingComponent(false)
   }
   // handle orientation change
   const orientation = useOrientation((orientation: boolean) => orientation)
@@ -85,6 +93,8 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
 
   const handleValue = (value: any): void => {
     setSelectedFormType(value)
+    setFormData({})
+    setShow(null)
   }
 
   const handleCloseModal = (): void => {
@@ -109,7 +119,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
         </Alert>)
         : (
         <main className="main-json-fiddle">
-           {isLoading && <LoadingOverlay />}
+           {(isLoading || isCallingComponent) && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox

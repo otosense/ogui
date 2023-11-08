@@ -51,7 +51,6 @@ const SelectConfigure = (props: IParamsDropDown) => {
 
   useEffect(() => {
     const { nodeInternals } = store.getState()
-    console.log('Array.from(nodeInternals.values())', Array.from(nodeInternals.values()))
     const grouped = groupBy(Array.from(nodeInternals.values()), 'data.label')
     // Iterate over the grouped data and count occurrences
     forEach(grouped, (group, label) => {

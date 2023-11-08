@@ -4,23 +4,19 @@ import { DagComponents, FormSpecStore } from './configs'
 import { specifications, store } from './data'
 
 async function fetchData (payload: any, url: string): Promise<any> {
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ ...payload }),
-      headers: { 'Content-type': 'application/json; charset=UTF-8' }
-    })
+  const response = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ ...payload }),
+    headers: { 'Content-type': 'application/json; charset=UTF-8' }
+  })
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
+  const json = await response.json()
 
-    const json = await response.json()
-    return json
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    return []
+  if (!response.ok) {
+    throw new Error(json.error)
   }
+
+  return json
 }
 function AppTest (): JSX.Element {
   const sum = (a: string): string => {
@@ -74,7 +70,24 @@ function AppTest (): JSX.Element {
   }
 
   const egress = (output: any): any => {
-    return <h1>{output}</h1>
+    if (Array.isArray(output)) {
+      return (
+        <>
+          <h4>Output:</h4>
+          <ul>
+            {output.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+    return (
+      <>
+        <h4>Output:</h4>
+        <div dangerouslySetInnerHTML={{ __html: output }} />
+      </>
+    )
   }
 
   const configuration = {

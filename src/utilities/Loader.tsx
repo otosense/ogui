@@ -26,7 +26,7 @@ const LoadingOverlay = (): JSX.Element => {
 
             <Box sx={{ width: '100%' }} alignItems={'center'} style={{ textAlign: 'center' }}>
                 <Typography variant="h5" gutterBottom>
-                    Fetching data <div id="wave">
+                    <div id="wave">
                         <span className="dot"></span>
                         <span className="dot"></span>
                         <span className="dot"></span>

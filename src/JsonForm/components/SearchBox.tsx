@@ -3,7 +3,8 @@ import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import { Box } from '@mui/material'
 import { arraySplitter, storeMapping } from '../utilities/Mapping/storeMapping'
-import { isObject, isFunction, last, initial } from 'lodash'
+import { isObject, isFunction, last, initial, isEmpty } from 'lodash'
+import { showToast } from '../../utilities/ReactToastMessage'
 
 interface Option {
   label: string
@@ -41,8 +42,12 @@ function SearchBox (props: ISearchBox): JSX.Element {
       if (isFunction(result?.then)) {
         // Check if the result of the function is a promise
         result.then((dataArray: any) => {
-          // schemaData && schemaData(dataArray.rjsf.schema);
-          schemaData?.(dataArray)
+          if (isEmpty(dataArray)) {
+            showToast('Error: There is No Store Data', 'error')
+            schemaData?.({ rjsf: {} })
+          } else {
+            schemaData?.(dataArray)
+          }
         })
       } else {
         schemaData?.(result)

@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider'
 import CloseIcon from '@mui/icons-material/Close'
 import LoadingOverlay from '../../utilities/Loader'
 import { showToast } from '../../utilities/ReactToastMessage'
+import { arraySplitter } from '../utilities/Mapping/storeMapping'
 
 function ResetAll (props: any): JSX.Element {
   const { handleClose, resetSchema, formType, newJsonSpecValue } = props
@@ -13,7 +14,8 @@ function ResetAll (props: any): JSX.Element {
     try {
       setIsLoading(true)
       handleClose()
-      const data = await resetSchema(formType.label)
+      const outputArray = arraySplitter(formType.label)
+      const data = await resetSchema(outputArray[0])
       if (data === null) {
         showToast('Success: Reset Successfully Done', 'success')
         newJsonSpecValue(data)

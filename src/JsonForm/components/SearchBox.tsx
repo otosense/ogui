@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import { Box } from '@mui/material'
-import { storeMapping } from '../utilities/Mapping/storeMapping'
+import { arraySplitter, storeMapping } from '../utilities/Mapping/storeMapping'
 import { isObject, isFunction, last, initial } from 'lodash'
 
 interface Option {
@@ -29,12 +29,13 @@ function SearchBox (props: ISearchBox): JSX.Element {
 
   const selectValueFromDropDown = (
     event: React.SyntheticEvent<Element, Event>,
-    newValue: Option | null
+    newValue: any
   ): void => {
     setSelectedValue(newValue)
     handleValue(newValue)
+    const outputArray = arraySplitter(newValue?.value)
     // if (onLoadSchema) {
-    const val = onLoadSchema(newValue?.value)
+    const val = onLoadSchema(outputArray[0])
     if (isObject(val)) {
       const result: any = val
       if (isFunction(result?.then)) {

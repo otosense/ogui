@@ -6,6 +6,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { isEmpty } from 'lodash'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { showToast } from '../../utilities/ReactToastMessage'
+import { arraySplitter } from '../utilities/Mapping/storeMapping'
 
 interface TSchemaManager {
   onDataUploaded?: any
@@ -94,9 +95,10 @@ function Editors (props: TSchemaManager): JSX.Element {
       const val = {
         rjsf: jsonString
       }
+      const outputArray = arraySplitter(formType?.value)
       const finalPayload = {
         value: val,
-        key: formType?.value
+        key: outputArray[0]
       }
       const data = await saveSchema(finalPayload)
       if (data === null) {

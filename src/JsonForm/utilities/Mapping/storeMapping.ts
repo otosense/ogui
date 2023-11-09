@@ -21,10 +21,10 @@ export const storeMapping = (data: string[]): ITransformedData[] => {
 
 export function arraySplitter (newValue: any): string[][] {
   return [newValue]?.map((str: string) => {
-    const parts = str.split('.')
-    const index = parts.findIndex((part: string) => (part === funcName || part === dagName))
+    const parts = str?.split('.')
+    const index = parts?.findIndex((part: string) => (part === funcName || part === dagName))
     if (index !== -1) {
-      return [parts.slice(0, index + 1).join('.'), parts.slice(index + 1).join('.')]
+      return [parts?.slice(0, index + 1).join('.'), parts?.slice(index + 1).join('.')]
     } else {
       return [str]
     }

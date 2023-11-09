@@ -12,9 +12,10 @@ import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
-import ReactToastMessage, { showToast } from '../utilities/ReactToastMessage'
+import ReactToastMessage from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
 import { arraySplitter } from './utilities/Mapping/storeMapping'
+import { errorKey } from './Testing/configs'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
@@ -35,25 +36,29 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   funcList: string[]
   isError: boolean
   isLoading: boolean
+  errorMessage: string
 }): JSX.Element => {
-  const { funcList, isError, isLoading } = props
+  const { funcList, isError, isLoading, errorMessage } = props
   const { onLoadSchema, saveSchema, egress, resetSchema, callDagSchema } = props
   const [collection, setCollection] = useState<any>({})
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
-  const [show, setShow] = useState()
+  const [show, setShow] = useState<any>()
   const [openModal, setOpenModal] = useState(false)
   const [funcStoreList, setFuncStoreList] = useState(funcList)
-  const [isCallingComponent, setIsCallingComponent] = useState<boolean>(false)
+  const [isLoadingComponent, setIsLoadingComponent] = useState<boolean>(isLoading)
 
   useEffect(() => {
     const combinedCheck = funcList.flatMap((subarray: any) => subarray?.join('.'))
     setFuncStoreList(combinedCheck)
+    if (!isEmpty(funcList)) {
+      setIsLoadingComponent(false)
+    }
     // setFuncStoreList(funcList.map(func => func[1]))
   }, [funcList])
 
   const onSubmit = async (props: IFormData): Promise<void> => {
-    setIsCallingComponent(true)
+    setIsLoadingComponent(true)
     const { formData } = props
     setFormData(formData)
     const outputArray = arraySplitter(selectedFormType?.value)
@@ -61,20 +66,30 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
       ...formData,
       _key: outputArray[0]
     }
+
     try {
       let output = await callDagSchema(finalPay)
-      output = (egress != null) ? egress(output) : output
-      setShow(output)
-      setIsCallingComponent(false)
-    } catch (error) {
+      if (Object.prototype.hasOwnProperty.call(output, errorKey)) {
+        const errEl: any = (
+          <Alert severity={errorKey} className="errorMessage">
+            {output?.error.message}
+          </Alert>
+        )
+        setShow(errEl)
+      } else {
+        output = (egress != null) ? egress(output) : output
+        setShow(output)
+        setIsLoadingComponent(false)
+      }
+    } catch (error: any) {
       const errEl: any = (
-        <Alert severity="error" className="errorMessage">
+        <Alert severity={errorKey} className="errorMessage">
             {error.message}
         </Alert>
       )
       setShow(errEl)
     }
-    setIsCallingComponent(false)
+    setIsLoadingComponent(false)
   }
   // handle orientation change
   const orientation = useOrientation((orientation: boolean) => orientation)
@@ -115,11 +130,11 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
     <main>
       {isError
         ? (<Alert severity="error" className="errorMessage">
-          There is an Error getting Store List data
+          {errorMessage}
         </Alert>)
         : (
         <main className="main-json-fiddle">
-           {(isLoading || isCallingComponent) && <LoadingOverlay />}
+           {(isLoadingComponent) && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox
@@ -158,7 +173,10 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
                     formData={formData} // remove this to clear the value once the submit button is clicked
                   />
                 )}
+
+                <div style={{ margin: '10px 0' }}>
                 {show}
+                </div>
               </div>
             </SplitterLayout>
           </section>

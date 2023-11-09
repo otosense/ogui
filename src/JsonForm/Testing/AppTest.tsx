@@ -1,22 +1,26 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
-import { DagComponents, FormSpecStore } from './configs'
+import { DagComponents, FormSpecStore, del, get, getAll, set } from './configs'
 import { specifications, store } from './data'
 
 async function fetchData (payload: any, url: string): Promise<any> {
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({ ...payload }),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ ...payload }),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
 
-  const json = await response.json()
+    const json = await response.json()
 
-  if (!response.ok) {
-    throw new Error(json.error)
+    if (!response.ok) {
+      throw new Error(json.error)
+    }
+
+    return json
+  } catch (error) {
+    return { error }
   }
-
-  return json
 }
 function AppTest (): JSX.Element {
   const sum = (a: string): string => {
@@ -26,7 +30,7 @@ function AppTest (): JSX.Element {
   const getFullFormSpecStore = async (): Promise<any> => {
     // return store
     const payload = {
-      _attr_name: '__iter__'
+      _attr_name: getAll
     }
     // Saving the Dag to Backend using API
     const response = await fetchData(payload, FormSpecStore)
@@ -36,7 +40,7 @@ function AppTest (): JSX.Element {
   const getSchemaForForm = async (data: any): Promise<any> => {
     // return specifications
     const payload = {
-      _attr_name: '__getitem__',
+      _attr_name: get,
       key: data
     }
     const response = await fetchData(payload, FormSpecStore)
@@ -45,7 +49,7 @@ function AppTest (): JSX.Element {
 
   const saveSchema = async (data: any): Promise<any> => {
     const payload = {
-      _attr_name: '__setitem__',
+      _attr_name: set,
       key: data.key,
       value: data.value
     }
@@ -56,7 +60,7 @@ function AppTest (): JSX.Element {
   const resetSchema = async (data: any): Promise<any> => {
     // return await specifications;
     const payload = {
-      _attr_name: '__delitem__',
+      _attr_name: del,
       key: data
     }
 

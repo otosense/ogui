@@ -12,7 +12,7 @@ import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
-import ReactToastMessage, { showToast } from '../utilities/ReactToastMessage'
+import ReactToastMessage from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
 import { arraySplitter } from './utilities/Mapping/storeMapping'
 
@@ -35,13 +35,14 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   funcList: string[]
   isError: boolean
   isLoading: boolean
+  errorMessage: string
 }): JSX.Element => {
-  const { funcList, isError, isLoading } = props
+  const { funcList, isError, isLoading, errorMessage } = props
   const { onLoadSchema, saveSchema, egress, resetSchema, callDagSchema } = props
   const [collection, setCollection] = useState<any>({})
   const [formData, setFormData] = useState<IFormData>()
   const [selectedFormType, setSelectedFormType] = useState<Option>()
-  const [show, setShow] = useState()
+  const [show, setShow] = useState<any>()
   const [openModal, setOpenModal] = useState(false)
   const [funcStoreList, setFuncStoreList] = useState(funcList)
   const [isCallingComponent, setIsCallingComponent] = useState<boolean>(false)
@@ -61,12 +62,22 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
       ...formData,
       _key: outputArray[0]
     }
+
     try {
       let output = await callDagSchema(finalPay)
-      output = (egress != null) ? egress(output) : output
-      setShow(output)
-      setIsCallingComponent(false)
-    } catch (error) {
+      if (Object.prototype.hasOwnProperty.call(output, 'error')) {
+        const errEl: any = (
+          <Alert severity="error" className="errorMessage">
+            {output?.error.message}
+          </Alert>
+        )
+        setShow(errEl)
+      } else {
+        output = (egress != null) ? egress(output) : output
+        setShow(output)
+        setIsCallingComponent(false)
+      }
+    } catch (error: any) {
       const errEl: any = (
         <Alert severity="error" className="errorMessage">
             {error.message}
@@ -115,7 +126,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
     <main>
       {isError
         ? (<Alert severity="error" className="errorMessage">
-          There is an Error getting Store List data
+          {errorMessage}
         </Alert>)
         : (
         <main className="main-json-fiddle">

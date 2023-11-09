@@ -4,19 +4,23 @@ import { DagComponents, FormSpecStore } from './configs'
 import { specifications, store } from './data'
 
 async function fetchData (payload: any, url: string): Promise<any> {
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({ ...payload }),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({ ...payload }),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
 
-  const json = await response.json()
+    const json = await response.json()
 
-  if (!response.ok) {
-    throw new Error(json.error)
+    if (!response.ok) {
+      throw new Error(json.error)
+    }
+
+    return json
+  } catch (error) {
+    return { error }
   }
-
-  return json
 }
 function AppTest (): JSX.Element {
   const sum = (a: string): string => {

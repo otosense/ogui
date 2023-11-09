@@ -70,22 +70,41 @@ function AppTest (): JSX.Element {
   }
 
   const egress = (output: any): any => {
-    if (Array.isArray(output)) {
-      return (
-        <>
-          <h4>Output:</h4>
-          <ul>
-            {output.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </>
-      )
+    let isJsonable = true
+    try {
+      JSON.stringify(output)
+    } catch (e) {
+      isJsonable = false
     }
+
+    // if (Array.isArray(output)) {
+    //   return (
+    //     <>
+    //       <h4>Output:</h4>
+    //       <ul>
+    //         {output.map((item, index) => (
+    //           <li key={index}>{item}</li>
+    //         ))}
+    //       </ul>
+    //     </>
+    //   )
+    // } else
+
+    const doc = new DOMParser().parseFromString(output, 'text/html')
+    const isHtml = Array.from(doc.body.childNodes).some(node => node.nodeType === 1)
+
+    let outputEl = <div>{output}</div>
+
+    if (isHtml) {
+      outputEl = <div dangerouslySetInnerHTML={{ __html: output }} />
+    } else if (isJsonable) {
+      outputEl = <pre>{JSON.stringify(output, null, 2)}</pre>
+    }
+
     return (
       <>
         <h4>Output:</h4>
-        <div dangerouslySetInnerHTML={{ __html: output }} />
+        {outputEl}
       </>
     )
   }

@@ -45,16 +45,19 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   const [show, setShow] = useState<any>()
   const [openModal, setOpenModal] = useState(false)
   const [funcStoreList, setFuncStoreList] = useState(funcList)
-  const [isCallingComponent, setIsCallingComponent] = useState<boolean>(false)
+  const [isLoadingComponent, setIsLoadingComponent] = useState<boolean>(isLoading)
 
   useEffect(() => {
     const combinedCheck = funcList.flatMap((subarray: any) => subarray?.join('.'))
     setFuncStoreList(combinedCheck)
+    if (!isEmpty(funcList)) {
+      setIsLoadingComponent(false)
+    }
     // setFuncStoreList(funcList.map(func => func[1]))
   }, [funcList])
 
   const onSubmit = async (props: IFormData): Promise<void> => {
-    setIsCallingComponent(true)
+    setIsLoadingComponent(true)
     const { formData } = props
     setFormData(formData)
     const outputArray = arraySplitter(selectedFormType?.value)
@@ -75,7 +78,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
       } else {
         output = (egress != null) ? egress(output) : output
         setShow(output)
-        setIsCallingComponent(false)
+        setIsLoadingComponent(false)
       }
     } catch (error: any) {
       const errEl: any = (
@@ -85,7 +88,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
       )
       setShow(errEl)
     }
-    setIsCallingComponent(false)
+    setIsLoadingComponent(false)
   }
   // handle orientation change
   const orientation = useOrientation((orientation: boolean) => orientation)
@@ -130,7 +133,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
         </Alert>)
         : (
         <main className="main-json-fiddle">
-           {(isLoading || isCallingComponent) && <LoadingOverlay />}
+           {(isLoadingComponent) && <LoadingOverlay />}
           <h1 className="center">JSON Form Fiddle</h1>
           <div className="inputs-fiddle">
             <SearchBox

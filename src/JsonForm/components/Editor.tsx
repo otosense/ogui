@@ -101,13 +101,16 @@ function Editors (props: TSchemaManager): JSX.Element {
         value: val,
         key: outputArray[0]
       }
-      const data = await saveSchema(finalPayload)
-      if (data === null) {
-        showToast(successMessage, successKey)
+      const data = await saveSchema(finalPayload) // Remove the concatenation
+      try {
+        if (data === null) {
+          showToast(successMessage, successKey)
+        }
+      } catch (error: any) {
+        showToast(error?.message, 'error')
       }
-    } catch (error) {
-      console.error('An error occurred while saving:', error)
-      showToast('Error: Failed to save', 'error')
+    } catch (error: any) {
+      showToast(error?.message, 'error')
     }
   }
 

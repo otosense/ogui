@@ -17,14 +17,16 @@ function ResetAll (props: any): JSX.Element {
       handleClose()
       const outputArray = arraySplitter(formType.value)
       const data = await resetSchema(outputArray[0])
-      if (data === null) {
-        showToast(resetMessage, successKey)
-        newJsonSpecValue(data)
+      try {
+        if (data === null) {
+          showToast(resetMessage, successKey)
+          newJsonSpecValue(data)
+        }
+      } catch (error: any) {
+        showToast(error?.message, errorKey)
       }
-    } catch (error) {
-      // Handle the Promise rejection (error) here
-      console.error('An error occurred while deleting:', error)
-      showToast('Error: Failed to reset', errorKey)
+    } catch (error: any) {
+      showToast(error?.message, errorKey)
     } finally {
       setIsLoading(false)
     }

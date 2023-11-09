@@ -50,6 +50,10 @@ function SearchBox (props: ISearchBox): JSX.Element {
             } else {
               schemaData?.(dataArray)
             }
+          }).catch((error: any) => {
+            // Handle the error here
+            showToast(error?.message, errorKey)
+            schemaData?.({ rjsf: {} })
           })
         } else {
           schemaData?.(result)

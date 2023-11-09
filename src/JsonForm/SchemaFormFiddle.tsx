@@ -12,7 +12,7 @@ import LoadingOverlay from '../utilities/Loader'
 import { useOrientation } from '../utilities/withOrientationEffect'
 import CustomModal from './components/Modal'
 import ResetAll from './components/ResetSpec'
-import ReactToastMessage from '../utilities/ReactToastMessage'
+import ReactToastMessage, { showToast } from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
 import { arraySplitter } from './utilities/Mapping/storeMapping'
 import { errorKey } from './Testing/configs'
@@ -122,8 +122,13 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
 
   const newJsonSpecValue = async (val: any): Promise<void> => {
     const outputArray = arraySplitter(selectedFormType?.value)
-    const data = await onLoadSchema(outputArray[0])
-    setCollection(data?.rjsf)
+    try {
+      const data = await onLoadSchema(outputArray[0])
+      setCollection(data?.rjsf)
+    } catch (error: any) {
+      showToast(error?.message, errorKey)
+      setIsLoadingComponent(false)
+    }
   }
 
   return (

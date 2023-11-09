@@ -22,7 +22,6 @@ export function withInitialData (WrappedComponent: React.ComponentType<any>) {
         if (isFunction(result?.then)) {
           // Check if the result of the function is a promise
           result.then((dataArray: any) => {
-            console.log({ dataArray, result })
             if (Object.prototype.hasOwnProperty.call(dataArray, errorKey)) {
               setIsError(true)
               setErrorMessage(dataArray?.error?.message)
@@ -34,6 +33,11 @@ export function withInitialData (WrappedComponent: React.ComponentType<any>) {
               setIsError(true)
               setFuncList([])
             }
+            setIsLoading(false)
+          }).catch((error: any) => {
+            // Handle the error here
+            setIsError(true)
+            setErrorMessage(error?.message)
             setIsLoading(false)
           })
         } else {

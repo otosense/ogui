@@ -241,7 +241,7 @@
 
 //   const newJsonSpecValue = async (val: any): Promise<void> => {
 //     setIsLoading(true)
-//     const data = await onLoadSchema(selectedFormType?.label)
+//     const data = await onLoadSchema(selectedFormType?.value)
 //     setCollection(data?.rjsf)
 //     setIsLoading(false)
 //   }

@@ -145,7 +145,7 @@ function Editors (props: TSchemaManager): JSX.Element {
                         </Tooltip>
                         <Tooltip title="Reset Specification">
                         <span>
-                              <Button onClick={() => handleOpenModal()} color="info" aria-label="Save" variant="contained" startIcon={<RestartAltIcon />}>
+                              <Button onClick={() => handleOpenModal()} color="info" aria-label="Reset" variant="contained" startIcon={<RestartAltIcon />}>
                               Reset
                             </Button>
                             </span>

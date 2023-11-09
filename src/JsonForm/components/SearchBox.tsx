@@ -32,29 +32,43 @@ function SearchBox (props: ISearchBox): JSX.Element {
     event: React.SyntheticEvent<Element, Event>,
     newValue: any
   ): void => {
-    setSelectedValue(newValue)
-    handleValue(newValue)
-    const outputArray = arraySplitter(newValue?.value)
-    // if (onLoadSchema) {
-    const val = onLoadSchema(outputArray[0])
-    if (isObject(val)) {
-      const result: any = val
-      if (isFunction(result?.then)) {
-        // Check if the result of the function is a promise
-        result.then((dataArray: any) => {
-          if (isEmpty(dataArray)) {
-            showToast('Error: There is No Store Data', 'error')
-            schemaData?.({ rjsf: {} })
-          } else {
-            schemaData?.(dataArray)
-          }
-        })
-      } else {
-        schemaData?.(result)
+    if (!isEmpty(newValue)) {
+      setSelectedValue(newValue)
+      handleValue(newValue)
+      const outputArray = arraySplitter(newValue?.value)
+      // if (onLoadSchema) {
+      const val = onLoadSchema(outputArray[0])
+      if (isObject(val)) {
+        const result: any = val
+        if (isFunction(result?.then)) {
+          // Check if the result of the function is a promise
+          result.then((dataArray: any) => {
+            if (isEmpty(dataArray)) {
+              showToast('Error: There is No Store Data', 'error')
+              schemaData?.({ rjsf: {} })
+            } else {
+              schemaData?.(dataArray)
+            }
+          })
+        } else {
+          schemaData?.(result)
+        }
       }
     }
+
     // }
   }
+
+  useEffect(() => {
+    funcLists.map((option: any) => {
+      const eln = option.label.split('.')
+      if (!(eln[0] === 'dags')) {
+        option.label = eln?.splice(1, eln.length - 1).join('.')
+      }
+      return option
+    })
+  }, [funcLists])
+
   return (
         <div className='autoComplete-Dropdown'>
             <Autocomplete

@@ -14,7 +14,7 @@ function ResetAll (props: any): JSX.Element {
     try {
       setIsLoading(true)
       handleClose()
-      const outputArray = arraySplitter(formType.label)
+      const outputArray = arraySplitter(formType.value)
       const data = await resetSchema(outputArray[0])
       if (data === null) {
         showToast('Success: Reset Successfully Done', 'success')
@@ -33,7 +33,7 @@ function ResetAll (props: any): JSX.Element {
         <>
         {isLoading && <LoadingOverlay />}
             <Typography variant="h6" component="div" sx={{ marginBottom: 2, textAlign: 'center' }} >
-                Are you sure? This action will reset the Specification it its older state, and it cannot be undone.
+                Are you sure? This action will reset the Specification to its older state, and it cannot be undone.
             </Typography>
             <Divider />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2, width: '70%', margin: '10px auto', textAlign: 'center' }} >

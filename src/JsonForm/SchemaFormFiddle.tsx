@@ -169,7 +169,10 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
                     formData={formData} // remove this to clear the value once the submit button is clicked
                   />
                 )}
+
+                <div style={{ margin: '10px 0' }}>
                 {show}
+                </div>
               </div>
             </SplitterLayout>
           </section>

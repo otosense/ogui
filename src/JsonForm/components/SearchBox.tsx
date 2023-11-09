@@ -5,6 +5,7 @@ import { Box } from '@mui/material'
 import { arraySplitter, storeMapping } from '../utilities/Mapping/storeMapping'
 import { isObject, isFunction, last, initial, isEmpty } from 'lodash'
 import { showToast } from '../../utilities/ReactToastMessage'
+import { dagName, errorKey, noStoreData } from '../Testing/configs'
 
 interface Option {
   label: string
@@ -44,7 +45,7 @@ function SearchBox (props: ISearchBox): JSX.Element {
           // Check if the result of the function is a promise
           result.then((dataArray: any) => {
             if (isEmpty(dataArray)) {
-              showToast('Error: There is No Store Data', 'error')
+              showToast(noStoreData, errorKey)
               schemaData?.({ rjsf: {} })
             } else {
               schemaData?.(dataArray)
@@ -62,7 +63,7 @@ function SearchBox (props: ISearchBox): JSX.Element {
   useEffect(() => {
     funcLists.map((option: any) => {
       const eln = option.label.split('.')
-      if (!(eln[0] === 'dags')) {
+      if (!(eln[0] === dagName)) {
         option.label = eln?.splice(1, eln.length - 1).join('.')
       }
       return option

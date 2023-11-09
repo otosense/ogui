@@ -6,6 +6,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import LoadingOverlay from '../../utilities/Loader'
 import { showToast } from '../../utilities/ReactToastMessage'
 import { arraySplitter } from '../utilities/Mapping/storeMapping'
+import { errorKey, resetMessage, successKey } from '../Testing/configs'
 
 function ResetAll (props: any): JSX.Element {
   const { handleClose, resetSchema, formType, newJsonSpecValue } = props
@@ -17,13 +18,13 @@ function ResetAll (props: any): JSX.Element {
       const outputArray = arraySplitter(formType.value)
       const data = await resetSchema(outputArray[0])
       if (data === null) {
-        showToast('Success: Reset Successfully Done', 'success')
+        showToast(resetMessage, successKey)
         newJsonSpecValue(data)
       }
     } catch (error) {
       // Handle the Promise rejection (error) here
       console.error('An error occurred while deleting:', error)
-      showToast('Error: Failed to reset', 'error')
+      showToast('Error: Failed to reset', errorKey)
     } finally {
       setIsLoading(false)
     }

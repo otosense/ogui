@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { isEmpty, isFunction, isObject } from 'lodash'
+import { errorKey } from '../Testing/configs'
 
 export function withInitialData (WrappedComponent: React.ComponentType<any>) {
   return function ComponentWithInitialData (props: any) {
@@ -22,7 +23,7 @@ export function withInitialData (WrappedComponent: React.ComponentType<any>) {
           // Check if the result of the function is a promise
           result.then((dataArray: any) => {
             console.log({ dataArray, result })
-            if (Object.prototype.hasOwnProperty.call(dataArray, 'error')) {
+            if (Object.prototype.hasOwnProperty.call(dataArray, errorKey)) {
               setIsError(true)
               setErrorMessage(dataArray?.error?.message)
               setIsLoading(false)

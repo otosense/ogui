@@ -15,6 +15,7 @@ import ResetAll from './components/ResetSpec'
 import ReactToastMessage from '../utilities/ReactToastMessage'
 import { withInitialData } from './utilities/withInitialData'
 import { arraySplitter } from './utilities/Mapping/storeMapping'
+import { errorKey } from './Testing/configs'
 
 interface IFunctionCallerProps extends FormProps<any, RJSFSchema, any> {
   getStoreList: [] | (() => []) | (() => Promise<any[]>)
@@ -68,9 +69,9 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
 
     try {
       let output = await callDagSchema(finalPay)
-      if (Object.prototype.hasOwnProperty.call(output, 'error')) {
+      if (Object.prototype.hasOwnProperty.call(output, errorKey)) {
         const errEl: any = (
-          <Alert severity="error" className="errorMessage">
+          <Alert severity={errorKey} className="errorMessage">
             {output?.error.message}
           </Alert>
         )
@@ -82,7 +83,7 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
       }
     } catch (error: any) {
       const errEl: any = (
-        <Alert severity="error" className="errorMessage">
+        <Alert severity={errorKey} className="errorMessage">
             {error.message}
         </Alert>
       )

@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { showToast } from '../../utilities/ReactToastMessage'
 import { arraySplitter } from '../utilities/Mapping/storeMapping'
+import { errorKey, successKey, successMessage } from '../Testing/configs'
 
 interface TSchemaManager {
   onDataUploaded?: any
@@ -102,7 +103,7 @@ function Editors (props: TSchemaManager): JSX.Element {
       }
       const data = await saveSchema(finalPayload)
       if (data === null) {
-        showToast('Success: Saved Successfully', 'success')
+        showToast(successMessage, successKey)
       }
     } catch (error) {
       console.error('An error occurred while saving:', error)
@@ -113,7 +114,7 @@ function Editors (props: TSchemaManager): JSX.Element {
   function ErrorHandlers (errors: any[]): JSX.Element[] | null {
     if (errors?.length > 0) {
       return errors.map((error: { message: string, startLineNumber: string }, index: number) => (
-        <Alert severity="error" key={`error-${index}`}>
+        <Alert severity={errorKey} key={`${errorKey}-${index}`}>
           {error?.message} at {error?.startLineNumber}
         </Alert>
       ))

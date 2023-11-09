@@ -1,4 +1,4 @@
-import { includes } from 'lodash'
+import { includes, isEmpty } from 'lodash'
 import { type IFuncNode, type IEdges, type IEdgeObject } from '../../Components/Interfaces'
 import { customRemoveText } from '../globalFunction'
 
@@ -44,18 +44,24 @@ export function convertFuncNodeToJsonNode (jsonData: { func_nodes: IFuncNode[] }
       funcObject.position = { x: 0, y: 0 }
     }
     initialNodes.push(funcObject) // creating the Nodes
-    if (count % 3 === 0) {
-      Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
-        varNodeCollection.push(varNode)
-      })
-      outNodeCollection.push(funcNode.out)
-      count = 0
-    } else if (count % 3 === 1 && fromAPI) {
-      Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
-        varNodeCollection.push(varNode)
-      })
+    Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
+      varNodeCollection.push(varNode)
+    })
+    if (!isEmpty(funcNode.out)) {
       outNodeCollection.push(funcNode.out)
     }
+    // if (count % 3 === 0) {
+    //   Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
+    //     varNodeCollection.push(varNode)
+    //   })
+    //   outNodeCollection.push(funcNode.out)
+    //   count = 0
+    // } else if (count % 3 === 1 && fromAPI) {
+    //   Object.values(funcNode.bind).map(varNode => { // pushing varNode and funcNode into bind
+    //     varNodeCollection.push(varNode)
+    //   })
+    //   outNodeCollection.push(funcNode.out)
+    // }
   })
 
   const varNodes = [...new Set([...new Set(varNodeCollection)].concat([...new Set(outNodeCollection)]))]

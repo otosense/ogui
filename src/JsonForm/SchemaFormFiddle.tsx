@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { isEmpty } from 'lodash'
-import { Alert } from '@mui/material'
+import { Alert, Typography } from '@mui/material'
 import { type FormProps } from '@rjsf/core'
 import { type RJSFSchema } from '@rjsf/utils'
 import SplitterLayout from 'react-splitter-layout'
@@ -135,7 +135,9 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
         : (
         <main className="main-json-fiddle">
            {(isLoadingComponent) && <LoadingOverlay />}
-          <h1 className="center">JSON Form Fiddle</h1>
+          <Typography variant="h3" gutterBottom>
+          JSON Form Fiddle
+          </Typography>
           <div className="inputs-fiddle">
             <SearchBox
               handleValue={handleValue}

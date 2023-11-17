@@ -2,36 +2,10 @@ import React, { memo } from 'react'
 import { loadTableData } from './SampleData'
 import DataTable from '../DataTable'
 import { type IDataTableProps } from '../components/Interfaces'
-import { fetchURL } from './configs'
 
-async function fetchData (payload: any): Promise<any> {
-  try {
-    const response = await fetch(fetchURL, {
-      method: 'POST',
-      body: JSON.stringify({ ...payload }),
-      headers: { 'Content-type': 'application/json; charset=UTF-8' }
-    })
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-
-    const json = await response.json()
-    return json
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    return []
-  }
-}
 function AppTest (): JSX.Element {
   const sampleFunction = async (): Promise<any> => {
-    // return loadTableData.data
-    const payload = {
-      from_: 0,
-      to_: 100
-    }
-    const response = await fetchData(payload)
-    return response.data
+    return loadTableData.data
   }
 
   const configuration: IDataTableProps = {

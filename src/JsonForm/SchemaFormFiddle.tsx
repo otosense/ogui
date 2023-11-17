@@ -121,7 +121,9 @@ const SchemaFormFiddle = (props: IFunctionCallerProps & {
   }
 
   const newJsonSpecValue = async (val: any): Promise<void> => {
+    console.log('selectedFormType', selectedFormType)
     const outputArray = arraySplitter(selectedFormType?.value)
+    console.log('outputArray', outputArray)
     try {
       const data = await onLoadSchema(outputArray[0])
       setCollection(data?.rjsf)

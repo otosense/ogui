@@ -81,6 +81,26 @@ h1 {
     height: 25px;
   }
 
+  .searchBox_TreeView{
+    display: none;
+  }
+
+  .list-container {
+    height: 12vh !important;
+    width: 17vw !important;
+  }
+
+  .Mui-expanded+div,
+.Mui-expanded {
+    background: #fff;
+    // z-index: 999999;
+    position: relative;
+}
+
+.Mui-expanded+div{
+  z-index: 99999;
+}
+
   button.copy + .MuiTreeItem-root {
     border: 0 !important;
     padding: 4px !important;
@@ -97,9 +117,9 @@ h1 {
   main.mainArea {
     width: 100%;
   }
-  .Mui-expanded + div {
-    background: unset !important;
-  }
+  // .Mui-expanded + div {
+  //   background: unset !important;
+  // }
 }
 
 @keyframes fadeIn {
@@ -119,3 +139,6 @@ h1 {
 .CodeMirror-hints {
   z-index: 999 !important;
 }
+
+
+

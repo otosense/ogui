@@ -39,7 +39,7 @@ function AppTest (): JSX.Element {
     rowExpandedDetails: ({ row }: any) => {
       const { channel, annotations } = row.original
       return <>
-        <p>{channel}</p>;
+        <p>{channel}</p>
         <pre>{JSON.stringify(annotations)}</pre>
       </>
     }

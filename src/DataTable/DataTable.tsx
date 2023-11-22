@@ -27,6 +27,7 @@ import { isEmpty } from 'lodash'
 import 'react-filter-box/lib/react-filter-box.css'
 import GlobalFilters from './components/CustomFilter'
 import SavedSearchIcon from '@mui/icons-material/SavedSearch'
+import './css/DataTable.scss'
 
 function DataTable (props: IDataTableProps): JSX.Element {
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([])

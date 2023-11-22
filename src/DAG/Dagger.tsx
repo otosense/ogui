@@ -40,6 +40,10 @@ import CustomModal from './Components/Modal'
 import DeleteAll from './Components/NodeTypes/DeleteAll'
 import { storeFuncKey } from './Testing/config'
 
+import './css/Dag.scss'
+import 'reactflow/dist/style.css'
+import 'react-splitter-layout/lib/index.css'
+
 // Main component Starts here
 const Dagger = (props: IDaggerProps): React.ReactElement => {
   const { onSave, LoadDagList, DagFuncList, onloadSavedDag, loadParamsList } = props

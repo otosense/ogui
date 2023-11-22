@@ -3,7 +3,7 @@ import Editor, { useMonaco } from '@monaco-editor/react'
 import { Alert, AppBar, Box, Button, Toolbar, Tooltip, Typography } from '@mui/material'
 import LoadingOverlay from '../../utilities/Loader'
 import SaveIcon from '@mui/icons-material/Save'
-import { isEmpty } from 'lodash'
+import { isEmpty, isObject } from 'lodash'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { showToast } from '../../utilities/ReactToastMessage'
 import { arraySplitter } from '../utilities/Mapping/storeMapping'
@@ -103,7 +103,7 @@ function Editors (props: TSchemaManager): JSX.Element {
       }
       const data = await saveSchema(finalPayload) // Remove the concatenation
       try {
-        if (data === null) {
+        if (data === null || isObject(data)) {
           showToast(successMessage, successKey)
         }
       } catch (error: any) {

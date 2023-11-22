@@ -7,6 +7,7 @@ import LoadingOverlay from '../../utilities/Loader'
 import { showToast } from '../../utilities/ReactToastMessage'
 import { arraySplitter } from '../utilities/Mapping/storeMapping'
 import { errorKey, resetMessage, successKey } from '../Testing/configs'
+import { isObject } from 'lodash'
 
 function ResetAll (props: any): JSX.Element {
   const { handleClose, resetSchema, formType, newJsonSpecValue } = props
@@ -16,9 +17,11 @@ function ResetAll (props: any): JSX.Element {
       setIsLoading(true)
       handleClose()
       const outputArray = arraySplitter(formType.value)
+      console.log('objects:', outputArray)
       const data = await resetSchema(outputArray[0])
+      console.log('data', data)
       try {
-        if (data === null) {
+        if (data === null || isObject(data)) {
           showToast(resetMessage, successKey)
           newJsonSpecValue(data)
         }

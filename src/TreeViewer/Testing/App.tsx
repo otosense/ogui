@@ -1,10 +1,10 @@
-import React from 'react';
-import AppTest from './AppTest';
+import React from 'react'
+import AppTest from './AppTest'
 
-function App() {
-	return (
-		<AppTest />
-	);
+function App (): JSX.Element {
+  return (
+<AppTest />
+  )
 }
 
-export default App;
+export default App

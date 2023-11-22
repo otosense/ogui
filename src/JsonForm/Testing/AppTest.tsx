@@ -1,72 +1,32 @@
 import React from 'react'
 import SchemaFormFiddle from '../SchemaFormFiddle'
-import { DagComponents, FormSpecStore, del, get, getAll, set } from './configs'
-import { specifications, store } from './data'
+import { specifications, store } from './Mockdata'
+import 'react-splitter-layout/lib/index.css'
+import './../css/JsonForm.scss'
 
-async function fetchData (payload: any, url: string): Promise<any> {
-  const response = await fetch(url, {
-    method: 'POST',
-    body: JSON.stringify({ ...payload }),
-    headers: { 'Content-type': 'application/json; charset=UTF-8' }
-  })
-
-  const json = await response.json()
-
-  if (!response.ok) {
-    throw new Error(json.error)
-  }
-
-  return json
-}
 function AppTest (): JSX.Element {
   const sum = (a: string): string => {
     const output = a
     return output
   }
   const getFullFormSpecStore = async (): Promise<any> => {
-    // return store
-    const payload = {
-      _attr_name: getAll
-    }
-    // Saving the Dag to Backend using API
-    const response = await fetchData(payload, FormSpecStore)
-    return response
+    return store
   }
 
   const getSchemaForForm = async (data: any): Promise<any> => {
-    // return specifications
-    const payload = {
-      _attr_name: get,
-      key: data
-    }
-    const response = await fetchData(payload, FormSpecStore)
-    return response
+    return specifications
   }
 
   const saveSchema = async (data: any): Promise<any> => {
-    const payload = {
-      _attr_name: set,
-      key: data.key,
-      value: data.value
-    }
-    const response = await fetchData(payload, FormSpecStore)
-    return response
+    return specifications
   }
 
   const resetSchema = async (data: any): Promise<any> => {
-    // return await specifications;
-    const payload = {
-      _attr_name: del,
-      key: data
-    }
-
-    const response = await fetchData(payload, FormSpecStore)
-    return response
+    return specifications
   }
 
   const callDagSchema = async (data: any): Promise<any> => {
-    const response = await fetchData(data, DagComponents)
-    return response
+    return 'p'
   }
 
   const egress = (output: any): any => {
